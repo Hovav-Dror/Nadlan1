@@ -617,13 +617,15 @@ def verify_city_comparison_helpers() -> dict[str, object]:
     )
 
     assert response["counts"]["unique_cities"] == 2
-    assert response["counts"]["summary_points"] == 4
-    assert response["counts"]["filtered_deals"] == 8
+    assert response["counts"]["summary_points"] == 5
+    assert response["counts"]["plotted_points"] == 4
+    assert response["counts"]["filtered_deals"] == 9
     assert len(response["series"]) == 2
     assert response["table"][0]["city"] == "עיר א"
     assert response["table"][0]["price_per_room"] == 0.45
     assert response["table"][0]["y"] == 0.45
-    assert all(row["deal_year"] != 2027 for row in response["table"])
+    assert any(row["deal_year"] == 2027 for row in response["table"])
+    assert all(point["year"] != 2027 for series in response["series"] for point in series["points"])
     assert response["overlays"]["sp500"]
     assert "parquet" not in str(response)
     assert "source_root" not in str(response)
@@ -942,7 +944,7 @@ def verify_download_helpers() -> dict[str, object]:
         store,
         {"cities": ["test_city"], "filters": {"deal_year_range": [2020, 2027]}, "remove_price_outliers": False},
     )
-    assert 2027 not in _read_download_csv(city_raw)["Deal Year"].tolist()
+    assert 2027 in _read_download_csv(city_raw)["Deal Year"].tolist()
 
     city_summary = build_city_comparison_summary_download(
         store,
@@ -989,7 +991,7 @@ def verify_download_helpers() -> dict[str, object]:
         "analysis_columns": analysis["columns"],
         "analysis_rows": analysis["row_count"],
         "compare_summary_rows": compare_summary["row_count"],
-        "city_raw_rows_without_2027": city_raw["row_count"],
+        "city_raw_rows": city_raw["row_count"],
         "gush_summary_groups": sorted(set(_read_download_csv(gush_summary)["Performance Group"])),
         "assumption": "Legacy Shiny filenames/column order were unavailable; verifier checks stable English export names.",
     }

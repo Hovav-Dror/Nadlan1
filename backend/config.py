@@ -13,7 +13,7 @@ class Config:
     CACHE_DIR = Path(os.environ.get("NADLAN2_CACHE_DIR", PROJECT_ROOT / ".cache")).resolve()
     METADATA_CACHE_TTL_SECONDS = int(os.environ.get("NADLAN2_METADATA_CACHE_TTL_SECONDS", "3600"))
     CITY_CACHE_TTL_SECONDS = int(os.environ.get("NADLAN2_CITY_CACHE_TTL_SECONDS", "900"))
-    CITY_CACHE_MAX_ITEMS = int(os.environ.get("NADLAN2_CITY_CACHE_MAX_ITEMS", "4"))
+    CITY_CACHE_MAX_ITEMS = int(os.environ.get("NADLAN2_CITY_CACHE_MAX_ITEMS", "24"))
     RESPONSE_CACHE_TTL_SECONDS = int(os.environ.get("NADLAN2_RESPONSE_CACHE_TTL_SECONDS", "1800"))
 
     APPLICATION_ROOT = os.environ.get("SCRIPT_NAME", "/")

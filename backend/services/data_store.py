@@ -41,6 +41,24 @@ TAB_AVAILABILITY = {
     "about": True,
 }
 
+DEFAULT_APARTMENT_TYPES = [
+    "דירה בבית קומות",
+    "Not specified",
+    "דירה",
+    "קוטג' דו משפחתי",
+    "קוטג' חד משפחתי",
+    "דירת גן",
+    "בית בודד",
+    "דירת גג",
+    "קוטג' טורי",
+    "מגורים",
+    "דירת גג (פנטהאוז)",
+    "חד משפחתי (וילה)",
+    "מיני פנטהאוז",
+    "דופלקס",
+    "בית פרטי",
+]
+
 
 class DataStoreError(Exception):
     def __init__(self, public_message: str):
@@ -386,7 +404,9 @@ class DataStore:
         return records
 
     def _default_filters(self, apartment_types: List[str]) -> Dict[str, Any]:
-        default_apartment_types = ["דירה"] if "דירה" in apartment_types else apartment_types[:1]
+        default_apartment_types = [apt_type for apt_type in DEFAULT_APARTMENT_TYPES if apt_type in apartment_types]
+        if not default_apartment_types:
+            default_apartment_types = ["דירה"] if "דירה" in apartment_types else apartment_types[:1]
         return {
             "cities": [],
             "apartment_types": default_apartment_types,

@@ -34,7 +34,8 @@
     gushRequestId: 0,
     cityFilterOptionsRequestId: 0,
     gushFilterOptionsRequestId: 0,
-    cityInitialRunDone: false
+    cityHasRun: false,
+    requestControllers: {}
   };
 
   var AUTO_ANALYSIS_POINT_LIMIT = 1500;
@@ -130,10 +131,15 @@
     if (!validTab(tab)) tab = "analysis";
     document.body.dataset.activeTab = tab;
     document.querySelectorAll(".tab").forEach(function (item) {
-      item.classList.toggle("is-active", item.dataset.tab === tab);
+      var isActive = item.dataset.tab === tab;
+      item.classList.toggle("is-active", isActive);
+      item.setAttribute("aria-selected", isActive ? "true" : "false");
+      item.setAttribute("tabindex", isActive ? "0" : "-1");
     });
     document.querySelectorAll(".tab-panel").forEach(function (panel) {
-      panel.classList.toggle("is-active", panel.id === "panel-" + tab);
+      var isActive = panel.id === "panel-" + tab;
+      panel.classList.toggle("is-active", isActive);
+      panel.hidden = !isActive;
     });
     if (updateHash && window.location.hash !== "#" + tab) {
       window.history.pushState(null, "", "#" + tab);
@@ -143,11 +149,7 @@
         if (tab === "compare") scheduleCompareAutoUpdate("tab");
         if (tab === "city") {
           scheduleCityFilterOptions();
-          if (state.cityFilterOptions && state.cityFilterOptionsSignature === currentCityFilterOptionsSignature()) {
-            runInitialCityComparison();
-          } else {
-            setNotice("city-state", "Loading city-specific filters before drawing the plot...", "loading");
-          }
+          setNotice("city-state", state.cityHasRun ? "City filters are ready. Change filters or click Update Plot." : "Select cities and click Update Plot. City comparison no longer runs automatically on first open.", "ok");
         }
     if (tab === "gush") {
       if (!state.gushFilterOptions || state.gushFilterOptionsSignature !== currentGushFilterOptionsSignature()) {
@@ -183,15 +185,18 @@
       loadLocationMetadata();
     });
     byId("run-analysis").addEventListener("click", runAnalysis);
+    byId("cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
     byId("auto-update-analysis").addEventListener("change", function () {
       scheduleAnalysisAutoUpdate("auto-toggle");
     });
     byId("run-compare").addEventListener("click", runCompare);
+    byId("cancel-compare").addEventListener("click", function () { cancelRequest("compare"); });
     byId("load-compare-raw").addEventListener("click", runCompareRawPreview);
     byId("auto-update-compare").addEventListener("change", function () {
       scheduleCompareAutoUpdate("auto-toggle");
     });
     byId("run-city").addEventListener("click", runCityComparison);
+    byId("cancel-city").addEventListener("click", function () { cancelRequest("city"); });
     byId("auto-update-city").addEventListener("change", function () {
       scheduleCityAutoUpdate("auto-toggle");
     });
@@ -202,6 +207,7 @@
       });
     });
     byId("run-gush").addEventListener("click", runGushPerformance);
+    byId("cancel-gush").addEventListener("click", function () { cancelRequest("gush"); });
     byId("gush-city-select").addEventListener("change", function () {
       renderGushCityReadout();
       state.gushFilterOptions = null;
@@ -228,6 +234,7 @@
     byId("clear-rooms").addEventListener("click", clearRoomSelection);
     byId("smart-reset-gush-rooms").addEventListener("click", applyGushSmartRoomSelection);
     byId("clear-gush-rooms").addEventListener("click", clearGushRoomSelection);
+    byId("reset-gush-filters").addEventListener("click", resetGushFilterRanges);
     byId("reset-filters").addEventListener("click", resetFilterRanges);
     byId("run-street-search").addEventListener("click", runStreetSearch);
     byId("street-search").addEventListener("keydown", function (event) {
@@ -348,6 +355,29 @@
         downloadCsv(button.dataset.download);
       });
     });
+    bindNumericGuardrails();
+  }
+
+  function bindNumericGuardrails() {
+    var currentYear = Math.max(2027, new Date().getFullYear() + 1);
+    document.querySelectorAll('input[inputmode="numeric"], input[inputmode="decimal"]').forEach(function (input) {
+      if (input.id.indexOf("year") !== -1 && !input.min) {
+        input.min = "1998";
+        input.max = String(currentYear);
+        input.step = "1";
+      }
+      input.addEventListener("change", function () { clampInputValue(input); });
+      input.addEventListener("blur", function () { clampInputValue(input); });
+    });
+  }
+
+  function clampInputValue(input) {
+    if (!input || input.value === "") return;
+    var value = Number(input.value);
+    if (!Number.isFinite(value)) return;
+    if (input.min !== "") value = Math.max(Number(input.min), value);
+    if (input.max !== "") value = Math.min(Number(input.max), value);
+    if (String(value) !== input.value) input.value = value;
   }
 
   async function refreshStatus() {
@@ -395,8 +425,13 @@
     ["compare", "city", "gush"].forEach(function (scope) {
       setOptions(byId(scope + "-apartment-type-select"), apartmentTypes, true);
     });
-    setSelectedValues(byId("apartment-type-select"), []);
+    var defaultApartmentTypes = meta.default_filters && meta.default_filters.apartment_types || [];
+    setSelectedValues(byId("apartment-type-select"), defaultApartmentTypes);
+    ["compare", "city", "gush"].forEach(function (scope) {
+      setSelectedValues(byId(scope + "-apartment-type-select"), defaultApartmentTypes);
+    });
     renderApartmentTypeChips();
+    renderCompareApartmentTypeChips();
     renderGushApartmentTypeChips();
 
     if (cityOptions.length && !byId("city-select").value) {
@@ -510,11 +545,7 @@
       renderCityComparisonPicker();
       renderCityFilterSummary();
       updateSelectionSummary();
-      if (document.body.dataset.activeTab === "city" && !state.cityInitialRunDone) {
-        runInitialCityComparison();
-      } else {
-        scheduleCityAutoUpdate("city-filter-options");
-      }
+      scheduleCityAutoUpdate("city-filter-options");
     } catch (error) {
       setNotice("city-state", error.message, "error");
     }
@@ -659,7 +690,7 @@
     scheduleFilterOptions();
     scheduleAnalysisAutoUpdate("gush-performance-selection");
     scheduleCompareAutoUpdate("gush-performance-selection");
-    setNotice("gush-state", "Selected " + gushIds.length + " ranked Gush areas in the shared picker.", "ok");
+    setNotice("gush-state", "Selected " + gushIds.length + " ranked Gush areas and switched them into the Analysis/Compare shared picker.", "ok");
   }
 
   function resetCitySelectionState() {
@@ -875,11 +906,12 @@
       return;
     }
     var requestId = ++state.analysisRequestId;
+    var controller = startRequest("analysis");
     state.latestPayloads.analysis = payload;
     setNotice("analysis-state", options.auto ? "Auto-updating analysis..." : "Loading analysis deals...", "loading");
     setAnalysisBusy(true);
     try {
-      var response = await postJson(endpoints.analysis, payload);
+      var response = await postJson(endpoints.analysis, payload, { signal: controller.signal });
       if (requestId !== state.analysisRequestId) return;
       var data = response.data || {};
       state.latestAnalysisRows = data.table_rows || [];
@@ -896,9 +928,13 @@
       setNotice("analysis-state", warningText(response) || emptyText(data.table_rows, "Analysis updated.", "No matching transactions."), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.analysisRequestId) return;
+      if (error.name === "AbortError") {
+        setNotice("analysis-state", "Analysis request canceled.", "warning");
+        return;
+      }
       setNotice("analysis-state", error.message, "error");
     } finally {
-      if (requestId === state.analysisRequestId) setAnalysisBusy(false);
+      if (requestId === state.analysisRequestId) finishRequest("analysis");
     }
   }
 
@@ -910,12 +946,13 @@
       return;
     }
     var requestId = ++state.compareRequestId;
+    var controller = startRequest("compare");
     state.latestPayloads["compare-summary"] = payload;
     state.latestPayloads["compare-raw"] = payload;
     setNotice("compare-state", options.auto ? "Auto-updating Gush comparison..." : "Loading Gush comparison...", "loading");
     setBusy("run-compare", true);
     try {
-      var response = await postJson(endpoints.compareSummary, payload);
+      var response = await postJson(endpoints.compareSummary, payload, { signal: controller.signal });
       if (requestId !== state.compareRequestId) return;
       var data = response.data || {};
       renderCompareContext(data, payload);
@@ -929,9 +966,13 @@
       setNotice("compare-state", warningText(response) || emptyText(data.table, "Compare summary updated.", "No matching summary rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.compareRequestId) return;
+      if (error.name === "AbortError") {
+        setNotice("compare-state", "Compare request canceled.", "warning");
+        return;
+      }
       setNotice("compare-state", error.message, "error");
     } finally {
-      if (requestId === state.compareRequestId) setBusy("run-compare", false);
+      if (requestId === state.compareRequestId) finishRequest("compare");
     }
   }
 
@@ -967,12 +1008,14 @@
       return;
     }
     var requestId = ++state.cityRequestId;
+    var controller = startRequest("city");
+    state.cityHasRun = true;
     state.latestPayloads["city-comparison-summary"] = payload;
     state.latestPayloads["city-comparison-raw"] = payload;
     setNotice("city-state", options.auto ? "Auto-updating city comparison..." : "Loading city comparison...", "loading");
     setBusy("run-city", true);
     try {
-      var response = await postJson(endpoints.citySummary, payload);
+      var response = await postJson(endpoints.citySummary, payload, { signal: controller.signal });
       if (requestId !== state.cityRequestId) return;
       var data = response.data || {};
       var chartMode = byId("city-chart-mode").value;
@@ -989,9 +1032,13 @@
       setNotice("city-state", warningText(response) || emptyText(data.table, "City comparison updated.", "No matching city rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.cityRequestId) return;
+      if (error.name === "AbortError") {
+        setNotice("city-state", "City comparison request canceled.", "warning");
+        return;
+      }
       setNotice("city-state", error.message, "error");
     } finally {
-      if (requestId === state.cityRequestId) setBusy("run-city", false);
+      if (requestId === state.cityRequestId) finishRequest("city");
     }
   }
 
@@ -1003,25 +1050,30 @@
       return;
     }
     var requestId = ++state.gushRequestId;
+    var controller = startRequest("gush");
     state.latestPayloads["gush-performance-summary"] = payload;
     state.latestPayloads["gush-performance-raw"] = payload;
     setNotice("gush-state", options.auto ? "Auto-updating Gush performance..." : "Loading Gush performance...", "loading");
     setBusy("run-gush", true);
     try {
-      var response = await postJson(endpoints.gushSummary, payload);
+      var response = await postJson(endpoints.gushSummary, payload, { signal: controller.signal });
       if (requestId !== state.gushRequestId) return;
       var data = response.data || {};
       state.latestGushPerformance = data;
-      renderSeriesChart("gush-chart", data.series || [], data.overlays || {}, "Gush Performance", yLabel(data.y_variable));
+      renderSeriesChart("gush-chart", data.series || [], data.overlays || {}, "Gush Performance", yLabel(data.y_variable), performanceSeriesChartOptions());
       renderMetrics("gush-counts", data.counts);
       renderGushPerformanceSummary(data);
       renderTable("gush-table", data.performance_table || [], performanceColumns(data.y_variable));
       setNotice("gush-state", warningText(response) || emptyText(data.performance_table, "Gush performance updated.", "No qualified Gush performance rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.gushRequestId) return;
+      if (error.name === "AbortError") {
+        setNotice("gush-state", "City Performance request canceled.", "warning");
+        return;
+      }
       setNotice("gush-state", error.message, "error");
     } finally {
-      if (requestId === state.gushRequestId) setBusy("run-gush", false);
+      if (requestId === state.gushRequestId) finishRequest("gush");
     }
   }
 
@@ -1069,7 +1121,7 @@
       show_city_comparison: byId("show-city-overlay").checked,
       remove_price_outliers: byId("remove-price-outliers").checked,
       remove_area_outliers: byId("remove-area-outliers").checked,
-      limit: intValue("row-limit", 2000),
+      limit: intValue("row-limit", 2000, 1, 5000),
       sample_seed: 1
     };
     addOptionalPayloadValue(payload, "color_var", "analysis-color-var");
@@ -1103,7 +1155,7 @@
       statistic: byId("city-statistic").value,
       show_sp500: byId("city-show-sp500").checked,
       remove_price_outliers: byId("city-remove-price-outliers").checked,
-      min_deals_per_year: intValue("city-min-deals", 10),
+      min_deals_per_year: intValue("city-min-deals", 10, 1, 1000),
       exclude_2027: true
     };
   }
@@ -1114,10 +1166,10 @@
       filters: buildFilters("gush"),
       yvar: byId("gush-y-variable").value,
       statistic: byId("gush-statistic").value,
-      top_count: intValue("gush-top-count", 5),
-      typical_count: intValue("gush-typical-count", 0),
-      bottom_count: intValue("gush-bottom-count", 5),
-      min_deals_per_gush: intValue("gush-min-deals", 5),
+      top_count: intValue("gush-top-count", 5, 0, 25),
+      typical_count: intValue("gush-typical-count", 0, 0, 25),
+      bottom_count: intValue("gush-bottom-count", 5, 0, 25),
+      min_deals_per_gush: intValue("gush-min-deals", 5, 1, 1000),
       show_city: byId("gush-show-city-overlay").checked,
       show_sp500: byId("gush-show-sp500").checked,
       remove_price_outliers: byId("gush-remove-price-outliers").checked
@@ -1292,8 +1344,10 @@
     if (options.reverseColors) colors = colors.slice().reverse();
     var symbols = options.symbols || [];
     var traces = (series || []).map(function (item, index) {
-      var color = item.color || colors[index % colors.length];
-      var symbol = symbols.length ? symbols[index % symbols.length] : undefined;
+      var group = item.performance_group || "";
+      var color = options.groupColors && options.groupColors[group] || item.color || colors[index % colors.length];
+      var symbol = options.groupSymbols && options.groupSymbols[group] || (symbols.length ? symbols[index % symbols.length] : undefined);
+      var dash = options.groupDashes && options.groupDashes[group] || "solid";
       return {
         name: item.label,
         type: "scatter",
@@ -1304,7 +1358,7 @@
           return point.tooltip || item.label + "<br>Year: " + valueOrDash(point.year) + "<br>Deals: " + valueOrDash(point.n_deals) + "<br>Value: " + valueOrDash(point.y);
         }),
         hovertemplate: "%{text}<extra></extra>",
-        line: { color: color },
+        line: { color: color, dash: dash },
         marker: {
           size: cityPointSizes(item.points || [], options.pointSizeRange),
           color: color,
@@ -1377,7 +1431,7 @@
         intro: "Use the plot space as your city-performance checklist until qualified Gush lines are ready.",
         emptyIntro: "Lower minimum deals, adjust group sizes, or loosen filters, then update performance again.",
         steps: [
-          "<strong>Select one city</strong> in the shared control panel.",
+          "<strong>Select one city</strong> in the City Performance rail.",
           "<strong>Set group sizes</strong> for top, typical, and bottom performers.",
           "<strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.",
           "<strong>Update performance</strong> to draw qualified Gush trend lines and rankings."
@@ -1804,7 +1858,7 @@
     html += "</thead><tbody>" + visibleRows.map(function (row) {
       return '<tr data-row-id="' + escapeHtml(row.id || "") + '">' + columns.map(function (column) {
         var value = row[column.key];
-        return '<td class="' + textDirectionClass(value) + '">' + escapeHtml(valueOrDash(value)) + "</td>";
+        return '<td dir="auto" class="' + textDirectionClass(value) + '">' + escapeHtml(valueOrDash(value)) + "</td>";
       }).join("") + "</tr>";
     }).join("") + "</tbody></table>";
     if (processedRows.length > visibleRows.length || processedRows.length !== rows.length) {
@@ -2085,6 +2139,27 @@
     };
   }
 
+  function performanceSeriesChartOptions() {
+    return {
+      groupColors: {
+        top: "#005f73",
+        typical: "#5f6770",
+        bottom: "#b35c00"
+      },
+      groupDashes: {
+        top: "solid",
+        typical: "dot",
+        bottom: "dash"
+      },
+      groupSymbols: {
+        top: "triangle-up",
+        typical: "circle-open",
+        bottom: "triangle-down"
+      },
+      pointSizeRange: [6, 13]
+    };
+  }
+
   function renderGushPerformanceSummary(data) {
     var filterTarget = byId("gush-filter-summary");
     var infoTarget = byId("gush-performance-info");
@@ -2112,15 +2187,29 @@
     var parts = ["City: " + city.replace(/\s+\([0-9,]+\)$/, "")];
     addRangeSummary(parts, "Years", "gush-filter-year-min", "gush-filter-year-max");
     addRangeSummary(parts, "Price", "gush-filter-price-min", "gush-filter-price-max", " M₪");
+    addRangeSummary(parts, "Price / m²", "gush-filter-price-m2-min", "gush-filter-price-m2-max", " k₪");
     addRangeSummary(parts, "Area", "gush-filter-area-min", "gush-filter-area-max", " m²");
     addRangeSummary(parts, "Floor", "gush-filter-floor-min", "gush-filter-floor-max");
+    addRangeSummary(parts, "Building floors", "gush-filter-building-floors-min", "gush-filter-building-floors-max");
+    addRangeSummary(parts, "Built year", "gush-filter-built-year-min", "gush-filter-built-year-max");
+    addRangeSummary(parts, "Building age", "gush-filter-building-age-min", "gush-filter-building-age-max");
     var rooms = selectedValues(byId("gush-rooms-select"));
     if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    var apartmentTypes = selectedValues(byId("gush-apartment-type-select"));
+    if (apartmentTypes.length) parts.push("Apartment type: " + compactList(apartmentTypes, 4));
     var roof = byId("gush-roof-select").value;
     if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
     var project = byId("gush-new-project-select").value;
     if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
+    if (byId("gush-remove-price-outliers").checked) parts.push("Price and area outliers removed");
     return parts;
+  }
+
+  function compactList(values, limit) {
+    var list = (values || []).map(String);
+    var max = limit || 3;
+    if (list.length <= max) return list.join(", ");
+    return list.slice(0, max).join(", ") + " (+" + (list.length - max) + " more)";
   }
 
   function addRangeSummary(parts, label, minId, maxId, suffix) {
@@ -2436,7 +2525,7 @@
   }
 
   function applyGushSmartRoomSelection() {
-    var smartRooms = state.filterOptions && state.filterOptions.rooms && state.filterOptions.rooms.smart_selected;
+    var smartRooms = state.gushFilterOptions && state.gushFilterOptions.rooms && state.gushFilterOptions.rooms.smart_selected;
     if (!smartRooms || !smartRooms.length) {
       setNotice("gush-state", "No smart room selection is available for the current city.", "warning");
       return;
@@ -2452,6 +2541,21 @@
     renderGushRoomChips();
     scheduleGushAutoUpdate("rooms");
     setNotice("gush-state", "Room filter cleared for City Performance.", "ok");
+  }
+
+  function resetGushFilterRanges() {
+    var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
+    setSelectedValues(byId("gush-apartment-type-select"), defaultApartmentTypes);
+    if (state.gushFilterOptions) {
+      applyScopedFilterDefaults("gush", state.gushFilterOptions);
+    }
+    byId("gush-roof-select").value = "both";
+    byId("gush-new-project-select").value = "both";
+    byId("gush-remove-price-outliers").checked = true;
+    renderGushRoomChips();
+    renderGushApartmentTypeChips();
+    scheduleGushAutoUpdate("reset-filters");
+    setNotice("gush-state", "City Performance filters reset to the selected city's available ranges.", "ok");
   }
 
   function clearCompareRoomSelection() {
@@ -2544,11 +2648,13 @@
     return response.json();
   }
 
-  async function postJson(url, payload) {
+  async function postJson(url, payload, options) {
+    options = options || {};
     var response = await fetch(url, {
       method: "POST",
       headers: { "Accept": "application/json", "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: options.signal
     });
     if (!response.ok) throw new Error(await responseMessage(response));
     return response.json();
@@ -2560,7 +2666,8 @@
       var parsed = JSON.parse(text);
       if (parsed.warnings && parsed.warnings.length) return parsed.warnings.join(" ");
     } catch (error) {
-      return text || response.statusText;
+      var fallback = (text || response.statusText || "").replace(/\s+/g, " ").trim();
+      return fallback.length > 240 ? fallback.slice(0, 240) + "..." : fallback;
     }
     return response.statusText;
   }
@@ -2980,24 +3087,15 @@
     }, 650);
   }
 
-  function runInitialCityComparison() {
-    if (state.cityInitialRunDone) {
-      scheduleCityAutoUpdate("tab");
-      return;
-    }
-    if (!selectedValues(byId("city-comparison-select")).length) return;
-    state.cityInitialRunDone = true;
-    window.setTimeout(function () {
-      if (document.body.dataset.activeTab !== "city") return;
-      runCityComparison({ auto: true });
-    }, 150);
-  }
-
   function scheduleCityAutoUpdate(reason) {
     if (state.autoCityTimer) window.clearTimeout(state.autoCityTimer);
     if (!byId("auto-update-city").checked) return;
     if (document.body.dataset.activeTab !== "city") return;
     if (!selectedValues(byId("city-comparison-select")).length) return;
+    if (!state.cityHasRun) {
+      setNotice("city-state", "Click Update Plot once to load City Comparison. Auto-update starts after the first manual run.", "ok");
+      return;
+    }
     state.autoCityTimer = window.setTimeout(function () {
       var decision = autoCityDecision();
       if (decision.status === "run") {
@@ -3326,14 +3424,20 @@
     return Number.isFinite(number) ? number : null;
   }
 
-  function intValue(id, fallback) {
+  function intValue(id, fallback, min, max) {
     var number = parseInt(byId(id).value, 10);
-    return Number.isFinite(number) ? number : fallback;
+    if (!Number.isFinite(number)) number = fallback;
+    if (Number.isFinite(min)) number = Math.max(min, number);
+    if (Number.isFinite(max)) number = Math.min(max, number);
+    byId(id).value = number;
+    return number;
   }
 
   function setNotice(id, message, kind) {
     var target = byId(id);
     if (!target) return;
+    target.setAttribute("aria-live", kind === "error" || kind === "warning" ? "assertive" : "polite");
+    target.setAttribute("role", kind === "error" || kind === "warning" ? "alert" : "status");
     target.innerHTML = message ? '<div class="notice ' + (kind || "") + '">' + escapeHtml(message) + "</div>" : "";
   }
 
@@ -3342,9 +3446,53 @@
     if (button) button.disabled = busy;
   }
 
+  function startRequest(key) {
+    cancelRequest(key, { silent: true });
+    var controller = new AbortController();
+    state.requestControllers[key] = controller;
+    setRequestBusy(key, true);
+    return controller;
+  }
+
+  function finishRequest(key) {
+    delete state.requestControllers[key];
+    setRequestBusy(key, false);
+  }
+
+  function cancelRequest(key, options) {
+    options = options || {};
+    var controller = state.requestControllers[key];
+    if (controller) {
+      controller.abort();
+      delete state.requestControllers[key];
+    }
+    setRequestBusy(key, false);
+    if (!options.silent) {
+      var stateId = {
+        analysis: "analysis-state",
+        compare: "compare-state",
+        city: "city-state",
+        gush: "gush-state"
+      }[key];
+      if (stateId) setNotice(stateId, "Canceling current request...", "warning");
+    }
+  }
+
+  function setRequestBusy(key, busy) {
+    var runId = {
+      analysis: "run-analysis",
+      compare: "run-compare",
+      city: "run-city",
+      gush: "run-gush"
+    }[key];
+    var cancelId = "cancel-" + key;
+    setBusy(runId, busy);
+    var cancelButton = byId(cancelId);
+    if (cancelButton) cancelButton.hidden = !busy;
+  }
+
   function setAnalysisBusy(busy) {
-    setBusy("run-analysis", busy);
-    setBusy("run-analysis-side", busy);
+    setRequestBusy("analysis", busy);
   }
 
   function updateSelectionSummary() {

@@ -10,7 +10,7 @@ from .calculations import (
     PRICE_TYPE_ROOM,
     apply_common_filters,
     price_used,
-    remove_price_outliers_by_year,
+    remove_price_outliers_global_iqr,
     sp500_normalized,
 )
 from .data_store import DataStore
@@ -35,13 +35,11 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
     raw_rows = int(len(city_frame))
 
     filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
-    if _exclude_2027(request_payload):
-        filtered = _without_year(filtered, 2027)
     filtered_rows = int(len(filtered))
 
     if _remove_price_outliers(request_payload):
         before = len(filtered)
-        filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
         if len(filtered) < before:
             warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
     outlier_rows = int(len(filtered))
@@ -59,9 +57,11 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
         table = [row for row in table if _safe_int(row.get("n_deals")) is not None and int(row["n_deals"]) >= min_deals]
         if len(table) < before:
             warnings.append(f"Hidden {before - len(table)} city/year points below {min_deals} deals.")
-    series = build_city_year_series(table)
+    plot_table = _without_year_rows(table, 2027) if _exclude_2027(request_payload) else table
+    series = build_city_year_series(plot_table)
     city_stats = build_city_stats(table, selection["cities"], y_variable)
-    overlays, overlay_warnings = _overlays(filtered, request_payload, y_variable)
+    overlay_frame = _without_year(filtered, 2027) if _exclude_2027(request_payload) else filtered
+    overlays, overlay_warnings = _overlays(overlay_frame, request_payload, y_variable)
     warnings.extend(overlay_warnings)
 
     return _json_ready(
@@ -73,6 +73,7 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
                 "filtered_deals": filtered_rows,
                 "outlier_deals": outlier_rows,
                 "summary_points": len(table),
+                "plotted_points": len(plot_table),
                 "unique_cities": len(selection["cities"]),
                 "plotted_cities": len(series),
                 "unique_years": len({row.get("deal_year") for row in table if row.get("deal_year") is not None}),
@@ -90,15 +91,38 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
 
 
 def build_city_comparison_raw_response(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
-    response = build_city_comparison_summary_response(data_store, payload)
-    return {
-        "rows": response["table"],
-        "counts": response["counts"],
-        "selection": response["selection"],
-        "warnings": response["warnings"],
-        "y_variable": response["y_variable"],
-        "statistic": response.get("statistic"),
-    }
+    request_payload = _request_payload(payload)
+    warnings: List[str] = []
+
+    selection = resolve_city_comparison_selection(data_store, request_payload)
+    city_frame = data_store.load_cities([city["id"] for city in selection["cities"]])
+    filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
+    filtered_rows = int(len(filtered))
+
+    if _remove_price_outliers(request_payload):
+        before = len(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
+        if len(filtered) < before:
+            warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
+    if filtered.empty:
+        warnings.append("No matching transactions were found.")
+
+    return _json_ready(
+        {
+            "rows": _raw_rows(_with_price_calculations(filtered)),
+            "counts": {
+                "raw_deals": int(len(city_frame)),
+                "filtered_deals": filtered_rows,
+                "outlier_deals": int(len(filtered)),
+                "unique_cities": len(selection["cities"]),
+                "unique_years": _nunique(filtered.get("deal year")),
+            },
+            "selection": {"cities": selection["cities"]},
+            "warnings": warnings,
+            "y_variable": _y_variable(request_payload.get("y_variable", request_payload.get("price_type"))),
+            "statistic": _statistic(request_payload),
+        }
+    )
 
 
 def resolve_city_comparison_selection(data_store: DataStore, payload: Mapping[str, Any]) -> Dict[str, Any]:
@@ -323,6 +347,54 @@ def _without_year(df: pd.DataFrame, year: int) -> pd.DataFrame:
     return df.loc[~years.eq(year)].copy()
 
 
+def _without_year_rows(rows: Sequence[Mapping[str, Any]], year: int) -> List[Dict[str, Any]]:
+    return [dict(row) for row in rows if _safe_int(row.get("deal_year")) != year]
+
+
+def _with_price_calculations(df: pd.DataFrame) -> pd.DataFrame:
+    working = df.copy()
+    working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
+    working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
+    return working
+
+
+def _raw_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    columns = [
+        column
+        for column in [
+            "city",
+            "street",
+            "Gush",
+            "FULLADRESS",
+            "date",
+            "deal year",
+            "price_millions",
+            "price_per_m2",
+            "price_per_room",
+            "area",
+            "rooms",
+            "floor",
+            "roof",
+            "apt type",
+            "New_Project",
+            "build_year",
+            "building age",
+            "build_floors",
+            "story",
+        ]
+        if column in df.columns
+    ]
+    if "date" in df.columns:
+        working = df.copy()
+        working["_city_comparison_date_sort"] = pd.to_datetime(working["date"], errors="coerce")
+        working = working.sort_values(["_city_comparison_date_sort"], kind="mergesort").drop(
+            columns=["_city_comparison_date_sort"]
+        )
+    else:
+        working = df
+    return [_normalize_row(row) for row in working[columns].to_dict(orient="records")]
+
+
 def _y_variable(value: Any) -> str:
     normalized = _normalize_text(value)
     if normalized in {"price / m²", "price / m2", "price per m2", "price_per_m2"}:
@@ -523,6 +595,10 @@ def _display_value(value: Any) -> Any:
         except (TypeError, ValueError):
             pass
     return value
+
+
+def _normalize_row(row: Mapping[str, Any]) -> Dict[str, Any]:
+    return {str(key): _json_ready(value) for key, value in row.items()}
 
 
 def _compact_number(value: Any) -> Any:

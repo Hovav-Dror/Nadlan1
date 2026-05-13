@@ -11,7 +11,7 @@ from .calculations import (
     apply_common_filters,
     price_used,
     remove_outliers_from_var,
-    remove_price_outliers_by_year,
+    remove_price_outliers_global_iqr,
     sp500_normalized,
     summary_by_city_year,
     summary_by_gush_year,
@@ -56,13 +56,10 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
 
     if _remove_price_outliers(request_payload):
         before = len(filtered)
-        filtered = remove_price_outliers_by_year(filtered)
-        if len(filtered) < before:
-            warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
-        before = len(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
         filtered = remove_outliers_from_var(filtered, "area")
         if len(filtered) < before:
-            warnings.append(f"Removed {before - len(filtered)} area outlier deals.")
+            warnings.append(f"Removed {before - len(filtered)} outlier deals.")
     outlier_rows = int(len(filtered))
 
     y_variable = _y_variable(_first_present(request_payload, "yvar", "y_variable", "price_type"))

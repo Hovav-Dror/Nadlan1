@@ -61,6 +61,16 @@ button:disabled {
   opacity: 0.65;
 }
 
+.cancel-button {
+  border-color: #9b5a10;
+  color: #9b5a10;
+}
+
+.cancel-button:hover {
+  background: #fff5e8;
+  color: #6f3b00;
+}
+
 .topbar {
   display: flex;
   justify-content: space-between;
@@ -536,6 +546,17 @@ option {
   margin: 0 0 14px;
 }
 
+.warning-callout {
+  border: 1px solid #d6a862;
+  border-radius: 8px;
+  background: #fff8ed;
+  color: #68430b;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .compare-area-panel {
   border: 1px solid #c5dcd8;
   border-radius: 8px;
@@ -661,6 +682,47 @@ option {
 
 .workflow-filter-panel select[multiple] {
   min-height: 92px;
+}
+
+.filter-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin: 14px 0 8px;
+  border-top: 1px solid #d9e6e3;
+  padding-top: 10px;
+}
+
+.filter-section-heading h4 {
+  margin: 0;
+  color: #304246;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.performance-advanced-filters {
+  border-top: 1px solid #cfe1de;
+  padding-top: 10px;
+}
+
+.performance-advanced-filters summary {
+  list-style-position: inside;
+}
+
+.performance-advanced-filters .range-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.performance-advanced-filters .apartment-type-filter {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.performance-room-chips {
+  margin-bottom: 8px;
 }
 
 .city-selector-panel {

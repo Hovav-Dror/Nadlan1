@@ -10,7 +10,7 @@ from .calculations import (
     PRICE_TYPE_ROOM,
     apply_common_filters,
     price_used,
-    remove_price_outliers_by_year,
+    remove_price_outliers_global_iqr,
     sp500_normalized,
     summary_by_city_year,
     summary_by_gush_year,
@@ -155,7 +155,7 @@ def _filtered_compare_deals(
 
     if _remove_price_outliers(request_payload):
         before = len(filtered)
-        filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
         if len(filtered) < before:
             warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
 
@@ -413,7 +413,7 @@ def _overlays(
     if payload.get("show_city_comparison") is True:
         city_filtered = apply_common_filters(city_frame, _non_location_filters(payload.get("filters")))
         if _remove_price_outliers(payload):
-            city_filtered = remove_price_outliers_by_year(city_filtered)
+            city_filtered = remove_price_outliers_global_iqr(city_filtered)
         overlays["city_comparison"] = _city_overlay_rows(_summary_by_city_year(city_filtered, statistic), y_variable)
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:

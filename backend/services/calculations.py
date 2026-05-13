@@ -94,6 +94,21 @@ def remove_price_outliers_by_year(df: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(filtered_frames, ignore_index=True).drop(columns=["_nadlan2_price", "_nadlan2_year"])
 
 
+def remove_price_outliers_global_iqr(df: pd.DataFrame, *, multiplier: float = 1.5) -> pd.DataFrame:
+    if "price_millions" not in df.columns:
+        return df.copy()
+    if df.empty:
+        return df.copy()
+
+    values = pd.to_numeric(df["price_millions"], errors="coerce")
+    q1 = values.quantile(0.25)
+    q3 = values.quantile(0.75)
+    iqr = q3 - q1
+    lower_bound = q1 - multiplier * iqr
+    upper_bound = q3 + multiplier * iqr
+    return df.loc[(values >= lower_bound) & (values <= upper_bound)].copy()
+
+
 def remove_outliers_from_var(df: pd.DataFrame, var_name: str) -> pd.DataFrame:
     if var_name not in df.columns:
         return df.copy()

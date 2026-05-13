@@ -504,9 +504,7 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
-app = create_app()
-
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    app = create_app()
     app.run(host="127.0.0.1", port=8006)

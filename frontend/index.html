@@ -19,16 +19,16 @@
     </header>
 
     <main class="app-shell">
-      <nav class="tabs" aria-label="Workflows">
+      <nav class="tabs" aria-label="Workflows" role="tablist">
         <span class="tab-group-label">Analysis workflows</span>
-        <button class="tab is-active" data-tab="analysis">Analysis Deals</button>
-        <button class="tab" data-tab="compare">Compare Areas</button>
-        <button class="tab" data-tab="city">City Comparison</button>
-        <button class="tab" data-tab="gush">City Performance</button>
+        <button class="tab is-active" id="tab-analysis" data-tab="analysis" role="tab" aria-controls="panel-analysis" aria-selected="true">Analysis Deals</button>
+        <button class="tab" id="tab-compare" data-tab="compare" role="tab" aria-controls="panel-compare" aria-selected="false">Compare Areas</button>
+        <button class="tab" id="tab-city" data-tab="city" role="tab" aria-controls="panel-city" aria-selected="false">City Comparison</button>
+        <button class="tab" id="tab-gush" data-tab="gush" role="tab" aria-controls="panel-gush" aria-selected="false">City Performance</button>
         <span class="tab-group-label">Utilities</span>
-        <button class="tab tab-secondary" data-tab="about">About</button>
-        <button class="tab tab-secondary" data-tab="metadata">Data Health</button>
-        <button class="tab tab-secondary" data-tab="downloads">Exports</button>
+        <button class="tab tab-secondary" id="tab-metadata" data-tab="metadata" role="tab" aria-controls="panel-metadata" aria-selected="false">Data Health</button>
+        <button class="tab tab-secondary" id="tab-downloads" data-tab="downloads" role="tab" aria-controls="panel-downloads" aria-selected="false">Exports</button>
+        <button class="tab tab-secondary" id="tab-about" data-tab="about" role="tab" aria-controls="panel-about" aria-selected="false">About</button>
       </nav>
 
       <section class="workspace">
@@ -175,7 +175,7 @@
         </aside>
 
         <section class="content-panel">
-          <section class="tab-panel is-active" id="panel-analysis">
+          <section class="tab-panel is-active" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis">
             <div class="workflow-banner">
               <div>
                 <h2>Analysis Deals - Granular View</h2>
@@ -207,6 +207,7 @@
               </div>
               <div class="actions">
                 <button id="run-analysis" type="button">Update analysis</button>
+                <button id="cancel-analysis" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
                 <button class="secondary" data-download="analysis" type="button">CSV</button>
               </div>
             </div>
@@ -324,7 +325,7 @@
                 </label>
                 <label>
                   Row Limit
-                  <input id="row-limit" inputmode="numeric" value="2000">
+                  <input id="row-limit" inputmode="numeric" type="number" min="1" max="5000" step="1" value="2000">
                 </label>
               </div>
               <div class="plot-toggle-row">
@@ -358,7 +359,7 @@
             <div id="analysis-table" class="table-wrap"></div>
           </section>
 
-          <section class="tab-panel" id="panel-metadata">
+          <section class="tab-panel" id="panel-metadata" role="tabpanel" aria-labelledby="tab-metadata">
             <div class="panel-heading">
               <div>
                 <h2>Data Health</h2>
@@ -373,7 +374,7 @@
             <div id="filter-summary" class="info-grid"></div>
           </section>
 
-          <section class="tab-panel" id="panel-about">
+          <section class="tab-panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
             <div class="panel-heading">
               <div>
                 <h2>About</h2>
@@ -497,7 +498,7 @@
             </article>
           </section>
 
-          <section class="tab-panel" id="panel-compare">
+          <section class="tab-panel" id="panel-compare" role="tabpanel" aria-labelledby="tab-compare">
             <div class="workflow-banner">
               <div>
                 <h2>Compare Areas</h2>
@@ -529,6 +530,7 @@
               </div>
               <div class="actions">
                 <button id="run-compare" type="button">Update compare</button>
+                <button id="cancel-compare" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
                 <button class="secondary" data-download="compare-summary" type="button">Summary CSV</button>
                 <button class="secondary" data-download="compare-raw" type="button">Raw CSV</button>
               </div>
@@ -575,12 +577,12 @@
                 <label>Color palette<select id="compare-color-palette"><option value="okabe">Okabe-Ito</option><option value="default">Default</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option><option value="category20">Category20</option><option value="grey">Grey</option></select></label>
                 <label>Shape palette<select id="compare-shape-palette"><option value="default">Default</option><option value="open">Open</option><option value="solid">Solid</option><option value="mixed">Mixed</option></select></label>
                 <label class="checkbox-field"><input id="compare-reverse-colors" type="checkbox"> Reverse colors</label>
-                <label>Year min<input id="compare-filter-year-min" inputmode="numeric"></label>
-                <label>Year max<input id="compare-filter-year-max" inputmode="numeric"></label>
+                <label>Year min<input id="compare-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
+                <label>Year max<input id="compare-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
                 <label>Price min (₪m)<input id="compare-filter-price-min" inputmode="decimal"></label>
                 <label>Price max (₪m)<input id="compare-filter-price-max" inputmode="decimal"></label>
               </div>
-              <details class="advanced-filters compare-filter-details" open>
+              <details class="advanced-filters compare-filter-details">
                 <summary>Advanced filters</summary>
                 <div class="compare-filter-layout">
                   <div class="filter-cluster">
@@ -669,7 +671,7 @@
             <div id="compare-table" class="table-wrap"></div>
           </section>
 
-          <section class="tab-panel" id="panel-city">
+          <section class="tab-panel" id="panel-city" role="tabpanel" aria-labelledby="tab-city">
             <div class="workflow-banner">
               <div>
                 <h2>City Comparison</h2>
@@ -733,8 +735,8 @@
                 <h3>Step 2: Additional filters</h3>
               </div>
               <div class="range-grid city-filter-range-grid">
-                <label>Year min<input id="city-filter-year-min" inputmode="numeric"></label>
-                <label>Year max<input id="city-filter-year-max" inputmode="numeric"></label>
+                <label>Year min<input id="city-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
+                <label>Year max<input id="city-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
                 <label>Price min (₪m)<input id="city-filter-price-min" inputmode="decimal"></label>
                 <label>Price max (₪m)<input id="city-filter-price-max" inputmode="decimal"></label>
                 <label>Price / m² min (₪k)<input id="city-filter-price-m2-min" inputmode="decimal"></label>
@@ -753,7 +755,7 @@
                 <label>Apartment types<select id="city-apartment-type-select" multiple size="4"></select></label>
                 <label>Top floor / roof<select id="city-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 <label>New project<select id="city-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
-                <label>Min deals / year<input id="city-min-deals" inputmode="numeric" value="1"></label>
+                <label>Min deals / year<input id="city-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="10"></label>
               </div>
               <div class="inline-controls">
                 <label><input id="city-remove-price-outliers" type="checkbox" checked> Remove outliers</label>
@@ -764,6 +766,7 @@
                 <section class="city-update-panel">
                   <h3>Update Analysis</h3>
                   <button id="run-city" type="button">Update Plot</button>
+                  <button id="cancel-city" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
                   <label><input id="auto-update-city" type="checkbox" checked> Auto-update for small datasets (&lt;500 records)</label>
                 </section>
                 <section class="plot-controls city-plot-controls" aria-label="City plot controls">
@@ -779,8 +782,8 @@
                   <div class="plot-toggle-row city-plot-options">
                     <label><input id="city-reverse-colors" type="checkbox"> Reverse color order</label>
                     <label><input id="city-show-points" type="checkbox" checked> Show points</label>
-                    <label>Point min<input id="city-point-size-min" inputmode="decimal" value="0.7"></label>
-                    <label>Point max<input id="city-point-size-max" inputmode="decimal" value="6"></label>
+                    <label title="Smallest marker size for city/year points, scaled by deal count.">Point min<input id="city-point-size-min" inputmode="decimal" type="number" min="1" max="20" step="0.5" value="3"></label>
+                    <label title="Largest marker size for city/year points, scaled by deal count.">Point max<input id="city-point-size-max" inputmode="decimal" type="number" min="1" max="30" step="0.5" value="10"></label>
                     <label><input id="city-show-sp500" type="checkbox"> S&amp;P 500</label>
                   </div>
                 </section>
@@ -816,7 +819,7 @@
             </div>
           </section>
 
-          <section class="tab-panel" id="panel-gush">
+          <section class="tab-panel" id="panel-gush" role="tabpanel" aria-labelledby="tab-gush">
             <div class="workflow-banner">
               <div>
                 <h2>City Performance</h2>
@@ -851,6 +854,9 @@
                 <button class="secondary" data-download="gush-performance-raw" type="button">Raw CSV</button>
               </div>
             </div>
+            <div class="warning-callout" role="note">
+              City Performance is a directional screening workflow. Treat rankings as candidates to inspect, not as final investment conclusions.
+            </div>
             <div class="performance-workflow-grid">
               <aside class="performance-filter-rail">
                 <section class="city-selector-panel" aria-label="City performance city">
@@ -871,53 +877,61 @@
               <div class="workflow-filter-heading">
                 <h3>Step 2: Performance Parameters</h3>
                 <div class="workflow-filter-actions">
-                  <label><input id="gush-remove-price-outliers" type="checkbox" checked> Remove outliers</label>
+                  <label><input id="gush-remove-price-outliers" type="checkbox" checked> Remove price and area outliers</label>
                 </div>
               </div>
               <div class="workflow-quick-grid performance-quick-grid">
-                <label>Top<input id="gush-top-count" inputmode="numeric" value="5"></label>
-                <label>Typical<input id="gush-typical-count" inputmode="numeric" value="0"></label>
-                <label>Bottom<input id="gush-bottom-count" inputmode="numeric" value="5"></label>
-                <label>Min deals<input id="gush-min-deals" inputmode="numeric" value="5"></label>
+                <label>Top<input id="gush-top-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5"></label>
+                <label>Typical<input id="gush-typical-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="0"></label>
+                <label>Bottom<input id="gush-bottom-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5"></label>
+                <label>Min deals<input id="gush-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="5"></label>
               </div>
-              <details class="advanced-filters" open>
+              <details class="advanced-filters performance-advanced-filters" open>
                 <summary>Step 3: Additional filters</summary>
+                <div class="filter-section-heading">
+                  <h4>Deal ranges</h4>
+                  <button id="reset-gush-filters" class="secondary compact-button" type="button">Reset</button>
+                </div>
                 <div class="range-grid">
-                  <label>Deal year min<input id="gush-filter-year-min" inputmode="numeric"></label>
-                  <label>Deal year max<input id="gush-filter-year-max" inputmode="numeric"></label>
+                  <label>Deal years from<input id="gush-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
+                  <label>Deal years to<input id="gush-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
+                  <label>Price from (₪m)<input id="gush-filter-price-min" inputmode="decimal"></label>
+                  <label>Price to (₪m)<input id="gush-filter-price-max" inputmode="decimal"></label>
+                  <label>Price / m² from (₪k)<input id="gush-filter-price-m2-min" inputmode="decimal"></label>
+                  <label>Price / m² to (₪k)<input id="gush-filter-price-m2-max" inputmode="decimal"></label>
+                  <label>Area from (m²)<input id="gush-filter-area-min" inputmode="decimal"></label>
+                  <label>Area to (m²)<input id="gush-filter-area-max" inputmode="decimal"></label>
+                </div>
+                <div class="filter-section-heading">
+                  <h4>Apartment mix</h4>
+                  <button id="smart-reset-gush-rooms" class="secondary compact-button" type="button">Smart rooms</button>
                 </div>
                 <div class="room-filter-header">
                   <span>Rooms</span>
-                  <button id="smart-reset-gush-rooms" class="secondary compact-button" type="button">Smart reset</button>
+                  <button id="clear-gush-rooms" class="secondary compact-button" type="button">All rooms</button>
                 </div>
-                <div id="gush-rooms-chip-group" class="filter-chip-group" aria-label="Gush performance rooms"></div>
-                <select id="gush-rooms-select" class="native-filter-select" multiple size="4"></select>
-                <div class="room-actions">
-                  <button id="clear-gush-rooms" class="secondary" type="button">All rooms</button>
-                </div>
-                <label>
-                  Apartment types
+                <div id="gush-rooms-chip-group" class="filter-chip-group performance-room-chips" aria-label="Gush performance rooms"></div>
+                <select id="gush-rooms-select" class="native-filter-select" multiple size="5"></select>
+                <label class="apartment-type-filter">
+                  Apartment type
                   <input id="gush-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
                   <div id="gush-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Gush performance apartment types"></div>
-                  <select id="gush-apartment-type-select" class="native-filter-select" multiple size="4"></select>
+                  <select id="gush-apartment-type-select" class="native-filter-select" multiple size="5"></select>
                 </label>
+                <div class="filter-section-heading">
+                  <h4>Building attributes</h4>
+                </div>
                 <div class="range-grid">
-                <label>Price min (₪m)<input id="gush-filter-price-min" inputmode="decimal"></label>
-                <label>Price max (₪m)<input id="gush-filter-price-max" inputmode="decimal"></label>
-                <label>Price / m² min (₪k)<input id="gush-filter-price-m2-min" inputmode="decimal"></label>
-                <label>Price / m² max (₪k)<input id="gush-filter-price-m2-max" inputmode="decimal"></label>
-                <label>Area min (m²)<input id="gush-filter-area-min" inputmode="decimal"></label>
-                <label>Area max (m²)<input id="gush-filter-area-max" inputmode="decimal"></label>
-                <label>Floor min<input id="gush-filter-floor-min" inputmode="numeric"></label>
-                <label>Floor max<input id="gush-filter-floor-max" inputmode="numeric"></label>
-                <label>Building floors min<input id="gush-filter-building-floors-min" inputmode="numeric"></label>
-                <label>Building floors max<input id="gush-filter-building-floors-max" inputmode="numeric"></label>
-                <label>Built year min<input id="gush-filter-built-year-min" inputmode="numeric"></label>
-                <label>Built year max<input id="gush-filter-built-year-max" inputmode="numeric"></label>
-                <label>Building age min<input id="gush-filter-building-age-min" inputmode="numeric"></label>
-                <label>Building age max<input id="gush-filter-building-age-max" inputmode="numeric"></label>
-                <label>Top floor / roof<select id="gush-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
-                <label>New project<select id="gush-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                  <label>Floor from<input id="gush-filter-floor-min" inputmode="numeric"></label>
+                  <label>Floor to<input id="gush-filter-floor-max" inputmode="numeric"></label>
+                  <label>Building floors from<input id="gush-filter-building-floors-min" inputmode="numeric"></label>
+                  <label>Building floors to<input id="gush-filter-building-floors-max" inputmode="numeric"></label>
+                  <label>Built year from<input id="gush-filter-built-year-min" inputmode="numeric"></label>
+                  <label>Built year to<input id="gush-filter-built-year-max" inputmode="numeric"></label>
+                  <label>Building age from<input id="gush-filter-building-age-min" inputmode="numeric"></label>
+                  <label>Building age to<input id="gush-filter-building-age-max" inputmode="numeric"></label>
+                  <label>Top floor / roof<select id="gush-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                  <label>New project<select id="gush-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 </div>
               </details>
             </section>
@@ -926,6 +940,7 @@
                 <section class="city-update-panel performance-update-panel">
                   <h3>Update Analysis</h3>
                   <button id="run-gush" type="button">Update Plot</button>
+                  <button id="cancel-gush" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
                   <label><input id="auto-update-gush" type="checkbox" checked> Auto-update</label>
                 </section>
                 <section class="plot-controls performance-plot-controls" aria-label="Gush performance plot controls">
@@ -974,7 +989,7 @@
             </div>
           </section>
 
-          <section class="tab-panel" id="panel-downloads">
+          <section class="tab-panel" id="panel-downloads" role="tabpanel" aria-labelledby="tab-downloads">
             <div class="panel-heading">
               <div>
                 <h2>Exports</h2>

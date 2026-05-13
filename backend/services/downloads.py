@@ -10,6 +10,7 @@ from .calculations import (
     apply_common_filters,
     price_used,
     remove_outliers_from_var,
+    remove_price_outliers_global_iqr,
     remove_price_outliers_by_year,
 )
 from .city_comparison import build_city_comparison_summary_response, resolve_city_comparison_selection
@@ -93,7 +94,7 @@ def build_compare_raw_download(data_store: DataStore, payload: Optional[Mapping[
     selected = apply_common_filters(city_frame, {"gushes": selection["gush_ids"]})
     filtered = apply_common_filters(selected, _non_location_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
-        filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_compare_raw.csv", column_names=RAW_COLUMN_NAMES)
 
@@ -112,10 +113,8 @@ def build_city_comparison_raw_download(data_store: DataStore, payload: Optional[
     selection = resolve_city_comparison_selection(data_store, request_payload)
     city_frame = data_store.load_cities([city["id"] for city in selection["cities"]])
     filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
-    if _exclude_2027(request_payload):
-        filtered = _without_year(filtered, 2027)
     if _remove_price_outliers(request_payload):
-        filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_city_comparison_raw.csv", column_names=RAW_COLUMN_NAMES)
 
@@ -135,7 +134,7 @@ def build_gush_performance_raw_download(data_store: DataStore, payload: Optional
     city_frame = data_store.load_city(city["id"])
     filtered = apply_common_filters(city_frame, _non_city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
-        filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_price_outliers_global_iqr(filtered)
         filtered = remove_outliers_from_var(filtered, "area")
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_gush_performance_raw.csv", column_names=RAW_COLUMN_NAMES)
@@ -310,20 +309,6 @@ def _remove_price_outliers(payload: Mapping[str, Any]) -> bool:
     if value is None and isinstance(filters, Mapping):
         value = _first_present(filters, "remove_price_outliers")
     return value is not False
-
-
-def _exclude_2027(payload: Mapping[str, Any]) -> bool:
-    value = _first_present(payload, "exclude_2027")
-    if value is None:
-        return True
-    return value is not False
-
-
-def _without_year(df: pd.DataFrame, year: int) -> pd.DataFrame:
-    if df.empty or "deal year" not in df.columns:
-        return df.copy()
-    years = pd.to_numeric(df["deal year"], errors="coerce")
-    return df.loc[~years.eq(year)].copy()
 
 
 def _request_payload(payload: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
