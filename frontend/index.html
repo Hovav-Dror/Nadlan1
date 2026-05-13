@@ -20,12 +20,15 @@
 
     <main class="app-shell">
       <nav class="tabs" aria-label="Workflows">
+        <span class="tab-group-label">Analysis workflows</span>
         <button class="tab is-active" data-tab="analysis">Analysis Deals</button>
-        <button class="tab" data-tab="metadata">Metadata & Filters</button>
         <button class="tab" data-tab="compare">Compare Areas</button>
         <button class="tab" data-tab="city">City Comparison</button>
-        <button class="tab" data-tab="gush">Gush Performance</button>
-        <button class="tab" data-tab="downloads">Downloads</button>
+        <button class="tab" data-tab="gush">City Performance <span class="tab-note">QA needed</span></button>
+        <span class="tab-group-label">Utilities</span>
+        <button class="tab tab-secondary" data-tab="about">About</button>
+        <button class="tab tab-secondary" data-tab="metadata">Data Health</button>
+        <button class="tab tab-secondary" data-tab="downloads">Exports</button>
       </nav>
 
       <section class="workspace">
@@ -176,7 +179,20 @@
             <div class="workflow-banner">
               <div>
                 <h2>Analysis Deals - Granular View</h2>
-                <p>Each point is one transaction. Select a city, narrow by street or Gush, then update the chart and table.</p>
+                <dl class="workflow-explainer">
+                  <div>
+                    <dt>What you see</dt>
+                    <dd>Each point is one individual deal.</dd>
+                  </div>
+                  <div>
+                    <dt>Best for</dt>
+                    <dd>Detailed exploration, finding specific properties, and understanding price variation within an area.</dd>
+                  </div>
+                  <div>
+                    <dt>Use when</dt>
+                    <dd>You want to see all deals, inspect individual transactions, or analyze price distribution in detail.</dd>
+                  </div>
+                </dl>
               </div>
               <div class="workflow-tags">
                 <span>Transaction-level</span>
@@ -318,7 +334,25 @@
               </div>
             </section>
             <div id="analysis-state" class="state"></div>
-            <div id="analysis-chart" class="chart" data-empty-label="Select streets or Gush areas, then update analysis"></div>
+            <div id="analysis-chart" class="chart chart-guide" data-empty-label="Select streets or Gush areas, then update analysis">
+              <div class="chart-guide-content">
+                <h3>Getting Started</h3>
+                <ol>
+                  <li><strong>Select a city</strong> or use Random to load a runnable example.</li>
+                  <li><strong>Choose properties</strong> by searching streets, selecting Gush areas, or expanding selected Gush areas into streets.</li>
+                  <li><strong>Adjust filters</strong> for year, price, area, rooms, floor, project status, and outliers.</li>
+                  <li><strong>Update analysis</strong> to draw the transaction-level scatter plot and table.</li>
+                </ol>
+                <div class="chart-guide-tips">
+                  <strong>Tips</strong>
+                  <ul>
+                    <li>Use street search when you do not know which Gush area contains a street.</li>
+                    <li>Smart reset chooses common room counts for the current selection.</li>
+                    <li>After the plot appears, click a point to inspect its transaction details.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <div id="selected-deal" class="selected-deal"></div>
             <div id="analysis-counts" class="metrics"></div>
             <div id="analysis-table" class="table-wrap"></div>
@@ -327,8 +361,8 @@
           <section class="tab-panel" id="panel-metadata">
             <div class="panel-heading">
               <div>
-                <h2>Metadata & Filters</h2>
-                <p>City streets, Gush labels, and filter ranges update automatically as you choose an area.</p>
+                <h2>Data Health</h2>
+                <p>Loaded cities, streets, Gush labels, and the dynamic filter ranges behind the analysis workflow.</p>
               </div>
               <div class="actions">
                 <button id="refresh-meta" type="button">Refresh metadata</button>
@@ -339,7 +373,155 @@
             <div id="filter-summary" class="info-grid"></div>
           </section>
 
+          <section class="tab-panel" id="panel-about">
+            <div class="panel-heading">
+              <div>
+                <h2>About</h2>
+                <p>Background, data notes, and a short guide carried over from the original Shiny app.</p>
+              </div>
+            </div>
+            <article class="about-panel rtl-text" lang="he" dir="rtl">
+              <section class="about-section about-intro">
+                <h3>ויזואליזציה של נתוני נדל"ן בישראל</h3>
+                <p>
+                  אם ניסתם פעם להשתמש בנתונים שאמורים להיות משותפים עם הציבור על עסקאות נדל"ן בישראל אולי גם אתם הרגשתם כאילו עושים הכל כדי שלא תצליחו.
+                  לכן מעניין ומרגש שכמה אלופים דאגו להוציא את הנתונים האלה לאור.
+                  תמצאו אותם ב<a href="https://www.odata.org.il/dataset/nadlan" target="_blank" rel="noopener">מידע לעם</a> תחת ארגון - "התמנון מידע ציבורי לכל".
+                  אז אם אתם מוצאים את הנתונים האלה שימושיים, עם או בלי האתר הזה, תזכרו להודות להם.
+                </p>
+                <p>
+                  מה שיש כאן הוא משהוא שהכנתי לעצמי כדי לשחק עם הנתונים האלה. אני לא יכול להבטיח שהכל עובד כפי שהתכוונתי, אבל כן יכול להבטיח לכם שאתר זה אינו למטרות מסחריות כלשהן. אתם מוזמנים להשתמש בו ללא כל חשש. לא אאסוף כל מידע אישי, ולא אבקש כסף.
+                </p>
+                <p>
+                  כמובן שהוא מסופק "כפי שהוא", ללא אחריות מכל סוג, מפורשת או משתמעת. כל שימוש הוא באחריות המשתמשים בלבד, ולא אקח אחריות על החלטות המבוססות על הנתונים או הניתוחים המוצגים כאן, על שגיאה בניתוח או על כל דבר אחר.
+                </p>
+                <p>
+                  לא כל הפונקציונליות פועלת באופן מושלם, וישנן תכונות מתוכננות שטרם יושמו. האתר מאוחסן על שרת חלש (=זול) עם זיכרון מוגבל, לכן ייתכנו בעיות ביצועים במקרים מסוימים.
+                </p>
+                <p>
+                  נתוני המקור כוללים רק דיווח אחד על נכס. כלומר דירה שנמכרה מספר פעמים לאורך השנים תופיע רק פעם אחת, בדרך כלל העסקה האחרונה. הנתונים גם לא מחוברים ל-API ולא מתעדכנים בשוטף.
+                </p>
+              </section>
+
+              <section class="about-section">
+                <h3>שיפורי איכות נתונים</h3>
+                <p>הנתונים עברו עיבוד מקיף והתאמה כדי לשפר את השימושיות שלהם. הנה העבודות העיקריות שבוצעו:</p>
+                <div class="about-feature-grid">
+                  <div>
+                    <h4>עיבוד נתוני עסקאות</h4>
+                    <ul>
+                      <li>ניקוי כתובות והסרת רשומות כפולות</li>
+                      <li>נרמול סכומי עסקאות למיליוני שקלים</li>
+                      <li>נרמול מספרי חדרים לערכים מספריים</li>
+                      <li>חישוב שטח דירה במטר רבוע</li>
+                      <li>סיווג סוגי דירות לקטגוריות עקביות</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>עיבוד מורכב של קומות</h4>
+                    <ul>
+                      <li>המרת שדה FLOORNO לערכים מספריים</li>
+                      <li>טיפול במגוון רחב של ביטויים בעברית</li>
+                      <li>טיפול במקרים מיוחדים: מרתפים, קרקע, וקומות מרובות</li>
+                      <li>ניקוי תווים בלתי נראים ורווחים מיותרים</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>עיבוד מידע על בניינים</h4>
+                    <ul>
+                      <li>חישוב גיל בניין לפי שנת עסקה ושנת בנייה</li>
+                      <li>זיהוי אוטומטי של דירות גג</li>
+                      <li>נרמול מספרי קומות בניין</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4>יצירת משתנים חדשים</h4>
+                    <ul>
+                      <li>מחיר למ"ר לפי יחס מחיר-שטח</li>
+                      <li>סיווג פרויקטים חדשים מול יד שנייה</li>
+                      <li>תיאורים מפורטים לכל עסקה</li>
+                      <li>זיהוי וטיפול בגושים שמופיעים בכמה ערים</li>
+                    </ul>
+                  </div>
+                </div>
+                <p>חשוב לציין שחלק מהנתונים עלולים להיות שגויים, אך השגיאות מתחבאות במקרים רבים כבר בנתונים הממשלתיים המקוריים.</p>
+              </section>
+
+              <section class="about-section">
+                <h3>הטאבים השונים באפליקציה</h3>
+                <div class="about-workflows">
+                  <div>
+                    <h4>1. Analysis Deals - ניתוח עסקאות</h4>
+                    <p>כל נקודה היא עסקה בודדת. מתאים לחקר מפורט, מציאת נכסים ספציפיים, והבנת וריאציות מחירים בתוך אזור.</p>
+                  </div>
+                  <div>
+                    <h4>2. Compare Areas - השוואת אזורים</h4>
+                    <p>כל נקודה היא חציון מחירים של כל העסקאות באותה שנה וגוש. מתאים להשוואת מחירים טיפוסיים בין אזורים ומעקב אחר מגמות.</p>
+                  </div>
+                  <div>
+                    <h4>3. City Comparison - השוואת ערים</h4>
+                    <p>כל נקודה היא חציון מחירים של כל העסקאות באותה שנה ועיר. מתאים להשוואת ערים ולניתוח מגמות עירוניות.</p>
+                  </div>
+                  <div>
+                    <h4>4. City Performance - ביצועי עיר</h4>
+                    <p>מציג גושים טובים, טיפוסיים, וגרועים בתוך עיר לפי שינויי מחירים לאורך זמן.</p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="about-section">
+                <h3>תוספות פחות שגרתיות</h3>
+                <h4>חריגים (Outliers)</h4>
+                <p>
+                  חריגים הם עסקאות בעלות מחירים גבוהים או נמוכים באופן קיצוני ביחס לשאר העסקאות באותו אזור, או עם מספר חדרים לא הגיוני, או שטח דירה קטנטן או ענק באופן מחשיד. ניתן לסנן החוצה חריגים אלה כדי למנוע הטיה של הניתוח.
+                </p>
+                <h4>קו השוואה למדד S&amp;P 500</h4>
+                <p>
+                  הקו המשווה למדד S&amp;P 500 מחשב כיצד היה הכסף מתפתח אילו הושקע במדד S&amp;P 500 במקום בנדל"ן. המדד מתואם לשקלים כדי להתחשב בשינויי שער חליפין.
+                </p>
+                <h4>קו השוואה עירוני</h4>
+                <p>
+                  קו ההשוואה העירוני מציג את החציון של מחירי הנדל"ן בעיר כולה, עם אותם מסננים שהוחלו על הנתונים המוצגים. כך אפשר להשוות את האזור הספציפי לעיר בכללותה.
+                </p>
+              </section>
+
+              <section class="about-section">
+                <h3>קריאה נוספת</h3>
+                <p>
+                  לפני שאתם רצים להשקיע בנדל"ן, מוזמנים גם לקרוא משהו שכתבתי לפני כעשור על
+                  <a href="https://wp.me/p9vBZz-hd" target="_blank" rel="noopener">השקעה בדירה או בשוק ההון?</a>
+                </p>
+                <h3>צור קשר</h3>
+                <p>הערות, הצעות ושאלות יתקבלו בברכה בכתובת: <span class="ltr-text">hovav@hotmail.com</span></p>
+              </section>
+            </article>
+          </section>
+
           <section class="tab-panel" id="panel-compare">
+            <div class="workflow-banner">
+              <div>
+                <h2>Compare Areas</h2>
+                <dl class="workflow-explainer">
+                  <div>
+                    <dt>What you see</dt>
+                    <dd>Each line is a selected street or Gush area summarized by year.</dd>
+                  </div>
+                  <div>
+                    <dt>Best for</dt>
+                    <dd>Comparing nearby areas, checking relative price levels, and spotting diverging trends.</dd>
+                  </div>
+                  <div>
+                    <dt>Use when</dt>
+                    <dd>You already know which streets or Gush areas you want to compare side by side.</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="workflow-tags">
+                <span>Area comparison</span>
+                <span>Yearly summary</span>
+                <span>Raw + summary CSV</span>
+              </div>
+            </div>
             <div class="panel-heading">
               <div>
                 <h2>Compare Areas</h2>
@@ -390,12 +572,54 @@
               </details>
             </section>
             <div id="compare-state" class="state"></div>
-            <div id="compare-chart" class="chart"></div>
+            <div id="compare-chart" class="chart chart-guide">
+              <div class="chart-guide-content">
+                <h3>Getting Started</h3>
+                <ol>
+                  <li><strong>Select a city</strong> in the shared control panel.</li>
+                  <li><strong>Choose streets or Gush areas</strong> to compare.</li>
+                  <li><strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.</li>
+                  <li><strong>Update compare</strong> to draw yearly lines and fill the summary table.</li>
+                </ol>
+                <div class="chart-guide-tips">
+                  <strong>Tips</strong>
+                  <ul>
+                    <li>Use Gush areas for neighborhood-block comparisons and streets for focused checks.</li>
+                    <li>Turn on city-wide to see the selected city as a reference line.</li>
+                    <li>Use Summary CSV for grouped trends and Raw CSV for the underlying deals.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <div id="compare-counts" class="metrics"></div>
             <div id="compare-table" class="table-wrap"></div>
           </section>
 
           <section class="tab-panel" id="panel-city">
+            <div class="workflow-banner">
+              <div>
+                <h2>City Comparison</h2>
+                <dl class="workflow-explainer">
+                  <div>
+                    <dt>What you see</dt>
+                    <dd>Each line is a selected city summarized by year.</dd>
+                  </div>
+                  <div>
+                    <dt>Best for</dt>
+                    <dd>Broad market comparison, city-level trend checks, and ranking demand or price movement.</dd>
+                  </div>
+                  <div>
+                    <dt>Use when</dt>
+                    <dd>You want a macro view before drilling into specific streets or Gush areas.</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="workflow-tags">
+                <span>City-level</span>
+                <span>Yearly trends</span>
+                <span>Broad filters</span>
+              </div>
+            </div>
             <div class="panel-heading">
               <div>
                 <h2>City Comparison</h2>
@@ -442,16 +666,58 @@
               </div>
             </section>
             <div id="city-state" class="state"></div>
-            <div id="city-chart" class="chart"></div>
+            <div id="city-chart" class="chart chart-guide">
+              <div class="chart-guide-content">
+                <h3>Getting Started</h3>
+                <ol>
+                  <li><strong>Select cities</strong> from the city list.</li>
+                  <li><strong>Choose a Y value</strong> for the comparison.</li>
+                  <li><strong>Adjust filters</strong> only if you want a narrower city-level slice.</li>
+                  <li><strong>Update cities</strong> to draw city trend lines and generate the table.</li>
+                </ol>
+                <div class="chart-guide-tips">
+                  <strong>Tips</strong>
+                  <ul>
+                    <li>Deal count is useful for market activity, not just price movement.</li>
+                    <li>Keep filters broad when comparing cities with different housing mixes.</li>
+                    <li>Use Raw CSV when you need to audit which transactions entered the summary.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <div id="city-counts" class="metrics"></div>
             <div id="city-table" class="table-wrap"></div>
           </section>
 
           <section class="tab-panel" id="panel-gush">
+            <div class="workflow-banner">
+              <div>
+                <h2>City Performance</h2>
+                <dl class="workflow-explainer">
+                  <div>
+                    <dt>What you see</dt>
+                    <dd>Top, typical, and bottom Gush areas inside one city, summarized by year.</dd>
+                  </div>
+                  <div>
+                    <dt>Best for</dt>
+                    <dd>Finding standout neighborhoods, comparing internal city segments, and screening candidates.</dd>
+                  </div>
+                  <div>
+                    <dt>Use when</dt>
+                    <dd>You want the app to identify which Gush areas perform differently within a selected city.</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="workflow-tags">
+                <span>Within-city</span>
+                <span>Top / typical / bottom</span>
+                <span>Qualified Gushes</span>
+              </div>
+            </div>
             <div class="panel-heading">
               <div>
-                <h2>Gush Performance</h2>
-                <p>Top, typical, and bottom Gush performers inside one city.</p>
+                <h2>City Performance</h2>
+                <p>Top, typical, and bottom Gush performers inside one city. This migrated workflow still needs baseline QA against the Shiny app.</p>
               </div>
               <div class="actions">
                 <button id="run-gush" type="button">Update performance</button>
@@ -497,7 +763,25 @@
               </div>
             </section>
             <div id="gush-state" class="state"></div>
-            <div id="gush-chart" class="chart"></div>
+            <div id="gush-chart" class="chart chart-guide">
+              <div class="chart-guide-content">
+                <h3>Getting Started</h3>
+                <ol>
+                  <li><strong>Select one city</strong> in the shared control panel.</li>
+                  <li><strong>Set group sizes</strong> for top, typical, and bottom performers.</li>
+                  <li><strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.</li>
+                  <li><strong>Update performance</strong> to draw qualified Gush trend lines and rankings.</li>
+                </ol>
+                <div class="chart-guide-tips">
+                  <strong>Tips</strong>
+                  <ul>
+                    <li>Raise minimum deals for steadier comparisons in large cities.</li>
+                    <li>Use city-wide as a reference line when judging standout Gush areas.</li>
+                    <li>The table shows which Gush areas qualified for each performance group.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
             <div id="gush-counts" class="metrics"></div>
             <div id="gush-table" class="table-wrap"></div>
           </section>
@@ -505,7 +789,7 @@
           <section class="tab-panel" id="panel-downloads">
             <div class="panel-heading">
               <div>
-                <h2>Downloads</h2>
+                <h2>Exports</h2>
                 <p>CSV exports use the filter panel for the workflow you export.</p>
               </div>
             </div>
@@ -516,8 +800,8 @@
               <button data-download="compare-raw" type="button">Compare raw CSV</button>
               <button data-download="city-comparison-summary" type="button">City comparison summary CSV</button>
               <button data-download="city-comparison-raw" type="button">City comparison raw CSV</button>
-              <button data-download="gush-performance-summary" type="button">Gush performance summary CSV</button>
-              <button data-download="gush-performance-raw" type="button">Gush performance raw CSV</button>
+              <button data-download="gush-performance-summary" type="button">City performance summary CSV</button>
+              <button data-download="gush-performance-raw" type="button">City performance raw CSV</button>
             </div>
           </section>
         </section>

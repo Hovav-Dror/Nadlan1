@@ -107,16 +107,24 @@ button:disabled {
 
 .tabs {
   display: flex;
-  gap: 6px;
+  gap: 8px;
+  align-items: center;
   overflow-x: auto;
-  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 14px;
+  padding-bottom: 12px;
 }
 
 .tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   flex: 0 0 auto;
-  background: #eef1ec;
-  border-color: #ccd6d1;
-  color: var(--ink);
+  min-height: 36px;
+  background: #eef5f4;
+  border-color: #bed2d0;
+  color: var(--accent-strong);
+  font-weight: 750;
 }
 
 .tab:hover {
@@ -135,6 +143,44 @@ button:disabled {
   background: var(--accent-strong);
   border-color: var(--accent-strong);
   color: #fff;
+}
+
+.tab-note {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.tab:not(.is-active) .tab-note {
+  border-color: #d7c48f;
+  background: #fff8df;
+  color: #7b5410;
+}
+
+.tab-secondary {
+  min-height: 32px;
+  background: transparent;
+  border-color: #cfd8d4;
+  color: #3d5357;
+  font-weight: 650;
+}
+
+.tab-secondary:hover {
+  background: #eef3f1;
+  border-color: #b8c9c4;
+  color: var(--ink);
+}
+
+.tab-group-label {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
 }
 
 .workspace {
@@ -731,7 +777,7 @@ option {
   gap: 18px;
   align-items: flex-start;
   border-radius: 8px;
-  background: linear-gradient(135deg, #3d82c4 0%, #4f739d 45%, #7b5ab3 100%);
+  background: linear-gradient(135deg, #386d9f 0%, #4d738f 52%, #6f5aa2 100%);
   color: #fff;
   padding: 18px 20px;
   margin-bottom: 16px;
@@ -743,10 +789,33 @@ option {
   font-size: 19px;
 }
 
-.workflow-banner p {
+.workflow-banner p,
+.workflow-explainer {
   margin: 0;
   max-width: 760px;
   color: rgba(255, 255, 255, 0.92);
+}
+
+.workflow-explainer {
+  display: grid;
+  gap: 8px;
+}
+
+.workflow-explainer div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+.workflow-explainer dt {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.workflow-explainer dd {
+  margin: 0;
+  font-size: 13px;
 }
 
 .workflow-tags {
@@ -873,6 +942,56 @@ option {
   content: attr(data-empty-label);
   color: var(--muted);
   font-size: 14px;
+}
+
+.chart-guide {
+  place-items: stretch;
+  padding: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f4fafb 100%);
+}
+
+.chart-guide:empty {
+  place-items: center;
+}
+
+.chart-guide-content {
+  align-self: stretch;
+  justify-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 14px;
+  padding: clamp(18px, 4vw, 42px);
+  color: #26383c;
+}
+
+.chart-guide-content h3 {
+  margin: 0;
+  color: #176574;
+  font-size: 20px;
+}
+
+.chart-guide-content ol,
+.chart-guide-content ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.chart-guide-content li {
+  margin: 7px 0;
+}
+
+.chart-guide-tips {
+  border-top: 1px solid #d4e7ea;
+  background: #eaf6f8;
+  margin: 4px -12px -12px;
+  padding: 13px 14px;
+  border-radius: 6px;
+}
+
+.chart-guide-tips strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #23464b;
 }
 
 .chart.js-plotly-plot {
@@ -1016,6 +1135,78 @@ tbody tr.is-selected {
   max-width: 760px;
 }
 
+.about-panel {
+  display: grid;
+  gap: 14px;
+  max-width: 1040px;
+  color: #263438;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.about-panel a {
+  color: var(--accent);
+  font-weight: 750;
+}
+
+.about-section {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfcfa;
+  padding: clamp(16px, 2.4vw, 24px);
+}
+
+.about-intro {
+  background: linear-gradient(180deg, #ffffff 0%, #eef7f6 100%);
+  border-color: #c7dcda;
+}
+
+.about-section h3 {
+  margin: 0 0 10px;
+  color: var(--accent-strong);
+  font-size: 20px;
+}
+
+.about-section h4 {
+  margin: 14px 0 5px;
+  color: #254246;
+  font-size: 15px;
+}
+
+.about-section p {
+  margin: 0 0 12px;
+}
+
+.about-section p:last-child {
+  margin-bottom: 0;
+}
+
+.about-section ul {
+  margin: 0;
+  padding: 0 20px 0 0;
+}
+
+.about-feature-grid,
+.about-workflows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+
+.about-feature-grid > div,
+.about-workflows > div {
+  border: 1px solid #dce4df;
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.about-feature-grid h4,
+.about-workflows h4 {
+  margin-top: 0;
+}
+
 .rtl-text {
   direction: rtl;
   unicode-bidi: plaintext;
@@ -1046,6 +1237,11 @@ tbody tr.is-selected {
 
   .workflow-banner {
     display: grid;
+  }
+
+  .workflow-explainer div {
+    grid-template-columns: 1fr;
+    gap: 2px;
   }
 
   .workflow-tags {

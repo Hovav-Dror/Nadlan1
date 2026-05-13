@@ -87,7 +87,7 @@
     setNotice("analysis-state", "Choose a city and search for streets or Gush areas. Metadata loads automatically.", "ok");
     setNotice("compare-state", "Select one or more Gush areas before updating compare.", "ok");
     setNotice("city-state", "Select cities and click update. No city summary is loaded automatically.", "ok");
-    setNotice("gush-state", "Choose one city and update performance.", "ok");
+    setNotice("gush-state", "Choose one city and update performance. This workflow still needs baseline QA against the Shiny app.", "warning");
     setNotice("download-state", "Downloads use the filter panel for the workflow you export.", "ok");
     refreshStatus();
     loadMeta();
@@ -731,6 +731,10 @@
 
   function renderAnalysisChart(data) {
     var points = data.points || [];
+    if (!points.length) {
+      renderAnalysisChartGuide(data);
+      return;
+    }
     var chartSpec = analysisChartSpec(points, data);
     Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout).then(function () {
       var chart = byId("analysis-chart");
@@ -741,6 +745,34 @@
       });
       markSelectedDealOnChart(state.selectedPointId);
     });
+  }
+
+  function renderAnalysisChartGuide(data) {
+    var chart = byId("analysis-chart");
+    if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
+      Plotly.purge(chart);
+    }
+    chart.className = "chart chart-guide";
+    var hasAttemptedAnalysis = data && Object.prototype.hasOwnProperty.call(data, "table_rows");
+    var title = hasAttemptedAnalysis ? "No Matching Transactions" : "Getting Started";
+    var intro = hasAttemptedAnalysis ?
+      "Broaden the current selection or loosen filters, then update analysis again." :
+      "Use the plot space as your checklist until the scatter plot is ready.";
+    chart.innerHTML = '<div class="chart-guide-content">' +
+      '<h3>' + escapeHtml(title) + "</h3>" +
+      '<p>' + escapeHtml(intro) + "</p>" +
+      "<ol>" +
+      "<li><strong>Select a city</strong> or use Random to load a runnable example.</li>" +
+      "<li><strong>Choose properties</strong> by searching streets, selecting Gush areas, or expanding selected Gush areas into streets.</li>" +
+      "<li><strong>Adjust filters</strong> for year, price, area, rooms, floor, project status, and outliers.</li>" +
+      "<li><strong>Update analysis</strong> to draw the transaction-level scatter plot and table.</li>" +
+      "</ol>" +
+      '<div class="chart-guide-tips"><strong>Tips</strong><ul>' +
+      "<li>Use street search when you do not know which Gush area contains a street.</li>" +
+      "<li>Smart reset chooses common room counts for the current selection.</li>" +
+      "<li>After the plot appears, click a point to inspect its transaction details.</li>" +
+      "</ul></div>" +
+      "</div>";
   }
 
   function analysisChartSpec(points, data) {
@@ -816,6 +848,10 @@
   }
 
   function renderSeriesChart(targetId, series, overlays, title, yAxisTitle) {
+    if (!seriesHasPoints(series)) {
+      renderSeriesChartGuide(targetId, title, true);
+      return;
+    }
     var traces = (series || []).map(function (item) {
       return {
         name: item.label,
@@ -832,6 +868,87 @@
     });
     addOverlayTraces(traces, overlays || {});
     Plotly.react(targetId, traces, chartLayout(title, yAxisTitle));
+  }
+
+  function seriesHasPoints(series) {
+    return (series || []).some(function (item) {
+      return Array.isArray(item.points) && item.points.length;
+    });
+  }
+
+  function renderSeriesChartGuide(targetId, title, hasAttemptedUpdate) {
+    var chart = byId(targetId);
+    if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
+      Plotly.purge(chart);
+    }
+    chart.className = "chart chart-guide";
+    var copy = seriesGuideCopy(targetId);
+    var heading = hasAttemptedUpdate ? "No Matching Summary Rows" : "Getting Started";
+    var intro = hasAttemptedUpdate ? copy.emptyIntro : copy.intro;
+    chart.innerHTML = '<div class="chart-guide-content">' +
+      '<h3>' + escapeHtml(heading) + "</h3>" +
+      '<p>' + escapeHtml(intro) + "</p>" +
+      "<ol>" + copy.steps.map(function (step) { return "<li>" + step + "</li>"; }).join("") + "</ol>" +
+      '<div class="chart-guide-tips"><strong>Tips</strong><ul>' +
+      copy.tips.map(function (tip) { return "<li>" + tip + "</li>"; }).join("") +
+      "</ul></div>" +
+      "</div>";
+  }
+
+  function seriesGuideCopy(targetId) {
+    var guides = {
+      "compare-chart": {
+        intro: "Use the plot space as your area-comparison checklist until the yearly lines are ready.",
+        emptyIntro: "Broaden the selected areas or loosen filters, then update compare again.",
+        steps: [
+          "<strong>Select a city</strong> in the shared control panel.",
+          "<strong>Choose streets or Gush areas</strong> to compare.",
+          "<strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.",
+          "<strong>Update compare</strong> to draw yearly lines and fill the summary table."
+        ],
+        tips: [
+          "Use Gush areas for neighborhood-block comparisons and streets for focused checks.",
+          "Turn on city-wide to see the selected city as a reference line.",
+          "Use Summary CSV for grouped trends and Raw CSV for the underlying deals."
+        ]
+      },
+      "city-chart": {
+        intro: "Use the plot space as your city-comparison checklist until the yearly lines are ready.",
+        emptyIntro: "Select more cities or loosen filters, then update cities again.",
+        steps: [
+          "<strong>Select cities</strong> from the city list.",
+          "<strong>Choose a Y value</strong> for the comparison.",
+          "<strong>Adjust filters</strong> only if you want a narrower city-level slice.",
+          "<strong>Update cities</strong> to draw city trend lines and generate the table."
+        ],
+        tips: [
+          "Deal count is useful for market activity, not just price movement.",
+          "Keep filters broad when comparing cities with different housing mixes.",
+          "Use Raw CSV when you need to audit which transactions entered the summary."
+        ]
+      },
+      "gush-chart": {
+        intro: "Use the plot space as your city-performance checklist until qualified Gush lines are ready.",
+        emptyIntro: "Lower minimum deals, adjust group sizes, or loosen filters, then update performance again.",
+        steps: [
+          "<strong>Select one city</strong> in the shared control panel.",
+          "<strong>Set group sizes</strong> for top, typical, and bottom performers.",
+          "<strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.",
+          "<strong>Update performance</strong> to draw qualified Gush trend lines and rankings."
+        ],
+        tips: [
+          "Raise minimum deals for steadier comparisons in large cities.",
+          "Use city-wide as a reference line when judging standout Gush areas.",
+          "The table shows which Gush areas qualified for each performance group."
+        ]
+      }
+    };
+    return guides[targetId] || {
+      intro: "Use the plot space as your checklist until the chart is ready.",
+      emptyIntro: "Loosen the current selections and filters, then update again.",
+      steps: ["<strong>Choose inputs</strong> for this workflow.", "<strong>Update</strong> to draw the chart."],
+      tips: ["Use the table below the chart to inspect summarized rows."]
+    };
   }
 
   function addOverlayTraces(traces, overlays, options) {

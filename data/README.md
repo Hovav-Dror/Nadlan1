@@ -10,7 +10,7 @@ Generated files:
 - `metadata/gush_descriptions.parquet`: Gush display metadata.
 - `metadata/unique_gush_streets.parquet`: city/street/Gush lookup metadata.
 - `metadata/apt_types.json`: apartment type choices.
-- `metadata/sp500_shekels.csv`: S&P 500 comparison index.
+- `metadata/sp500_shekels.csv`: S&P 500 total-return comparison index, with dividends reinvested and converted to ILS using USD/ILS. The 2026 row is provisional/YTD as of May 2026 and should be refreshed after 2026 closes.
 - `manifest.json`: Hebrew city display names mapped to stable ASCII Parquet filenames.
 - `validation_report.json`: row count, column, date, and UTF-8 roundtrip checks.
 
