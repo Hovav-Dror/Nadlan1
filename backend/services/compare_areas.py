@@ -45,26 +45,18 @@ def build_compare_summary_response(data_store: DataStore, payload: Optional[Mapp
     city_frame = data_store.load_cities(selection["city_ids"])
     raw_rows = int(len(city_frame))
 
-    selected_frame = apply_common_filters(city_frame, {"gushes": selection["gush_ids"]})
-    selected_rows = int(len(selected_frame))
-    filtered = apply_common_filters(selected_frame, _non_location_filters(request_payload.get("filters")))
-    filtered_rows = int(len(filtered))
+    filtered, compare_counts, filter_warnings = _filtered_compare_deals(city_frame, selection["gush_ids"], request_payload)
+    warnings.extend(filter_warnings)
 
-    if _remove_price_outliers(request_payload):
-        before = len(filtered)
-        filtered = remove_price_outliers_by_year(filtered)
-        if len(filtered) < before:
-            warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
-    outlier_rows = int(len(filtered))
-
-    summary = summary_by_gush_year(filtered)
+    statistic = _statistic(request_payload.get("statistic", request_payload.get("stat")))
+    summary = _summary_by_gush_year(filtered, statistic)
     if summary.empty:
         warnings.append("No matching transactions were found.")
 
     y_variable = _y_variable(request_payload.get("y_variable", request_payload.get("price_type")))
     table = _summary_rows(summary, selection["label_by_key"], y_variable)
     series = _series_rows(table)
-    overlays, overlay_warnings = _overlays(city_frame, filtered, request_payload, y_variable)
+    overlays, overlay_warnings = _overlays(city_frame, filtered, request_payload, y_variable, statistic)
     warnings.extend(overlay_warnings)
 
     return _json_ready(
@@ -73,9 +65,9 @@ def build_compare_summary_response(data_store: DataStore, payload: Optional[Mapp
             "table": table,
             "counts": {
                 "raw_deals": raw_rows,
-                "selected_deals": selected_rows,
-                "filtered_deals": filtered_rows,
-                "outlier_deals": outlier_rows,
+                "selected_deals": compare_counts["selected_deals"],
+                "filtered_deals": compare_counts["filtered_deals"],
+                "outlier_deals": compare_counts["outlier_deals"],
                 "summary_points": len(table),
                 "unique_gushes": len(selection["gush_ids"]),
                 "unique_years": _nunique(summary.get("deal year")),
@@ -87,19 +79,38 @@ def build_compare_summary_response(data_store: DataStore, payload: Optional[Mapp
             "overlays": overlays,
             "warnings": warnings,
             "y_variable": y_variable,
+            "statistic": statistic,
         }
     )
 
 
 def build_compare_raw_response(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
-    response = build_compare_summary_response(data_store, payload)
-    return {
-        "rows": response["table"],
-        "counts": response["counts"],
-        "selection": response["selection"],
-        "warnings": response["warnings"],
-        "y_variable": response["y_variable"],
-    }
+    request_payload = _request_payload(payload)
+    warnings: List[str] = []
+    selection = resolve_compare_selection(data_store, request_payload)
+    city_frame = data_store.load_cities(selection["city_ids"])
+    filtered, compare_counts, filter_warnings = _filtered_compare_deals(city_frame, selection["gush_ids"], request_payload)
+    warnings.extend(filter_warnings)
+    if filtered.empty:
+        warnings.append("No matching transactions were found.")
+    return _json_ready(
+        {
+            "rows": _raw_rows(filtered),
+            "counts": {
+                "raw_deals": int(len(city_frame)),
+                **compare_counts,
+                "unique_gushes": len(selection["gush_ids"]),
+                "unique_years": _nunique(filtered.get("deal year")),
+            },
+            "selection": {
+                "gushes": selection["gushes"],
+                "cities": selection["cities"],
+            },
+            "warnings": warnings,
+            "y_variable": _y_variable(request_payload.get("y_variable", request_payload.get("price_type"))),
+            "statistic": _statistic(request_payload.get("statistic", request_payload.get("stat"))),
+        }
+    )
 
 
 def resolve_compare_selection(data_store: DataStore, payload: Mapping[str, Any]) -> Dict[str, Any]:
@@ -129,6 +140,34 @@ def resolve_compare_selection(data_store: DataStore, payload: Mapping[str, Any])
         "gushes": [_selection_gush_payload(gush_id, label_by_key) for gush_id in gush_ids],
         "label_by_key": label_by_key,
     }
+
+
+def _filtered_compare_deals(
+    city_frame: pd.DataFrame,
+    gush_ids: Sequence[Any],
+    request_payload: Mapping[str, Any],
+) -> tuple[pd.DataFrame, Dict[str, int], List[str]]:
+    warnings: List[str] = []
+    selected_frame = apply_common_filters(city_frame, {"gushes": gush_ids})
+    selected_rows = int(len(selected_frame))
+    filtered = apply_common_filters(selected_frame, _non_location_filters(request_payload.get("filters")))
+    filtered_rows = int(len(filtered))
+
+    if _remove_price_outliers(request_payload):
+        before = len(filtered)
+        filtered = remove_price_outliers_by_year(filtered)
+        if len(filtered) < before:
+            warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
+
+    return (
+        filtered,
+        {
+            "selected_deals": selected_rows,
+            "filtered_deals": filtered_rows,
+            "outlier_deals": int(len(filtered)),
+        },
+        warnings,
+    )
 
 
 def _request_payload(payload: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
@@ -229,6 +268,49 @@ def _y_variable(value: Any) -> str:
     raise CompareAreasError("Unsupported y variable.")
 
 
+def _statistic(value: Any) -> str:
+    normalized = _normalize_text(value)
+    if normalized in {"", "median"}:
+        return "median"
+    if normalized == "mean":
+        return "mean"
+    raise CompareAreasError("Unsupported statistic.")
+
+
+def _summary_by_gush_year(df: pd.DataFrame, statistic: str) -> pd.DataFrame:
+    if statistic == "median":
+        return summary_by_gush_year(df)
+    return _summary_by(df, [column for column in ["city", "Gush", "deal year"] if column in df.columns], statistic)
+
+
+def _summary_by_city_year(df: pd.DataFrame, statistic: str) -> pd.DataFrame:
+    if statistic == "median":
+        return summary_by_city_year(df)
+    return _summary_by(df, [column for column in ["city", "deal year"] if column in df.columns], statistic)
+
+
+def _summary_by(df: pd.DataFrame, group_columns: List[str], statistic: str) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame(columns=group_columns + ["n_deals", "price_millions", "price_per_m2", "price_per_room"])
+    working = df.copy()
+    working["price_millions"] = pd.to_numeric(working.get("price_millions"), errors="coerce")
+    working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
+    working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
+    agg = "mean" if statistic == "mean" else "median"
+    return (
+        working.groupby(group_columns, dropna=False)
+        .agg(
+            n_deals=("price_millions", "size"),
+            price_millions=("price_millions", agg),
+            price_per_m2=("price_per_m2", agg),
+            price_per_room=("price_per_room", agg),
+        )
+        .reset_index()
+        .sort_values(group_columns)
+        .reset_index(drop=True)
+    )
+
+
 def _summary_rows(summary: pd.DataFrame, label_by_key: Mapping[str, str], y_variable: str) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for _, row in summary.iterrows():
@@ -284,11 +366,46 @@ def _series_rows(table: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
     return list(grouped.values())
 
 
+def _raw_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
+    if df.empty:
+        return []
+    working = df.copy()
+    working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
+    working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
+    columns = [
+        "city",
+        "street",
+        "Gush",
+        "GUSH",
+        "FULLADRESS",
+        "date",
+        "deal year",
+        "price_millions",
+        "price_per_m2",
+        "price_per_room",
+        "area",
+        "rooms",
+        "floor",
+        "roof",
+        "apt type",
+        "New_Project",
+        "build_year",
+        "building age",
+        "build_floors",
+        "story",
+    ]
+    if "date" in working.columns:
+        working["_compare_date_sort"] = pd.to_datetime(working["date"], errors="coerce")
+        working = working.sort_values(["_compare_date_sort"], kind="mergesort").drop(columns=["_compare_date_sort"])
+    return [_json_ready(row) for row in working[[column for column in columns if column in working.columns]].to_dict(orient="records")]
+
+
 def _overlays(
     city_frame: pd.DataFrame,
     selected_deals: pd.DataFrame,
     payload: Mapping[str, Any],
     y_variable: str,
+    statistic: str,
 ) -> tuple[Dict[str, Any], List[str]]:
     overlays: Dict[str, Any] = {"city_comparison": [], "sp500": []}
     warnings: List[str] = []
@@ -297,10 +414,10 @@ def _overlays(
         city_filtered = apply_common_filters(city_frame, _non_location_filters(payload.get("filters")))
         if _remove_price_outliers(payload):
             city_filtered = remove_price_outliers_by_year(city_filtered)
-        overlays["city_comparison"] = _city_overlay_rows(summary_by_city_year(city_filtered), y_variable)
+        overlays["city_comparison"] = _city_overlay_rows(_summary_by_city_year(city_filtered, statistic), y_variable)
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:
-        yearly = _yearly_selected_medians(selected_deals, y_variable)
+        yearly = _yearly_selected_values(selected_deals, y_variable, statistic)
         if not yearly.empty:
             try:
                 base_value = yearly.sort_values("deal year")["PriceUsed"].iloc[0]
@@ -339,7 +456,7 @@ def _city_overlay_rows(summary: pd.DataFrame, y_variable: str) -> List[Dict[str,
     return rows
 
 
-def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
+def _yearly_selected_values(df: pd.DataFrame, y_variable: str, statistic: str) -> pd.DataFrame:
     if df.empty or "deal year" not in df.columns:
         return pd.DataFrame(columns=["deal year", "PriceUsed"])
     working = df.copy()
@@ -353,7 +470,7 @@ def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
     return (
         working.dropna(subset=["deal year", "PriceUsed"])
         .groupby("deal year", dropna=True)["PriceUsed"]
-        .median()
+        .agg("mean" if statistic == "mean" else "median")
         .reset_index()
     )
 

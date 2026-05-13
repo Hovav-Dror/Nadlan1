@@ -7,15 +7,34 @@
     gushes: [],
     filterOptions: null,
     filterOptionsSignature: "",
+    cityFilterOptions: null,
+    cityFilterOptionsSignature: "",
+    gushFilterOptions: null,
+    gushFilterOptionsSignature: "",
     latestPayloads: {},
     latestAnalysisRows: [],
+    latestGushPerformance: null,
     selectedPointId: null,
     tableStates: {},
     roomsSelectionInitialized: false,
     filterOptionsTimer: null,
     filterOptionsRequestId: 0,
+    compareGushSearchTimer: null,
+    compareGushSearchRequestId: 0,
+    compareStreetSearchTimer: null,
     autoAnalysisTimer: null,
-    analysisRequestId: 0
+    autoCompareTimer: null,
+    autoCityTimer: null,
+    autoGushTimer: null,
+    cityFilterOptionsTimer: null,
+    gushFilterOptionsTimer: null,
+    analysisRequestId: 0,
+    compareRequestId: 0,
+    cityRequestId: 0,
+    gushRequestId: 0,
+    cityFilterOptionsRequestId: 0,
+    gushFilterOptionsRequestId: 0,
+    cityInitialRunDone: false
   };
 
   var AUTO_ANALYSIS_POINT_LIMIT = 1500;
@@ -69,6 +88,7 @@
     unique_gushes: "Gush areas",
     unique_years: "Years",
     unique_cities: "Cities",
+    plotted_cities: "Plotted cities",
     city_rows: "City rows",
     location_rows: "Location rows",
     pre_outlier_rows: "Before outliers",
@@ -81,30 +101,66 @@
   };
 
   document.addEventListener("DOMContentLoaded", function () {
-    document.body.dataset.activeTab = "analysis";
+    document.body.dataset.compareHasSelection = "false";
     bindTabs();
     bindControls();
+    activateTab(initialTabFromHash(), false);
+    window.addEventListener("hashchange", function () {
+      activateTab(initialTabFromHash(), false);
+    });
     setNotice("analysis-state", "Choose a city and search for streets or Gush areas. Metadata loads automatically.", "ok");
-    setNotice("compare-state", "Select one or more Gush areas before updating compare.", "ok");
+    setNotice("compare-state", "Select streets or Gush areas. Compare updates automatically when the selection is small enough.", "ok");
     setNotice("city-state", "Select cities and click update. No city summary is loaded automatically.", "ok");
-    setNotice("gush-state", "Choose one city and update performance. This workflow still needs baseline QA against the Shiny app.", "warning");
+    setNotice("gush-state", "Choose one city and update performance.", "ok");
     setNotice("download-state", "Downloads use the filter panel for the workflow you export.", "ok");
     refreshStatus();
     loadMeta();
   });
 
+  function initialTabFromHash() {
+    var tab = String(window.location.hash || "").replace(/^#/, "");
+    return validTab(tab) ? tab : "analysis";
+  }
+
+  function validTab(tab) {
+    return Boolean(tab && document.querySelector('.tab[data-tab="' + cssEscape(tab) + '"]') && byId("panel-" + tab));
+  }
+
+  function activateTab(tab, updateHash) {
+    if (!validTab(tab)) tab = "analysis";
+    document.body.dataset.activeTab = tab;
+    document.querySelectorAll(".tab").forEach(function (item) {
+      item.classList.toggle("is-active", item.dataset.tab === tab);
+    });
+    document.querySelectorAll(".tab-panel").forEach(function (panel) {
+      panel.classList.toggle("is-active", panel.id === "panel-" + tab);
+    });
+    if (updateHash && window.location.hash !== "#" + tab) {
+      window.history.pushState(null, "", "#" + tab);
+    }
+        updateSelectionSummary();
+        updateCompareSelectionState();
+        if (tab === "compare") scheduleCompareAutoUpdate("tab");
+        if (tab === "city") {
+          scheduleCityFilterOptions();
+          if (state.cityFilterOptions && state.cityFilterOptionsSignature === currentCityFilterOptionsSignature()) {
+            runInitialCityComparison();
+          } else {
+            setNotice("city-state", "Loading city-specific filters before drawing the plot...", "loading");
+          }
+        }
+    if (tab === "gush") {
+      if (!state.gushFilterOptions || state.gushFilterOptionsSignature !== currentGushFilterOptionsSignature()) {
+        scheduleGushFilterOptions();
+      }
+      scheduleGushAutoUpdate("tab");
+    }
+  }
+
   function bindTabs() {
     document.querySelectorAll(".tab").forEach(function (button) {
       button.addEventListener("click", function () {
-        var tab = button.dataset.tab;
-        document.body.dataset.activeTab = tab;
-        document.querySelectorAll(".tab").forEach(function (item) {
-          item.classList.toggle("is-active", item === button);
-        });
-        document.querySelectorAll(".tab-panel").forEach(function (panel) {
-          panel.classList.toggle("is-active", panel.id === "panel-" + tab);
-        });
-        updateSelectionSummary();
+        activateTab(button.dataset.tab, true);
       });
     });
   }
@@ -123,6 +179,7 @@
       byId("street-search-results").innerHTML = "";
       renderLocationPickers();
       updateSelectionSummary();
+      updateCompareSelectionState();
       loadLocationMetadata();
     });
     byId("run-analysis").addEventListener("click", runAnalysis);
@@ -130,12 +187,47 @@
       scheduleAnalysisAutoUpdate("auto-toggle");
     });
     byId("run-compare").addEventListener("click", runCompare);
+    byId("load-compare-raw").addEventListener("click", runCompareRawPreview);
+    byId("auto-update-compare").addEventListener("change", function () {
+      scheduleCompareAutoUpdate("auto-toggle");
+    });
     byId("run-city").addEventListener("click", runCityComparison);
+    byId("auto-update-city").addEventListener("change", function () {
+      scheduleCityAutoUpdate("auto-toggle");
+    });
+    byId("city-comparison-search").addEventListener("input", renderCityComparisonPicker);
+    document.querySelectorAll("[data-city-preset]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        applyCityPreset(button.dataset.cityPreset);
+      });
+    });
     byId("run-gush").addEventListener("click", runGushPerformance);
+    byId("gush-city-select").addEventListener("change", function () {
+      renderGushCityReadout();
+      state.gushFilterOptions = null;
+      state.gushFilterOptionsSignature = "";
+      state.latestGushPerformance = null;
+      scheduleGushFilterOptions();
+    });
+    byId("auto-update-gush").addEventListener("change", function () {
+      scheduleGushAutoUpdate("auto-toggle");
+    });
+    byId("use-tel-aviv-performance").addEventListener("click", useTelAvivPerformanceDefault);
+    byId("select-gush-performance-all").addEventListener("click", function () {
+      selectGushPerformanceRows("all");
+    });
+    byId("select-gush-performance-top").addEventListener("click", function () {
+      selectGushPerformanceRows("top");
+    });
+    byId("select-gush-performance-bottom").addEventListener("click", function () {
+      selectGushPerformanceRows("bottom");
+    });
     byId("add-gush-streets").addEventListener("click", addStreetsFromSelectedGushes);
     byId("select-street-gushes").addEventListener("click", selectGushesFromSelectedStreets);
     byId("smart-reset-rooms").addEventListener("click", applySmartRoomSelection);
     byId("clear-rooms").addEventListener("click", clearRoomSelection);
+    byId("smart-reset-gush-rooms").addEventListener("click", applyGushSmartRoomSelection);
+    byId("clear-gush-rooms").addEventListener("click", clearGushRoomSelection);
     byId("reset-filters").addEventListener("click", resetFilterRanges);
     byId("run-street-search").addEventListener("click", runStreetSearch);
     byId("street-search").addEventListener("keydown", function (event) {
@@ -144,16 +236,35 @@
         runStreetSearch();
       }
     });
+    if (byId("run-compare-street-search")) byId("run-compare-street-search").addEventListener("click", runCompareStreetSearch);
+    if (byId("compare-street-search")) {
+      byId("compare-street-search").addEventListener("input", scheduleCompareStreetSearch);
+      byId("compare-street-search").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          runCompareStreetSearch();
+        }
+      });
+    }
+    if (byId("compare-gush-search")) byId("compare-gush-search").addEventListener("input", scheduleCompareGushSearch);
     ["street-select", "gush-select", "rooms-select", "apartment-type-select"].forEach(function (id) {
       byId(id).addEventListener("change", updateSelectionSummary);
       byId(id).addEventListener("change", function () {
         if (id === "rooms-select") state.roomsSelectionInitialized = true;
         if (id === "rooms-select" || id === "apartment-type-select") scheduleAnalysisAutoUpdate(id);
+        if (id === "street-select" || id === "gush-select") scheduleCompareAutoUpdate(id);
       });
     });
     byId("rooms-select").addEventListener("change", renderRoomChips);
     byId("apartment-type-select").addEventListener("change", renderApartmentTypeChips);
     byId("apartment-type-search").addEventListener("input", renderApartmentTypeChips);
+    if (byId("compare-clear-rooms")) byId("compare-clear-rooms").addEventListener("click", clearCompareRoomSelection);
+    if (byId("compare-rooms-select")) byId("compare-rooms-select").addEventListener("change", renderCompareRoomChips);
+    if (byId("compare-apartment-type-select")) byId("compare-apartment-type-select").addEventListener("change", renderCompareApartmentTypeChips);
+    if (byId("compare-apartment-type-search")) byId("compare-apartment-type-search").addEventListener("input", renderCompareApartmentTypeChips);
+    byId("gush-rooms-select").addEventListener("change", renderGushRoomChips);
+    byId("gush-apartment-type-select").addEventListener("change", renderGushApartmentTypeChips);
+    byId("gush-apartment-type-search").addEventListener("input", renderGushApartmentTypeChips);
     [
       "filter-year-min", "filter-year-max", "filter-price-min", "filter-price-max",
       "filter-price-m2-min", "filter-price-m2-max", "filter-area-min", "filter-area-max",
@@ -165,6 +276,44 @@
       byId(id).addEventListener("input", updateSelectionSummary);
       byId(id).addEventListener("change", function () { scheduleAnalysisAutoUpdate(id); });
       byId(id).addEventListener("input", function () { scheduleAnalysisAutoUpdate(id); });
+    });
+    [
+      "compare-y-variable", "compare-statistic", "compare-color-palette", "compare-shape-palette", "compare-reverse-colors",
+      "compare-remove-price-outliers", "compare-show-sp500", "compare-show-city-overlay",
+      "compare-filter-year-min", "compare-filter-year-max", "compare-filter-price-min", "compare-filter-price-max",
+      "compare-filter-price-m2-min", "compare-filter-price-m2-max", "compare-filter-area-min", "compare-filter-area-max",
+      "compare-filter-floor-min", "compare-filter-floor-max", "compare-filter-building-floors-min", "compare-filter-building-floors-max",
+      "compare-filter-built-year-min", "compare-filter-built-year-max", "compare-filter-building-age-min", "compare-filter-building-age-max",
+      "compare-rooms-select", "compare-apartment-type-select", "compare-roof-select", "compare-new-project-select"
+    ].forEach(function (id) {
+      byId(id).addEventListener("change", updateSelectionSummary);
+      byId(id).addEventListener("input", updateSelectionSummary);
+      byId(id).addEventListener("change", function () { scheduleCompareAutoUpdate(id); });
+      byId(id).addEventListener("input", function () { scheduleCompareAutoUpdate(id); });
+    });
+    [
+      "city-y-variable", "city-statistic", "city-chart-mode", "city-min-deals", "city-remove-price-outliers", "city-show-sp500",
+      "city-show-points", "city-point-size-min", "city-point-size-max", "city-color-palette", "city-reverse-colors",
+      "city-filter-year-min", "city-filter-year-max", "city-filter-price-min", "city-filter-price-max",
+      "city-filter-price-m2-min", "city-filter-price-m2-max", "city-filter-area-min", "city-filter-area-max",
+      "city-filter-floor-min", "city-filter-floor-max", "city-filter-building-floors-min", "city-filter-building-floors-max",
+      "city-filter-built-year-min", "city-filter-built-year-max", "city-filter-building-age-min", "city-filter-building-age-max",
+      "city-rooms-select", "city-apartment-type-select", "city-roof-select", "city-new-project-select"
+    ].forEach(function (id) {
+      byId(id).addEventListener("change", function () { scheduleCityAutoUpdate(id); });
+      byId(id).addEventListener("input", function () { scheduleCityAutoUpdate(id); });
+    });
+    [
+      "gush-y-variable", "gush-statistic", "gush-top-count", "gush-typical-count", "gush-bottom-count", "gush-min-deals",
+      "gush-remove-price-outliers", "gush-show-sp500", "gush-show-city-overlay",
+      "gush-filter-year-min", "gush-filter-year-max", "gush-filter-price-min", "gush-filter-price-max",
+      "gush-filter-price-m2-min", "gush-filter-price-m2-max", "gush-filter-area-min", "gush-filter-area-max",
+      "gush-filter-floor-min", "gush-filter-floor-max", "gush-filter-building-floors-min", "gush-filter-building-floors-max",
+      "gush-filter-built-year-min", "gush-filter-built-year-max", "gush-filter-building-age-min", "gush-filter-building-age-max",
+      "gush-rooms-select", "gush-apartment-type-select", "gush-roof-select", "gush-new-project-select"
+    ].forEach(function (id) {
+      byId(id).addEventListener("change", function () { scheduleGushAutoUpdate(id); });
+      byId(id).addEventListener("input", function () { scheduleGushAutoUpdate(id); });
     });
     [
       "row-limit", "analysis-color-var", "analysis-shape-var", "analysis-size-var",
@@ -181,12 +330,16 @@
         byId(control.dataset.select).value = button.dataset.value;
         syncSegmentedControls();
         updateSelectionSummary();
-        scheduleAnalysisAutoUpdate(control.dataset.select);
+        scheduleAutoUpdateForControl(control.dataset.select);
       });
     });
     Object.keys(pickerConfig).forEach(function (key) {
       var config = pickerConfig[key];
       byId(config.searchId).addEventListener("input", function () {
+        if (key === "gushes" && document.body.dataset.activeTab === "compare") {
+          scheduleCompareGushSearch();
+          return;
+        }
         renderPicker(key);
       });
     });
@@ -200,7 +353,7 @@
   async function refreshStatus() {
     try {
       var status = await getJson(endpoints.status);
-      byId("app-status").textContent = status.app + " " + status.version + " is " + status.status;
+      byId("app-status").textContent = status.status === "ok" ? "" : "Status: " + status.status;
     } catch (error) {
       byId("app-status").textContent = "Status unavailable: " + error.message;
     }
@@ -228,9 +381,12 @@
     });
     setOptions(byId("city-select"), cityOptions, false);
     setOptions(byId("city-comparison-select"), cityOptions, true);
+    setOptions(byId("gush-city-select"), cityOptions, false);
 
-    var defaultCityIds = (meta.cities || []).slice(-3).map(function (city) { return city.id; });
+    var defaultCityIds = (meta.cities || []).slice(0, 20).map(function (city) { return city.id; });
     setSelectedValues(byId("city-comparison-select"), defaultCityIds);
+    renderCityComparisonPicker();
+    scheduleCityFilterOptions();
 
     var apartmentTypes = (meta.apartment_types || []).map(function (value) {
       return { value: value, label: value };
@@ -241,11 +397,30 @@
     });
     setSelectedValues(byId("apartment-type-select"), []);
     renderApartmentTypeChips();
+    renderGushApartmentTypeChips();
 
     if (cityOptions.length && !byId("city-select").value) {
       byId("city-select").value = cityOptions[0].value;
     }
+    setDefaultGushCity();
+    renderGushCityReadout();
+    scheduleGushFilterOptions();
     updateSelectionSummary();
+  }
+
+  function setDefaultGushCity() {
+    var select = byId("gush-city-select");
+    if (!select || select.value) return;
+    var telAviv = cityOptionByNames(["תל אביב -יפו", "תל אביב-יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"], select);
+    select.value = telAviv ? telAviv.value : (select.options[1] && select.options[1].value || "");
+  }
+
+  function renderGushCityReadout() {
+    var target = byId("gush-city-current");
+    var select = byId("gush-city-select");
+    if (!target || !select) return;
+    var selected = select.selectedOptions && select.selectedOptions[0];
+    target.textContent = selected && selected.value ? selected.textContent : "";
   }
 
   async function loadLocationMetadata() {
@@ -263,17 +438,27 @@
       state.streets = results[0].data.streets || [];
       state.gushes = results[1].data.gushes || [];
       setOptions(byId("street-select"), state.streets.map(function (street) {
-        return { value: street, label: street };
+        return { value: street, label: street, searchText: street };
       }), true);
       setOptions(byId("gush-select"), state.gushes.map(function (gush) {
-        return { value: gush.id, label: gush.label + " (" + gush.id + ")" };
+        var details = [gush.label, "(" + gush.id + ")"];
+        if (gush.representative_street) details.push("- " + gush.representative_street);
+        if (gush.deals) details.push("· " + formatNumber(gush.deals) + " deals");
+        return {
+          value: gush.id,
+          label: details.join(" "),
+          searchText: [gush.id, gush.label, gush.representative_street, gush.city].filter(Boolean).join(" ")
+        };
       }), true);
       setNotice("metadata-state", "Loaded " + state.streets.length + " streets and " + state.gushes.length + " Gush areas.", "ok");
       setNotice("analysis-state", "City metadata loaded. Search streets or Gush areas, then update analysis.", "ok");
       renderMetaSummary(state.meta);
       renderLocationPickers();
       updateSelectionSummary();
+      updateCompareSelectionState();
       scheduleFilterOptions();
+      scheduleCompareAutoUpdate("metadata");
+      scheduleGushAutoUpdate("metadata");
     } catch (error) {
       setNotice("metadata-state", error.message, "error");
     }
@@ -281,16 +466,12 @@
 
   async function loadFilterOptions() {
     var city = byId("city-select").value;
-    if (!city) {
-      setNotice("metadata-state", "Choose a city first.", "warning");
+    if (!city && !activeGushSelection().length) {
+      setNotice("metadata-state", "Choose a city or selected Gush area first.", "warning");
       return;
     }
     var requestId = ++state.filterOptionsRequestId;
-    var payload = {
-      city: city,
-      streets: activeStreetSelection(),
-      gushes: activeGushSelection()
-    };
+    var payload = filterOptionsPayload();
     var selectionSignature = filterOptionsSignature(payload);
     setNotice("metadata-state", "Loading dynamic filter ranges...", "loading");
     try {
@@ -305,8 +486,59 @@
       setNotice("metadata-state", warningText(response) || "Filter options loaded.", warningText(response) ? "warning" : "ok");
       updateSelectionSummary();
       scheduleAnalysisAutoUpdate("filter-options");
+      scheduleCompareAutoUpdate("filter-options");
+      scheduleGushAutoUpdate("filter-options");
     } catch (error) {
       setNotice("metadata-state", error.message, "error");
+    }
+  }
+
+  async function loadCityFilterOptions() {
+    var cities = selectedValues(byId("city-comparison-select"));
+    if (!cities.length) return;
+    var requestId = ++state.cityFilterOptionsRequestId;
+    var payload = { cities: cities };
+    var signature = JSON.stringify(cities.map(String).sort());
+    try {
+      var response = await postJson(endpoints.filterOptions, payload);
+      if (requestId !== state.cityFilterOptionsRequestId || signature !== currentCityFilterOptionsSignature()) {
+        return;
+      }
+      state.cityFilterOptions = response.data;
+      state.cityFilterOptionsSignature = signature;
+      applyScopedFilterDefaults("city", response.data);
+      renderCityComparisonPicker();
+      renderCityFilterSummary();
+      updateSelectionSummary();
+      if (document.body.dataset.activeTab === "city" && !state.cityInitialRunDone) {
+        runInitialCityComparison();
+      } else {
+        scheduleCityAutoUpdate("city-filter-options");
+      }
+    } catch (error) {
+      setNotice("city-state", error.message, "error");
+    }
+  }
+
+  async function loadGushFilterOptions() {
+    var city = byId("gush-city-select").value;
+    if (!city) return;
+    var requestId = ++state.gushFilterOptionsRequestId;
+    var payload = { city: city };
+    var signature = currentGushFilterOptionsSignature();
+    try {
+      var response = await postJson(endpoints.filterOptions, payload);
+      if (requestId !== state.gushFilterOptionsRequestId || signature !== currentGushFilterOptionsSignature()) {
+        return;
+      }
+      state.gushFilterOptions = response.data;
+      state.gushFilterOptionsSignature = signature;
+      applyScopedFilterDefaults("gush", response.data);
+      renderGushRoomChips();
+      renderGushApartmentTypeChips();
+      scheduleGushAutoUpdate("gush-filter-options");
+    } catch (error) {
+      setNotice("gush-state", error.message, "error");
     }
   }
 
@@ -329,6 +561,8 @@
           updateSelectionSummary();
           scheduleFilterOptions();
           scheduleAnalysisAutoUpdate("random");
+          scheduleCompareAutoUpdate("random");
+          scheduleGushAutoUpdate("random");
           setNotice(
             "analysis-state",
             "Random runnable case: " + city.label + " / " + gush.label + " (" + gush.id + ").",
@@ -371,6 +605,63 @@
     return eligible[Math.floor(Math.random() * eligible.length)];
   }
 
+  async function useTelAvivPerformanceDefault() {
+    var citySelect = byId("gush-city-select");
+    var telAviv = cityOptionByNames(["תל אביב -יפו", "תל אביב-יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"], citySelect);
+    if (!telAviv) {
+      setNotice("gush-state", "Tel Aviv is not available in the loaded city list.", "warning");
+      return;
+    }
+    citySelect.value = telAviv.value;
+    renderGushCityReadout();
+    byId("gush-y-variable").value = "price_per_m2";
+    byId("gush-top-count").value = "5";
+    byId("gush-typical-count").value = "0";
+    byId("gush-bottom-count").value = "5";
+    byId("gush-min-deals").value = "5";
+    await loadGushFilterOptions();
+    setNotice("gush-state", "Tel Aviv performance defaults loaded.", "ok");
+    scheduleGushAutoUpdate("tel-aviv-default");
+  }
+
+  function cityOptionByNames(names, select) {
+    select = select || byId("city-select");
+    var wanted = new Set((names || []).map(normalizeSearch));
+    return Array.from(select.options || []).find(function (option) {
+      return wanted.has(normalizeSearch(option.textContent)) || wanted.has(normalizeSearch(option.value));
+    });
+  }
+
+  async function selectGushPerformanceRows(group) {
+    var data = state.latestGushPerformance;
+    var rows = data && data.performance_table || [];
+    if (group && group !== "all") {
+      rows = rows.filter(function (row) { return String(row.performance_group) === group; });
+    }
+    var gushIds = rows.map(function (row) { return row.gush; }).filter(function (value) {
+      return value !== null && value !== undefined && value !== "";
+    });
+    if (!gushIds.length) {
+      setNotice("gush-state", "Run City Performance first, then choose which ranked Gushes to use.", "warning");
+      return;
+    }
+    var performanceCity = byId("gush-city-select").value;
+    if (performanceCity && byId("city-select").value !== performanceCity) {
+      byId("city-select").value = performanceCity;
+      resetCitySelectionState();
+      await loadLocationMetadata();
+    }
+    setSelectedValues(byId("street-select"), []);
+    setSelectedValues(byId("gush-select"), gushIds);
+    renderLocationPickers();
+    updateSelectionSummary();
+    updateCompareSelectionState();
+    scheduleFilterOptions();
+    scheduleAnalysisAutoUpdate("gush-performance-selection");
+    scheduleCompareAutoUpdate("gush-performance-selection");
+    setNotice("gush-state", "Selected " + gushIds.length + " ranked Gush areas in the shared picker.", "ok");
+  }
+
   function resetCitySelectionState() {
     clearSelect(byId("street-select"));
     clearSelect(byId("gush-select"));
@@ -378,10 +669,12 @@
     state.gushes = [];
     state.filterOptions = null;
     state.filterOptionsSignature = "";
+    state.latestGushPerformance = null;
     state.roomsSelectionInitialized = false;
     byId("street-search-results").innerHTML = "";
     renderLocationPickers();
     updateSelectionSummary();
+    updateCompareSelectionState();
   }
 
   function shuffleCopy(values) {
@@ -409,8 +702,10 @@
       setSelectedValues(byId("street-select"), response.data.streets || []);
       renderLocationPickers();
       updateSelectionSummary();
+      updateCompareSelectionState();
       scheduleFilterOptions();
       scheduleAnalysisAutoUpdate("gush-streets");
+      scheduleCompareAutoUpdate("gush-streets");
       setNotice("analysis-state", "Using " + (response.data.streets || []).length + " streets from the selected Gush areas.", "ok");
     } catch (error) {
       setNotice("analysis-state", error.message, "error");
@@ -431,10 +726,13 @@
       var response = await postJson("api/cities/" + encodeURIComponent(city) + "/selection", { streets: streets });
       setSelectedValues(byId("street-select"), []);
       setSelectedValues(byId("gush-select"), (response.data.gushes || []).map(function (gush) { return gush.id; }));
+      enforceCompareGushLimit();
       renderLocationPickers();
       updateSelectionSummary();
+      updateCompareSelectionState();
       scheduleFilterOptions();
       scheduleAnalysisAutoUpdate("street-gushes");
+      scheduleCompareAutoUpdate("street-gushes");
       setNotice("analysis-state", "Using " + (response.data.gushes || []).length + " whole Gush areas from the selected streets.", "ok");
     } catch (error) {
       setNotice("analysis-state", error.message, "error");
@@ -446,6 +744,7 @@
   async function runStreetSearch() {
     var query = byId("street-search").value.trim();
     var city = byId("city-select").value;
+    var isCompare = document.body.dataset.activeTab === "compare";
     var target = byId("street-search-results");
     if (!query) {
       target.innerHTML = "";
@@ -454,12 +753,64 @@
     target.innerHTML = '<div class="mini-notice">Searching...</div>';
     try {
       var url = "api/street-search?q=" + encodeURIComponent(query) + "&limit=8";
-      if (city) url += "&city=" + encodeURIComponent(city);
+      if (city && !isCompare) url += "&city=" + encodeURIComponent(city);
       var response = await getJson(url);
       renderStreetSearchResults(response.data.results || []);
     } catch (error) {
       target.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
     }
+  }
+
+  function scheduleCompareStreetSearch() {
+    if (state.compareStreetSearchTimer) window.clearTimeout(state.compareStreetSearchTimer);
+    state.compareStreetSearchTimer = window.setTimeout(runCompareStreetSearch, 300);
+  }
+
+  async function runCompareStreetSearch() {
+    var input = byId("compare-street-search");
+    var target = byId("compare-street-results");
+    if (!input || !target) return;
+    var query = input.value.trim();
+    if (!query) {
+      target.innerHTML = '<div class="mini-notice">Type any street name to search across all cities.</div>';
+      return;
+    }
+    target.innerHTML = '<div class="mini-notice">Searching streets across all cities...</div>';
+    try {
+      var response = await getJson("api/street-search?q=" + encodeURIComponent(query) + "&limit=12");
+      renderCompareStreetSearchResults(response.data.results || []);
+    } catch (error) {
+      target.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
+    }
+  }
+
+  function renderCompareStreetSearchResults(results) {
+    var target = byId("compare-street-results");
+    if (!target) return;
+    if (!results.length) {
+      target.innerHTML = '<div class="mini-notice">No matching streets.</div>';
+      return;
+    }
+    target.innerHTML = results.map(function (result, index) {
+      var gushes = result.gushes || [];
+      var gushText = gushes.map(function (gush) { return gush.label + " (" + gush.id + ")"; }).join(", ");
+      var detailText = [result.city, gushText].filter(Boolean).join(" · ");
+      return '<button class="search-result" type="button" data-index="' + index + '">' +
+        '<strong class="' + textDirectionClass(result.street) + '">' + escapeHtml(result.street) + "</strong>" +
+        '<span class="' + textDirectionClass(detailText) + '">' + escapeHtml(detailText) + "</span>" +
+        "</button>";
+    }).join("");
+    target.querySelectorAll(".search-result").forEach(function (button) {
+      button.addEventListener("click", function () {
+        addCompareGushSearchResult(results[Number(button.dataset.index)]);
+        renderCompareGushPicker();
+        updateSelectionSummary();
+        updateCompareSelectionState();
+        scheduleFilterOptions();
+        scheduleCompareAutoUpdate("compare-street-search");
+        setNotice("compare-state", "Added matching Gush areas from street search.", "ok");
+      });
+    });
   }
 
   function renderStreetSearchResults(results) {
@@ -471,23 +822,49 @@
     target.innerHTML = results.map(function (result, index) {
       var gushes = result.gushes || [];
       var gushText = gushes.map(function (gush) { return gush.label + " (" + gush.id + ")"; }).join(", ");
+      var detailText = (document.body.dataset.activeTab === "compare" && result.city ? result.city + " · " : "") + (gushText || result.city);
       return '<button class="search-result" type="button" data-index="' + index + '">' +
         '<strong class="' + textDirectionClass(result.street) + '">' + escapeHtml(result.street) + "</strong>" +
-        '<span class="' + textDirectionClass(gushText) + '">' + escapeHtml(gushText || result.city) + "</span>" +
+        '<span class="' + textDirectionClass(detailText) + '">' + escapeHtml(detailText) + "</span>" +
         "</button>";
     }).join("");
     target.querySelectorAll(".search-result").forEach(function (button) {
       button.addEventListener("click", function () {
         var result = results[Number(button.dataset.index)];
-        setSelectedValues(byId("gush-select"), []);
-        selectAdditionalValues(byId("street-select"), [result.street]);
+        if (document.body.dataset.activeTab === "compare") {
+          addCompareGushSearchResult(result);
+        } else {
+          setSelectedValues(byId("gush-select"), []);
+          selectAdditionalValues(byId("street-select"), [result.street]);
+        }
         renderLocationPickers();
         updateSelectionSummary();
+        updateCompareSelectionState();
         scheduleFilterOptions();
         scheduleAnalysisAutoUpdate("street-search");
-        setNotice("analysis-state", "Using selected street. Choose \"Use whole Gush\" to broaden it.", "ok");
+        scheduleCompareAutoUpdate("street-search");
+        if (document.body.dataset.activeTab === "compare") {
+          setNotice("compare-state", "Added the street's Gush areas. Compare controls are ready.", "ok");
+        } else {
+          setNotice("analysis-state", "Using selected street. Choose \"Use whole Gush\" to broaden it.", "ok");
+        }
       });
     });
+  }
+
+  function addCompareGushSearchResult(result) {
+    var select = byId("gush-select");
+    (result.gushes || []).forEach(function (gush) {
+      ensureSelectOption(select, {
+        value: gush.id,
+        label: result.city + " - " + gush.label + " (" + gush.id + ")",
+        searchText: [result.city, result.street, gush.id, gush.label].filter(Boolean).join(" ")
+      });
+    });
+    setSelectedValues(byId("street-select"), []);
+    selectAdditionalValues(select, (result.gushes || []).map(function (gush) { return gush.id; }));
+    enforceCompareGushLimit();
+    renderCompareGushPicker();
   }
 
   async function runAnalysis(options) {
@@ -525,75 +902,126 @@
     }
   }
 
-  async function runCompare() {
+  async function runCompare(options) {
+    options = options || {};
     var payload = buildComparePayload();
     if (!payload.gushes.length && !payload.streets.length) {
       setNotice("compare-state", "Select Gush areas or streets before updating compare.", "warning");
       return;
     }
+    var requestId = ++state.compareRequestId;
     state.latestPayloads["compare-summary"] = payload;
     state.latestPayloads["compare-raw"] = payload;
-    setNotice("compare-state", "Loading Gush comparison...", "loading");
+    setNotice("compare-state", options.auto ? "Auto-updating Gush comparison..." : "Loading Gush comparison...", "loading");
     setBusy("run-compare", true);
     try {
       var response = await postJson(endpoints.compareSummary, payload);
+      if (requestId !== state.compareRequestId) return;
       var data = response.data || {};
-      renderSeriesChart("compare-chart", data.series || [], data.overlays || {}, "Compare Areas", yLabel(data.y_variable));
+      renderCompareContext(data, payload);
+      renderSeriesChart("compare-chart", data.series || [], data.overlays || {}, "Compare Areas", compareYAxisLabel(data), compareSeriesChartOptions());
       renderMetrics("compare-counts", data.counts);
-      renderTable("compare-table", data.table || [], summaryColumns());
+      renderTable("compare-table", data.table || [], summaryColumns(), {
+        sortable: true,
+        filterable: true
+      });
+      byId("compare-raw-table").innerHTML = "";
       setNotice("compare-state", warningText(response) || emptyText(data.table, "Compare summary updated.", "No matching summary rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
+      if (requestId !== state.compareRequestId) return;
       setNotice("compare-state", error.message, "error");
     } finally {
-      setBusy("run-compare", false);
+      if (requestId === state.compareRequestId) setBusy("run-compare", false);
     }
   }
 
-  async function runCityComparison() {
+  async function runCompareRawPreview() {
+    var payload = state.latestPayloads["compare-raw"] || buildComparePayload();
+    if (!payload.gushes.length && !payload.streets.length) {
+      setNotice("compare-state", "Select Gush areas or streets before loading raw deals.", "warning");
+      return;
+    }
+    setBusy("load-compare-raw", true);
+    setNotice("compare-state", "Loading raw deals preview...", "loading");
+    try {
+      var response = await postJson("api/compare/raw", payload);
+      var data = response.data || {};
+      renderTable("compare-raw-table", data.rows || [], compareRawColumns(), {
+        sortable: true,
+        filterable: true,
+        resetState: true
+      });
+      setNotice("compare-state", warningText(response) || emptyText(data.rows, "Raw deals preview loaded.", "No matching raw deals."), warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      setNotice("compare-state", error.message, "error");
+    } finally {
+      setBusy("load-compare-raw", false);
+    }
+  }
+
+  async function runCityComparison(options) {
+    options = options || {};
     var payload = buildCityPayload();
     if (!payload.cities.length) {
       setNotice("city-state", "Select at least one city.", "warning");
       return;
     }
+    var requestId = ++state.cityRequestId;
     state.latestPayloads["city-comparison-summary"] = payload;
     state.latestPayloads["city-comparison-raw"] = payload;
-    setNotice("city-state", "Loading city comparison...", "loading");
+    setNotice("city-state", options.auto ? "Auto-updating city comparison..." : "Loading city comparison...", "loading");
     setBusy("run-city", true);
     try {
       var response = await postJson(endpoints.citySummary, payload);
+      if (requestId !== state.cityRequestId) return;
       var data = response.data || {};
-      renderSeriesChart("city-chart", data.series || [], data.overlays || {}, "City Comparison", yLabel(data.y_variable));
+      var chartMode = byId("city-chart-mode").value;
+      var transformed = transformSeriesForMode(data.series || [], data.overlays || {}, chartMode);
+      renderSeriesChart("city-chart", transformed.series, transformed.overlays, "City Comparison", cityChartYAxisLabel(data.y_variable, chartMode), citySeriesChartOptions());
       renderMetrics("city-counts", data.counts);
-      renderTable("city-table", data.table || [], summaryColumns(["city_label"]));
+      renderCityInsights(data.city_stats);
+      renderCityFilterSummary(data);
+      renderTable("city-table", data.table || [], citySummaryColumns(), {
+        sortable: true,
+        filterable: true,
+        resetState: true
+      });
       setNotice("city-state", warningText(response) || emptyText(data.table, "City comparison updated.", "No matching city rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
+      if (requestId !== state.cityRequestId) return;
       setNotice("city-state", error.message, "error");
     } finally {
-      setBusy("run-city", false);
+      if (requestId === state.cityRequestId) setBusy("run-city", false);
     }
   }
 
-  async function runGushPerformance() {
+  async function runGushPerformance(options) {
+    options = options || {};
     var payload = buildGushPayload();
     if (!payload.city) {
       setNotice("gush-state", "Choose one city first.", "warning");
       return;
     }
+    var requestId = ++state.gushRequestId;
     state.latestPayloads["gush-performance-summary"] = payload;
     state.latestPayloads["gush-performance-raw"] = payload;
-    setNotice("gush-state", "Loading Gush performance...", "loading");
+    setNotice("gush-state", options.auto ? "Auto-updating Gush performance..." : "Loading Gush performance...", "loading");
     setBusy("run-gush", true);
     try {
       var response = await postJson(endpoints.gushSummary, payload);
+      if (requestId !== state.gushRequestId) return;
       var data = response.data || {};
+      state.latestGushPerformance = data;
       renderSeriesChart("gush-chart", data.series || [], data.overlays || {}, "Gush Performance", yLabel(data.y_variable));
       renderMetrics("gush-counts", data.counts);
-      renderTable("gush-table", data.performance_table || [], summaryColumns(["gush_label"]));
+      renderGushPerformanceSummary(data);
+      renderTable("gush-table", data.performance_table || [], performanceColumns(data.y_variable));
       setNotice("gush-state", warningText(response) || emptyText(data.performance_table, "Gush performance updated.", "No qualified Gush performance rows."), warningText(response) ? "warning" : "ok");
     } catch (error) {
+      if (requestId !== state.gushRequestId) return;
       setNotice("gush-state", error.message, "error");
     } finally {
-      setBusy("run-gush", false);
+      if (requestId === state.gushRequestId) setBusy("run-gush", false);
     }
   }
 
@@ -660,6 +1088,7 @@
       gushes: gushes,
       filters: buildFilters("compare"),
       y_variable: byId("compare-y-variable").value,
+      statistic: byId("compare-statistic").value,
       show_sp500: byId("compare-show-sp500").checked,
       show_city_comparison: byId("compare-show-city-overlay").checked,
       remove_price_outliers: byId("compare-remove-price-outliers").checked
@@ -671,21 +1100,24 @@
       cities: selectedValues(byId("city-comparison-select")),
       filters: buildFilters("city"),
       y_variable: byId("city-y-variable").value,
+      statistic: byId("city-statistic").value,
       show_sp500: byId("city-show-sp500").checked,
       remove_price_outliers: byId("city-remove-price-outliers").checked,
+      min_deals_per_year: intValue("city-min-deals", 10),
       exclude_2027: true
     };
   }
 
   function buildGushPayload() {
     return {
-      city: byId("city-select").value,
+      city: byId("gush-city-select").value,
       filters: buildFilters("gush"),
       yvar: byId("gush-y-variable").value,
+      statistic: byId("gush-statistic").value,
       top_count: intValue("gush-top-count", 5),
-      typical_count: intValue("gush-typical-count", 5),
+      typical_count: intValue("gush-typical-count", 0),
       bottom_count: intValue("gush-bottom-count", 5),
-      min_deals_per_gush: intValue("gush-min-deals", 10),
+      min_deals_per_gush: intValue("gush-min-deals", 5),
       show_city: byId("gush-show-city-overlay").checked,
       show_sp500: byId("gush-show-sp500").checked,
       remove_price_outliers: byId("gush-remove-price-outliers").checked
@@ -847,23 +1279,37 @@
     return { traces: traces, layout: layout };
   }
 
-  function renderSeriesChart(targetId, series, overlays, title, yAxisTitle) {
+  function renderSeriesChart(targetId, series, overlays, title, yAxisTitle, options) {
+    options = options || {};
     if (!seriesHasPoints(series)) {
       renderSeriesChartGuide(targetId, title, true);
       return;
     }
-    var traces = (series || []).map(function (item) {
+    var chart = byId(targetId);
+    chart.className = "chart";
+    if (!chart.classList.contains("js-plotly-plot")) chart.innerHTML = "";
+    var colors = options.colors || colorPalette("default", "series");
+    if (options.reverseColors) colors = colors.slice().reverse();
+    var symbols = options.symbols || [];
+    var traces = (series || []).map(function (item, index) {
+      var color = item.color || colors[index % colors.length];
+      var symbol = symbols.length ? symbols[index % symbols.length] : undefined;
       return {
         name: item.label,
         type: "scatter",
-        mode: "lines+markers",
+        mode: options.showMarkers === false ? "lines" : "lines+markers",
         x: (item.points || []).map(function (point) { return point.date || point.year; }),
         y: (item.points || []).map(function (point) { return point.y; }),
         text: (item.points || []).map(function (point) {
-          return item.label + "<br>Year: " + valueOrDash(point.year) + "<br>Deals: " + valueOrDash(point.n_deals) + "<br>Value: " + valueOrDash(point.y);
+          return point.tooltip || item.label + "<br>Year: " + valueOrDash(point.year) + "<br>Deals: " + valueOrDash(point.n_deals) + "<br>Value: " + valueOrDash(point.y);
         }),
         hovertemplate: "%{text}<extra></extra>",
-        marker: { size: 6 }
+        line: { color: color },
+        marker: {
+          size: cityPointSizes(item.points || [], options.pointSizeRange),
+          color: color,
+          symbol: symbol
+        }
       };
     });
     addOverlayTraces(traces, overlays || {});
@@ -901,8 +1347,8 @@
         intro: "Use the plot space as your area-comparison checklist until the yearly lines are ready.",
         emptyIntro: "Broaden the selected areas or loosen filters, then update compare again.",
         steps: [
-          "<strong>Select a city</strong> in the shared control panel.",
-          "<strong>Choose streets or Gush areas</strong> to compare.",
+          "<strong>Search a street across all cities</strong> or pick known Gush areas.",
+          "<strong>Add the matching Gush areas</strong> directly from the search results.",
           "<strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.",
           "<strong>Update compare</strong> to draw yearly lines and fill the summary table."
         ],
@@ -1030,16 +1476,20 @@
   function shapeSymbols(palette) {
     if (palette === "open") return ["circle-open", "square-open", "diamond-open", "cross-open", "triangle-up-open", "x-open"];
     if (palette === "solid") return ["circle", "square", "diamond", "cross", "triangle-up", "x"];
+    if (palette === "mixed") return ["circle", "circle-open", "square", "square-open", "diamond", "diamond-open", "triangle-up", "triangle-up-open"];
     return ["circle", "square", "diamond", "cross", "triangle-up", "x", "star", "hexagon"];
   }
 
   function colorPalette(palette, colorVar) {
     var palettes = {
       default: ["#186c72", "#b04a4a", "#3478b9", "#8a6f2a", "#7a4f9d", "#208557", "#c06624", "#5f6b73"],
+      okabe: ["#e69f00", "#56b4e9", "#009e73", "#f0e442", "#0072b2", "#d55e00", "#cc79a7", "#999999"],
       bold: ["#0072b2", "#d55e00", "#009e73", "#cc79a7", "#f0e442", "#56b4e9", "#e69f00", "#000000"],
       soft: ["#6f9db2", "#d58f7d", "#8bbf9f", "#c6a15b", "#9c89b8", "#d6a2b8", "#8f9a6c", "#7e8d94"],
       contrast: ["#004488", "#ddaa33", "#bb5566", "#000000", "#33bbc5", "#994455", "#228833", "#eeeeee"],
-      earth: ["#2f6f5e", "#9f6b43", "#6f7f3f", "#b27a2f", "#536878", "#8f4f39", "#7d6f55", "#3f3f3f"]
+      earth: ["#2f6f5e", "#9f6b43", "#6f7f3f", "#b27a2f", "#536878", "#8f4f39", "#7d6f55", "#3f3f3f"],
+      category20: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#aec7e8", "#ffbb78", "#98df8a", "#ff9896", "#c5b0d5", "#c49c94", "#f7b6d3", "#c7c7c7", "#dbdb8d", "#9edae5"],
+      grey: ["#222222", "#444444", "#666666", "#888888", "#aaaaaa", "#c4c4c4", "#d8d8d8", "#eeeeee"]
     };
     var colors = palettes[palette] || palettes.default;
     return colorVar ? colors : ["#4a4a4a"].concat(colors);
@@ -1573,6 +2023,247 @@
     }).join("");
   }
 
+  function renderCompareContext(data, payload) {
+    var target = byId("compare-context");
+    if (!target) return;
+    if (!data || !data.counts) {
+      target.innerHTML = "";
+      return;
+    }
+    var filters = buildCompareFilterSummary(data, payload || {});
+    var counts = data.counts || {};
+    target.innerHTML = '<div class="active-filter-box"><strong>Active filters</strong><span>' +
+      escapeHtml(filters.join(" • ")) + "</span></div>" +
+      '<div class="data-summary-box"><strong>Data summary</strong><span>' +
+      escapeHtml(valueOrDash(counts.summary_points) + " aggregated points from " + formatNumber(counts.outlier_deals || counts.filtered_deals || 0) + " individual deals") +
+      "</span><span>" +
+      escapeHtml("Each point = " + (data.statistic || byId("compare-statistic").value) + " of deals in same year and Gush") +
+      "</span><span>" +
+      escapeHtml("Covering " + valueOrDash(counts.unique_gushes) + " Gush areas across " + valueOrDash(counts.unique_years) + " years") +
+      "</span></div>";
+  }
+
+  function buildCompareFilterSummary(data, payload) {
+    var selection = data.selection || {};
+    var gushes = selection.gushes || [];
+    var gushText = gushes.length > 3
+      ? gushes.slice(0, 3).map(function (gush) { return gush.label || gush.id; }).join(", ") + " (+" + (gushes.length - 3) + " more)"
+      : (gushes.map(function (gush) { return gush.label || gush.id; }).join(", ") || "None");
+    var cities = (selection.cities || []).map(function (city) { return city.name || city.id; });
+    var parts = [
+      "Gush: " + gushText,
+      "City: " + (cities.join(", ") || "All matched cities"),
+      "Y: " + selectedOptionText("compare-y-variable"),
+      "Statistic: " + selectedOptionText("compare-statistic")
+    ];
+    addRangeSummary(parts, "Years", "compare-filter-year-min", "compare-filter-year-max");
+    addRangeSummary(parts, "Price", "compare-filter-price-min", "compare-filter-price-max", " M₪");
+    addRangeSummary(parts, "Price / m²", "compare-filter-price-m2-min", "compare-filter-price-m2-max", " k₪");
+    addRangeSummary(parts, "Area", "compare-filter-area-min", "compare-filter-area-max", " m²");
+    addRangeSummary(parts, "Floor", "compare-filter-floor-min", "compare-filter-floor-max");
+    var rooms = selectedValues(byId("compare-rooms-select"));
+    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    var roof = byId("compare-roof-select").value;
+    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    var project = byId("compare-new-project-select").value;
+    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
+    if (payload.remove_price_outliers) parts.push("Outliers removed");
+    return parts;
+  }
+
+  function compareYAxisLabel(data) {
+    var stat = data && data.statistic ? data.statistic : byId("compare-statistic").value;
+    return (stat === "mean" ? "Mean " : "Median ") + yLabel(data && data.y_variable || byId("compare-y-variable").value);
+  }
+
+  function compareSeriesChartOptions() {
+    return {
+      colors: colorPalette(byId("compare-color-palette").value, "series"),
+      reverseColors: byId("compare-reverse-colors").checked,
+      symbols: shapeSymbols(byId("compare-shape-palette").value),
+      pointSizeRange: [5, 16]
+    };
+  }
+
+  function renderGushPerformanceSummary(data) {
+    var filterTarget = byId("gush-filter-summary");
+    var infoTarget = byId("gush-performance-info");
+    if (!filterTarget || !infoTarget) return;
+    if (!data || !data.selection) {
+      filterTarget.innerHTML = "";
+      infoTarget.innerHTML = "";
+      return;
+    }
+    var selection = data.selection || {};
+    var thresholds = data.changes && data.changes.thresholds || {};
+    var filters = buildGushFilterSummary();
+    filterTarget.innerHTML = '<strong>Active filters</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
+    var qualified = data.counts && data.counts.qualified_gushes || 0;
+    var selected = data.counts && data.counts.selected_gushes || 0;
+    var selectedCopy = selected + " selected Gush areas from " + qualified + " qualifying areas";
+    var groupsCopy = "Showing top " + valueOrDash(selection.top_count) + ", typical " + valueOrDash(selection.typical_count) + ", and bottom " + valueOrDash(selection.bottom_count) + " performers";
+    var basisCopy = "Each point = " + selectedOptionText("gush-statistic").toLowerCase() + "; ranked by annualized trimmed mean YoY change; median deals per year " + (thresholds.min_deals_comparison || ">=") + " " + valueOrDash(thresholds.min_deals_per_gush);
+    infoTarget.innerHTML = '<strong>Performance analysis</strong><span>' + escapeHtml(selectedCopy) + "</span><span>" + escapeHtml(groupsCopy) + "</span><span>" + escapeHtml(basisCopy) + "</span>";
+  }
+
+  function buildGushFilterSummary() {
+    var citySelect = byId("gush-city-select");
+    var city = citySelect && citySelect.selectedOptions[0] ? citySelect.selectedOptions[0].textContent : valueOrDash(byId("gush-city-select").value);
+    var parts = ["City: " + city.replace(/\s+\([0-9,]+\)$/, "")];
+    addRangeSummary(parts, "Years", "gush-filter-year-min", "gush-filter-year-max");
+    addRangeSummary(parts, "Price", "gush-filter-price-min", "gush-filter-price-max", " M₪");
+    addRangeSummary(parts, "Area", "gush-filter-area-min", "gush-filter-area-max", " m²");
+    addRangeSummary(parts, "Floor", "gush-filter-floor-min", "gush-filter-floor-max");
+    var rooms = selectedValues(byId("gush-rooms-select"));
+    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    var roof = byId("gush-roof-select").value;
+    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    var project = byId("gush-new-project-select").value;
+    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
+    return parts;
+  }
+
+  function addRangeSummary(parts, label, minId, maxId, suffix) {
+    var min = byId(minId).value;
+    var max = byId(maxId).value;
+    if (min || max) parts.push(label + ": " + valueOrDash(min) + "-" + valueOrDash(max) + (suffix || ""));
+  }
+
+  function renderCityInsights(cityStats) {
+    var target = byId("city-insights");
+    if (!target) return;
+    if (!cityStats) {
+      target.innerHTML = '<div class="mini-notice">Run city comparison to see rankings.</div>';
+      return;
+    }
+    var cards = (cityStats.cards || []).map(function (card) {
+      return '<div class="metric"><span>' + escapeHtml(card.label) + '</span><strong class="' + textDirectionClass(card.value) + '">' +
+        escapeHtml(valueOrDash(card.value)) + '</strong>' +
+        (card.detail !== undefined && card.detail !== null ? '<small>' + escapeHtml(valueOrDash(card.detail)) + '</small>' : "") +
+        "</div>";
+    }).join("");
+    var ranking = (cityStats.ranking || []).slice(0, 8).map(function (row, index) {
+      return '<tr><td>' + (index + 1) + '</td><td class="' + textDirectionClass(row.city) + '">' + escapeHtml(valueOrDash(row.city)) +
+        '</td><td>' + escapeHtml(valueOrDash(row.pct_change)) + '%</td><td>' + escapeHtml(valueOrDash(row.last_value)) + '</td><td>' +
+        escapeHtml(valueOrDash(row.avg_deals_per_year)) + "</td></tr>";
+    }).join("");
+    target.innerHTML = '<div class="city-insight-cards">' + (cards || '<div class="mini-notice">No comparable city stats yet.</div>') + "</div>" +
+      '<div class="city-ranking"><h4>Change ranking</h4><table><thead><tr><th>#</th><th>City</th><th>Change</th><th>Latest</th><th>Deals / yr</th></tr></thead><tbody>' +
+      (ranking || '<tr><td colspan="5">No ranking rows.</td></tr>') + "</tbody></table></div>";
+  }
+
+  function renderCityFilterSummary(data) {
+    var filterTarget = byId("city-filter-summary");
+    var infoTarget = byId("city-data-info");
+    if (!filterTarget || !infoTarget) return;
+    var filters = buildCityFilterSummary();
+    filterTarget.innerHTML = '<strong>Active filters</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
+    if (!data || !data.counts) {
+      infoTarget.innerHTML = "";
+      return;
+    }
+    var stats = data.city_stats || {};
+    var yearRange = stats.year_range ? stats.year_range.min + "-" + stats.year_range.max : valueOrDash(data.counts.unique_years) + " years";
+    infoTarget.innerHTML = '<strong>City comparison data</strong><span>' +
+      escapeHtml(valueOrDash(data.counts.summary_points) + " aggregated points from " + formatNumber(data.counts.outlier_deals || data.counts.filtered_deals || 0) + " deals") +
+      "</span><span>" + escapeHtml("Covering " + valueOrDash(data.counts.plotted_cities || data.counts.unique_cities) + " cities across " + yearRange) +
+      "</span><span>" + escapeHtml("Each point = " + selectedOptionText("city-statistic").toLowerCase() + " of deals in same year and city") + "</span>";
+  }
+
+  function buildCityFilterSummary() {
+    var cities = selectedCityLabels();
+    var cityText = cities.length > 3 ? cities.slice(0, 3).join(", ") + " (+" + (cities.length - 3) + " more)" : (cities.join(", ") || "None");
+    var parts = ["Cities: " + cityText, "Y: " + selectedOptionText("city-y-variable"), "Statistic: " + selectedOptionText("city-statistic")];
+    addRangeSummary(parts, "Years", "city-filter-year-min", "city-filter-year-max");
+    addRangeSummary(parts, "Price", "city-filter-price-min", "city-filter-price-max", " M₪");
+    addRangeSummary(parts, "Price / m²", "city-filter-price-m2-min", "city-filter-price-m2-max", " k₪");
+    addRangeSummary(parts, "Area", "city-filter-area-min", "city-filter-area-max", " m²");
+    addRangeSummary(parts, "Floor", "city-filter-floor-min", "city-filter-floor-max");
+    var rooms = selectedValues(byId("city-rooms-select"));
+    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    var roof = byId("city-roof-select").value;
+    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    var project = byId("city-new-project-select").value;
+    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
+    if (byId("city-remove-price-outliers").checked) parts.push("Outliers removed");
+    return parts;
+  }
+
+  function selectedCityLabels() {
+    return selectedValues(byId("city-comparison-select")).map(function (value) {
+      var option = optionForValue(byId("city-comparison-select"), value);
+      return option ? option.textContent : value;
+    });
+  }
+
+  function citySeriesChartOptions() {
+    var minSize = numberValue("city-point-size-min");
+    var maxSize = numberValue("city-point-size-max");
+    if (minSize === null) minSize = 3;
+    if (maxSize === null) maxSize = 10;
+    if (maxSize < minSize) {
+      var swap = minSize;
+      minSize = maxSize;
+      maxSize = swap;
+    }
+    return {
+      colors: colorPalette(byId("city-color-palette").value, "city"),
+      reverseColors: byId("city-reverse-colors").checked,
+      showMarkers: byId("city-show-points").checked,
+      pointSizeRange: [minSize, maxSize]
+    };
+  }
+
+  function cityPointSizes(points, range) {
+    range = range || [6, 6];
+    var values = (points || []).map(function (point) { return Number(point.n_deals); });
+    var numeric = values.filter(Number.isFinite);
+    if (!numeric.length) return range[0];
+    var min = Math.min.apply(null, numeric);
+    var max = Math.max.apply(null, numeric);
+    return values.map(function (value) {
+      if (!Number.isFinite(value) || max === min) return (range[0] + range[1]) / 2;
+      return range[0] + ((value - min) / (max - min)) * (range[1] - range[0]);
+    });
+  }
+
+  function transformSeriesForMode(series, overlays, mode) {
+    if (mode === "absolute") return { series: series, overlays: overlays };
+    var transformedSeries = (series || []).map(function (item) {
+      return Object.assign({}, item, {
+        points: transformPointsForMode(item.points || [], mode)
+      });
+    });
+    var transformedOverlays = {};
+    Object.keys(overlays || {}).forEach(function (key) {
+      transformedOverlays[key] = transformPointsForMode(overlays[key] || [], mode);
+    });
+    return { series: transformedSeries, overlays: transformedOverlays };
+  }
+
+  function transformPointsForMode(points, mode) {
+    var ordered = (points || []).slice().sort(function (left, right) {
+      return Number(left.year || left.deal_year || 0) - Number(right.year || right.deal_year || 0);
+    });
+    var basePoint = ordered.find(function (point) { return Number.isFinite(Number(point.y)) && Number(point.y) !== 0; });
+    if (!basePoint) return ordered;
+    var base = Number(basePoint.y);
+    return ordered.map(function (point) {
+      var y = Number(point.y);
+      var transformedY = Number.isFinite(y) ? (mode === "indexed" ? (y / base) * 100 : ((y / base) - 1) * 100) : null;
+      return Object.assign({}, point, {
+        raw_y: point.y,
+        y: transformedY === null ? null : Math.round(transformedY * 1000) / 1000
+      });
+    });
+  }
+
+  function cityChartYAxisLabel(yVariable, mode) {
+    if (mode === "indexed") return "Index (first year = 100)";
+    if (mode === "change") return "Change from first year (%)";
+    return yLabel(yVariable);
+  }
+
   function renderMetaSummary(meta) {
     var target = byId("metadata-summary");
     if (!meta) {
@@ -1588,7 +2279,7 @@
       ["Generated", meta.data_summary && meta.data_summary.generated_at]
     ];
     target.innerHTML = cards.map(infoCard).join("");
-    byId("global-summary").innerHTML = cards.slice(0, 3).map(function (card) {
+    byId("global-summary").innerHTML = cards.slice(0, 2).map(function (card) {
       return '<div class="metric-pill"><strong>' + escapeHtml(formatNumber(card[1])) + '</strong> ' + escapeHtml(card[0]) + "</div>";
     }).join("");
   }
@@ -1616,15 +2307,8 @@
 
   function applyFilterDefaults(data) {
     var ranges = data.ranges || {};
-    setRangeInputs("filter-year", ranges.deal_year);
-    setRangeInputs("filter-price", ranges.price_millions);
-    setRangeInputs("filter-price-m2", ranges.price_per_m2);
-    setRangeInputs("filter-area", ranges.area);
-    setRangeInputs("filter-floor", ranges.floor);
-    setRangeInputs("filter-building-floors", ranges.build_floors);
-    setRangeInputs("filter-built-year", ranges.build_year);
-    setRangeInputs("filter-building-age", ranges.building_age);
-    ["compare", "city", "gush"].forEach(function (scope) {
+    applyScopedFilterDefaults("analysis", data);
+    ["compare", "gush"].forEach(function (scope) {
       setRangeInputs(scope + "-filter-year", ranges.deal_year);
       setRangeInputs(scope + "-filter-price", ranges.price_millions);
       setRangeInputs(scope + "-filter-price-m2", ranges.price_per_m2);
@@ -1642,7 +2326,7 @@
       return { value: value, label: value };
     });
     setOptions(byId("rooms-select"), roomOptions, true);
-    ["compare", "city", "gush"].forEach(function (scope) {
+    ["compare", "gush"].forEach(function (scope) {
       var select = byId(scope + "-rooms-select");
       var selected = selectedValues(select);
       setOptions(select, roomOptions, true);
@@ -1651,14 +2335,57 @@
     setSelectedValues(byId("rooms-select"), nextSelectedRooms);
     state.roomsSelectionInitialized = true;
     renderRoomChips();
+    renderCompareRoomChips();
+    renderGushRoomChips();
     syncSegmentedControls();
     if (data.apartment_types && data.apartment_types.available && data.apartment_types.available.length) {
+      var availableApartmentOptions = data.apartment_types.available.map(function (value) {
+        return { value: value, label: value };
+      });
       var selectedApartmentTypes = selectedValues(byId("apartment-type-select"));
-      setOptions(byId("apartment-type-select"), data.apartment_types.available.map(function (value) {
+      setOptions(byId("apartment-type-select"), availableApartmentOptions, true);
+      setSelectedValues(byId("apartment-type-select"), selectedApartmentTypes);
+      ["compare", "gush"].forEach(function (scope) {
+        var select = byId(scope + "-apartment-type-select");
+        var selected = selectedValues(select);
+        setOptions(select, availableApartmentOptions, true);
+        setSelectedValues(select, selected);
+      });
+      renderApartmentTypeChips();
+      renderCompareApartmentTypeChips();
+      renderGushApartmentTypeChips();
+    }
+  }
+
+  function applyScopedFilterDefaults(scope, data) {
+    var ranges = data && data.ranges || {};
+    setRangeInputs(filterControlPrefix(scope, "filter-year"), ranges.deal_year);
+    setRangeInputs(filterControlPrefix(scope, "filter-price"), ranges.price_millions);
+    setRangeInputs(filterControlPrefix(scope, "filter-price-m2"), ranges.price_per_m2);
+    setRangeInputs(filterControlPrefix(scope, "filter-area"), ranges.area);
+    setRangeInputs(filterControlPrefix(scope, "filter-floor"), ranges.floor);
+    setRangeInputs(filterControlPrefix(scope, "filter-building-floors"), ranges.build_floors);
+    setRangeInputs(filterControlPrefix(scope, "filter-built-year"), ranges.build_year);
+    setRangeInputs(filterControlPrefix(scope, "filter-building-age"), ranges.building_age);
+    var roomOptions = (data.rooms && data.rooms.choices || []).map(function (value) {
+      return { value: value, label: value };
+    });
+    var roomsSelect = byId(filterControlId(scope, "rooms-select"));
+    if (roomsSelect) {
+      setOptions(roomsSelect, roomOptions, true);
+      setSelectedValues(roomsSelect, data.rooms && data.rooms.smart_selected || []);
+    }
+    var aptSelect = byId(filterControlId(scope, "apartment-type-select"));
+    if (aptSelect && data.apartment_types && data.apartment_types.available) {
+      var current = selectedValues(aptSelect);
+      var defaults = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
+      if (!current.length && (scope === "city" || scope === "gush")) current = defaults;
+      setOptions(aptSelect, data.apartment_types.available.map(function (value) {
         return { value: value, label: value };
       }), true);
-      setSelectedValues(byId("apartment-type-select"), selectedApartmentTypes);
-      renderApartmentTypeChips();
+      setSelectedValues(aptSelect, current.filter(function (value) {
+        return data.apartment_types.available.map(String).indexOf(String(value)) !== -1;
+      }));
     }
   }
 
@@ -1708,6 +2435,33 @@
     setNotice("metadata-state", "Room filter cleared.", "ok");
   }
 
+  function applyGushSmartRoomSelection() {
+    var smartRooms = state.filterOptions && state.filterOptions.rooms && state.filterOptions.rooms.smart_selected;
+    if (!smartRooms || !smartRooms.length) {
+      setNotice("gush-state", "No smart room selection is available for the current city.", "warning");
+      return;
+    }
+    setSelectedValues(byId("gush-rooms-select"), smartRooms);
+    renderGushRoomChips();
+    scheduleGushAutoUpdate("rooms");
+    setNotice("gush-state", "Applied smart room selection: " + smartRooms.join(", ") + ".", "ok");
+  }
+
+  function clearGushRoomSelection() {
+    setSelectedValues(byId("gush-rooms-select"), []);
+    renderGushRoomChips();
+    scheduleGushAutoUpdate("rooms");
+    setNotice("gush-state", "Room filter cleared for City Performance.", "ok");
+  }
+
+  function clearCompareRoomSelection() {
+    setSelectedValues(byId("compare-rooms-select"), []);
+    renderCompareRoomChips();
+    updateSelectionSummary();
+    scheduleCompareAutoUpdate("rooms");
+    setNotice("compare-state", "Room filter cleared for Compare Areas.", "ok");
+  }
+
   function resetFilterRanges() {
     if (state.filterOptions) {
       applyFilterDefaults(state.filterOptions);
@@ -1743,6 +2497,45 @@
       y: "Selected value"
     };
     return keys.map(function (key) { return { key: key, label: labelByKey[key] || key }; });
+  }
+
+  function compareRawColumns() {
+    return [
+      ["date", "Date", "date"], ["city", "City"], ["street", "Street"], ["Gush", "Gush", "number"],
+      ["price_millions", "Price", "number"], ["price_per_m2", "Price / m²", "number"], ["price_per_room", "Price / Room", "number"],
+      ["area", "Area", "number"], ["rooms", "Rooms", "number"], ["floor", "Floor", "number"], ["apt type", "Type"],
+      ["FULLADRESS", "Address"], ["New_Project", "Project"], ["build_year", "Built year", "number"], ["building age", "Building age", "number"]
+    ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
+  }
+
+  function performanceColumns(yVariable) {
+    var selectedLabel = yLabel(yVariable);
+    return [
+      { key: "performance_group", label: "Group" },
+      { key: "rank", label: "Rank", type: "number", filter: "range" },
+      { key: "position_in_group", label: "Group #", type: "number", filter: "range" },
+      { key: "gush_label", label: "Gush" },
+      { key: "price_change", label: "Change %", type: "number", filter: "range" },
+      { key: "yearly_slope", label: "Annual YoY %", type: "number", filter: "range" },
+      { key: "first_y", label: "First " + selectedLabel, type: "number", filter: "range" },
+      { key: "last_y", label: "Last " + selectedLabel, type: "number", filter: "range" },
+      { key: "first_year", label: "First year", type: "number", filter: "range" },
+      { key: "last_year", label: "Last year", type: "number", filter: "range" },
+      { key: "years_span", label: "Years", type: "number", filter: "range" },
+      { key: "median_deals_per_year", label: "Median deals/year", type: "number", filter: "range" }
+    ];
+  }
+
+  function citySummaryColumns() {
+    return [
+      { key: "city_label", label: "City" },
+      { key: "deal_year", label: "Year", type: "number", filter: "range" },
+      { key: "n_deals", label: "Deals", type: "number", filter: "range" },
+      { key: "price_millions", label: "Price", type: "number", filter: "range" },
+      { key: "price_per_m2", label: "Price / m²", type: "number", filter: "range" },
+      { key: "price_per_room", label: "Price / Room", type: "number", filter: "range" },
+      { key: "y", label: "Selected value", type: "number", filter: "range" }
+    ];
   }
 
   async function getJson(url) {
@@ -1784,14 +2577,186 @@
       var el = document.createElement("option");
       el.value = option.value;
       el.textContent = option.label;
+      if (option.searchText) el.dataset.searchText = option.searchText;
       if (hasHebrew(option.label)) el.className = "rtl-text";
       select.appendChild(el);
     });
   }
 
+  function ensureSelectOption(select, option) {
+    var existing = optionForValue(select, option.value);
+    if (existing) {
+      if (option.label) existing.textContent = option.label;
+      if (option.searchText) existing.dataset.searchText = option.searchText;
+      return existing;
+    }
+    var el = document.createElement("option");
+    el.value = option.value;
+    el.textContent = option.label || option.value;
+    if (option.searchText) el.dataset.searchText = option.searchText;
+    if (hasHebrew(el.textContent)) el.className = "rtl-text";
+    select.appendChild(el);
+    return el;
+  }
+
+  function renderCityComparisonPicker() {
+    var select = byId("city-comparison-select");
+    var search = byId("city-comparison-search");
+    var results = byId("city-comparison-results");
+    var selectedTarget = byId("city-comparison-selected");
+    if (!select || !search || !results || !selectedTarget) return;
+
+    var options = Array.from(select.options || []);
+    var selected = new Set(selectedValues(select).map(String));
+    var query = normalizeSearch(search.value);
+    var visible = query
+      ? options.filter(function (option) {
+          return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
+        }).slice(0, 30)
+      : options.slice(0, 12);
+
+    selectedTarget.innerHTML = "";
+    var selectedList = Array.from(selected);
+    if (selectedList.length > 8) {
+      var summary = document.createElement("div");
+      summary.className = "city-selection-summary";
+      var selectedLabels = selectedList.map(function (value) {
+        var option = optionForValue(select, value);
+        return option ? option.textContent : value;
+      });
+      summary.innerHTML = '<strong>' + escapeHtml(formatNumber(selectedList.length) + " cities selected") + "</strong>" +
+        '<button class="secondary compact-button" type="button">Clear</button>' +
+        '<span class="' + textDirectionClass(selectedLabels.join(", ")) + '">' +
+        escapeHtml(selectedLabels.slice(0, 6).join(", ") + (selectedLabels.length > 6 ? " +" + (selectedLabels.length - 6) + " more" : "")) +
+        "</span>";
+      summary.querySelector("button").addEventListener("click", function () {
+        setSelectedValues(select, []);
+        renderCityComparisonPicker();
+        scheduleCityFilterOptions();
+        scheduleCityAutoUpdate("city-clear");
+      });
+      selectedTarget.appendChild(summary);
+    } else {
+      selectedList.forEach(function (value) {
+      var option = optionForValue(select, value);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "selection-chip";
+      chip.textContent = (option ? option.textContent : value) + " ×";
+      chip.addEventListener("click", function () {
+        setOptionSelected(select, value, false);
+        renderCityComparisonPicker();
+        scheduleCityFilterOptions();
+        scheduleCityAutoUpdate("city-chip");
+      });
+      selectedTarget.appendChild(chip);
+      });
+    }
+
+    results.innerHTML = "";
+    if (!visible.length) {
+      results.innerHTML = '<div class="mini-notice">No matching cities.</div>';
+      return;
+    }
+    visible.forEach(function (option) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "picker-option city-picker-option";
+      button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.innerHTML = '<span class="' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + '</span><small>' +
+        escapeHtml(formatNumber(cityRowsForOption(option)) + " rows") + "</small>";
+      button.addEventListener("click", function () {
+        setOptionSelected(select, option.value, !selected.has(String(option.value)));
+        renderCityComparisonPicker();
+        scheduleCityFilterOptions();
+        scheduleCityAutoUpdate("city-picker");
+      });
+      results.appendChild(button);
+    });
+  }
+
+  function applyCityPreset(preset) {
+    var select = byId("city-comparison-select");
+    var options = Array.from(select.options || []);
+    var values = [];
+    if (preset === "clear") {
+      values = [];
+    } else if (preset === "largest") {
+      values = options
+        .slice()
+        .sort(function (left, right) { return cityRowsForOption(right) - cityRowsForOption(left); })
+        .slice(0, 8)
+        .map(function (option) { return option.value; });
+    } else if (preset === "central") {
+      var centralNames = ["תל אביב -יפו", "רמת גן", "גבעתיים", "בני ברק", "פתח תקווה", "חולון", "בת ים", "ראשון לציון", "הרצליה", "רעננה", "כפר סבא"];
+      var centralSet = new Set(centralNames.map(normalizeSearch));
+      values = options.filter(function (option) {
+        return centralSet.has(normalizeSearch(option.textContent));
+      }).slice(0, 10).map(function (option) { return option.value; });
+    }
+    setSelectedValues(select, values);
+    renderCityComparisonPicker();
+    scheduleCityFilterOptions();
+    scheduleCityAutoUpdate("city-preset");
+    setNotice("city-state", values.length ? "City preset applied. Update cities to refresh the chart." : "City selection cleared.", values.length ? "ok" : "warning");
+  }
+
+  function cityRowsForOption(option) {
+    if (!state.meta || !state.meta.cities) return 0;
+    var city = state.meta.cities.find(function (item) {
+      return String(item.id) === String(option.value);
+    });
+    return Number(city && city.rows) || 0;
+  }
+
+  function optionSearchText(option) {
+    return [option.textContent, option.dataset && option.dataset.searchText].filter(Boolean).join(" ");
+  }
+
   function renderLocationPickers() {
     renderPicker("streets");
     renderPicker("gushes");
+    renderCompareGushPicker();
+  }
+
+  function scheduleCompareGushSearch() {
+    if (state.compareGushSearchTimer) window.clearTimeout(state.compareGushSearchTimer);
+    state.compareGushSearchTimer = window.setTimeout(runCompareGushSearch, 250);
+  }
+
+  async function runCompareGushSearch() {
+    var search = byId("compare-gush-search") || byId("gush-picker-search");
+    var results = byId("compare-gush-results") || byId("gush-picker-results");
+    if (!search || !results) return;
+    var query = search.value.trim();
+    if (query.length < 2) {
+      renderCompareGushPicker();
+      return;
+    }
+    var requestId = ++state.compareGushSearchRequestId;
+    results.innerHTML = '<div class="mini-notice">Searching Gush areas across all cities...</div>';
+    try {
+      var response = await getJson("api/gush-search?q=" + encodeURIComponent(query) + "&limit=30");
+      if (requestId !== state.compareGushSearchRequestId) return;
+      mergeCompareGushOptions(response.data.results || []);
+      renderCompareGushPicker();
+    } catch (error) {
+      results.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
+    }
+  }
+
+  function mergeCompareGushOptions(gushes) {
+    var select = byId("gush-select");
+    (gushes || []).forEach(function (gush) {
+      var details = [gush.city, "-", gush.label, "(" + gush.id + ")"].filter(Boolean);
+      if (gush.representative_street) details.push("- " + gush.representative_street);
+      if (gush.deals) details.push("· " + formatNumber(gush.deals) + " deals");
+      ensureSelectOption(select, {
+        value: gush.id,
+        label: details.join(" "),
+        searchText: [gush.id, gush.label, gush.city, gush.representative_street].filter(Boolean).join(" ")
+      });
+    });
   }
 
   function renderPicker(key) {
@@ -1806,7 +2771,7 @@
     var selected = new Set(selectedValues(select).map(String));
     var query = normalizeSearch(search.value);
     var visible = query ? options.filter(function (option) {
-      return selected.has(String(option.value)) || normalizeSearch(option.textContent).indexOf(query) !== -1;
+      return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
     }).slice(0, 24) : [];
 
     selectedTarget.innerHTML = "";
@@ -1820,8 +2785,10 @@
         setOptionSelected(select, value, false);
         renderLocationPickers();
         updateSelectionSummary();
+        updateCompareSelectionState();
         scheduleFilterOptions();
         scheduleAnalysisAutoUpdate("location-chip");
+        scheduleCompareAutoUpdate("location-chip");
       });
       selectedTarget.appendChild(chip);
     });
@@ -1832,7 +2799,11 @@
       return;
     }
     if (!query) {
-      results.innerHTML = '<div class="mini-notice">Search to narrow the list. Selected items stay pinned above.</div>';
+      results.innerHTML = '<div class="mini-notice">' +
+        (key === "gushes" && document.body.dataset.activeTab === "compare"
+          ? "Search Gush number, city, label, or street across all cities. Selected items stay pinned above."
+          : "Search to narrow the list. Selected items stay pinned above.") +
+        "</div>";
       return;
     }
     if (!visible.length) {
@@ -1853,6 +2824,69 @@
     });
   }
 
+  function renderCompareGushPicker() {
+    var select = byId("gush-select");
+    var search = byId("compare-gush-search");
+    var results = byId("compare-gush-results");
+    var selectedTarget = byId("compare-gush-selected");
+    if (!select || !search || !results || !selectedTarget) return;
+
+    var options = Array.from(select.options || []).filter(function (option) { return option.value; });
+    var selected = new Set(selectedValues(select).map(String));
+    var query = normalizeSearch(search.value);
+    var visible = query ? options.filter(function (option) {
+      return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
+    }).slice(0, 30) : [];
+
+    selectedTarget.innerHTML = "";
+    Array.from(selected).forEach(function (value) {
+      var option = optionForValue(select, value);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "selection-chip";
+      chip.textContent = (option ? option.textContent : value) + " ×";
+      if (option && hasHebrew(option.textContent)) chip.classList.add("rtl-text");
+      chip.addEventListener("click", function () {
+        setOptionSelected(select, value, false);
+        renderLocationPickers();
+        updateSelectionSummary();
+        updateCompareSelectionState();
+        scheduleFilterOptions();
+        scheduleCompareAutoUpdate("compare-gush-chip");
+      });
+      selectedTarget.appendChild(chip);
+    });
+
+    if (!query) {
+      results.innerHTML = '<div class="mini-notice">Search by Gush number, city, description, or street. Selected areas stay pinned above.</div>';
+      return;
+    }
+    if (!visible.length) {
+      results.innerHTML = '<div class="mini-notice">No matches yet. Keep typing to search all cities.</div>';
+      return;
+    }
+
+    results.innerHTML = "";
+    visible.forEach(function (option) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "picker-option compare-gush-option";
+      button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.innerHTML = '<strong class="' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</strong>";
+      button.addEventListener("click", function () {
+        setSelectedValues(byId("street-select"), []);
+        setOptionSelected(select, option.value, !option.selected);
+        enforceCompareGushLimit();
+        renderLocationPickers();
+        updateSelectionSummary();
+        updateCompareSelectionState();
+        scheduleFilterOptions();
+        scheduleCompareAutoUpdate("compare-gush-picker");
+      });
+      results.appendChild(button);
+    });
+  }
+
   function togglePickerValue(key, value) {
     var config = pickerConfig[key];
     var select = byId(config.selectId);
@@ -1864,16 +2898,31 @@
     } else {
       option.selected = false;
     }
+    enforceCompareGushLimit();
     renderLocationPickers();
     updateSelectionSummary();
+    updateCompareSelectionState();
     scheduleFilterOptions();
     scheduleAnalysisAutoUpdate("location");
+    scheduleCompareAutoUpdate("location");
   }
 
   function scheduleFilterOptions() {
     if (state.filterOptionsTimer) window.clearTimeout(state.filterOptionsTimer);
-    if (!byId("city-select").value) return;
+    if (!byId("city-select").value && !activeGushSelection().length) return;
     state.filterOptionsTimer = window.setTimeout(loadFilterOptions, 450);
+  }
+
+  function scheduleCityFilterOptions() {
+    if (state.cityFilterOptionsTimer) window.clearTimeout(state.cityFilterOptionsTimer);
+    if (!selectedValues(byId("city-comparison-select")).length) return;
+    state.cityFilterOptionsTimer = window.setTimeout(loadCityFilterOptions, 450);
+  }
+
+  function scheduleGushFilterOptions() {
+    if (state.gushFilterOptionsTimer) window.clearTimeout(state.gushFilterOptionsTimer);
+    if (!byId("gush-city-select").value) return;
+    state.gushFilterOptionsTimer = window.setTimeout(loadGushFilterOptions, 450);
   }
 
   function scheduleAnalysisAutoUpdate(reason) {
@@ -1922,6 +2971,116 @@
     return { status: "run" };
   }
 
+  function scheduleCompareAutoUpdate(reason) {
+    if (state.autoCompareTimer) window.clearTimeout(state.autoCompareTimer);
+    if (!byId("auto-update-compare").checked) return;
+    if (document.body.dataset.activeTab !== "compare") return;
+    state.autoCompareTimer = window.setTimeout(function () {
+      runCompareAutoUpdate(reason);
+    }, 650);
+  }
+
+  function runInitialCityComparison() {
+    if (state.cityInitialRunDone) {
+      scheduleCityAutoUpdate("tab");
+      return;
+    }
+    if (!selectedValues(byId("city-comparison-select")).length) return;
+    state.cityInitialRunDone = true;
+    window.setTimeout(function () {
+      if (document.body.dataset.activeTab !== "city") return;
+      runCityComparison({ auto: true });
+    }, 150);
+  }
+
+  function scheduleCityAutoUpdate(reason) {
+    if (state.autoCityTimer) window.clearTimeout(state.autoCityTimer);
+    if (!byId("auto-update-city").checked) return;
+    if (document.body.dataset.activeTab !== "city") return;
+    if (!selectedValues(byId("city-comparison-select")).length) return;
+    state.autoCityTimer = window.setTimeout(function () {
+      var decision = autoCityDecision();
+      if (decision.status === "run") {
+        runCityComparison({ auto: true });
+      } else if (decision.status === "skip-size") {
+        setNotice("city-state", decision.message, "warning");
+      }
+    }, 650);
+  }
+
+  function scheduleGushAutoUpdate(reason) {
+    if (state.autoGushTimer) window.clearTimeout(state.autoGushTimer);
+    if (!byId("auto-update-gush").checked) return;
+    if (document.body.dataset.activeTab !== "gush") return;
+    if (!byId("gush-city-select").value) return;
+    state.autoGushTimer = window.setTimeout(function () {
+      var decision = autoGushDecision();
+      if (decision.status === "run") {
+        runGushPerformance({ auto: true });
+      } else if (decision.status === "skip-size") {
+        setNotice("gush-state", decision.message, "warning");
+      }
+    }, 650);
+  }
+
+  function autoGushDecision() {
+    if (!state.gushFilterOptions || state.gushFilterOptionsSignature !== currentGushFilterOptionsSignature()) {
+      scheduleGushFilterOptions();
+      return { status: "waiting" };
+    }
+    return { status: "run" };
+  }
+
+  function autoCityDecision() {
+    if (!state.cityFilterOptions || state.cityFilterOptionsSignature !== currentCityFilterOptionsSignature()) {
+      return { status: "waiting" };
+    }
+    var counts = state.cityFilterOptions.counts || {};
+    var estimate = Number(counts.after_outlier_removal || counts.before_outlier_removal || 0);
+    if (!Number.isFinite(estimate) || estimate <= 0 || estimate < 500) return { status: "run" };
+    return {
+      status: "skip-size",
+      message: "Auto update paused for " + formatNumber(estimate) + " city-level deals. Click Update cities to run it."
+    };
+  }
+
+  function runCompareAutoUpdate(reason) {
+    var decision = autoCompareDecision();
+    if (decision.status === "run") {
+      runCompare({ auto: true });
+      return;
+    }
+    if (decision.status === "skip-size") {
+      setNotice("compare-state", decision.message, "warning");
+    }
+  }
+
+  function autoCompareDecision() {
+    var gushes = activeGushSelection();
+    var streets = activeStreetSelection();
+    if (!gushes.length && !streets.length) return { status: "missing-selection" };
+    if (gushes.length > 15) {
+      return { status: "skip-size", message: "Auto update paused because Compare Areas supports up to 15 selected Gush areas." };
+    }
+    return { status: "run" };
+  }
+
+  function updateCompareSelectionState() {
+    var hasSelection = activeGushSelection().length > 0 || activeStreetSelection().length > 0;
+    document.body.dataset.compareHasSelection = hasSelection ? "true" : "false";
+    if (document.body.dataset.activeTab === "compare" && !hasSelection) {
+      setNotice("compare-state", "Search by street name across all cities, or pick up to 15 Gush areas.", "ok");
+    }
+  }
+
+  function enforceCompareGushLimit() {
+    var select = byId("gush-select");
+    var selected = selectedValues(select);
+    if (selected.length <= 15) return;
+    setSelectedValues(select, selected.slice(0, 15));
+    setNotice("compare-state", "Compare Areas supports up to 15 Gush areas. Keeping the first 15 selected.", "warning");
+  }
+
   function filterOptionsSignature(payload) {
     return JSON.stringify({
       city: payload.city || "",
@@ -1931,11 +3090,24 @@
   }
 
   function currentFilterOptionsSignature() {
-    return filterOptionsSignature({
-      city: byId("city-select").value,
+    return filterOptionsSignature(filterOptionsPayload());
+  }
+
+  function currentCityFilterOptionsSignature() {
+    return JSON.stringify(selectedValues(byId("city-comparison-select")).map(String).sort());
+  }
+
+  function currentGushFilterOptionsSignature() {
+    return JSON.stringify({ city: byId("gush-city-select").value || "" });
+  }
+
+  function filterOptionsPayload() {
+    var gushes = activeGushSelection();
+    return {
+      city: document.body.dataset.activeTab === "compare" && gushes.length ? "" : byId("city-select").value,
       streets: activeStreetSelection(),
-      gushes: activeGushSelection()
-    });
+      gushes: gushes
+    };
   }
 
   function activeStreetSelection() {
@@ -1973,8 +3145,40 @@
   }
 
   function renderRoomChips() {
-    var target = byId("rooms-chip-group");
-    var select = byId("rooms-select");
+    renderScopedRoomChips({
+      targetId: "rooms-chip-group",
+      selectId: "rooms-select",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleAnalysisAutoUpdate("rooms");
+      }
+    });
+  }
+
+  function renderCompareRoomChips() {
+    renderScopedRoomChips({
+      targetId: "compare-rooms-chip-group",
+      selectId: "compare-rooms-select",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleCompareAutoUpdate("rooms");
+      }
+    });
+  }
+
+  function renderGushRoomChips() {
+    renderScopedRoomChips({
+      targetId: "gush-rooms-chip-group",
+      selectId: "gush-rooms-select",
+      onChange: function () {
+        scheduleGushAutoUpdate("rooms");
+      }
+    });
+  }
+
+  function renderScopedRoomChips(config) {
+    var target = byId(config.targetId);
+    var select = byId(config.selectId);
     if (!target || !select) return;
     var selected = new Set(selectedValues(select).map(String));
     var options = Array.from(select.options || []).filter(function (option) { return option.value; });
@@ -1991,18 +3195,52 @@
       button.textContent = option.textContent;
       button.addEventListener("click", function () {
         option.selected = !option.selected;
-        renderRoomChips();
-        updateSelectionSummary();
-        scheduleAnalysisAutoUpdate("rooms");
+        renderScopedRoomChips(config);
+        if (config.onChange) config.onChange();
       });
       target.appendChild(button);
     });
   }
 
   function renderApartmentTypeChips() {
-    var target = byId("apartment-type-chip-group");
-    var select = byId("apartment-type-select");
-    var search = byId("apartment-type-search");
+    renderScopedApartmentTypeChips({
+      targetId: "apartment-type-chip-group",
+      selectId: "apartment-type-select",
+      searchId: "apartment-type-search",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleAnalysisAutoUpdate("apartment-types");
+      }
+    });
+  }
+
+  function renderCompareApartmentTypeChips() {
+    renderScopedApartmentTypeChips({
+      targetId: "compare-apartment-type-chip-group",
+      selectId: "compare-apartment-type-select",
+      searchId: "compare-apartment-type-search",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleCompareAutoUpdate("apartment-types");
+      }
+    });
+  }
+
+  function renderGushApartmentTypeChips() {
+    renderScopedApartmentTypeChips({
+      targetId: "gush-apartment-type-chip-group",
+      selectId: "gush-apartment-type-select",
+      searchId: "gush-apartment-type-search",
+      onChange: function () {
+        scheduleGushAutoUpdate("apartment-types");
+      }
+    });
+  }
+
+  function renderScopedApartmentTypeChips(config) {
+    var target = byId(config.targetId);
+    var select = byId(config.selectId);
+    var search = byId(config.searchId);
     if (!target || !select || !search) return;
 
     var selected = new Set(selectedValues(select).map(String));
@@ -2026,9 +3264,8 @@
       if (hasHebrew(option.textContent)) button.classList.add("rtl-text");
       button.addEventListener("click", function () {
         option.selected = !option.selected;
-        renderApartmentTypeChips();
-        updateSelectionSummary();
-        scheduleAnalysisAutoUpdate("apartment-types");
+        renderScopedApartmentTypeChips(config);
+        if (config.onChange) config.onChange();
       });
       target.appendChild(button);
     });
@@ -2041,6 +3278,18 @@
         button.classList.toggle("is-selected", select && String(select.value) === String(button.dataset.value));
       });
     });
+  }
+
+  function scheduleAutoUpdateForControl(controlId) {
+    if (controlId.indexOf("compare-") === 0) {
+      scheduleCompareAutoUpdate(controlId);
+    } else if (controlId.indexOf("city-") === 0) {
+      scheduleCityAutoUpdate(controlId);
+    } else if (controlId.indexOf("gush-") === 0) {
+      scheduleGushAutoUpdate(controlId);
+    } else {
+      scheduleAnalysisAutoUpdate(controlId);
+    }
   }
 
   function selectAdditionalValues(select, values) {
@@ -2114,6 +3363,20 @@
         ["Status", statusFilterText()],
         ["Custom ranges", customRangeFilterCount()]
       ]);
+    } else if (document.body.dataset.activeTab === "compare") {
+      pieces = pieces.concat([
+        ["Y value", selectedOptionText("compare-y-variable")],
+        ["Rooms", selectedValues(byId("compare-rooms-select")).length || "All"],
+        ["Custom ranges", customRangeFilterCount("compare")]
+      ]);
+    } else if (document.body.dataset.activeTab === "city") {
+      pieces = [
+        ["Cities", selectedValues(byId("city-comparison-select")).length],
+        ["Y value", selectedOptionText("city-y-variable")],
+        ["Statistic", selectedOptionText("city-statistic")],
+        ["Rooms", selectedValues(byId("city-rooms-select")).length || "All"],
+        ["Custom ranges", customRangeFilterCount("city")]
+      ];
     }
     target.innerHTML = pieces.map(function (piece) {
       return '<div><span>' + escapeHtml(piece[0]) + '</span><strong>' + escapeHtml(piece[1]) + "</strong></div>";
@@ -2136,17 +3399,18 @@
     return labels.length ? labels.join(", ") : "Both";
   }
 
-  function customRangeFilterCount() {
+  function customRangeFilterCount(scope) {
+    scope = scope || "analysis";
     var defaults = state.filterOptions && state.filterOptions.ranges || {};
     var rangeMap = [
-      ["filter-year", defaults.deal_year],
-      ["filter-price", defaults.price_millions],
-      ["filter-price-m2", defaults.price_per_m2],
-      ["filter-area", defaults.area],
-      ["filter-floor", defaults.floor],
-      ["filter-building-floors", defaults.build_floors],
-      ["filter-built-year", defaults.build_year],
-      ["filter-building-age", defaults.building_age]
+      [filterControlPrefix(scope, "filter-year"), defaults.deal_year],
+      [filterControlPrefix(scope, "filter-price"), defaults.price_millions],
+      [filterControlPrefix(scope, "filter-price-m2"), defaults.price_per_m2],
+      [filterControlPrefix(scope, "filter-area"), defaults.area],
+      [filterControlPrefix(scope, "filter-floor"), defaults.floor],
+      [filterControlPrefix(scope, "filter-building-floors"), defaults.build_floors],
+      [filterControlPrefix(scope, "filter-built-year"), defaults.build_year],
+      [filterControlPrefix(scope, "filter-building-age"), defaults.building_age]
     ];
     return rangeMap.reduce(function (count, item) {
       var prefix = item[0];
@@ -2158,6 +3422,10 @@
         String(valueOrEmpty(range.max)) === byId(prefix + "-max").value.trim();
       return count + (hasValue && !matchesDefault ? 1 : 0);
     }, 0);
+  }
+
+  function filterControlPrefix(scope, basePrefix) {
+    return scope === "analysis" ? basePrefix : scope + "-" + basePrefix;
   }
 
   function warningText(response) {

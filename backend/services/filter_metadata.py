@@ -24,6 +24,9 @@ def build_filter_options(data_store: DataStore, payload: Optional[Mapping[str, A
     request_payload = payload or {}
     cities = _selected_cities(request_payload)
     if not cities:
+        gushes = _as_list(_first_present(request_payload, "gushes", "gush", "gush_select", "Gush"))
+        cities = [city["id"] for city in data_store.cities_for_gushes(gushes)]
+    if not cities:
         raise FilterMetadataError("At least one city is required.")
 
     frame = data_store.load_cities(cities)
@@ -118,6 +121,47 @@ def street_search_results(
             gushes.append({"id": gush_id, "label": label})
         enriched.append({**result, "gushes": gushes})
     return _json_ready(enriched)
+
+
+def gush_search_results(
+    data_store: DataStore,
+    query: str,
+    *,
+    limit: int = 30,
+) -> List[Dict[str, Any]]:
+    normalized_query = _normalize_text(query)
+    if not normalized_query:
+        return []
+    descriptions = data_store.load_metadata()["gush_descriptions"].copy()
+    working = descriptions.dropna(subset=["Gush", "Gush_desc"]).copy()
+    haystack = (
+        working["Gush"].astype(str).map(_normalize_text)
+        + " "
+        + working["Gush_desc"].astype(str).map(_normalize_text)
+        + " "
+        + working.get("city", pd.Series("", index=working.index)).astype(str).map(_normalize_text)
+        + " "
+        + working.get("street", pd.Series("", index=working.index)).astype(str).map(_normalize_text)
+    )
+    matches = working.loc[haystack.str.contains(normalized_query, regex=False)].copy()
+    if matches.empty:
+        return []
+    matches["_rank"] = matches["Gush_desc"].astype(str).map(
+        lambda label: 0 if _normalize_text(label).startswith(normalized_query) else 1
+    )
+    matches = matches.sort_values(["_rank", "city", "Gush_desc"]).head(limit)
+    return _json_ready(
+        [
+            {
+                "id": _normalize_gush_id(row.get("Gush")),
+                "label": _safe_string(row.get("Gush_desc")) or str(row.get("Gush")),
+                "city": _safe_string(row.get("city")),
+                "representative_street": _safe_string(row.get("street")),
+                "deals": _safe_int(row.get("n")),
+            }
+            for _, row in matches.iterrows()
+        ]
+    )
 
 
 def gush_detail(data_store: DataStore, gush_id: Any) -> Dict[str, Any]:
@@ -296,6 +340,48 @@ def _as_list(value: Any) -> List[Any]:
     if isinstance(value, Sequence):
         return list(value)
     return [value]
+
+
+def _normalize_text(value: Any) -> str:
+    if value is None:
+        return ""
+    try:
+        if not isinstance(value, (str, bytes)) and pd.isna(value):
+            return ""
+    except (TypeError, ValueError):
+        pass
+    return str(value).strip().casefold()
+
+
+def _normalize_gush_id(value: Any) -> Optional[int | str]:
+    numeric = _safe_number(value)
+    if numeric is None:
+        text = str(value).strip()
+        return text or None
+    if float(numeric).is_integer():
+        return int(numeric)
+    return str(numeric)
+
+
+def _safe_string(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except (TypeError, ValueError):
+        pass
+    text = str(value).strip()
+    return text or None
+
+
+def _safe_int(value: Any) -> Optional[int]:
+    try:
+        if pd.isna(value):
+            return None
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _safe_number(value: Any) -> Optional[float]:

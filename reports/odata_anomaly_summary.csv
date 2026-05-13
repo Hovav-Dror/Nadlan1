@@ -1,0 +1,47 @@
+check,scope,count,notes
+date after current date 2026-05-13,odata_all,6,future-dated relative to report date
+date after 2027-12-31,odata_all,2,very far future
+missing price_millions,odata_all,0,
+price_millions <= 0,odata_all,0,
+price_millions >= 100,odata_all,2103,>= NIS 100m
+missing area,odata_all,15803,
+area <= 0,odata_all,0,
+area >= 1000,odata_all,6321,
+missing rooms,odata_all,1072778,
+missing floor,odata_all,132665,
+missing build_year,odata_all,16744,
+missing GUSH,odata_all,0,
+missing street,odata_all,0,
+missing FULLADRESS,odata_all,0,
+duplicate transformed transaction signature,odata_all,237500,same transformed fields; can be legitimate bulk/new-project repetition
+date after current date 2026-05-13,odata_common_20,4,future-dated relative to report date
+date after 2027-12-31,odata_common_20,0,very far future
+missing price_millions,odata_common_20,0,
+price_millions <= 0,odata_common_20,0,
+price_millions >= 100,odata_common_20,1952,>= NIS 100m
+missing area,odata_common_20,12644,
+area <= 0,odata_common_20,0,
+area >= 1000,odata_common_20,4158,
+missing rooms,odata_common_20,718610,
+missing floor,odata_common_20,68068,
+missing build_year,odata_common_20,9066,
+missing GUSH,odata_common_20,0,
+missing street,odata_common_20,0,
+missing FULLADRESS,odata_common_20,0,
+duplicate transformed transaction signature,odata_common_20,157576,same transformed fields; can be legitimate bulk/new-project repetition
+date after current date 2026-05-13,old_current_20,4,future-dated relative to report date
+date after 2027-12-31,old_current_20,0,very far future
+missing price_millions,old_current_20,0,
+price_millions <= 0,old_current_20,0,
+price_millions >= 100,old_current_20,1700,>= NIS 100m
+missing area,old_current_20,11576,
+area <= 0,old_current_20,0,
+area >= 1000,old_current_20,4026,
+missing rooms,old_current_20,50270,
+missing floor,old_current_20,30,
+missing build_year,old_current_20,9746,
+missing GUSH,old_current_20,0,
+missing street,old_current_20,0,
+missing FULLADRESS,old_current_20,7505,
+duplicate transformed transaction signature,old_current_20,0,same transformed fields; can be legitimate bulk/new-project repetition
+cities with future-dated rows in OData,odata_all,5,

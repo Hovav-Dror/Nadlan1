@@ -1,0 +1,5635 @@
+dataset,city,year,deals
+odata_all_cities,אבו גוש,1999,1
+odata_all_cities,אבו גוש,2007,2
+odata_all_cities,אבו גוש,2008,1
+odata_all_cities,אבו גוש,2010,1
+odata_all_cities,אבו גוש,2011,3
+odata_all_cities,אבו גוש,2012,1
+odata_all_cities,אבו גוש,2013,2
+odata_all_cities,אבו גוש,2014,1
+odata_all_cities,אבו גוש,2015,3
+odata_all_cities,אבו גוש,2016,1
+odata_all_cities,אבו גוש,2017,1
+odata_all_cities,אבו גוש,2019,1
+odata_all_cities,אבו גוש,2020,3
+odata_all_cities,אבו גוש,2021,4
+odata_all_cities,אבו גוש,2022,2
+odata_all_cities,אבו גוש,2023,1
+odata_all_cities,אבו גוש,2024,1
+odata_all_cities,אביחיל,2006,1
+odata_all_cities,אביחיל,2007,1
+odata_all_cities,אביחיל,2009,1
+odata_all_cities,אביחיל,2013,1
+odata_all_cities,אביחיל,2014,1
+odata_all_cities,אביחיל,2015,1
+odata_all_cities,אביחיל,2016,3
+odata_all_cities,אביחיל,2017,2
+odata_all_cities,אביחיל,2018,2
+odata_all_cities,אביחיל,2020,1
+odata_all_cities,אביחיל,2021,4
+odata_all_cities,אביחיל,2022,5
+odata_all_cities,אביחיל,2023,5
+odata_all_cities,אביחיל,2024,1
+odata_all_cities,אבן יהודה,1998,42
+odata_all_cities,אבן יהודה,1999,43
+odata_all_cities,אבן יהודה,2000,35
+odata_all_cities,אבן יהודה,2001,26
+odata_all_cities,אבן יהודה,2002,33
+odata_all_cities,אבן יהודה,2003,25
+odata_all_cities,אבן יהודה,2004,39
+odata_all_cities,אבן יהודה,2005,40
+odata_all_cities,אבן יהודה,2006,57
+odata_all_cities,אבן יהודה,2007,74
+odata_all_cities,אבן יהודה,2008,87
+odata_all_cities,אבן יהודה,2009,97
+odata_all_cities,אבן יהודה,2010,106
+odata_all_cities,אבן יהודה,2011,58
+odata_all_cities,אבן יהודה,2012,77
+odata_all_cities,אבן יהודה,2013,86
+odata_all_cities,אבן יהודה,2014,77
+odata_all_cities,אבן יהודה,2015,92
+odata_all_cities,אבן יהודה,2016,78
+odata_all_cities,אבן יהודה,2017,66
+odata_all_cities,אבן יהודה,2018,59
+odata_all_cities,אבן יהודה,2019,85
+odata_all_cities,אבן יהודה,2020,90
+odata_all_cities,אבן יהודה,2021,161
+odata_all_cities,אבן יהודה,2022,78
+odata_all_cities,אבן יהודה,2023,41
+odata_all_cities,אבן יהודה,2024,28
+odata_all_cities,אבן ספיר,2022,3
+odata_all_cities,אבן ספיר,2023,2
+odata_all_cities,אדורה,2017,1
+odata_all_cities,אודים,2001,1
+odata_all_cities,אודים,2003,1
+odata_all_cities,אודים,2004,1
+odata_all_cities,אודים,2006,1
+odata_all_cities,אודים,2017,2
+odata_all_cities,אודים,2018,4
+odata_all_cities,אודים,2019,1
+odata_all_cities,אודים,2020,1
+odata_all_cities,אודים,2021,2
+odata_all_cities,אודים,2022,3
+odata_all_cities,אודים,2023,1
+odata_all_cities,אופקים,1998,21
+odata_all_cities,אופקים,1999,31
+odata_all_cities,אופקים,2000,22
+odata_all_cities,אופקים,2001,24
+odata_all_cities,אופקים,2002,25
+odata_all_cities,אופקים,2003,32
+odata_all_cities,אופקים,2004,20
+odata_all_cities,אופקים,2005,30
+odata_all_cities,אופקים,2006,23
+odata_all_cities,אופקים,2007,17
+odata_all_cities,אופקים,2008,20
+odata_all_cities,אופקים,2009,37
+odata_all_cities,אופקים,2010,116
+odata_all_cities,אופקים,2011,123
+odata_all_cities,אופקים,2012,119
+odata_all_cities,אופקים,2013,130
+odata_all_cities,אופקים,2014,173
+odata_all_cities,אופקים,2015,159
+odata_all_cities,אופקים,2016,270
+odata_all_cities,אופקים,2017,328
+odata_all_cities,אופקים,2018,355
+odata_all_cities,אופקים,2019,292
+odata_all_cities,אופקים,2020,251
+odata_all_cities,אופקים,2021,389
+odata_all_cities,אופקים,2022,320
+odata_all_cities,אופקים,2023,221
+odata_all_cities,אופקים,2024,137
+odata_all_cities,אור יהודה,1998,59
+odata_all_cities,אור יהודה,1999,46
+odata_all_cities,אור יהודה,2000,53
+odata_all_cities,אור יהודה,2001,75
+odata_all_cities,אור יהודה,2002,110
+odata_all_cities,אור יהודה,2003,80
+odata_all_cities,אור יהודה,2004,93
+odata_all_cities,אור יהודה,2005,81
+odata_all_cities,אור יהודה,2006,111
+odata_all_cities,אור יהודה,2007,218
+odata_all_cities,אור יהודה,2008,224
+odata_all_cities,אור יהודה,2009,198
+odata_all_cities,אור יהודה,2010,280
+odata_all_cities,אור יהודה,2011,182
+odata_all_cities,אור יהודה,2012,243
+odata_all_cities,אור יהודה,2013,304
+odata_all_cities,אור יהודה,2014,337
+odata_all_cities,אור יהודה,2015,348
+odata_all_cities,אור יהודה,2016,326
+odata_all_cities,אור יהודה,2017,264
+odata_all_cities,אור יהודה,2018,276
+odata_all_cities,אור יהודה,2019,279
+odata_all_cities,אור יהודה,2020,301
+odata_all_cities,אור יהודה,2021,453
+odata_all_cities,אור יהודה,2022,299
+odata_all_cities,אור יהודה,2023,185
+odata_all_cities,אור יהודה,2024,146
+odata_all_cities,אור עקיבא,1998,14
+odata_all_cities,אור עקיבא,1999,12
+odata_all_cities,אור עקיבא,2000,14
+odata_all_cities,אור עקיבא,2001,20
+odata_all_cities,אור עקיבא,2002,16
+odata_all_cities,אור עקיבא,2003,26
+odata_all_cities,אור עקיבא,2004,38
+odata_all_cities,אור עקיבא,2005,42
+odata_all_cities,אור עקיבא,2006,62
+odata_all_cities,אור עקיבא,2007,64
+odata_all_cities,אור עקיבא,2008,92
+odata_all_cities,אור עקיבא,2009,72
+odata_all_cities,אור עקיבא,2010,114
+odata_all_cities,אור עקיבא,2011,136
+odata_all_cities,אור עקיבא,2012,140
+odata_all_cities,אור עקיבא,2013,232
+odata_all_cities,אור עקיבא,2014,198
+odata_all_cities,אור עקיבא,2015,330
+odata_all_cities,אור עקיבא,2016,220
+odata_all_cities,אור עקיבא,2017,222
+odata_all_cities,אור עקיבא,2018,162
+odata_all_cities,אור עקיבא,2019,274
+odata_all_cities,אור עקיבא,2020,260
+odata_all_cities,אור עקיבא,2021,452
+odata_all_cities,אור עקיבא,2022,448
+odata_all_cities,אור עקיבא,2023,276
+odata_all_cities,אור עקיבא,2024,238
+odata_all_cities,אורה,2000,2
+odata_all_cities,אורה,2001,2
+odata_all_cities,אורה,2007,2
+odata_all_cities,אורה,2008,2
+odata_all_cities,אורה,2009,2
+odata_all_cities,אורה,2012,4
+odata_all_cities,אורה,2013,2
+odata_all_cities,אורה,2017,2
+odata_all_cities,אורה,2018,2
+odata_all_cities,אורה,2021,6
+odata_all_cities,אורה,2022,2
+odata_all_cities,אורנית,1998,2
+odata_all_cities,אורנית,1999,12
+odata_all_cities,אורנית,2000,24
+odata_all_cities,אורנית,2001,6
+odata_all_cities,אורנית,2002,12
+odata_all_cities,אורנית,2003,10
+odata_all_cities,אורנית,2004,30
+odata_all_cities,אורנית,2005,46
+odata_all_cities,אורנית,2006,48
+odata_all_cities,אורנית,2007,74
+odata_all_cities,אורנית,2008,78
+odata_all_cities,אורנית,2009,58
+odata_all_cities,אורנית,2010,44
+odata_all_cities,אורנית,2011,42
+odata_all_cities,אורנית,2012,62
+odata_all_cities,אורנית,2013,44
+odata_all_cities,אורנית,2014,40
+odata_all_cities,אורנית,2015,54
+odata_all_cities,אורנית,2016,44
+odata_all_cities,אורנית,2017,78
+odata_all_cities,אורנית,2018,40
+odata_all_cities,אורנית,2019,52
+odata_all_cities,אורנית,2020,46
+odata_all_cities,אורנית,2021,70
+odata_all_cities,אורנית,2022,52
+odata_all_cities,אורנית,2023,18
+odata_all_cities,אורנית,2024,10
+odata_all_cities,אזור,1998,36
+odata_all_cities,אזור,1999,92
+odata_all_cities,אזור,2000,54
+odata_all_cities,אזור,2001,50
+odata_all_cities,אזור,2002,64
+odata_all_cities,אזור,2003,72
+odata_all_cities,אזור,2004,72
+odata_all_cities,אזור,2005,62
+odata_all_cities,אזור,2006,122
+odata_all_cities,אזור,2007,156
+odata_all_cities,אזור,2008,164
+odata_all_cities,אזור,2009,116
+odata_all_cities,אזור,2010,96
+odata_all_cities,אזור,2011,48
+odata_all_cities,אזור,2012,84
+odata_all_cities,אזור,2013,78
+odata_all_cities,אזור,2014,108
+odata_all_cities,אזור,2015,130
+odata_all_cities,אזור,2016,120
+odata_all_cities,אזור,2017,130
+odata_all_cities,אזור,2018,178
+odata_all_cities,אזור,2019,160
+odata_all_cities,אזור,2020,146
+odata_all_cities,אזור,2021,230
+odata_all_cities,אזור,2022,126
+odata_all_cities,אזור,2023,98
+odata_all_cities,אזור,2024,76
+odata_all_cities,אחווה,1998,2
+odata_all_cities,אחווה,2002,2
+odata_all_cities,אחווה,2004,2
+odata_all_cities,אחווה,2005,2
+odata_all_cities,אחווה,2006,2
+odata_all_cities,אחווה,2008,4
+odata_all_cities,אחווה,2009,2
+odata_all_cities,אחווה,2012,6
+odata_all_cities,אחווה,2013,4
+odata_all_cities,אחווה,2015,2
+odata_all_cities,אחווה,2016,8
+odata_all_cities,אחווה,2017,8
+odata_all_cities,אחווה,2018,2
+odata_all_cities,אחווה,2019,2
+odata_all_cities,אחווה,2021,4
+odata_all_cities,אחווה,2023,2
+odata_all_cities,אחווה,2024,2
+odata_all_cities,אחוזת ברק,1998,48
+odata_all_cities,אחוזת ברק,1999,16
+odata_all_cities,אחוזת ברק,2000,32
+odata_all_cities,אחוזת ברק,2001,10
+odata_all_cities,אחוזת ברק,2002,24
+odata_all_cities,אחוזת ברק,2003,16
+odata_all_cities,אחוזת ברק,2004,16
+odata_all_cities,אחוזת ברק,2005,22
+odata_all_cities,אחוזת ברק,2006,20
+odata_all_cities,אחוזת ברק,2007,26
+odata_all_cities,אחוזת ברק,2008,50
+odata_all_cities,אחוזת ברק,2009,134
+odata_all_cities,אחוזת ברק,2010,118
+odata_all_cities,אחוזת ברק,2011,82
+odata_all_cities,אחוזת ברק,2012,96
+odata_all_cities,אחוזת ברק,2013,36
+odata_all_cities,אחוזת ברק,2014,30
+odata_all_cities,אחוזת ברק,2015,14
+odata_all_cities,אחוזת ברק,2016,22
+odata_all_cities,אחוזת ברק,2017,18
+odata_all_cities,אחוזת ברק,2018,34
+odata_all_cities,אחוזת ברק,2019,32
+odata_all_cities,אחוזת ברק,2020,32
+odata_all_cities,אחוזת ברק,2021,54
+odata_all_cities,אחוזת ברק,2022,28
+odata_all_cities,אחוזת ברק,2023,12
+odata_all_cities,אחוזת ברק,2024,12
+odata_all_cities,אחיטוב,2002,2
+odata_all_cities,אחיטוב,2010,2
+odata_all_cities,אחיטוב,2013,2
+odata_all_cities,אחיטוב,2016,4
+odata_all_cities,אחיטוב,2017,2
+odata_all_cities,אחיטוב,2018,4
+odata_all_cities,אחיטוב,2019,4
+odata_all_cities,אחיטוב,2020,4
+odata_all_cities,אחיטוב,2021,4
+odata_all_cities,אחיטוב,2022,2
+odata_all_cities,אחיטוב,2023,2
+odata_all_cities,אחיסמך,2014,2
+odata_all_cities,אחיסמך,2016,2
+odata_all_cities,אחיסמך,2022,2
+odata_all_cities,אחיסמך,2023,2
+odata_all_cities,אילת,1998,159
+odata_all_cities,אילת,1999,197
+odata_all_cities,אילת,2000,140
+odata_all_cities,אילת,2001,183
+odata_all_cities,אילת,2002,117
+odata_all_cities,אילת,2003,192
+odata_all_cities,אילת,2004,202
+odata_all_cities,אילת,2005,203
+odata_all_cities,אילת,2006,193
+odata_all_cities,אילת,2007,344
+odata_all_cities,אילת,2008,330
+odata_all_cities,אילת,2009,434
+odata_all_cities,אילת,2010,663
+odata_all_cities,אילת,2011,654
+odata_all_cities,אילת,2012,990
+odata_all_cities,אילת,2013,794
+odata_all_cities,אילת,2014,853
+odata_all_cities,אילת,2015,1025
+odata_all_cities,אילת,2016,918
+odata_all_cities,אילת,2017,756
+odata_all_cities,אילת,2018,770
+odata_all_cities,אילת,2019,923
+odata_all_cities,אילת,2020,852
+odata_all_cities,אילת,2021,1379
+odata_all_cities,אילת,2022,1076
+odata_all_cities,אילת,2023,633
+odata_all_cities,אילת,2024,428
+odata_all_cities,אשדוד,1998,867
+odata_all_cities,אשדוד,1999,1096
+odata_all_cities,אשדוד,2000,656
+odata_all_cities,אשדוד,2001,673
+odata_all_cities,אשדוד,2002,758
+odata_all_cities,אשדוד,2003,756
+odata_all_cities,אשדוד,2004,756
+odata_all_cities,אשדוד,2005,517
+odata_all_cities,אשדוד,2006,684
+odata_all_cities,אשדוד,2007,1662
+odata_all_cities,אשדוד,2008,1861
+odata_all_cities,אשדוד,2009,2061
+odata_all_cities,אשדוד,2010,2257
+odata_all_cities,אשדוד,2011,1934
+odata_all_cities,אשדוד,2012,2222
+odata_all_cities,אשדוד,2013,2465
+odata_all_cities,אשדוד,2014,2485
+odata_all_cities,אשדוד,2015,3010
+odata_all_cities,אשדוד,2016,2524
+odata_all_cities,אשדוד,2017,2100
+odata_all_cities,אשדוד,2018,2612
+odata_all_cities,אשדוד,2019,2810
+odata_all_cities,אשדוד,2020,3062
+odata_all_cities,אשדוד,2021,4481
+odata_all_cities,אשדוד,2022,3734
+odata_all_cities,אשדוד,2023,2009
+odata_all_cities,אשדוד,2024,1573
+odata_all_cities,אשקלון,1998,153
+odata_all_cities,אשקלון,1999,207
+odata_all_cities,אשקלון,2000,207
+odata_all_cities,אשקלון,2001,202
+odata_all_cities,אשקלון,2002,243
+odata_all_cities,אשקלון,2003,204
+odata_all_cities,אשקלון,2004,239
+odata_all_cities,אשקלון,2005,199
+odata_all_cities,אשקלון,2006,194
+odata_all_cities,אשקלון,2007,431
+odata_all_cities,אשקלון,2008,456
+odata_all_cities,אשקלון,2009,709
+odata_all_cities,אשקלון,2010,975
+odata_all_cities,אשקלון,2011,914
+odata_all_cities,אשקלון,2012,1135
+odata_all_cities,אשקלון,2013,1409
+odata_all_cities,אשקלון,2014,1405
+odata_all_cities,אשקלון,2015,1607
+odata_all_cities,אשקלון,2016,1439
+odata_all_cities,אשקלון,2017,1129
+odata_all_cities,אשקלון,2018,1057
+odata_all_cities,אשקלון,2019,1153
+odata_all_cities,אשקלון,2020,1210
+odata_all_cities,אשקלון,2021,2253
+odata_all_cities,אשקלון,2022,1623
+odata_all_cities,אשקלון,2023,1173
+odata_all_cities,אשקלון,2024,850
+odata_all_cities,באר אורה,2002,2
+odata_all_cities,באר אורה,2004,8
+odata_all_cities,באר אורה,2005,3
+odata_all_cities,באר אורה,2006,1
+odata_all_cities,באר אורה,2007,5
+odata_all_cities,באר אורה,2008,6
+odata_all_cities,באר אורה,2009,13
+odata_all_cities,באר אורה,2011,1
+odata_all_cities,באר אורה,2012,1
+odata_all_cities,באר אורה,2013,3
+odata_all_cities,באר אורה,2014,7
+odata_all_cities,באר אורה,2015,6
+odata_all_cities,באר אורה,2016,17
+odata_all_cities,באר אורה,2017,9
+odata_all_cities,באר אורה,2018,10
+odata_all_cities,באר אורה,2019,7
+odata_all_cities,באר אורה,2020,11
+odata_all_cities,באר אורה,2021,10
+odata_all_cities,באר אורה,2022,6
+odata_all_cities,באר אורה,2023,4
+odata_all_cities,באר גנים,2018,2
+odata_all_cities,באר גנים,2019,2
+odata_all_cities,באר גנים,2020,4
+odata_all_cities,באר גנים,2021,14
+odata_all_cities,באר גנים,2022,5
+odata_all_cities,באר גנים,2023,1
+odata_all_cities,באר גנים,2024,5
+odata_all_cities,באר יעקב,1999,2
+odata_all_cities,באר יעקב,2001,1
+odata_all_cities,באר יעקב,2004,1
+odata_all_cities,באר יעקב,2005,1
+odata_all_cities,באר יעקב,2006,1
+odata_all_cities,באר יעקב,2007,4
+odata_all_cities,באר יעקב,2008,31
+odata_all_cities,באר יעקב,2009,43
+odata_all_cities,באר יעקב,2010,51
+odata_all_cities,באר יעקב,2011,9
+odata_all_cities,באר יעקב,2012,2
+odata_all_cities,באר יעקב,2013,5
+odata_all_cities,באר יעקב,2014,44
+odata_all_cities,באר יעקב,2015,63
+odata_all_cities,באר יעקב,2016,11
+odata_all_cities,באר יעקב,2017,8
+odata_all_cities,באר יעקב,2018,19
+odata_all_cities,באר יעקב,2019,24
+odata_all_cities,באר יעקב,2020,24
+odata_all_cities,באר יעקב,2021,48
+odata_all_cities,באר יעקב,2022,37
+odata_all_cities,באר יעקב,2023,13
+odata_all_cities,באר יעקב,2024,12
+odata_all_cities,באר שבע,1998,436
+odata_all_cities,באר שבע,1999,446
+odata_all_cities,באר שבע,2000,346
+odata_all_cities,באר שבע,2001,556
+odata_all_cities,באר שבע,2002,502
+odata_all_cities,באר שבע,2003,491
+odata_all_cities,באר שבע,2004,397
+odata_all_cities,באר שבע,2005,275
+odata_all_cities,באר שבע,2006,232
+odata_all_cities,באר שבע,2007,429
+odata_all_cities,באר שבע,2008,598
+odata_all_cities,באר שבע,2009,602
+odata_all_cities,באר שבע,2010,1182
+odata_all_cities,באר שבע,2011,1200
+odata_all_cities,באר שבע,2012,1754
+odata_all_cities,באר שבע,2013,1986
+odata_all_cities,באר שבע,2014,1652
+odata_all_cities,באר שבע,2015,2102
+odata_all_cities,באר שבע,2016,2296
+odata_all_cities,באר שבע,2017,1910
+odata_all_cities,באר שבע,2018,1858
+odata_all_cities,באר שבע,2019,1972
+odata_all_cities,באר שבע,2020,2044
+odata_all_cities,באר שבע,2021,3160
+odata_all_cities,באר שבע,2022,3174
+odata_all_cities,באר שבע,2023,2143
+odata_all_cities,באר שבע,2024,1722
+odata_all_cities,בארותיים,2020,1
+odata_all_cities,בארותיים,2021,1
+odata_all_cities,בארותיים,2023,1
+odata_all_cities,בוסתן הגליל,1998,1
+odata_all_cities,בוסתן הגליל,2001,1
+odata_all_cities,בוסתן הגליל,2002,1
+odata_all_cities,בוסתן הגליל,2005,2
+odata_all_cities,בוסתן הגליל,2008,1
+odata_all_cities,בוסתן הגליל,2009,1
+odata_all_cities,בוסתן הגליל,2010,1
+odata_all_cities,בוסתן הגליל,2011,1
+odata_all_cities,בוסתן הגליל,2012,1
+odata_all_cities,בוסתן הגליל,2016,1
+odata_all_cities,בוסתן הגליל,2021,3
+odata_all_cities,בוסתן הגליל,2022,2
+odata_all_cities,בוסתן הגליל,2023,1
+odata_all_cities,בורגתה,2009,1
+odata_all_cities,בורגתה,2022,2
+odata_all_cities,בורגתה,2024,1
+odata_all_cities,בחן,2009,1
+odata_all_cities,בחן,2010,1
+odata_all_cities,בחן,2011,3
+odata_all_cities,בחן,2013,2
+odata_all_cities,בחן,2014,3
+odata_all_cities,בחן,2015,3
+odata_all_cities,בחן,2016,5
+odata_all_cities,בחן,2017,3
+odata_all_cities,בחן,2018,1
+odata_all_cities,בחן,2019,5
+odata_all_cities,בחן,2020,5
+odata_all_cities,בחן,2021,2
+odata_all_cities,בחן,2022,4
+odata_all_cities,בחן,2023,1
+odata_all_cities,בית אל,2009,2
+odata_all_cities,בית אל,2013,2
+odata_all_cities,בית אל,2014,2
+odata_all_cities,בית אל,2016,3
+odata_all_cities,בית אל,2017,1
+odata_all_cities,בית אל,2018,8
+odata_all_cities,בית אל,2019,5
+odata_all_cities,בית אל,2020,1
+odata_all_cities,בית אל,2021,1
+odata_all_cities,בית אל,2022,2
+odata_all_cities,בית אלעזרי,2007,1
+odata_all_cities,בית אלעזרי,2009,1
+odata_all_cities,בית אלעזרי,2011,1
+odata_all_cities,בית אלעזרי,2012,1
+odata_all_cities,בית אלעזרי,2013,1
+odata_all_cities,בית אלעזרי,2014,2
+odata_all_cities,בית אלעזרי,2015,2
+odata_all_cities,בית אלעזרי,2017,2
+odata_all_cities,בית אלעזרי,2018,2
+odata_all_cities,בית אלעזרי,2019,2
+odata_all_cities,בית אלעזרי,2020,1
+odata_all_cities,בית אלעזרי,2021,2
+odata_all_cities,בית אלעזרי,2022,1
+odata_all_cities,בית אלעזרי,2023,1
+odata_all_cities,בית אלעזרי,2024,1
+odata_all_cities,בית אלפא,2016,18
+odata_all_cities,בית אלפא,2017,12
+odata_all_cities,בית אלפא,2019,6
+odata_all_cities,בית אלפא,2020,3
+odata_all_cities,בית אלפא,2021,1
+odata_all_cities,בית אלפא,2022,3
+odata_all_cities,בית אלפא,2023,4
+odata_all_cities,בית אלפא,2024,2
+odata_all_cities,בית אריה,2000,1
+odata_all_cities,בית אריה,2007,1
+odata_all_cities,בית אריה,2008,2
+odata_all_cities,בית אריה,2009,1
+odata_all_cities,בית אריה,2012,3
+odata_all_cities,בית אריה,2013,2
+odata_all_cities,בית אריה,2014,4
+odata_all_cities,בית אריה,2015,3
+odata_all_cities,בית אריה,2016,2
+odata_all_cities,בית אריה,2017,12
+odata_all_cities,בית אריה,2018,14
+odata_all_cities,בית אריה,2019,13
+odata_all_cities,בית אריה,2020,13
+odata_all_cities,בית אריה,2021,25
+odata_all_cities,בית אריה,2022,25
+odata_all_cities,בית אריה,2023,10
+odata_all_cities,בית אריה,2024,12
+odata_all_cities,בית ג'ן,1999,1
+odata_all_cities,בית ג'ן,2001,2
+odata_all_cities,בית ג'ן,2002,2
+odata_all_cities,בית ג'ן,2003,2
+odata_all_cities,בית ג'ן,2004,2
+odata_all_cities,בית ג'ן,2005,1
+odata_all_cities,בית ג'ן,2006,1
+odata_all_cities,בית ג'ן,2008,1
+odata_all_cities,בית ג'ן,2009,2
+odata_all_cities,בית ג'ן,2010,2
+odata_all_cities,בית ג'ן,2011,1
+odata_all_cities,בית ג'ן,2012,1
+odata_all_cities,בית ג'ן,2013,2
+odata_all_cities,בית ג'ן,2014,1
+odata_all_cities,בית ג'ן,2016,2
+odata_all_cities,בית ג'ן,2017,1
+odata_all_cities,בית ג'ן,2018,7
+odata_all_cities,בית ג'ן,2019,7
+odata_all_cities,בית ג'ן,2020,10
+odata_all_cities,בית ג'ן,2021,17
+odata_all_cities,בית ג'ן,2022,23
+odata_all_cities,בית ג'ן,2023,19
+odata_all_cities,בית ג'ן,2024,9
+odata_all_cities,בית דגן,1998,3
+odata_all_cities,בית דגן,1999,10
+odata_all_cities,בית דגן,2000,4
+odata_all_cities,בית דגן,2001,13
+odata_all_cities,בית דגן,2002,21
+odata_all_cities,בית דגן,2003,11
+odata_all_cities,בית דגן,2004,18
+odata_all_cities,בית דגן,2005,12
+odata_all_cities,בית דגן,2006,19
+odata_all_cities,בית דגן,2007,18
+odata_all_cities,בית דגן,2008,23
+odata_all_cities,בית דגן,2009,24
+odata_all_cities,בית דגן,2010,24
+odata_all_cities,בית דגן,2011,16
+odata_all_cities,בית דגן,2012,18
+odata_all_cities,בית דגן,2013,23
+odata_all_cities,בית דגן,2014,31
+odata_all_cities,בית דגן,2015,28
+odata_all_cities,בית דגן,2016,28
+odata_all_cities,בית דגן,2017,33
+odata_all_cities,בית דגן,2018,22
+odata_all_cities,בית דגן,2019,24
+odata_all_cities,בית דגן,2020,35
+odata_all_cities,בית דגן,2021,42
+odata_all_cities,בית דגן,2022,41
+odata_all_cities,בית דגן,2023,20
+odata_all_cities,בית דגן,2024,11
+odata_all_cities,בית זית,2000,1
+odata_all_cities,בית זית,2001,1
+odata_all_cities,בית זית,2002,3
+odata_all_cities,בית זית,2003,1
+odata_all_cities,בית זית,2004,1
+odata_all_cities,בית זית,2008,2
+odata_all_cities,בית זית,2009,2
+odata_all_cities,בית זית,2012,1
+odata_all_cities,בית זית,2013,2
+odata_all_cities,בית זית,2014,2
+odata_all_cities,בית זית,2015,1
+odata_all_cities,בית זית,2016,1
+odata_all_cities,בית זית,2018,2
+odata_all_cities,בית זית,2020,1
+odata_all_cities,בית זית,2021,3
+odata_all_cities,בית זית,2022,3
+odata_all_cities,בית זית,2023,5
+odata_all_cities,בית חירות,2021,1
+odata_all_cities,בית חירות,2022,1
+odata_all_cities,בית חירות,2024,1
+odata_all_cities,בית חנן,2023,1
+odata_all_cities,בית חשמונאי,2006,1
+odata_all_cities,בית חשמונאי,2007,3
+odata_all_cities,בית חשמונאי,2008,2
+odata_all_cities,בית חשמונאי,2009,1
+odata_all_cities,בית חשמונאי,2010,4
+odata_all_cities,בית חשמונאי,2011,3
+odata_all_cities,בית חשמונאי,2012,2
+odata_all_cities,בית חשמונאי,2013,4
+odata_all_cities,בית חשמונאי,2014,7
+odata_all_cities,בית חשמונאי,2015,4
+odata_all_cities,בית חשמונאי,2016,2
+odata_all_cities,בית חשמונאי,2017,1
+odata_all_cities,בית חשמונאי,2018,4
+odata_all_cities,בית חשמונאי,2019,5
+odata_all_cities,בית חשמונאי,2020,6
+odata_all_cities,בית חשמונאי,2021,6
+odata_all_cities,בית חשמונאי,2022,3
+odata_all_cities,בית חשמונאי,2023,3
+odata_all_cities,בית חשמונאי,2024,1
+odata_all_cities,בית יהושע,2006,1
+odata_all_cities,בית יהושע,2007,1
+odata_all_cities,בית יהושע,2008,1
+odata_all_cities,בית יהושע,2021,1
+odata_all_cities,בית יהושע,2023,1
+odata_all_cities,בית ינאי,2001,1
+odata_all_cities,בית ינאי,2006,1
+odata_all_cities,בית ינאי,2008,1
+odata_all_cities,בית ינאי,2010,1
+odata_all_cities,בית ינאי,2012,1
+odata_all_cities,בית ינאי,2013,3
+odata_all_cities,בית ינאי,2020,1
+odata_all_cities,בית ינאי,2021,5
+odata_all_cities,בית ינאי,2022,2
+odata_all_cities,בית ינאי,2023,2
+odata_all_cities,בית יצחק-שער חפר,2000,1
+odata_all_cities,בית יצחק-שער חפר,2005,1
+odata_all_cities,בית יצחק-שער חפר,2006,1
+odata_all_cities,בית יצחק-שער חפר,2008,1
+odata_all_cities,בית יצחק-שער חפר,2010,1
+odata_all_cities,בית יצחק-שער חפר,2012,1
+odata_all_cities,בית יצחק-שער חפר,2013,5
+odata_all_cities,בית יצחק-שער חפר,2014,4
+odata_all_cities,בית יצחק-שער חפר,2015,1
+odata_all_cities,בית יצחק-שער חפר,2016,5
+odata_all_cities,בית יצחק-שער חפר,2017,3
+odata_all_cities,בית יצחק-שער חפר,2018,5
+odata_all_cities,בית יצחק-שער חפר,2019,1
+odata_all_cities,בית יצחק-שער חפר,2020,2
+odata_all_cities,בית יצחק-שער חפר,2021,8
+odata_all_cities,בית יצחק-שער חפר,2022,8
+odata_all_cities,בית יצחק-שער חפר,2023,5
+odata_all_cities,בית נחמיה,2007,2
+odata_all_cities,בית נחמיה,2008,1
+odata_all_cities,בית נחמיה,2009,1
+odata_all_cities,בית נחמיה,2012,1
+odata_all_cities,בית נחמיה,2013,1
+odata_all_cities,בית נחמיה,2014,1
+odata_all_cities,בית נחמיה,2015,3
+odata_all_cities,בית נחמיה,2016,2
+odata_all_cities,בית נחמיה,2018,2
+odata_all_cities,בית נחמיה,2021,2
+odata_all_cities,בית נחמיה,2022,1
+odata_all_cities,בית שאן,1998,22
+odata_all_cities,בית שאן,1999,29
+odata_all_cities,בית שאן,2000,20
+odata_all_cities,בית שאן,2001,36
+odata_all_cities,בית שאן,2002,30
+odata_all_cities,בית שאן,2003,25
+odata_all_cities,בית שאן,2004,25
+odata_all_cities,בית שאן,2005,20
+odata_all_cities,בית שאן,2006,33
+odata_all_cities,בית שאן,2007,36
+odata_all_cities,בית שאן,2008,42
+odata_all_cities,בית שאן,2009,39
+odata_all_cities,בית שאן,2010,47
+odata_all_cities,בית שאן,2011,48
+odata_all_cities,בית שאן,2012,50
+odata_all_cities,בית שאן,2013,49
+odata_all_cities,בית שאן,2014,65
+odata_all_cities,בית שאן,2015,152
+odata_all_cities,בית שאן,2016,197
+odata_all_cities,בית שאן,2017,151
+odata_all_cities,בית שאן,2018,136
+odata_all_cities,בית שאן,2019,90
+odata_all_cities,בית שאן,2020,112
+odata_all_cities,בית שאן,2021,162
+odata_all_cities,בית שאן,2022,235
+odata_all_cities,בית שאן,2023,192
+odata_all_cities,בית שאן,2024,56
+odata_all_cities,בית שמש,1998,78
+odata_all_cities,בית שמש,1999,152
+odata_all_cities,בית שמש,2000,123
+odata_all_cities,בית שמש,2001,151
+odata_all_cities,בית שמש,2002,166
+odata_all_cities,בית שמש,2003,214
+odata_all_cities,בית שמש,2004,195
+odata_all_cities,בית שמש,2005,164
+odata_all_cities,בית שמש,2006,116
+odata_all_cities,בית שמש,2007,331
+odata_all_cities,בית שמש,2008,363
+odata_all_cities,בית שמש,2009,434
+odata_all_cities,בית שמש,2010,466
+odata_all_cities,בית שמש,2011,549
+odata_all_cities,בית שמש,2012,617
+odata_all_cities,בית שמש,2013,605
+odata_all_cities,בית שמש,2014,602
+odata_all_cities,בית שמש,2015,641
+odata_all_cities,בית שמש,2016,674
+odata_all_cities,בית שמש,2017,612
+odata_all_cities,בית שמש,2018,615
+odata_all_cities,בית שמש,2019,1123
+odata_all_cities,בית שמש,2020,1109
+odata_all_cities,בית שמש,2021,1288
+odata_all_cities,בית שמש,2022,829
+odata_all_cities,בית שמש,2023,549
+odata_all_cities,בית שמש,2024,383
+odata_all_cities,בית שערים,2001,1
+odata_all_cities,בית שערים,2007,1
+odata_all_cities,בית שערים,2008,1
+odata_all_cities,בית שערים,2009,1
+odata_all_cities,בית שערים,2010,1
+odata_all_cities,בית שערים,2011,1
+odata_all_cities,בית שערים,2017,1
+odata_all_cities,בית שערים,2018,2
+odata_all_cities,בית שערים,2021,1
+odata_all_cities,ביתן אהרן,2015,1
+odata_all_cities,ביתר עילית,1998,23
+odata_all_cities,ביתר עילית,1999,24
+odata_all_cities,ביתר עילית,2000,9
+odata_all_cities,ביתר עילית,2001,10
+odata_all_cities,ביתר עילית,2002,15
+odata_all_cities,ביתר עילית,2003,18
+odata_all_cities,ביתר עילית,2004,22
+odata_all_cities,ביתר עילית,2005,39
+odata_all_cities,ביתר עילית,2006,45
+odata_all_cities,ביתר עילית,2007,159
+odata_all_cities,ביתר עילית,2008,150
+odata_all_cities,ביתר עילית,2009,130
+odata_all_cities,ביתר עילית,2010,122
+odata_all_cities,ביתר עילית,2011,145
+odata_all_cities,ביתר עילית,2012,180
+odata_all_cities,ביתר עילית,2013,242
+odata_all_cities,ביתר עילית,2014,180
+odata_all_cities,ביתר עילית,2015,175
+odata_all_cities,ביתר עילית,2016,227
+odata_all_cities,ביתר עילית,2017,202
+odata_all_cities,ביתר עילית,2018,243
+odata_all_cities,ביתר עילית,2019,240
+odata_all_cities,ביתר עילית,2020,182
+odata_all_cities,ביתר עילית,2021,295
+odata_all_cities,ביתר עילית,2022,166
+odata_all_cities,ביתר עילית,2023,109
+odata_all_cities,ביתר עילית,2024,86
+odata_all_cities,בלפוריה,2012,1
+odata_all_cities,בלפוריה,2014,1
+odata_all_cities,בלפוריה,2016,1
+odata_all_cities,בלפוריה,2021,1
+odata_all_cities,בלפוריה,2022,3
+odata_all_cities,בלפוריה,2023,3
+odata_all_cities,בני ברק,1998,443
+odata_all_cities,בני ברק,1999,523
+odata_all_cities,בני ברק,2000,452
+odata_all_cities,בני ברק,2001,590
+odata_all_cities,בני ברק,2002,688
+odata_all_cities,בני ברק,2003,767
+odata_all_cities,בני ברק,2004,769
+odata_all_cities,בני ברק,2005,857
+odata_all_cities,בני ברק,2006,687
+odata_all_cities,בני ברק,2007,914
+odata_all_cities,בני ברק,2008,907
+odata_all_cities,בני ברק,2009,896
+odata_all_cities,בני ברק,2010,964
+odata_all_cities,בני ברק,2011,918
+odata_all_cities,בני ברק,2012,1009
+odata_all_cities,בני ברק,2013,1275
+odata_all_cities,בני ברק,2014,1149
+odata_all_cities,בני ברק,2015,1268
+odata_all_cities,בני ברק,2016,1331
+odata_all_cities,בני ברק,2017,1231
+odata_all_cities,בני ברק,2018,1412
+odata_all_cities,בני ברק,2019,1295
+odata_all_cities,בני ברק,2020,1313
+odata_all_cities,בני ברק,2021,1829
+odata_all_cities,בני ברק,2022,1872
+odata_all_cities,בני ברק,2023,1326
+odata_all_cities,בני ברק,2024,907
+odata_all_cities,בני דקלים,2018,2
+odata_all_cities,בני דקלים,2019,6
+odata_all_cities,בני דקלים,2021,6
+odata_all_cities,בני דקלים,2022,2
+odata_all_cities,בני דרור,2002,2
+odata_all_cities,בני דרור,2003,2
+odata_all_cities,בני דרור,2005,2
+odata_all_cities,בני דרור,2006,2
+odata_all_cities,בני דרור,2007,4
+odata_all_cities,בני דרור,2009,4
+odata_all_cities,בני דרור,2011,2
+odata_all_cities,בני דרור,2012,4
+odata_all_cities,בני דרור,2013,2
+odata_all_cities,בני דרור,2015,2
+odata_all_cities,בני דרור,2017,4
+odata_all_cities,בני דרור,2018,2
+odata_all_cities,בני דרור,2019,6
+odata_all_cities,בני דרור,2020,6
+odata_all_cities,בני דרור,2021,8
+odata_all_cities,בני דרור,2022,10
+odata_all_cities,בני דרור,2023,2
+odata_all_cities,בני עטרות,2002,2
+odata_all_cities,בני עטרות,2004,6
+odata_all_cities,בני עטרות,2005,4
+odata_all_cities,בני עטרות,2006,2
+odata_all_cities,בני עטרות,2008,4
+odata_all_cities,בני עטרות,2009,4
+odata_all_cities,בני עטרות,2010,6
+odata_all_cities,בני עטרות,2011,6
+odata_all_cities,בני עטרות,2012,2
+odata_all_cities,בני עטרות,2013,4
+odata_all_cities,בני עטרות,2017,2
+odata_all_cities,בני עטרות,2018,4
+odata_all_cities,"בני עי""ש",1998,20
+odata_all_cities,"בני עי""ש",1999,28
+odata_all_cities,"בני עי""ש",2000,26
+odata_all_cities,"בני עי""ש",2001,32
+odata_all_cities,"בני עי""ש",2002,30
+odata_all_cities,"בני עי""ש",2003,30
+odata_all_cities,"בני עי""ש",2004,28
+odata_all_cities,"בני עי""ש",2005,22
+odata_all_cities,"בני עי""ש",2006,12
+odata_all_cities,"בני עי""ש",2007,70
+odata_all_cities,"בני עי""ש",2008,60
+odata_all_cities,"בני עי""ש",2009,72
+odata_all_cities,"בני עי""ש",2010,62
+odata_all_cities,"בני עי""ש",2011,48
+odata_all_cities,"בני עי""ש",2012,80
+odata_all_cities,"בני עי""ש",2013,92
+odata_all_cities,"בני עי""ש",2014,78
+odata_all_cities,"בני עי""ש",2015,96
+odata_all_cities,"בני עי""ש",2016,90
+odata_all_cities,"בני עי""ש",2017,58
+odata_all_cities,"בני עי""ש",2018,64
+odata_all_cities,"בני עי""ש",2019,92
+odata_all_cities,"בני עי""ש",2020,64
+odata_all_cities,"בני עי""ש",2021,104
+odata_all_cities,"בני עי""ש",2022,110
+odata_all_cities,"בני עי""ש",2023,80
+odata_all_cities,"בני עי""ש",2024,56
+odata_all_cities,בני ציון,2000,4
+odata_all_cities,בני ציון,2001,2
+odata_all_cities,בני ציון,2002,4
+odata_all_cities,בני ציון,2004,2
+odata_all_cities,בני ציון,2005,6
+odata_all_cities,בני ציון,2006,10
+odata_all_cities,בני ציון,2007,18
+odata_all_cities,בני ציון,2008,4
+odata_all_cities,בני ציון,2009,8
+odata_all_cities,בני ציון,2010,8
+odata_all_cities,בני ציון,2011,10
+odata_all_cities,בני ציון,2012,2
+odata_all_cities,בני ציון,2013,2
+odata_all_cities,בני ציון,2014,6
+odata_all_cities,בני ציון,2015,4
+odata_all_cities,בני ציון,2016,8
+odata_all_cities,בני ציון,2018,14
+odata_all_cities,בני ציון,2019,6
+odata_all_cities,בני ציון,2020,10
+odata_all_cities,בני ציון,2021,12
+odata_all_cities,בני ציון,2022,4
+odata_all_cities,בני ציון,2023,10
+odata_all_cities,בני ציון,2024,2
+odata_all_cities,בנימינה-גבעת עדה,1998,36
+odata_all_cities,בנימינה-גבעת עדה,1999,54
+odata_all_cities,בנימינה-גבעת עדה,2000,68
+odata_all_cities,בנימינה-גבעת עדה,2001,82
+odata_all_cities,בנימינה-גבעת עדה,2002,64
+odata_all_cities,בנימינה-גבעת עדה,2003,72
+odata_all_cities,בנימינה-גבעת עדה,2004,100
+odata_all_cities,בנימינה-גבעת עדה,2005,142
+odata_all_cities,בנימינה-גבעת עדה,2006,126
+odata_all_cities,בנימינה-גבעת עדה,2007,144
+odata_all_cities,בנימינה-גבעת עדה,2008,112
+odata_all_cities,בנימינה-גבעת עדה,2009,154
+odata_all_cities,בנימינה-גבעת עדה,2010,166
+odata_all_cities,בנימינה-גבעת עדה,2011,74
+odata_all_cities,בנימינה-גבעת עדה,2012,84
+odata_all_cities,בנימינה-גבעת עדה,2013,122
+odata_all_cities,בנימינה-גבעת עדה,2014,140
+odata_all_cities,בנימינה-גבעת עדה,2015,178
+odata_all_cities,בנימינה-גבעת עדה,2016,188
+odata_all_cities,בנימינה-גבעת עדה,2017,168
+odata_all_cities,בנימינה-גבעת עדה,2018,132
+odata_all_cities,בנימינה-גבעת עדה,2019,192
+odata_all_cities,בנימינה-גבעת עדה,2020,180
+odata_all_cities,בנימינה-גבעת עדה,2021,222
+odata_all_cities,בנימינה-גבעת עדה,2022,228
+odata_all_cities,בנימינה-גבעת עדה,2023,132
+odata_all_cities,בנימינה-גבעת עדה,2024,100
+odata_all_cities,בסמת טבעון,2006,4
+odata_all_cities,בסמת טבעון,2008,4
+odata_all_cities,בסמת טבעון,2009,2
+odata_all_cities,בסמת טבעון,2010,2
+odata_all_cities,בסמת טבעון,2011,2
+odata_all_cities,בסמת טבעון,2012,6
+odata_all_cities,בסמת טבעון,2013,2
+odata_all_cities,בסמת טבעון,2017,2
+odata_all_cities,בסמת טבעון,2018,6
+odata_all_cities,בסמת טבעון,2019,4
+odata_all_cities,בסמת טבעון,2020,6
+odata_all_cities,בסמת טבעון,2021,10
+odata_all_cities,בסמת טבעון,2023,4
+odata_all_cities,בסמת טבעון,2024,2
+odata_all_cities,בר גיורא,2012,2
+odata_all_cities,בר גיורא,2018,4
+odata_all_cities,בר גיורא,2020,2
+odata_all_cities,בר גיורא,2021,4
+odata_all_cities,בר גיורא,2023,2
+odata_all_cities,בת חן,2002,4
+odata_all_cities,בת חן,2003,4
+odata_all_cities,בת חן,2004,2
+odata_all_cities,בת חן,2006,12
+odata_all_cities,בת חן,2007,10
+odata_all_cities,בת חן,2008,4
+odata_all_cities,בת חן,2009,8
+odata_all_cities,בת חן,2010,2
+odata_all_cities,בת חן,2011,4
+odata_all_cities,בת חן,2013,2
+odata_all_cities,בת חן,2014,4
+odata_all_cities,בת חן,2015,6
+odata_all_cities,בת חן,2016,6
+odata_all_cities,בת חן,2017,2
+odata_all_cities,בת חן,2018,2
+odata_all_cities,בת חן,2019,2
+odata_all_cities,בת חן,2020,2
+odata_all_cities,בת חן,2021,10
+odata_all_cities,בת חפר,1999,2
+odata_all_cities,בת חפר,2005,4
+odata_all_cities,בת חפר,2006,16
+odata_all_cities,בת חפר,2007,26
+odata_all_cities,בת חפר,2008,34
+odata_all_cities,בת חפר,2009,44
+odata_all_cities,בת חפר,2010,68
+odata_all_cities,בת חפר,2011,46
+odata_all_cities,בת חפר,2012,54
+odata_all_cities,בת חפר,2013,70
+odata_all_cities,בת חפר,2014,48
+odata_all_cities,בת חפר,2015,60
+odata_all_cities,בת חפר,2016,74
+odata_all_cities,בת חפר,2017,44
+odata_all_cities,בת חפר,2018,30
+odata_all_cities,בת חפר,2019,74
+odata_all_cities,בת חפר,2020,66
+odata_all_cities,בת חפר,2021,100
+odata_all_cities,בת חפר,2022,38
+odata_all_cities,בת חפר,2023,14
+odata_all_cities,בת חפר,2024,16
+odata_all_cities,בת ים,1998,1014
+odata_all_cities,בת ים,1999,1089
+odata_all_cities,בת ים,2000,1127
+odata_all_cities,בת ים,2001,1002
+odata_all_cities,בת ים,2002,1098
+odata_all_cities,בת ים,2003,1013
+odata_all_cities,בת ים,2004,1107
+odata_all_cities,בת ים,2005,1333
+odata_all_cities,בת ים,2006,1450
+odata_all_cities,בת ים,2007,1882
+odata_all_cities,בת ים,2008,1515
+odata_all_cities,בת ים,2009,1580
+odata_all_cities,בת ים,2010,1505
+odata_all_cities,בת ים,2011,1231
+odata_all_cities,בת ים,2012,1545
+odata_all_cities,בת ים,2013,1592
+odata_all_cities,בת ים,2014,1425
+odata_all_cities,בת ים,2015,1802
+odata_all_cities,בת ים,2016,1899
+odata_all_cities,בת ים,2017,1500
+odata_all_cities,בת ים,2018,1668
+odata_all_cities,בת ים,2019,1717
+odata_all_cities,בת ים,2020,1604
+odata_all_cities,בת ים,2021,2881
+odata_all_cities,בת ים,2022,2283
+odata_all_cities,בת ים,2023,1395
+odata_all_cities,בת ים,2024,1142
+odata_all_cities,ג'ולס,2006,1
+odata_all_cities,ג'ולס,2007,2
+odata_all_cities,ג'ולס,2012,3
+odata_all_cities,ג'ולס,2013,2
+odata_all_cities,ג'ולס,2014,1
+odata_all_cities,ג'ולס,2016,2
+odata_all_cities,ג'ולס,2017,4
+odata_all_cities,ג'ולס,2018,12
+odata_all_cities,ג'ולס,2019,10
+odata_all_cities,ג'ולס,2020,8
+odata_all_cities,ג'ולס,2021,4
+odata_all_cities,ג'ולס,2022,9
+odata_all_cities,ג'ולס,2023,9
+odata_all_cities,ג'ולס,2024,5
+odata_all_cities,ג'סר א-זרקא,1999,2
+odata_all_cities,ג'סר א-זרקא,2000,1
+odata_all_cities,ג'סר א-זרקא,2005,1
+odata_all_cities,ג'סר א-זרקא,2007,2
+odata_all_cities,ג'סר א-זרקא,2008,2
+odata_all_cities,ג'סר א-זרקא,2009,1
+odata_all_cities,ג'סר א-זרקא,2010,2
+odata_all_cities,ג'סר א-זרקא,2015,1
+odata_all_cities,ג'סר א-זרקא,2017,4
+odata_all_cities,ג'סר א-זרקא,2018,5
+odata_all_cities,ג'סר א-זרקא,2019,16
+odata_all_cities,ג'סר א-זרקא,2020,4
+odata_all_cities,ג'סר א-זרקא,2021,7
+odata_all_cities,ג'סר א-זרקא,2022,5
+odata_all_cities,ג'סר א-זרקא,2023,4
+odata_all_cities,ג'סר א-זרקא,2024,2
+odata_all_cities,גבעון החדשה,2017,2
+odata_all_cities,גבעון החדשה,2019,4
+odata_all_cities,גבעון החדשה,2021,1
+odata_all_cities,גבעת אבני,1998,1
+odata_all_cities,גבעת אבני,2000,1
+odata_all_cities,גבעת אבני,2001,3
+odata_all_cities,גבעת אבני,2002,1
+odata_all_cities,גבעת אבני,2003,1
+odata_all_cities,גבעת אבני,2004,2
+odata_all_cities,גבעת אבני,2005,6
+odata_all_cities,גבעת אבני,2006,2
+odata_all_cities,גבעת אבני,2007,15
+odata_all_cities,גבעת אבני,2008,6
+odata_all_cities,גבעת אבני,2009,6
+odata_all_cities,גבעת אבני,2010,7
+odata_all_cities,גבעת אבני,2011,12
+odata_all_cities,גבעת אבני,2012,7
+odata_all_cities,גבעת אבני,2013,7
+odata_all_cities,גבעת אבני,2014,5
+odata_all_cities,גבעת אבני,2015,5
+odata_all_cities,גבעת אבני,2016,7
+odata_all_cities,גבעת אבני,2017,6
+odata_all_cities,גבעת אבני,2018,5
+odata_all_cities,גבעת אבני,2019,4
+odata_all_cities,גבעת אבני,2020,10
+odata_all_cities,גבעת אבני,2021,11
+odata_all_cities,גבעת אבני,2022,8
+odata_all_cities,גבעת אבני,2023,11
+odata_all_cities,גבעת אבני,2024,4
+odata_all_cities,גבעת אלה,2001,1
+odata_all_cities,גבעת אלה,2005,1
+odata_all_cities,גבעת אלה,2007,6
+odata_all_cities,גבעת אלה,2008,2
+odata_all_cities,גבעת אלה,2009,5
+odata_all_cities,גבעת אלה,2010,6
+odata_all_cities,גבעת אלה,2011,5
+odata_all_cities,גבעת אלה,2012,6
+odata_all_cities,גבעת אלה,2013,5
+odata_all_cities,גבעת אלה,2014,1
+odata_all_cities,גבעת אלה,2015,4
+odata_all_cities,גבעת אלה,2016,9
+odata_all_cities,גבעת אלה,2017,4
+odata_all_cities,גבעת אלה,2018,4
+odata_all_cities,גבעת אלה,2019,9
+odata_all_cities,גבעת אלה,2020,3
+odata_all_cities,גבעת אלה,2021,9
+odata_all_cities,גבעת אלה,2022,8
+odata_all_cities,גבעת אלה,2023,8
+odata_all_cities,גבעת אלה,2024,1
+odata_all_cities,גבעת זאב,1998,27
+odata_all_cities,גבעת זאב,1999,24
+odata_all_cities,גבעת זאב,2000,14
+odata_all_cities,גבעת זאב,2001,17
+odata_all_cities,גבעת זאב,2002,17
+odata_all_cities,גבעת זאב,2003,25
+odata_all_cities,גבעת זאב,2004,33
+odata_all_cities,גבעת זאב,2005,21
+odata_all_cities,גבעת זאב,2006,18
+odata_all_cities,גבעת זאב,2007,48
+odata_all_cities,גבעת זאב,2008,29
+odata_all_cities,גבעת זאב,2009,39
+odata_all_cities,גבעת זאב,2010,39
+odata_all_cities,גבעת זאב,2011,30
+odata_all_cities,גבעת זאב,2012,38
+odata_all_cities,גבעת זאב,2013,58
+odata_all_cities,גבעת זאב,2014,51
+odata_all_cities,גבעת זאב,2015,78
+odata_all_cities,גבעת זאב,2016,63
+odata_all_cities,גבעת זאב,2017,80
+odata_all_cities,גבעת זאב,2018,70
+odata_all_cities,גבעת זאב,2019,78
+odata_all_cities,גבעת זאב,2020,70
+odata_all_cities,גבעת זאב,2021,116
+odata_all_cities,גבעת זאב,2022,82
+odata_all_cities,גבעת זאב,2023,61
+odata_all_cities,גבעת זאב,2024,31
+odata_all_cities,"גבעת ח""ן",2001,1
+odata_all_cities,"גבעת ח""ן",2006,1
+odata_all_cities,"גבעת ח""ן",2022,1
+odata_all_cities,גבעת יערים,2005,1
+odata_all_cities,גבעת יערים,2006,1
+odata_all_cities,גבעת יערים,2008,1
+odata_all_cities,גבעת יערים,2009,3
+odata_all_cities,גבעת יערים,2011,2
+odata_all_cities,גבעת יערים,2013,2
+odata_all_cities,גבעת יערים,2014,1
+odata_all_cities,גבעת יערים,2017,1
+odata_all_cities,גבעת יערים,2019,1
+odata_all_cities,גבעת יערים,2020,2
+odata_all_cities,גבעת יערים,2022,1
+odata_all_cities,גבעת שמואל,1998,140
+odata_all_cities,גבעת שמואל,1999,161
+odata_all_cities,גבעת שמואל,2000,138
+odata_all_cities,גבעת שמואל,2001,118
+odata_all_cities,גבעת שמואל,2002,164
+odata_all_cities,גבעת שמואל,2003,117
+odata_all_cities,גבעת שמואל,2004,86
+odata_all_cities,גבעת שמואל,2005,103
+odata_all_cities,גבעת שמואל,2006,81
+odata_all_cities,גבעת שמואל,2007,99
+odata_all_cities,גבעת שמואל,2008,91
+odata_all_cities,גבעת שמואל,2009,162
+odata_all_cities,גבעת שמואל,2010,142
+odata_all_cities,גבעת שמואל,2011,101
+odata_all_cities,גבעת שמואל,2012,126
+odata_all_cities,גבעת שמואל,2013,148
+odata_all_cities,גבעת שמואל,2014,121
+odata_all_cities,גבעת שמואל,2015,140
+odata_all_cities,גבעת שמואל,2016,105
+odata_all_cities,גבעת שמואל,2017,105
+odata_all_cities,גבעת שמואל,2018,115
+odata_all_cities,גבעת שמואל,2019,139
+odata_all_cities,גבעת שמואל,2020,139
+odata_all_cities,גבעת שמואל,2021,232
+odata_all_cities,גבעת שמואל,2022,153
+odata_all_cities,גבעת שמואל,2023,104
+odata_all_cities,גבעת שמואל,2024,182
+odata_all_cities,גבעתי,2005,1
+odata_all_cities,גבעתי,2007,1
+odata_all_cities,גבעתי,2008,1
+odata_all_cities,גבעתי,2009,3
+odata_all_cities,גבעתי,2014,2
+odata_all_cities,גבעתי,2015,2
+odata_all_cities,גבעתי,2022,1
+odata_all_cities,גבעתיים,1998,221
+odata_all_cities,גבעתיים,1999,303
+odata_all_cities,גבעתיים,2000,227
+odata_all_cities,גבעתיים,2001,230
+odata_all_cities,גבעתיים,2002,254
+odata_all_cities,גבעתיים,2003,250
+odata_all_cities,גבעתיים,2004,307
+odata_all_cities,גבעתיים,2005,290
+odata_all_cities,גבעתיים,2006,261
+odata_all_cities,גבעתיים,2007,417
+odata_all_cities,גבעתיים,2008,312
+odata_all_cities,גבעתיים,2009,430
+odata_all_cities,גבעתיים,2010,362
+odata_all_cities,גבעתיים,2011,271
+odata_all_cities,גבעתיים,2012,451
+odata_all_cities,גבעתיים,2013,424
+odata_all_cities,גבעתיים,2014,342
+odata_all_cities,גבעתיים,2015,455
+odata_all_cities,גבעתיים,2016,380
+odata_all_cities,גבעתיים,2017,358
+odata_all_cities,גבעתיים,2018,418
+odata_all_cities,גבעתיים,2019,485
+odata_all_cities,גבעתיים,2020,457
+odata_all_cities,גבעתיים,2021,674
+odata_all_cities,גבעתיים,2022,514
+odata_all_cities,גבעתיים,2023,319
+odata_all_cities,גבעתיים,2024,278
+odata_all_cities,גדרה,1998,49
+odata_all_cities,גדרה,1999,30
+odata_all_cities,גדרה,2000,21
+odata_all_cities,גדרה,2001,27
+odata_all_cities,גדרה,2002,17
+odata_all_cities,גדרה,2003,45
+odata_all_cities,גדרה,2004,41
+odata_all_cities,גדרה,2005,35
+odata_all_cities,גדרה,2006,51
+odata_all_cities,גדרה,2007,162
+odata_all_cities,גדרה,2008,187
+odata_all_cities,גדרה,2009,197
+odata_all_cities,גדרה,2010,183
+odata_all_cities,גדרה,2011,101
+odata_all_cities,גדרה,2012,132
+odata_all_cities,גדרה,2013,199
+odata_all_cities,גדרה,2014,168
+odata_all_cities,גדרה,2015,235
+odata_all_cities,גדרה,2016,239
+odata_all_cities,גדרה,2017,153
+odata_all_cities,גדרה,2018,359
+odata_all_cities,גדרה,2019,218
+odata_all_cities,גדרה,2020,242
+odata_all_cities,גדרה,2021,292
+odata_all_cities,גדרה,2022,154
+odata_all_cities,גדרה,2023,81
+odata_all_cities,גדרה,2024,60
+odata_all_cities,גילון,2004,3
+odata_all_cities,גילון,2005,1
+odata_all_cities,גילון,2006,2
+odata_all_cities,גילון,2008,1
+odata_all_cities,גילון,2009,1
+odata_all_cities,גילון,2010,3
+odata_all_cities,גילון,2011,2
+odata_all_cities,גילון,2012,1
+odata_all_cities,גילון,2013,3
+odata_all_cities,גילון,2014,2
+odata_all_cities,גילון,2015,3
+odata_all_cities,גילון,2016,2
+odata_all_cities,גילון,2017,2
+odata_all_cities,גילון,2018,6
+odata_all_cities,גילון,2019,2
+odata_all_cities,גילון,2020,5
+odata_all_cities,גילון,2021,4
+odata_all_cities,גילון,2022,3
+odata_all_cities,גילון,2023,2
+odata_all_cities,גילון,2024,2
+odata_all_cities,גינתון,2006,1
+odata_all_cities,גינתון,2007,2
+odata_all_cities,גינתון,2011,1
+odata_all_cities,גינתון,2013,1
+odata_all_cities,גינתון,2015,2
+odata_all_cities,גינתון,2017,3
+odata_all_cities,גינתון,2018,1
+odata_all_cities,גינתון,2019,2
+odata_all_cities,גינתון,2020,2
+odata_all_cities,גינתון,2021,1
+odata_all_cities,גינתון,2022,1
+odata_all_cities,גינתון,2023,1
+odata_all_cities,גינתון,2024,1
+odata_all_cities,גמזו,2005,1
+odata_all_cities,גמזו,2007,1
+odata_all_cities,גמזו,2008,1
+odata_all_cities,גמזו,2009,1
+odata_all_cities,גמזו,2013,3
+odata_all_cities,גמזו,2014,1
+odata_all_cities,גמזו,2015,1
+odata_all_cities,גמזו,2017,1
+odata_all_cities,גמזו,2019,1
+odata_all_cities,גמזו,2020,1
+odata_all_cities,גמזו,2021,1
+odata_all_cities,גמזו,2023,1
+odata_all_cities,גמזו,2024,1
+odata_all_cities,גן יבנה,1998,41
+odata_all_cities,גן יבנה,1999,29
+odata_all_cities,גן יבנה,2000,37
+odata_all_cities,גן יבנה,2001,29
+odata_all_cities,גן יבנה,2002,30
+odata_all_cities,גן יבנה,2003,54
+odata_all_cities,גן יבנה,2004,55
+odata_all_cities,גן יבנה,2005,56
+odata_all_cities,גן יבנה,2006,62
+odata_all_cities,גן יבנה,2007,173
+odata_all_cities,גן יבנה,2008,134
+odata_all_cities,גן יבנה,2009,159
+odata_all_cities,גן יבנה,2010,113
+odata_all_cities,גן יבנה,2011,84
+odata_all_cities,גן יבנה,2012,133
+odata_all_cities,גן יבנה,2013,151
+odata_all_cities,גן יבנה,2014,116
+odata_all_cities,גן יבנה,2015,175
+odata_all_cities,גן יבנה,2016,132
+odata_all_cities,גן יבנה,2017,100
+odata_all_cities,גן יבנה,2018,88
+odata_all_cities,גן יבנה,2019,106
+odata_all_cities,גן יבנה,2020,150
+odata_all_cities,גן יבנה,2021,198
+odata_all_cities,גן יבנה,2022,134
+odata_all_cities,גן יבנה,2023,69
+odata_all_cities,גן יבנה,2024,36
+odata_all_cities,גן נר,1999,1
+odata_all_cities,גן נר,2001,1
+odata_all_cities,גן נר,2002,1
+odata_all_cities,גן נר,2003,3
+odata_all_cities,גן נר,2005,1
+odata_all_cities,גן נר,2007,6
+odata_all_cities,גן נר,2008,11
+odata_all_cities,גן נר,2009,14
+odata_all_cities,גן נר,2010,19
+odata_all_cities,גן נר,2011,12
+odata_all_cities,גן נר,2012,14
+odata_all_cities,גן נר,2013,20
+odata_all_cities,גן נר,2014,16
+odata_all_cities,גן נר,2015,19
+odata_all_cities,גן נר,2016,12
+odata_all_cities,גן נר,2017,13
+odata_all_cities,גן נר,2018,9
+odata_all_cities,גן נר,2019,12
+odata_all_cities,גן נר,2020,10
+odata_all_cities,גן נר,2021,15
+odata_all_cities,גן נר,2022,11
+odata_all_cities,גן נר,2023,9
+odata_all_cities,גנות הדר,1999,12
+odata_all_cities,גנות הדר,2000,13
+odata_all_cities,גנות הדר,2001,6
+odata_all_cities,גנות הדר,2002,11
+odata_all_cities,גנות הדר,2003,9
+odata_all_cities,גנות הדר,2004,10
+odata_all_cities,גנות הדר,2005,12
+odata_all_cities,גנות הדר,2006,4
+odata_all_cities,גנות הדר,2007,2
+odata_all_cities,גנות הדר,2008,1
+odata_all_cities,גנות הדר,2011,1
+odata_all_cities,גנות הדר,2012,3
+odata_all_cities,גנות הדר,2013,6
+odata_all_cities,גנות הדר,2014,2
+odata_all_cities,גנות הדר,2015,7
+odata_all_cities,גנות הדר,2016,4
+odata_all_cities,גנות הדר,2017,1
+odata_all_cities,גנות הדר,2018,3
+odata_all_cities,גנות הדר,2019,3
+odata_all_cities,גנות הדר,2020,4
+odata_all_cities,גנות הדר,2021,10
+odata_all_cities,גנות הדר,2022,4
+odata_all_cities,גני יוחנן,2005,3
+odata_all_cities,גני יוחנן,2006,1
+odata_all_cities,גני יוחנן,2007,2
+odata_all_cities,גני יוחנן,2008,1
+odata_all_cities,גני יוחנן,2010,3
+odata_all_cities,גני יוחנן,2011,1
+odata_all_cities,גני יוחנן,2012,2
+odata_all_cities,גני יוחנן,2013,2
+odata_all_cities,גני יוחנן,2016,1
+odata_all_cities,גני יוחנן,2019,2
+odata_all_cities,גני יוחנן,2020,3
+odata_all_cities,גני יוחנן,2021,1
+odata_all_cities,גני יוחנן,2023,1
+odata_all_cities,גני עם,1999,1
+odata_all_cities,גני עם,2007,1
+odata_all_cities,גני עם,2008,1
+odata_all_cities,גני עם,2012,1
+odata_all_cities,גני עם,2016,1
+odata_all_cities,גני תקווה,1998,55
+odata_all_cities,גני תקווה,1999,61
+odata_all_cities,גני תקווה,2000,53
+odata_all_cities,גני תקווה,2001,39
+odata_all_cities,גני תקווה,2002,55
+odata_all_cities,גני תקווה,2003,52
+odata_all_cities,גני תקווה,2004,93
+odata_all_cities,גני תקווה,2005,70
+odata_all_cities,גני תקווה,2006,50
+odata_all_cities,גני תקווה,2007,87
+odata_all_cities,גני תקווה,2008,85
+odata_all_cities,גני תקווה,2009,144
+odata_all_cities,גני תקווה,2010,175
+odata_all_cities,גני תקווה,2011,85
+odata_all_cities,גני תקווה,2012,148
+odata_all_cities,גני תקווה,2013,121
+odata_all_cities,גני תקווה,2014,129
+odata_all_cities,גני תקווה,2015,229
+odata_all_cities,גני תקווה,2016,172
+odata_all_cities,גני תקווה,2017,105
+odata_all_cities,גני תקווה,2018,150
+odata_all_cities,גני תקווה,2019,232
+odata_all_cities,גני תקווה,2020,252
+odata_all_cities,גני תקווה,2021,269
+odata_all_cities,גני תקווה,2022,144
+odata_all_cities,גני תקווה,2023,103
+odata_all_cities,גני תקווה,2024,87
+odata_all_cities,גת רימון,2022,2
+odata_all_cities,דאלית אל-כרמל,2003,1
+odata_all_cities,דאלית אל-כרמל,2006,2
+odata_all_cities,דאלית אל-כרמל,2008,1
+odata_all_cities,דאלית אל-כרמל,2012,1
+odata_all_cities,דאלית אל-כרמל,2015,1
+odata_all_cities,דאלית אל-כרמל,2016,1
+odata_all_cities,דאלית אל-כרמל,2017,1
+odata_all_cities,דאלית אל-כרמל,2018,5
+odata_all_cities,דאלית אל-כרמל,2019,7
+odata_all_cities,דאלית אל-כרמל,2020,8
+odata_all_cities,דאלית אל-כרמל,2021,3
+odata_all_cities,דאלית אל-כרמל,2022,9
+odata_all_cities,דאלית אל-כרמל,2023,4
+odata_all_cities,דאלית אל-כרמל,2024,2
+odata_all_cities,דימונה,1998,32
+odata_all_cities,דימונה,1999,41
+odata_all_cities,דימונה,2000,36
+odata_all_cities,דימונה,2001,53
+odata_all_cities,דימונה,2002,29
+odata_all_cities,דימונה,2003,29
+odata_all_cities,דימונה,2004,27
+odata_all_cities,דימונה,2005,21
+odata_all_cities,דימונה,2006,17
+odata_all_cities,דימונה,2007,39
+odata_all_cities,דימונה,2008,59
+odata_all_cities,דימונה,2009,63
+odata_all_cities,דימונה,2010,150
+odata_all_cities,דימונה,2011,144
+odata_all_cities,דימונה,2012,182
+odata_all_cities,דימונה,2013,186
+odata_all_cities,דימונה,2014,185
+odata_all_cities,דימונה,2015,202
+odata_all_cities,דימונה,2016,203
+odata_all_cities,דימונה,2017,183
+odata_all_cities,דימונה,2018,193
+odata_all_cities,דימונה,2019,225
+odata_all_cities,דימונה,2020,294
+odata_all_cities,דימונה,2021,574
+odata_all_cities,דימונה,2022,743
+odata_all_cities,דימונה,2023,515
+odata_all_cities,דימונה,2024,306
+odata_all_cities,הדר עם,2002,3
+odata_all_cities,הדר עם,2004,1
+odata_all_cities,הדר עם,2005,1
+odata_all_cities,הדר עם,2006,2
+odata_all_cities,הדר עם,2007,1
+odata_all_cities,הדר עם,2009,2
+odata_all_cities,הדר עם,2010,1
+odata_all_cities,הדר עם,2011,1
+odata_all_cities,הדר עם,2012,1
+odata_all_cities,הדר עם,2013,1
+odata_all_cities,הדר עם,2015,4
+odata_all_cities,הדר עם,2016,1
+odata_all_cities,הדר עם,2017,2
+odata_all_cities,הדר עם,2018,2
+odata_all_cities,הדר עם,2019,2
+odata_all_cities,הדר עם,2020,2
+odata_all_cities,הדר עם,2021,4
+odata_all_cities,הדר עם,2023,3
+odata_all_cities,הדר עם,2024,3
+odata_all_cities,הוד השרון,1998,240
+odata_all_cities,הוד השרון,1999,205
+odata_all_cities,הוד השרון,2000,203
+odata_all_cities,הוד השרון,2001,218
+odata_all_cities,הוד השרון,2002,259
+odata_all_cities,הוד השרון,2003,308
+odata_all_cities,הוד השרון,2004,283
+odata_all_cities,הוד השרון,2005,328
+odata_all_cities,הוד השרון,2006,348
+odata_all_cities,הוד השרון,2007,394
+odata_all_cities,הוד השרון,2008,333
+odata_all_cities,הוד השרון,2009,350
+odata_all_cities,הוד השרון,2010,396
+odata_all_cities,הוד השרון,2011,504
+odata_all_cities,הוד השרון,2012,656
+odata_all_cities,הוד השרון,2013,688
+odata_all_cities,הוד השרון,2014,587
+odata_all_cities,הוד השרון,2015,693
+odata_all_cities,הוד השרון,2016,605
+odata_all_cities,הוד השרון,2017,432
+odata_all_cities,הוד השרון,2018,512
+odata_all_cities,הוד השרון,2019,581
+odata_all_cities,הוד השרון,2020,529
+odata_all_cities,הוד השרון,2021,730
+odata_all_cities,הוד השרון,2022,517
+odata_all_cities,הוד השרון,2023,280
+odata_all_cities,הוד השרון,2024,227
+odata_all_cities,הר אדר,2003,1
+odata_all_cities,הר אדר,2004,3
+odata_all_cities,הר אדר,2005,6
+odata_all_cities,הר אדר,2006,4
+odata_all_cities,הר אדר,2007,12
+odata_all_cities,הר אדר,2008,7
+odata_all_cities,הר אדר,2009,18
+odata_all_cities,הר אדר,2010,11
+odata_all_cities,הר אדר,2011,12
+odata_all_cities,הר אדר,2012,8
+odata_all_cities,הר אדר,2013,7
+odata_all_cities,הר אדר,2014,8
+odata_all_cities,הר אדר,2015,13
+odata_all_cities,הר אדר,2016,8
+odata_all_cities,הר אדר,2017,6
+odata_all_cities,הר אדר,2018,10
+odata_all_cities,הר אדר,2019,9
+odata_all_cities,הר אדר,2020,10
+odata_all_cities,הר אדר,2021,11
+odata_all_cities,הר אדר,2022,5
+odata_all_cities,הר אדר,2023,5
+odata_all_cities,הר אדר,2024,1
+odata_all_cities,הר גילה,2021,2
+odata_all_cities,הרצלייה,1998,437
+odata_all_cities,הרצלייה,1999,406
+odata_all_cities,הרצלייה,2000,452
+odata_all_cities,הרצלייה,2001,538
+odata_all_cities,הרצלייה,2002,557
+odata_all_cities,הרצלייה,2003,617
+odata_all_cities,הרצלייה,2004,724
+odata_all_cities,הרצלייה,2005,840
+odata_all_cities,הרצלייה,2006,908
+odata_all_cities,הרצלייה,2007,985
+odata_all_cities,הרצלייה,2008,765
+odata_all_cities,הרצלייה,2009,1004
+odata_all_cities,הרצלייה,2010,954
+odata_all_cities,הרצלייה,2011,711
+odata_all_cities,הרצלייה,2012,840
+odata_all_cities,הרצלייה,2013,915
+odata_all_cities,הרצלייה,2014,840
+odata_all_cities,הרצלייה,2015,945
+odata_all_cities,הרצלייה,2016,1008
+odata_all_cities,הרצלייה,2017,871
+odata_all_cities,הרצלייה,2018,1169
+odata_all_cities,הרצלייה,2019,1063
+odata_all_cities,הרצלייה,2020,1066
+odata_all_cities,הרצלייה,2021,1781
+odata_all_cities,הרצלייה,2022,1140
+odata_all_cities,הרצלייה,2023,756
+odata_all_cities,הרצלייה,2024,527
+odata_all_cities,זכרון יעקב,1998,61
+odata_all_cities,זכרון יעקב,1999,53
+odata_all_cities,זכרון יעקב,2000,69
+odata_all_cities,זכרון יעקב,2001,53
+odata_all_cities,זכרון יעקב,2002,77
+odata_all_cities,זכרון יעקב,2003,99
+odata_all_cities,זכרון יעקב,2004,97
+odata_all_cities,זכרון יעקב,2005,97
+odata_all_cities,זכרון יעקב,2006,121
+odata_all_cities,זכרון יעקב,2007,128
+odata_all_cities,זכרון יעקב,2008,131
+odata_all_cities,זכרון יעקב,2009,151
+odata_all_cities,זכרון יעקב,2010,142
+odata_all_cities,זכרון יעקב,2011,128
+odata_all_cities,זכרון יעקב,2012,163
+odata_all_cities,זכרון יעקב,2013,170
+odata_all_cities,זכרון יעקב,2014,129
+odata_all_cities,זכרון יעקב,2015,159
+odata_all_cities,זכרון יעקב,2016,182
+odata_all_cities,זכרון יעקב,2017,117
+odata_all_cities,זכרון יעקב,2018,151
+odata_all_cities,זכרון יעקב,2019,160
+odata_all_cities,זכרון יעקב,2020,137
+odata_all_cities,זכרון יעקב,2021,269
+odata_all_cities,זכרון יעקב,2022,168
+odata_all_cities,זכרון יעקב,2023,114
+odata_all_cities,זכרון יעקב,2024,76
+odata_all_cities,זכריה,2006,1
+odata_all_cities,זכריה,2008,1
+odata_all_cities,זכריה,2009,1
+odata_all_cities,זכריה,2010,1
+odata_all_cities,זכריה,2012,1
+odata_all_cities,זכריה,2014,2
+odata_all_cities,זכריה,2015,1
+odata_all_cities,זכריה,2016,1
+odata_all_cities,זכריה,2018,1
+odata_all_cities,זכריה,2020,2
+odata_all_cities,זכריה,2021,2
+odata_all_cities,זכריה,2022,2
+odata_all_cities,זכריה,2023,3
+odata_all_cities,זרזיר,2002,3
+odata_all_cities,זרזיר,2003,1
+odata_all_cities,זרזיר,2005,1
+odata_all_cities,זרזיר,2007,1
+odata_all_cities,זרזיר,2011,4
+odata_all_cities,זרזיר,2012,2
+odata_all_cities,זרזיר,2016,2
+odata_all_cities,זרזיר,2017,1
+odata_all_cities,זרזיר,2018,8
+odata_all_cities,זרזיר,2019,8
+odata_all_cities,זרזיר,2020,9
+odata_all_cities,זרזיר,2021,9
+odata_all_cities,זרזיר,2022,2
+odata_all_cities,זרזיר,2023,6
+odata_all_cities,חבצלת השרון,1999,1
+odata_all_cities,חבצלת השרון,2012,1
+odata_all_cities,חבצלת השרון,2014,1
+odata_all_cities,חבצלת השרון,2019,1
+odata_all_cities,חבצלת השרון,2021,1
+odata_all_cities,חגור,2004,2
+odata_all_cities,חגור,2005,1
+odata_all_cities,חגור,2006,4
+odata_all_cities,חגור,2007,1
+odata_all_cities,חגור,2009,2
+odata_all_cities,חגור,2010,1
+odata_all_cities,חגור,2013,3
+odata_all_cities,חגור,2016,1
+odata_all_cities,חגור,2018,2
+odata_all_cities,חגור,2020,1
+odata_all_cities,חגור,2021,2
+odata_all_cities,חגור,2024,1
+odata_all_cities,חדיד,2009,1
+odata_all_cities,חדרה,1998,247
+odata_all_cities,חדרה,1999,229
+odata_all_cities,חדרה,2000,194
+odata_all_cities,חדרה,2001,202
+odata_all_cities,חדרה,2002,211
+odata_all_cities,חדרה,2003,263
+odata_all_cities,חדרה,2004,277
+odata_all_cities,חדרה,2005,283
+odata_all_cities,חדרה,2006,356
+odata_all_cities,חדרה,2007,529
+odata_all_cities,חדרה,2008,692
+odata_all_cities,חדרה,2009,639
+odata_all_cities,חדרה,2010,707
+odata_all_cities,חדרה,2011,619
+odata_all_cities,חדרה,2012,693
+odata_all_cities,חדרה,2013,831
+odata_all_cities,חדרה,2014,783
+odata_all_cities,חדרה,2015,1138
+odata_all_cities,חדרה,2016,1404
+odata_all_cities,חדרה,2017,1016
+odata_all_cities,חדרה,2018,1062
+odata_all_cities,חדרה,2019,983
+odata_all_cities,חדרה,2020,1009
+odata_all_cities,חדרה,2021,1707
+odata_all_cities,חדרה,2022,1060
+odata_all_cities,חדרה,2023,682
+odata_all_cities,חדרה,2024,540
+odata_all_cities,חולון,1998,743
+odata_all_cities,חולון,1999,835
+odata_all_cities,חולון,2000,796
+odata_all_cities,חולון,2001,829
+odata_all_cities,חולון,2002,895
+odata_all_cities,חולון,2003,872
+odata_all_cities,חולון,2004,822
+odata_all_cities,חולון,2005,890
+odata_all_cities,חולון,2006,1068
+odata_all_cities,חולון,2007,1597
+odata_all_cities,חולון,2008,1421
+odata_all_cities,חולון,2009,1345
+odata_all_cities,חולון,2010,1165
+odata_all_cities,חולון,2011,965
+odata_all_cities,חולון,2012,1300
+odata_all_cities,חולון,2013,1413
+odata_all_cities,חולון,2014,1271
+odata_all_cities,חולון,2015,1557
+odata_all_cities,חולון,2016,1509
+odata_all_cities,חולון,2017,1262
+odata_all_cities,חולון,2018,1357
+odata_all_cities,חולון,2019,1497
+odata_all_cities,חולון,2020,1306
+odata_all_cities,חולון,2021,2005
+odata_all_cities,חולון,2022,1519
+odata_all_cities,חולון,2023,909
+odata_all_cities,חולון,2024,720
+odata_all_cities,חוסן,2001,1
+odata_all_cities,חוסן,2002,2
+odata_all_cities,חוסן,2008,2
+odata_all_cities,חוסן,2009,2
+odata_all_cities,חוסן,2013,2
+odata_all_cities,חוסן,2014,2
+odata_all_cities,חוסן,2015,1
+odata_all_cities,חוסן,2016,5
+odata_all_cities,חוסן,2017,2
+odata_all_cities,חוסן,2018,2
+odata_all_cities,חוסן,2019,4
+odata_all_cities,חוסן,2020,4
+odata_all_cities,חוסן,2021,3
+odata_all_cities,חוסן,2022,6
+odata_all_cities,חוסן,2023,1
+odata_all_cities,חופית,1999,1
+odata_all_cities,חופית,2000,4
+odata_all_cities,חופית,2001,4
+odata_all_cities,חופית,2002,1
+odata_all_cities,חופית,2003,4
+odata_all_cities,חופית,2004,4
+odata_all_cities,חופית,2005,3
+odata_all_cities,חופית,2006,5
+odata_all_cities,חופית,2007,7
+odata_all_cities,חופית,2008,1
+odata_all_cities,חופית,2009,4
+odata_all_cities,חופית,2010,4
+odata_all_cities,חופית,2011,2
+odata_all_cities,חופית,2012,3
+odata_all_cities,חופית,2013,5
+odata_all_cities,חופית,2014,4
+odata_all_cities,חופית,2015,3
+odata_all_cities,חופית,2017,4
+odata_all_cities,חופית,2018,2
+odata_all_cities,חופית,2019,2
+odata_all_cities,חופית,2020,8
+odata_all_cities,חופית,2021,13
+odata_all_cities,חופית,2022,6
+odata_all_cities,חופית,2023,3
+odata_all_cities,חורה,2017,1
+odata_all_cities,חורה,2019,1
+odata_all_cities,חיבת ציון,2014,3
+odata_all_cities,חיבת ציון,2017,4
+odata_all_cities,חיבת ציון,2021,5
+odata_all_cities,חיבת ציון,2022,3
+odata_all_cities,חיבת ציון,2023,2
+odata_all_cities,חיבת ציון,2024,1
+odata_all_cities,חיפה,1998,887
+odata_all_cities,חיפה,1999,976
+odata_all_cities,חיפה,2000,903
+odata_all_cities,חיפה,2001,838
+odata_all_cities,חיפה,2002,847
+odata_all_cities,חיפה,2003,944
+odata_all_cities,חיפה,2004,896
+odata_all_cities,חיפה,2005,937
+odata_all_cities,חיפה,2006,855
+odata_all_cities,חיפה,2007,1327
+odata_all_cities,חיפה,2008,1782
+odata_all_cities,חיפה,2009,2199
+odata_all_cities,חיפה,2010,2062
+odata_all_cities,חיפה,2011,1875
+odata_all_cities,חיפה,2012,2240
+odata_all_cities,חיפה,2013,2412
+odata_all_cities,חיפה,2014,2329
+odata_all_cities,חיפה,2015,2414
+odata_all_cities,חיפה,2016,2538
+odata_all_cities,חיפה,2017,2488
+odata_all_cities,חיפה,2018,2456
+odata_all_cities,חיפה,2019,2640
+odata_all_cities,חיפה,2020,2646
+odata_all_cities,חיפה,2021,4324
+odata_all_cities,חיפה,2022,4305
+odata_all_cities,חיפה,2023,3365
+odata_all_cities,חיפה,2024,2199
+odata_all_cities,חיפה,2027,1
+odata_all_cities,חירות,2002,1
+odata_all_cities,חירות,2011,1
+odata_all_cities,חירות,2013,1
+odata_all_cities,חירות,2016,1
+odata_all_cities,חירות,2018,2
+odata_all_cities,חירות,2019,1
+odata_all_cities,חירות,2020,1
+odata_all_cities,חירות,2021,2
+odata_all_cities,חירות,2022,4
+odata_all_cities,חמד,2012,1
+odata_all_cities,חמד,2017,1
+odata_all_cities,חמד,2018,1
+odata_all_cities,חמד,2019,2
+odata_all_cities,חמד,2023,1
+odata_all_cities,חניאל,2015,1
+odata_all_cities,חצור הגלילית,1998,8
+odata_all_cities,חצור הגלילית,1999,4
+odata_all_cities,חצור הגלילית,2000,10
+odata_all_cities,חצור הגלילית,2001,14
+odata_all_cities,חצור הגלילית,2002,15
+odata_all_cities,חצור הגלילית,2003,13
+odata_all_cities,חצור הגלילית,2004,4
+odata_all_cities,חצור הגלילית,2005,4
+odata_all_cities,חצור הגלילית,2006,17
+odata_all_cities,חצור הגלילית,2007,15
+odata_all_cities,חצור הגלילית,2008,22
+odata_all_cities,חצור הגלילית,2009,31
+odata_all_cities,חצור הגלילית,2010,34
+odata_all_cities,חצור הגלילית,2011,17
+odata_all_cities,חצור הגלילית,2012,26
+odata_all_cities,חצור הגלילית,2013,45
+odata_all_cities,חצור הגלילית,2014,104
+odata_all_cities,חצור הגלילית,2015,59
+odata_all_cities,חצור הגלילית,2016,32
+odata_all_cities,חצור הגלילית,2017,33
+odata_all_cities,חצור הגלילית,2018,40
+odata_all_cities,חצור הגלילית,2019,44
+odata_all_cities,חצור הגלילית,2020,60
+odata_all_cities,חצור הגלילית,2021,87
+odata_all_cities,חצור הגלילית,2022,63
+odata_all_cities,חצור הגלילית,2023,54
+odata_all_cities,חצור הגלילית,2024,27
+odata_all_cities,חריש,2002,1
+odata_all_cities,חריש,2013,18
+odata_all_cities,חריש,2014,33
+odata_all_cities,חריש,2015,81
+odata_all_cities,חריש,2016,256
+odata_all_cities,חריש,2017,173
+odata_all_cities,חריש,2018,222
+odata_all_cities,חריש,2019,202
+odata_all_cities,חריש,2020,281
+odata_all_cities,חריש,2021,599
+odata_all_cities,חריש,2022,625
+odata_all_cities,חריש,2023,215
+odata_all_cities,חריש,2024,253
+odata_all_cities,חשמונאים,2003,1
+odata_all_cities,חשמונאים,2005,2
+odata_all_cities,חשמונאים,2007,2
+odata_all_cities,חשמונאים,2008,2
+odata_all_cities,חשמונאים,2010,4
+odata_all_cities,חשמונאים,2012,2
+odata_all_cities,חשמונאים,2013,4
+odata_all_cities,חשמונאים,2014,4
+odata_all_cities,חשמונאים,2015,3
+odata_all_cities,חשמונאים,2016,5
+odata_all_cities,חשמונאים,2017,1
+odata_all_cities,חשמונאים,2018,1
+odata_all_cities,חשמונאים,2019,7
+odata_all_cities,חשמונאים,2020,5
+odata_all_cities,חשמונאים,2021,2
+odata_all_cities,חשמונאים,2022,2
+odata_all_cities,חשמונאים,2023,5
+odata_all_cities,טבריה,1998,119
+odata_all_cities,טבריה,1999,175
+odata_all_cities,טבריה,2000,165
+odata_all_cities,טבריה,2001,203
+odata_all_cities,טבריה,2002,139
+odata_all_cities,טבריה,2003,129
+odata_all_cities,טבריה,2004,128
+odata_all_cities,טבריה,2005,85
+odata_all_cities,טבריה,2006,114
+odata_all_cities,טבריה,2007,169
+odata_all_cities,טבריה,2008,193
+odata_all_cities,טבריה,2009,347
+odata_all_cities,טבריה,2010,471
+odata_all_cities,טבריה,2011,402
+odata_all_cities,טבריה,2012,478
+odata_all_cities,טבריה,2013,553
+odata_all_cities,טבריה,2014,552
+odata_all_cities,טבריה,2015,709
+odata_all_cities,טבריה,2016,843
+odata_all_cities,טבריה,2017,691
+odata_all_cities,טבריה,2018,715
+odata_all_cities,טבריה,2019,716
+odata_all_cities,טבריה,2020,736
+odata_all_cities,טבריה,2021,1182
+odata_all_cities,טבריה,2022,1255
+odata_all_cities,טבריה,2023,865
+odata_all_cities,טבריה,2024,439
+odata_all_cities,טובא-זנגרייה,2001,2
+odata_all_cities,טובא-זנגרייה,2002,2
+odata_all_cities,טובא-זנגרייה,2003,2
+odata_all_cities,טובא-זנגרייה,2009,2
+odata_all_cities,טובא-זנגרייה,2011,2
+odata_all_cities,טובא-זנגרייה,2012,2
+odata_all_cities,טובא-זנגרייה,2014,4
+odata_all_cities,טובא-זנגרייה,2015,2
+odata_all_cities,טובא-זנגרייה,2016,8
+odata_all_cities,טובא-זנגרייה,2019,4
+odata_all_cities,טובא-זנגרייה,2020,4
+odata_all_cities,טובא-זנגרייה,2022,6
+odata_all_cities,טובא-זנגרייה,2023,4
+odata_all_cities,טורעאן,1998,2
+odata_all_cities,טורעאן,1999,4
+odata_all_cities,טורעאן,2001,2
+odata_all_cities,טורעאן,2008,2
+odata_all_cities,טורעאן,2010,4
+odata_all_cities,טורעאן,2011,6
+odata_all_cities,טורעאן,2012,2
+odata_all_cities,טורעאן,2013,2
+odata_all_cities,טורעאן,2014,2
+odata_all_cities,טורעאן,2015,2
+odata_all_cities,טורעאן,2016,4
+odata_all_cities,טורעאן,2017,2
+odata_all_cities,טורעאן,2018,8
+odata_all_cities,טורעאן,2019,4
+odata_all_cities,טורעאן,2020,8
+odata_all_cities,טורעאן,2021,24
+odata_all_cities,טורעאן,2022,34
+odata_all_cities,טורעאן,2023,28
+odata_all_cities,טורעאן,2024,12
+odata_all_cities,טירה,1998,2
+odata_all_cities,טירה,2000,2
+odata_all_cities,טירה,2016,2
+odata_all_cities,טירה,2017,2
+odata_all_cities,טירה,2018,2
+odata_all_cities,טירה,2019,2
+odata_all_cities,טירה,2021,4
+odata_all_cities,טירה,2022,2
+odata_all_cities,טירה,2023,2
+odata_all_cities,טירת כרמל,1998,45
+odata_all_cities,טירת כרמל,1999,44
+odata_all_cities,טירת כרמל,2000,28
+odata_all_cities,טירת כרמל,2001,31
+odata_all_cities,טירת כרמל,2002,27
+odata_all_cities,טירת כרמל,2003,35
+odata_all_cities,טירת כרמל,2004,29
+odata_all_cities,טירת כרמל,2005,31
+odata_all_cities,טירת כרמל,2006,32
+odata_all_cities,טירת כרמל,2007,58
+odata_all_cities,טירת כרמל,2008,72
+odata_all_cities,טירת כרמל,2009,72
+odata_all_cities,טירת כרמל,2010,94
+odata_all_cities,טירת כרמל,2011,98
+odata_all_cities,טירת כרמל,2012,120
+odata_all_cities,טירת כרמל,2013,116
+odata_all_cities,טירת כרמל,2014,173
+odata_all_cities,טירת כרמל,2015,195
+odata_all_cities,טירת כרמל,2016,230
+odata_all_cities,טירת כרמל,2017,183
+odata_all_cities,טירת כרמל,2018,172
+odata_all_cities,טירת כרמל,2019,159
+odata_all_cities,טירת כרמל,2020,189
+odata_all_cities,טירת כרמל,2021,369
+odata_all_cities,טירת כרמל,2022,277
+odata_all_cities,טירת כרמל,2023,255
+odata_all_cities,טירת כרמל,2024,261
+odata_all_cities,טל-אל,1998,1
+odata_all_cities,טל-אל,2003,1
+odata_all_cities,טל-אל,2007,1
+odata_all_cities,טל-אל,2012,1
+odata_all_cities,טל-אל,2014,4
+odata_all_cities,טל-אל,2015,5
+odata_all_cities,טל-אל,2016,8
+odata_all_cities,טל-אל,2017,2
+odata_all_cities,טל-אל,2018,4
+odata_all_cities,טל-אל,2019,8
+odata_all_cities,טל-אל,2020,3
+odata_all_cities,טל-אל,2021,4
+odata_all_cities,טל-אל,2022,5
+odata_all_cities,טל-אל,2023,3
+odata_all_cities,טל-אל,2024,2
+odata_all_cities,טנא,2016,1
+odata_all_cities,טנא,2019,3
+odata_all_cities,טנא,2024,2
+odata_all_cities,יבנה,1998,28
+odata_all_cities,יבנה,1999,62
+odata_all_cities,יבנה,2000,53
+odata_all_cities,יבנה,2001,62
+odata_all_cities,יבנה,2002,84
+odata_all_cities,יבנה,2003,79
+odata_all_cities,יבנה,2004,95
+odata_all_cities,יבנה,2005,97
+odata_all_cities,יבנה,2006,92
+odata_all_cities,יבנה,2007,220
+odata_all_cities,יבנה,2008,192
+odata_all_cities,יבנה,2009,238
+odata_all_cities,יבנה,2010,429
+odata_all_cities,יבנה,2011,389
+odata_all_cities,יבנה,2012,569
+odata_all_cities,יבנה,2013,470
+odata_all_cities,יבנה,2014,426
+odata_all_cities,יבנה,2015,501
+odata_all_cities,יבנה,2016,329
+odata_all_cities,יבנה,2017,294
+odata_all_cities,יבנה,2018,355
+odata_all_cities,יבנה,2019,353
+odata_all_cities,יבנה,2020,411
+odata_all_cities,יבנה,2021,557
+odata_all_cities,יבנה,2022,450
+odata_all_cities,יבנה,2023,207
+odata_all_cities,יבנה,2024,222
+odata_all_cities,יד בנימין,2006,1
+odata_all_cities,יד בנימין,2007,22
+odata_all_cities,יד בנימין,2008,10
+odata_all_cities,יד בנימין,2009,15
+odata_all_cities,יד בנימין,2010,13
+odata_all_cities,יד בנימין,2011,5
+odata_all_cities,יד בנימין,2012,10
+odata_all_cities,יד בנימין,2013,9
+odata_all_cities,יד בנימין,2014,5
+odata_all_cities,יד בנימין,2015,4
+odata_all_cities,יד בנימין,2016,4
+odata_all_cities,יד בנימין,2017,3
+odata_all_cities,יד בנימין,2018,7
+odata_all_cities,יד בנימין,2019,8
+odata_all_cities,יד בנימין,2020,3
+odata_all_cities,יד בנימין,2021,7
+odata_all_cities,יד בנימין,2022,4
+odata_all_cities,יד בנימין,2023,3
+odata_all_cities,יד בנימין,2024,2
+odata_all_cities,יד נתן,2002,1
+odata_all_cities,יד נתן,2004,1
+odata_all_cities,יד נתן,2008,3
+odata_all_cities,יד נתן,2011,1
+odata_all_cities,יד נתן,2013,1
+odata_all_cities,יד נתן,2014,2
+odata_all_cities,יד נתן,2015,1
+odata_all_cities,יד נתן,2018,2
+odata_all_cities,יד נתן,2019,1
+odata_all_cities,יד נתן,2020,1
+odata_all_cities,יד נתן,2021,1
+odata_all_cities,יד נתן,2023,2
+odata_all_cities,יד נתן,2024,1
+odata_all_cities,יהוד-מונוסון,1998,26
+odata_all_cities,יהוד-מונוסון,1999,24
+odata_all_cities,יהוד-מונוסון,2000,25
+odata_all_cities,יהוד-מונוסון,2001,25
+odata_all_cities,יהוד-מונוסון,2002,33
+odata_all_cities,יהוד-מונוסון,2003,52
+odata_all_cities,יהוד-מונוסון,2004,48
+odata_all_cities,יהוד-מונוסון,2005,48
+odata_all_cities,יהוד-מונוסון,2006,49
+odata_all_cities,יהוד-מונוסון,2007,83
+odata_all_cities,יהוד-מונוסון,2008,86
+odata_all_cities,יהוד-מונוסון,2009,115
+odata_all_cities,יהוד-מונוסון,2010,123
+odata_all_cities,יהוד-מונוסון,2011,87
+odata_all_cities,יהוד-מונוסון,2012,122
+odata_all_cities,יהוד-מונוסון,2013,175
+odata_all_cities,יהוד-מונוסון,2014,159
+odata_all_cities,יהוד-מונוסון,2015,175
+odata_all_cities,יהוד-מונוסון,2016,224
+odata_all_cities,יהוד-מונוסון,2017,201
+odata_all_cities,יהוד-מונוסון,2018,201
+odata_all_cities,יהוד-מונוסון,2019,177
+odata_all_cities,יהוד-מונוסון,2020,169
+odata_all_cities,יהוד-מונוסון,2021,250
+odata_all_cities,יהוד-מונוסון,2022,168
+odata_all_cities,יהוד-מונוסון,2023,100
+odata_all_cities,יהוד-מונוסון,2024,101
+odata_all_cities,יעד,2007,3
+odata_all_cities,יעד,2008,2
+odata_all_cities,יעד,2011,1
+odata_all_cities,יעד,2013,1
+odata_all_cities,יעד,2015,1
+odata_all_cities,יעד,2016,1
+odata_all_cities,יעד,2018,1
+odata_all_cities,יעד,2020,3
+odata_all_cities,יעד,2021,1
+odata_all_cities,יעד,2023,3
+odata_all_cities,יקיר,2017,1
+odata_all_cities,יקיר,2018,3
+odata_all_cities,יקיר,2019,3
+odata_all_cities,יקנעם עילית,1998,55
+odata_all_cities,יקנעם עילית,1999,19
+odata_all_cities,יקנעם עילית,2000,9
+odata_all_cities,יקנעם עילית,2001,25
+odata_all_cities,יקנעם עילית,2002,26
+odata_all_cities,יקנעם עילית,2003,26
+odata_all_cities,יקנעם עילית,2004,24
+odata_all_cities,יקנעם עילית,2005,31
+odata_all_cities,יקנעם עילית,2006,37
+odata_all_cities,יקנעם עילית,2007,55
+odata_all_cities,יקנעם עילית,2008,79
+odata_all_cities,יקנעם עילית,2009,144
+odata_all_cities,יקנעם עילית,2010,244
+odata_all_cities,יקנעם עילית,2011,178
+odata_all_cities,יקנעם עילית,2012,179
+odata_all_cities,יקנעם עילית,2013,178
+odata_all_cities,יקנעם עילית,2014,122
+odata_all_cities,יקנעם עילית,2015,131
+odata_all_cities,יקנעם עילית,2016,137
+odata_all_cities,יקנעם עילית,2017,137
+odata_all_cities,יקנעם עילית,2018,124
+odata_all_cities,יקנעם עילית,2019,133
+odata_all_cities,יקנעם עילית,2020,143
+odata_all_cities,יקנעם עילית,2021,250
+odata_all_cities,יקנעם עילית,2022,192
+odata_all_cities,יקנעם עילית,2023,128
+odata_all_cities,יקנעם עילית,2024,79
+odata_all_cities,ירוחם,1998,3
+odata_all_cities,ירוחם,1999,5
+odata_all_cities,ירוחם,2000,5
+odata_all_cities,ירוחם,2001,8
+odata_all_cities,ירוחם,2002,4
+odata_all_cities,ירוחם,2003,5
+odata_all_cities,ירוחם,2004,5
+odata_all_cities,ירוחם,2005,3
+odata_all_cities,ירוחם,2006,4
+odata_all_cities,ירוחם,2007,5
+odata_all_cities,ירוחם,2008,5
+odata_all_cities,ירוחם,2009,11
+odata_all_cities,ירוחם,2010,18
+odata_all_cities,ירוחם,2011,30
+odata_all_cities,ירוחם,2012,53
+odata_all_cities,ירוחם,2013,75
+odata_all_cities,ירוחם,2014,83
+odata_all_cities,ירוחם,2015,77
+odata_all_cities,ירוחם,2016,80
+odata_all_cities,ירוחם,2017,51
+odata_all_cities,ירוחם,2018,47
+odata_all_cities,ירוחם,2019,48
+odata_all_cities,ירוחם,2020,47
+odata_all_cities,ירוחם,2021,85
+odata_all_cities,ירוחם,2022,107
+odata_all_cities,ירוחם,2023,99
+odata_all_cities,ירוחם,2024,71
+odata_all_cities,ירושלים,1998,981
+odata_all_cities,ירושלים,1999,1359
+odata_all_cities,ירושלים,2000,1032
+odata_all_cities,ירושלים,2001,1148
+odata_all_cities,ירושלים,2002,1209
+odata_all_cities,ירושלים,2003,1324
+odata_all_cities,ירושלים,2004,1693
+odata_all_cities,ירושלים,2005,1608
+odata_all_cities,ירושלים,2006,1433
+odata_all_cities,ירושלים,2007,2367
+odata_all_cities,ירושלים,2008,2138
+odata_all_cities,ירושלים,2009,2508
+odata_all_cities,ירושלים,2010,2601
+odata_all_cities,ירושלים,2011,2274
+odata_all_cities,ירושלים,2012,2868
+odata_all_cities,ירושלים,2013,3421
+odata_all_cities,ירושלים,2014,2844
+odata_all_cities,ירושלים,2015,3418
+odata_all_cities,ירושלים,2016,3255
+odata_all_cities,ירושלים,2017,2734
+odata_all_cities,ירושלים,2018,3008
+odata_all_cities,ירושלים,2019,3037
+odata_all_cities,ירושלים,2020,3031
+odata_all_cities,ירושלים,2021,4769
+odata_all_cities,ירושלים,2022,4076
+odata_all_cities,ירושלים,2023,3194
+odata_all_cities,ירושלים,2024,2371
+odata_all_cities,ירחיב,2009,1
+odata_all_cities,ירחיב,2014,1
+odata_all_cities,ירחיב,2015,2
+odata_all_cities,ירחיב,2017,1
+odata_all_cities,ירחיב,2019,1
+odata_all_cities,ירחיב,2021,4
+odata_all_cities,ירחיב,2022,1
+odata_all_cities,ירכא,1999,1
+odata_all_cities,ירכא,2006,2
+odata_all_cities,ירכא,2008,1
+odata_all_cities,ירכא,2011,1
+odata_all_cities,ירכא,2013,1
+odata_all_cities,ירכא,2014,1
+odata_all_cities,ירכא,2015,1
+odata_all_cities,ירכא,2016,1
+odata_all_cities,ירכא,2017,3
+odata_all_cities,ירכא,2018,3
+odata_all_cities,ירכא,2020,6
+odata_all_cities,ירכא,2021,12
+odata_all_cities,ירכא,2022,18
+odata_all_cities,ירכא,2023,6
+odata_all_cities,ירכא,2024,6
+odata_all_cities,ירקונה,2000,1
+odata_all_cities,ירקונה,2001,1
+odata_all_cities,ירקונה,2002,1
+odata_all_cities,ירקונה,2003,1
+odata_all_cities,ירקונה,2005,1
+odata_all_cities,ירקונה,2006,2
+odata_all_cities,ירקונה,2007,2
+odata_all_cities,ירקונה,2008,1
+odata_all_cities,ירקונה,2011,1
+odata_all_cities,ירקונה,2012,1
+odata_all_cities,ירקונה,2013,1
+odata_all_cities,ירקונה,2015,1
+odata_all_cities,ירקונה,2016,1
+odata_all_cities,ירקונה,2017,1
+odata_all_cities,ירקונה,2018,2
+odata_all_cities,ירקונה,2019,1
+odata_all_cities,ירקונה,2020,2
+odata_all_cities,ירקונה,2023,1
+odata_all_cities,כוכב השחר,2022,1
+odata_all_cities,כוכב השחר,2023,1
+odata_all_cities,כוכב יאיר,1998,7
+odata_all_cities,כוכב יאיר,1999,8
+odata_all_cities,כוכב יאיר,2000,15
+odata_all_cities,כוכב יאיר,2001,10
+odata_all_cities,כוכב יאיר,2002,15
+odata_all_cities,כוכב יאיר,2003,21
+odata_all_cities,כוכב יאיר,2004,38
+odata_all_cities,כוכב יאיר,2005,46
+odata_all_cities,כוכב יאיר,2006,53
+odata_all_cities,כוכב יאיר,2007,93
+odata_all_cities,כוכב יאיר,2008,62
+odata_all_cities,כוכב יאיר,2009,48
+odata_all_cities,כוכב יאיר,2010,40
+odata_all_cities,כוכב יאיר,2011,38
+odata_all_cities,כוכב יאיר,2012,38
+odata_all_cities,כוכב יאיר,2013,45
+odata_all_cities,כוכב יאיר,2014,53
+odata_all_cities,כוכב יאיר,2015,47
+odata_all_cities,כוכב יאיר,2016,74
+odata_all_cities,כוכב יאיר,2017,51
+odata_all_cities,כוכב יאיר,2018,63
+odata_all_cities,כוכב יאיר,2019,62
+odata_all_cities,כוכב יאיר,2020,59
+odata_all_cities,כוכב יאיר,2021,69
+odata_all_cities,כוכב יאיר,2022,37
+odata_all_cities,כוכב יאיר,2023,23
+odata_all_cities,כוכב יאיר,2024,17
+odata_all_cities,כמון,2001,1
+odata_all_cities,כמון,2004,1
+odata_all_cities,כמון,2005,5
+odata_all_cities,כמון,2006,3
+odata_all_cities,כמון,2007,2
+odata_all_cities,כמון,2008,2
+odata_all_cities,כמון,2009,1
+odata_all_cities,כמון,2010,1
+odata_all_cities,כמון,2011,1
+odata_all_cities,כמון,2013,2
+odata_all_cities,כמון,2014,3
+odata_all_cities,כמון,2015,3
+odata_all_cities,כמון,2016,1
+odata_all_cities,כמון,2017,1
+odata_all_cities,כמון,2018,1
+odata_all_cities,כמון,2019,3
+odata_all_cities,כמון,2020,3
+odata_all_cities,כמון,2021,2
+odata_all_cities,כמון,2022,1
+odata_all_cities,כמון,2023,3
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2007,1
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2017,1
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2019,2
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2020,1
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2021,1
+odata_all_cities,כעביה-טבאש-חג'אג'רה,2023,1
+odata_all_cities,כפר אדומים,2001,1
+odata_all_cities,כפר אדומים,2019,1
+odata_all_cities,כפר אוריה,2005,1
+odata_all_cities,כפר אוריה,2009,1
+odata_all_cities,כפר אוריה,2016,1
+odata_all_cities,כפר אוריה,2018,2
+odata_all_cities,כפר אוריה,2019,1
+odata_all_cities,כפר אוריה,2021,2
+odata_all_cities,כפר אוריה,2022,1
+odata_all_cities,כפר ביאליק,2022,1
+odata_all_cities,כפר ביאליק,2023,1
+odata_all_cities,"כפר ביל""ו",2006,1
+odata_all_cities,"כפר ביל""ו",2013,1
+odata_all_cities,"כפר ביל""ו",2019,1
+odata_all_cities,"כפר ביל""ו",2020,1
+odata_all_cities,"כפר ביל""ו",2021,2
+odata_all_cities,"כפר ביל""ו",2023,2
+odata_all_cities,"כפר ביל""ו",2024,2
+odata_all_cities,כפר בן נון,2006,1
+odata_all_cities,כפר בן נון,2009,2
+odata_all_cities,כפר בן נון,2012,1
+odata_all_cities,כפר בן נון,2013,2
+odata_all_cities,כפר בן נון,2017,1
+odata_all_cities,כפר בן נון,2019,2
+odata_all_cities,כפר בן נון,2021,1
+odata_all_cities,כפר בן נון,2022,1
+odata_all_cities,כפר ברא,1999,1
+odata_all_cities,כפר ברא,2006,1
+odata_all_cities,כפר ברא,2007,1
+odata_all_cities,כפר ברא,2009,2
+odata_all_cities,כפר ברא,2010,1
+odata_all_cities,כפר ברא,2011,1
+odata_all_cities,כפר ברא,2012,2
+odata_all_cities,כפר ברא,2013,1
+odata_all_cities,כפר ברא,2014,2
+odata_all_cities,כפר ברא,2015,3
+odata_all_cities,כפר ברא,2016,3
+odata_all_cities,כפר ברא,2017,1
+odata_all_cities,כפר ברא,2018,1
+odata_all_cities,כפר ברא,2019,4
+odata_all_cities,כפר ברא,2020,5
+odata_all_cities,כפר ברא,2021,10
+odata_all_cities,כפר ברא,2022,6
+odata_all_cities,כפר ברא,2023,25
+odata_all_cities,כפר ברא,2024,14
+odata_all_cities,כפר ברוך,2021,3
+odata_all_cities,כפר ברוך,2022,3
+odata_all_cities,כפר ברוך,2023,1
+odata_all_cities,כפר ברוך,2024,2
+odata_all_cities,כפר האורנים,2003,5
+odata_all_cities,כפר האורנים,2004,11
+odata_all_cities,כפר האורנים,2005,4
+odata_all_cities,כפר האורנים,2007,7
+odata_all_cities,כפר האורנים,2008,10
+odata_all_cities,כפר האורנים,2009,12
+odata_all_cities,כפר האורנים,2010,12
+odata_all_cities,כפר האורנים,2011,11
+odata_all_cities,כפר האורנים,2012,15
+odata_all_cities,כפר האורנים,2013,16
+odata_all_cities,כפר האורנים,2014,9
+odata_all_cities,כפר האורנים,2015,6
+odata_all_cities,כפר האורנים,2016,8
+odata_all_cities,כפר האורנים,2017,7
+odata_all_cities,כפר האורנים,2018,9
+odata_all_cities,כפר האורנים,2019,9
+odata_all_cities,כפר האורנים,2020,5
+odata_all_cities,כפר האורנים,2021,18
+odata_all_cities,כפר האורנים,2022,7
+odata_all_cities,כפר האורנים,2023,3
+odata_all_cities,כפר האורנים,2024,4
+odata_all_cities,"כפר הרי""ף",2002,2
+odata_all_cities,"כפר הרי""ף",2006,1
+odata_all_cities,"כפר הרי""ף",2007,2
+odata_all_cities,"כפר הרי""ף",2008,2
+odata_all_cities,"כפר הרי""ף",2010,2
+odata_all_cities,"כפר הרי""ף",2011,1
+odata_all_cities,"כפר הרי""ף",2012,3
+odata_all_cities,"כפר הרי""ף",2013,1
+odata_all_cities,"כפר הרי""ף",2014,2
+odata_all_cities,"כפר הרי""ף",2016,1
+odata_all_cities,"כפר הרי""ף",2018,1
+odata_all_cities,"כפר הרי""ף",2021,4
+odata_all_cities,"כפר הרי""ף",2022,2
+odata_all_cities,"כפר הרי""ף",2023,1
+odata_all_cities,כפר ויתקין,2001,1
+odata_all_cities,כפר ויתקין,2004,1
+odata_all_cities,כפר ויתקין,2005,2
+odata_all_cities,כפר ויתקין,2006,4
+odata_all_cities,כפר ויתקין,2007,4
+odata_all_cities,כפר ויתקין,2008,6
+odata_all_cities,כפר ויתקין,2009,2
+odata_all_cities,כפר ויתקין,2011,3
+odata_all_cities,כפר ויתקין,2013,5
+odata_all_cities,כפר ויתקין,2014,2
+odata_all_cities,כפר ויתקין,2015,1
+odata_all_cities,כפר ויתקין,2016,2
+odata_all_cities,כפר ויתקין,2017,1
+odata_all_cities,כפר ויתקין,2019,1
+odata_all_cities,כפר ויתקין,2020,1
+odata_all_cities,כפר ויתקין,2021,7
+odata_all_cities,כפר ויתקין,2022,1
+odata_all_cities,כפר ויתקין,2023,4
+odata_all_cities,כפר ויתקין,2024,3
+odata_all_cities,כפר ורדים,1998,7
+odata_all_cities,כפר ורדים,1999,11
+odata_all_cities,כפר ורדים,2000,10
+odata_all_cities,כפר ורדים,2001,11
+odata_all_cities,כפר ורדים,2002,8
+odata_all_cities,כפר ורדים,2003,5
+odata_all_cities,כפר ורדים,2004,6
+odata_all_cities,כפר ורדים,2005,13
+odata_all_cities,כפר ורדים,2006,13
+odata_all_cities,כפר ורדים,2007,16
+odata_all_cities,כפר ורדים,2008,42
+odata_all_cities,כפר ורדים,2009,50
+odata_all_cities,כפר ורדים,2010,31
+odata_all_cities,כפר ורדים,2011,32
+odata_all_cities,כפר ורדים,2012,27
+odata_all_cities,כפר ורדים,2013,28
+odata_all_cities,כפר ורדים,2014,21
+odata_all_cities,כפר ורדים,2015,42
+odata_all_cities,כפר ורדים,2016,49
+odata_all_cities,כפר ורדים,2017,39
+odata_all_cities,כפר ורדים,2018,31
+odata_all_cities,כפר ורדים,2019,46
+odata_all_cities,כפר ורדים,2020,44
+odata_all_cities,כפר ורדים,2021,65
+odata_all_cities,כפר ורדים,2022,37
+odata_all_cities,כפר ורדים,2023,24
+odata_all_cities,כפר ורדים,2024,13
+odata_all_cities,"כפר חב""ד",2001,1
+odata_all_cities,"כפר חב""ד",2002,1
+odata_all_cities,"כפר חב""ד",2009,2
+odata_all_cities,"כפר חב""ד",2010,2
+odata_all_cities,"כפר חב""ד",2012,1
+odata_all_cities,"כפר חב""ד",2013,1
+odata_all_cities,"כפר חב""ד",2015,1
+odata_all_cities,"כפר חב""ד",2017,1
+odata_all_cities,"כפר חב""ד",2018,2
+odata_all_cities,"כפר חב""ד",2019,3
+odata_all_cities,"כפר חב""ד",2020,4
+odata_all_cities,"כפר חב""ד",2021,2
+odata_all_cities,"כפר חב""ד",2022,4
+odata_all_cities,"כפר חב""ד",2023,4
+odata_all_cities,"כפר חב""ד",2024,4
+odata_all_cities,כפר טרומן,1998,1
+odata_all_cities,כפר טרומן,2003,2
+odata_all_cities,כפר טרומן,2005,2
+odata_all_cities,כפר טרומן,2006,1
+odata_all_cities,כפר טרומן,2007,1
+odata_all_cities,כפר טרומן,2008,2
+odata_all_cities,כפר טרומן,2009,3
+odata_all_cities,כפר טרומן,2010,3
+odata_all_cities,כפר טרומן,2011,1
+odata_all_cities,כפר טרומן,2012,3
+odata_all_cities,כפר טרומן,2013,3
+odata_all_cities,כפר טרומן,2014,1
+odata_all_cities,כפר טרומן,2015,1
+odata_all_cities,כפר טרומן,2016,1
+odata_all_cities,כפר טרומן,2017,1
+odata_all_cities,כפר טרומן,2018,1
+odata_all_cities,כפר טרומן,2019,2
+odata_all_cities,כפר טרומן,2020,3
+odata_all_cities,כפר טרומן,2021,1
+odata_all_cities,כפר טרומן,2022,1
+odata_all_cities,כפר טרומן,2023,1
+odata_all_cities,כפר ידידיה,2002,1
+odata_all_cities,כפר ידידיה,2010,1
+odata_all_cities,כפר ידידיה,2011,1
+odata_all_cities,כפר ידידיה,2012,1
+odata_all_cities,כפר ידידיה,2014,1
+odata_all_cities,כפר ידידיה,2016,1
+odata_all_cities,כפר ידידיה,2020,2
+odata_all_cities,כפר ידידיה,2021,3
+odata_all_cities,כפר ידידיה,2022,1
+odata_all_cities,כפר ידידיה,2023,3
+odata_all_cities,כפר ידידיה,2024,2
+odata_all_cities,כפר יונה,1998,47
+odata_all_cities,כפר יונה,1999,53
+odata_all_cities,כפר יונה,2000,41
+odata_all_cities,כפר יונה,2001,43
+odata_all_cities,כפר יונה,2002,57
+odata_all_cities,כפר יונה,2003,56
+odata_all_cities,כפר יונה,2004,99
+odata_all_cities,כפר יונה,2005,83
+odata_all_cities,כפר יונה,2006,169
+odata_all_cities,כפר יונה,2007,226
+odata_all_cities,כפר יונה,2008,197
+odata_all_cities,כפר יונה,2009,160
+odata_all_cities,כפר יונה,2010,181
+odata_all_cities,כפר יונה,2011,121
+odata_all_cities,כפר יונה,2012,169
+odata_all_cities,כפר יונה,2013,171
+odata_all_cities,כפר יונה,2014,133
+odata_all_cities,כפר יונה,2015,202
+odata_all_cities,כפר יונה,2016,252
+odata_all_cities,כפר יונה,2017,267
+odata_all_cities,כפר יונה,2018,307
+odata_all_cities,כפר יונה,2019,324
+odata_all_cities,כפר יונה,2020,282
+odata_all_cities,כפר יונה,2021,347
+odata_all_cities,כפר יונה,2022,162
+odata_all_cities,כפר יונה,2023,99
+odata_all_cities,כפר יונה,2024,123
+odata_all_cities,כפר כמא,1998,1
+odata_all_cities,כפר כמא,2000,1
+odata_all_cities,כפר כמא,2006,2
+odata_all_cities,כפר כמא,2014,1
+odata_all_cities,כפר כמא,2015,2
+odata_all_cities,כפר כמא,2018,2
+odata_all_cities,כפר כמא,2019,1
+odata_all_cities,כפר כמא,2021,3
+odata_all_cities,כפר כמא,2022,3
+odata_all_cities,כפר כמא,2023,1
+odata_all_cities,"כפר מל""ל",2020,1
+odata_all_cities,כפר מרדכי,1998,1
+odata_all_cities,כפר מרדכי,2011,1
+odata_all_cities,כפר מרדכי,2012,1
+odata_all_cities,כפר מרדכי,2014,1
+odata_all_cities,כפר מרדכי,2016,2
+odata_all_cities,כפר מרדכי,2017,1
+odata_all_cities,כפר מרדכי,2022,2
+odata_all_cities,כפר נטר,2003,1
+odata_all_cities,כפר נטר,2004,2
+odata_all_cities,כפר נטר,2005,6
+odata_all_cities,כפר נטר,2006,3
+odata_all_cities,כפר נטר,2007,2
+odata_all_cities,כפר נטר,2008,3
+odata_all_cities,כפר נטר,2009,1
+odata_all_cities,כפר נטר,2010,3
+odata_all_cities,כפר נטר,2011,2
+odata_all_cities,כפר נטר,2012,2
+odata_all_cities,כפר נטר,2013,2
+odata_all_cities,כפר נטר,2014,1
+odata_all_cities,כפר נטר,2016,1
+odata_all_cities,כפר נטר,2017,3
+odata_all_cities,כפר נטר,2019,2
+odata_all_cities,כפר נטר,2020,2
+odata_all_cities,כפר נטר,2021,2
+odata_all_cities,כפר נטר,2022,2
+odata_all_cities,כפר נטר,2024,1
+odata_all_cities,כפר סבא,1998,402
+odata_all_cities,כפר סבא,1999,504
+odata_all_cities,כפר סבא,2000,511
+odata_all_cities,כפר סבא,2001,460
+odata_all_cities,כפר סבא,2002,480
+odata_all_cities,כפר סבא,2003,324
+odata_all_cities,כפר סבא,2004,398
+odata_all_cities,כפר סבא,2005,531
+odata_all_cities,כפר סבא,2006,620
+odata_all_cities,כפר סבא,2007,855
+odata_all_cities,כפר סבא,2008,783
+odata_all_cities,כפר סבא,2009,1118
+odata_all_cities,כפר סבא,2010,991
+odata_all_cities,כפר סבא,2011,692
+odata_all_cities,כפר סבא,2012,899
+odata_all_cities,כפר סבא,2013,1061
+odata_all_cities,כפר סבא,2014,916
+odata_all_cities,כפר סבא,2015,1108
+odata_all_cities,כפר סבא,2016,892
+odata_all_cities,כפר סבא,2017,767
+odata_all_cities,כפר סבא,2018,809
+odata_all_cities,כפר סבא,2019,875
+odata_all_cities,כפר סבא,2020,858
+odata_all_cities,כפר סבא,2021,1372
+odata_all_cities,כפר סבא,2022,879
+odata_all_cities,כפר סבא,2023,648
+odata_all_cities,כפר סבא,2024,461
+odata_all_cities,כפר סבא,2026,1
+odata_all_cities,כרמיאל,1998,10
+odata_all_cities,כרמיאל,1999,13
+odata_all_cities,כרמיאל,2000,16
+odata_all_cities,כרמיאל,2001,13
+odata_all_cities,כרמיאל,2002,12
+odata_all_cities,כרמיאל,2003,13
+odata_all_cities,כרמיאל,2004,14
+odata_all_cities,כרמיאל,2005,11
+odata_all_cities,כרמיאל,2006,9
+odata_all_cities,כרמיאל,2007,16
+odata_all_cities,כרמיאל,2008,30
+odata_all_cities,כרמיאל,2009,32
+odata_all_cities,כרמיאל,2010,42
+odata_all_cities,כרמיאל,2011,40
+odata_all_cities,כרמיאל,2012,66
+odata_all_cities,כרמיאל,2013,83
+odata_all_cities,כרמיאל,2014,81
+odata_all_cities,כרמיאל,2015,78
+odata_all_cities,כרמיאל,2016,101
+odata_all_cities,כרמיאל,2017,78
+odata_all_cities,כרמיאל,2018,72
+odata_all_cities,כרמיאל,2019,88
+odata_all_cities,כרמיאל,2020,93
+odata_all_cities,כרמיאל,2021,167
+odata_all_cities,כרמיאל,2022,144
+odata_all_cities,כרמיאל,2023,75
+odata_all_cities,כרמיאל,2024,50
+odata_all_cities,לבון,2007,1
+odata_all_cities,לבון,2009,1
+odata_all_cities,לבון,2010,2
+odata_all_cities,לבון,2011,1
+odata_all_cities,לבון,2012,2
+odata_all_cities,לבון,2013,2
+odata_all_cities,לבון,2014,3
+odata_all_cities,לבון,2015,5
+odata_all_cities,לבון,2016,4
+odata_all_cities,לבון,2017,1
+odata_all_cities,לבון,2018,4
+odata_all_cities,לבון,2019,5
+odata_all_cities,לבון,2020,7
+odata_all_cities,לבון,2021,4
+odata_all_cities,לבון,2022,3
+odata_all_cities,לבון,2023,1
+odata_all_cities,להבים,1998,3
+odata_all_cities,להבים,1999,3
+odata_all_cities,להבים,2000,6
+odata_all_cities,להבים,2001,6
+odata_all_cities,להבים,2002,8
+odata_all_cities,להבים,2003,12
+odata_all_cities,להבים,2004,7
+odata_all_cities,להבים,2005,6
+odata_all_cities,להבים,2006,7
+odata_all_cities,להבים,2007,8
+odata_all_cities,להבים,2008,11
+odata_all_cities,להבים,2009,8
+odata_all_cities,להבים,2010,22
+odata_all_cities,להבים,2011,22
+odata_all_cities,להבים,2012,23
+odata_all_cities,להבים,2013,25
+odata_all_cities,להבים,2014,32
+odata_all_cities,להבים,2015,34
+odata_all_cities,להבים,2016,23
+odata_all_cities,להבים,2017,19
+odata_all_cities,להבים,2018,23
+odata_all_cities,להבים,2019,20
+odata_all_cities,להבים,2020,32
+odata_all_cities,להבים,2021,60
+odata_all_cities,להבים,2022,34
+odata_all_cities,להבים,2023,29
+odata_all_cities,להבים,2024,24
+odata_all_cities,לוד,1998,61
+odata_all_cities,לוד,1999,65
+odata_all_cities,לוד,2000,71
+odata_all_cities,לוד,2001,133
+odata_all_cities,לוד,2002,80
+odata_all_cities,לוד,2003,84
+odata_all_cities,לוד,2004,82
+odata_all_cities,לוד,2005,67
+odata_all_cities,לוד,2006,78
+odata_all_cities,לוד,2007,198
+odata_all_cities,לוד,2008,295
+odata_all_cities,לוד,2009,343
+odata_all_cities,לוד,2010,346
+odata_all_cities,לוד,2011,369
+odata_all_cities,לוד,2012,433
+odata_all_cities,לוד,2013,492
+odata_all_cities,לוד,2014,443
+odata_all_cities,לוד,2015,434
+odata_all_cities,לוד,2016,698
+odata_all_cities,לוד,2017,418
+odata_all_cities,לוד,2018,462
+odata_all_cities,לוד,2019,482
+odata_all_cities,לוד,2020,490
+odata_all_cities,לוד,2021,767
+odata_all_cities,לוד,2022,1029
+odata_all_cities,לוד,2023,707
+odata_all_cities,לוד,2024,438
+odata_all_cities,לפיד,1998,11
+odata_all_cities,לפיד,1999,11
+odata_all_cities,לפיד,2000,13
+odata_all_cities,לפיד,2001,9
+odata_all_cities,לפיד,2002,7
+odata_all_cities,לפיד,2003,10
+odata_all_cities,לפיד,2004,17
+odata_all_cities,לפיד,2005,9
+odata_all_cities,לפיד,2006,7
+odata_all_cities,לפיד,2007,13
+odata_all_cities,לפיד,2008,14
+odata_all_cities,לפיד,2009,14
+odata_all_cities,לפיד,2010,18
+odata_all_cities,לפיד,2011,7
+odata_all_cities,לפיד,2012,8
+odata_all_cities,לפיד,2013,7
+odata_all_cities,לפיד,2014,10
+odata_all_cities,לפיד,2015,11
+odata_all_cities,לפיד,2016,2
+odata_all_cities,לפיד,2017,11
+odata_all_cities,לפיד,2018,10
+odata_all_cities,לפיד,2019,12
+odata_all_cities,לפיד,2020,13
+odata_all_cities,לפיד,2021,10
+odata_all_cities,לפיד,2022,6
+odata_all_cities,לפיד,2023,4
+odata_all_cities,לפיד,2024,3
+odata_all_cities,מבוא ביתר,1998,1
+odata_all_cities,מבוא ביתר,1999,1
+odata_all_cities,מבוא ביתר,2007,1
+odata_all_cities,מבוא ביתר,2008,5
+odata_all_cities,מבוא ביתר,2009,1
+odata_all_cities,מבוא ביתר,2011,3
+odata_all_cities,מבוא ביתר,2012,1
+odata_all_cities,מבוא ביתר,2013,1
+odata_all_cities,מבוא ביתר,2015,5
+odata_all_cities,מבוא ביתר,2016,2
+odata_all_cities,מבוא ביתר,2017,3
+odata_all_cities,מבוא ביתר,2018,1
+odata_all_cities,מבוא ביתר,2019,1
+odata_all_cities,מבוא ביתר,2020,6
+odata_all_cities,מבוא ביתר,2021,4
+odata_all_cities,מבוא ביתר,2022,1
+odata_all_cities,מבוא ביתר,2023,2
+odata_all_cities,מבועים,1998,1
+odata_all_cities,מבועים,1999,2
+odata_all_cities,מבועים,2004,1
+odata_all_cities,מבועים,2005,2
+odata_all_cities,מבועים,2006,1
+odata_all_cities,מבועים,2007,1
+odata_all_cities,מבועים,2009,1
+odata_all_cities,מבועים,2010,1
+odata_all_cities,מבועים,2011,2
+odata_all_cities,מבועים,2012,3
+odata_all_cities,מבועים,2014,3
+odata_all_cities,מבועים,2015,4
+odata_all_cities,מבועים,2017,2
+odata_all_cities,מבועים,2018,2
+odata_all_cities,מבועים,2019,1
+odata_all_cities,מבועים,2021,1
+odata_all_cities,מבועים,2024,1
+odata_all_cities,מבשרת ציון,1998,25
+odata_all_cities,מבשרת ציון,1999,74
+odata_all_cities,מבשרת ציון,2000,19
+odata_all_cities,מבשרת ציון,2001,28
+odata_all_cities,מבשרת ציון,2002,41
+odata_all_cities,מבשרת ציון,2003,25
+odata_all_cities,מבשרת ציון,2004,42
+odata_all_cities,מבשרת ציון,2005,30
+odata_all_cities,מבשרת ציון,2006,32
+odata_all_cities,מבשרת ציון,2007,95
+odata_all_cities,מבשרת ציון,2008,90
+odata_all_cities,מבשרת ציון,2009,113
+odata_all_cities,מבשרת ציון,2010,114
+odata_all_cities,מבשרת ציון,2011,78
+odata_all_cities,מבשרת ציון,2012,100
+odata_all_cities,מבשרת ציון,2013,114
+odata_all_cities,מבשרת ציון,2014,88
+odata_all_cities,מבשרת ציון,2015,110
+odata_all_cities,מבשרת ציון,2016,105
+odata_all_cities,מבשרת ציון,2017,89
+odata_all_cities,מבשרת ציון,2018,118
+odata_all_cities,מבשרת ציון,2019,118
+odata_all_cities,מבשרת ציון,2020,119
+odata_all_cities,מבשרת ציון,2021,230
+odata_all_cities,מבשרת ציון,2022,155
+odata_all_cities,מבשרת ציון,2023,97
+odata_all_cities,מבשרת ציון,2024,68
+odata_all_cities,מגדל,2001,1
+odata_all_cities,מגדל,2008,1
+odata_all_cities,מגדל,2009,1
+odata_all_cities,מגדל,2010,2
+odata_all_cities,מגדל,2011,3
+odata_all_cities,מגדל,2012,2
+odata_all_cities,מגדל,2013,1
+odata_all_cities,מגדל,2015,3
+odata_all_cities,מגדל,2016,2
+odata_all_cities,מגדל,2017,2
+odata_all_cities,מגדל,2018,3
+odata_all_cities,מגדל,2019,4
+odata_all_cities,מגדל,2021,3
+odata_all_cities,מגדל,2022,6
+odata_all_cities,מגדל,2023,3
+odata_all_cities,מגדל,2024,1
+odata_all_cities,מגדל העמק,1998,5
+odata_all_cities,מגדל העמק,1999,7
+odata_all_cities,מגדל העמק,2000,12
+odata_all_cities,מגדל העמק,2001,73
+odata_all_cities,מגדל העמק,2002,53
+odata_all_cities,מגדל העמק,2003,53
+odata_all_cities,מגדל העמק,2004,40
+odata_all_cities,מגדל העמק,2005,72
+odata_all_cities,מגדל העמק,2006,43
+odata_all_cities,מגדל העמק,2007,59
+odata_all_cities,מגדל העמק,2008,97
+odata_all_cities,מגדל העמק,2009,126
+odata_all_cities,מגדל העמק,2010,201
+odata_all_cities,מגדל העמק,2011,120
+odata_all_cities,מגדל העמק,2012,145
+odata_all_cities,מגדל העמק,2013,220
+odata_all_cities,מגדל העמק,2014,253
+odata_all_cities,מגדל העמק,2015,275
+odata_all_cities,מגדל העמק,2016,222
+odata_all_cities,מגדל העמק,2017,206
+odata_all_cities,מגדל העמק,2018,259
+odata_all_cities,מגדל העמק,2019,231
+odata_all_cities,מגדל העמק,2020,222
+odata_all_cities,מגדל העמק,2021,408
+odata_all_cities,מגדל העמק,2022,446
+odata_all_cities,מגדל העמק,2023,302
+odata_all_cities,מגדל העמק,2024,161
+odata_all_cities,מגשימים,2005,1
+odata_all_cities,מגשימים,2013,1
+odata_all_cities,מגשימים,2015,1
+odata_all_cities,מגשימים,2016,3
+odata_all_cities,מגשימים,2017,2
+odata_all_cities,מגשימים,2018,1
+odata_all_cities,מגשימים,2020,1
+odata_all_cities,מגשימים,2021,1
+odata_all_cities,מגשימים,2022,4
+odata_all_cities,מגשימים,2024,1
+odata_all_cities,מודיעין עילית,2004,37
+odata_all_cities,מודיעין עילית,2005,21
+odata_all_cities,מודיעין עילית,2006,6
+odata_all_cities,מודיעין עילית,2007,59
+odata_all_cities,מודיעין עילית,2008,174
+odata_all_cities,מודיעין עילית,2009,177
+odata_all_cities,מודיעין עילית,2010,224
+odata_all_cities,מודיעין עילית,2011,177
+odata_all_cities,מודיעין עילית,2012,282
+odata_all_cities,מודיעין עילית,2013,306
+odata_all_cities,מודיעין עילית,2014,204
+odata_all_cities,מודיעין עילית,2015,212
+odata_all_cities,מודיעין עילית,2016,247
+odata_all_cities,מודיעין עילית,2017,256
+odata_all_cities,מודיעין עילית,2018,365
+odata_all_cities,מודיעין עילית,2019,300
+odata_all_cities,מודיעין עילית,2020,220
+odata_all_cities,מודיעין עילית,2021,319
+odata_all_cities,מודיעין עילית,2022,207
+odata_all_cities,מודיעין עילית,2023,146
+odata_all_cities,מודיעין עילית,2024,146
+odata_all_cities,מודיעין-מכבים-רעות,1998,85
+odata_all_cities,מודיעין-מכבים-רעות,1999,93
+odata_all_cities,מודיעין-מכבים-רעות,2000,62
+odata_all_cities,מודיעין-מכבים-רעות,2001,80
+odata_all_cities,מודיעין-מכבים-רעות,2002,181
+odata_all_cities,מודיעין-מכבים-רעות,2003,157
+odata_all_cities,מודיעין-מכבים-רעות,2004,146
+odata_all_cities,מודיעין-מכבים-רעות,2005,130
+odata_all_cities,מודיעין-מכבים-רעות,2006,144
+odata_all_cities,מודיעין-מכבים-רעות,2007,524
+odata_all_cities,מודיעין-מכבים-רעות,2008,449
+odata_all_cities,מודיעין-מכבים-רעות,2009,641
+odata_all_cities,מודיעין-מכבים-רעות,2010,677
+odata_all_cities,מודיעין-מכבים-רעות,2011,401
+odata_all_cities,מודיעין-מכבים-רעות,2012,508
+odata_all_cities,מודיעין-מכבים-רעות,2013,615
+odata_all_cities,מודיעין-מכבים-רעות,2014,524
+odata_all_cities,מודיעין-מכבים-רעות,2015,620
+odata_all_cities,מודיעין-מכבים-רעות,2016,519
+odata_all_cities,מודיעין-מכבים-רעות,2017,392
+odata_all_cities,מודיעין-מכבים-רעות,2018,475
+odata_all_cities,מודיעין-מכבים-רעות,2019,594
+odata_all_cities,מודיעין-מכבים-רעות,2020,577
+odata_all_cities,מודיעין-מכבים-רעות,2021,908
+odata_all_cities,מודיעין-מכבים-רעות,2022,486
+odata_all_cities,מודיעין-מכבים-רעות,2023,334
+odata_all_cities,מודיעין-מכבים-רעות,2024,232
+odata_all_cities,מוצא עילית,1998,1
+odata_all_cities,מוצא עילית,1999,2
+odata_all_cities,מוצא עילית,2001,1
+odata_all_cities,מוצא עילית,2004,2
+odata_all_cities,מוצא עילית,2005,1
+odata_all_cities,מוצא עילית,2006,1
+odata_all_cities,מוצא עילית,2007,1
+odata_all_cities,מוצא עילית,2010,3
+odata_all_cities,מוצא עילית,2011,2
+odata_all_cities,מוצא עילית,2012,5
+odata_all_cities,מוצא עילית,2013,2
+odata_all_cities,מוצא עילית,2014,47
+odata_all_cities,מוצא עילית,2015,16
+odata_all_cities,מוצא עילית,2016,36
+odata_all_cities,מוצא עילית,2017,16
+odata_all_cities,מוצא עילית,2018,10
+odata_all_cities,מוצא עילית,2019,5
+odata_all_cities,מוצא עילית,2020,7
+odata_all_cities,מוצא עילית,2021,12
+odata_all_cities,מוצא עילית,2022,6
+odata_all_cities,מוצא עילית,2023,2
+odata_all_cities,מורשת,2009,1
+odata_all_cities,מורשת,2012,1
+odata_all_cities,מורשת,2013,2
+odata_all_cities,מורשת,2014,4
+odata_all_cities,מורשת,2016,2
+odata_all_cities,מורשת,2018,4
+odata_all_cities,מורשת,2019,2
+odata_all_cities,מורשת,2020,1
+odata_all_cities,מורשת,2021,1
+odata_all_cities,מורשת,2022,2
+odata_all_cities,מורשת,2024,1
+odata_all_cities,מזור,2001,1
+odata_all_cities,מזור,2003,1
+odata_all_cities,מזור,2004,1
+odata_all_cities,מזור,2005,1
+odata_all_cities,מזור,2006,2
+odata_all_cities,מזור,2007,5
+odata_all_cities,מזור,2008,3
+odata_all_cities,מזור,2009,1
+odata_all_cities,מזור,2010,2
+odata_all_cities,מזור,2011,2
+odata_all_cities,מזור,2012,1
+odata_all_cities,מזור,2013,3
+odata_all_cities,מזור,2014,1
+odata_all_cities,מזור,2015,3
+odata_all_cities,מזור,2017,1
+odata_all_cities,מזור,2019,2
+odata_all_cities,מזור,2020,3
+odata_all_cities,מזור,2021,2
+odata_all_cities,מזור,2023,2
+odata_all_cities,מזכרת בתיה,1998,11
+odata_all_cities,מזכרת בתיה,1999,20
+odata_all_cities,מזכרת בתיה,2000,18
+odata_all_cities,מזכרת בתיה,2001,11
+odata_all_cities,מזכרת בתיה,2002,37
+odata_all_cities,מזכרת בתיה,2003,28
+odata_all_cities,מזכרת בתיה,2004,40
+odata_all_cities,מזכרת בתיה,2005,42
+odata_all_cities,מזכרת בתיה,2006,33
+odata_all_cities,מזכרת בתיה,2007,84
+odata_all_cities,מזכרת בתיה,2008,72
+odata_all_cities,מזכרת בתיה,2009,132
+odata_all_cities,מזכרת בתיה,2010,170
+odata_all_cities,מזכרת בתיה,2011,155
+odata_all_cities,מזכרת בתיה,2012,199
+odata_all_cities,מזכרת בתיה,2013,240
+odata_all_cities,מזכרת בתיה,2014,159
+odata_all_cities,מזכרת בתיה,2015,185
+odata_all_cities,מזכרת בתיה,2016,327
+odata_all_cities,מזכרת בתיה,2017,131
+odata_all_cities,מזכרת בתיה,2018,127
+odata_all_cities,מזכרת בתיה,2019,119
+odata_all_cities,מזכרת בתיה,2020,121
+odata_all_cities,מזכרת בתיה,2021,262
+odata_all_cities,מזכרת בתיה,2022,100
+odata_all_cities,מזכרת בתיה,2023,72
+odata_all_cities,מזכרת בתיה,2024,66
+odata_all_cities,מטולה,1998,2
+odata_all_cities,מטולה,1999,6
+odata_all_cities,מטולה,2001,4
+odata_all_cities,מטולה,2004,4
+odata_all_cities,מטולה,2005,2
+odata_all_cities,מטולה,2006,2
+odata_all_cities,מטולה,2007,6
+odata_all_cities,מטולה,2008,10
+odata_all_cities,מטולה,2009,2
+odata_all_cities,מטולה,2010,10
+odata_all_cities,מטולה,2011,8
+odata_all_cities,מטולה,2012,8
+odata_all_cities,מטולה,2013,8
+odata_all_cities,מטולה,2014,4
+odata_all_cities,מטולה,2015,6
+odata_all_cities,מטולה,2016,10
+odata_all_cities,מטולה,2017,6
+odata_all_cities,מטולה,2018,10
+odata_all_cities,מטולה,2019,14
+odata_all_cities,מטולה,2020,16
+odata_all_cities,מטולה,2021,14
+odata_all_cities,מטולה,2022,12
+odata_all_cities,מטולה,2023,8
+odata_all_cities,מטולה,2024,2
+odata_all_cities,מיתר,1998,8
+odata_all_cities,מיתר,1999,10
+odata_all_cities,מיתר,2000,2
+odata_all_cities,מיתר,2001,6
+odata_all_cities,מיתר,2002,8
+odata_all_cities,מיתר,2003,8
+odata_all_cities,מיתר,2004,8
+odata_all_cities,מיתר,2005,12
+odata_all_cities,מיתר,2006,22
+odata_all_cities,מיתר,2007,46
+odata_all_cities,מיתר,2008,50
+odata_all_cities,מיתר,2009,36
+odata_all_cities,מיתר,2010,84
+odata_all_cities,מיתר,2011,88
+odata_all_cities,מיתר,2012,94
+odata_all_cities,מיתר,2013,94
+odata_all_cities,מיתר,2014,108
+odata_all_cities,מיתר,2015,86
+odata_all_cities,מיתר,2016,100
+odata_all_cities,מיתר,2017,102
+odata_all_cities,מיתר,2018,98
+odata_all_cities,מיתר,2019,102
+odata_all_cities,מיתר,2020,168
+odata_all_cities,מיתר,2021,148
+odata_all_cities,מיתר,2022,84
+odata_all_cities,מיתר,2023,46
+odata_all_cities,מיתר,2024,32
+odata_all_cities,מכמורת,1999,2
+odata_all_cities,מכמורת,2000,2
+odata_all_cities,מכמורת,2001,2
+odata_all_cities,מכמורת,2003,4
+odata_all_cities,מכמורת,2004,4
+odata_all_cities,מכמורת,2005,4
+odata_all_cities,מכמורת,2006,10
+odata_all_cities,מכמורת,2007,4
+odata_all_cities,מכמורת,2009,6
+odata_all_cities,מכמורת,2011,2
+odata_all_cities,מכמורת,2013,4
+odata_all_cities,מכמורת,2014,10
+odata_all_cities,מכמורת,2016,2
+odata_all_cities,מכמורת,2017,6
+odata_all_cities,מכמורת,2019,4
+odata_all_cities,מכמורת,2020,4
+odata_all_cities,מכמורת,2021,6
+odata_all_cities,מכמורת,2022,6
+odata_all_cities,מכמורת,2023,8
+odata_all_cities,מכמנים,2016,2
+odata_all_cities,מכמנים,2017,2
+odata_all_cities,מכמנים,2018,4
+odata_all_cities,מכמנים,2019,2
+odata_all_cities,מכמנים,2021,6
+odata_all_cities,מכמנים,2024,2
+odata_all_cities,מנוחה,2010,2
+odata_all_cities,מנוחה,2016,4
+odata_all_cities,מנוחה,2018,2
+odata_all_cities,מנוחה,2019,6
+odata_all_cities,מנוחה,2020,2
+odata_all_cities,מנוחה,2021,8
+odata_all_cities,מנוחה,2022,4
+odata_all_cities,מנוחה,2023,2
+odata_all_cities,מנחמיה,1999,2
+odata_all_cities,מנחמיה,2001,4
+odata_all_cities,מנחמיה,2002,2
+odata_all_cities,מנחמיה,2003,10
+odata_all_cities,מנחמיה,2004,4
+odata_all_cities,מנחמיה,2005,2
+odata_all_cities,מנחמיה,2006,6
+odata_all_cities,מנחמיה,2007,4
+odata_all_cities,מנחמיה,2008,4
+odata_all_cities,מנחמיה,2010,6
+odata_all_cities,מנחמיה,2011,8
+odata_all_cities,מנחמיה,2012,8
+odata_all_cities,מנחמיה,2013,4
+odata_all_cities,מנחמיה,2014,4
+odata_all_cities,מנחמיה,2015,8
+odata_all_cities,מנחמיה,2016,10
+odata_all_cities,מנחמיה,2017,16
+odata_all_cities,מנחמיה,2018,6
+odata_all_cities,מנחמיה,2019,12
+odata_all_cities,מנחמיה,2020,26
+odata_all_cities,מנחמיה,2021,18
+odata_all_cities,מנחמיה,2022,6
+odata_all_cities,מנחמיה,2023,4
+odata_all_cities,מנחמיה,2024,4
+odata_all_cities,מסילת ציון,2002,2
+odata_all_cities,מסילת ציון,2004,2
+odata_all_cities,מסילת ציון,2006,2
+odata_all_cities,מסילת ציון,2008,6
+odata_all_cities,מסילת ציון,2009,2
+odata_all_cities,מסילת ציון,2010,4
+odata_all_cities,מסילת ציון,2011,2
+odata_all_cities,מסילת ציון,2012,4
+odata_all_cities,מסילת ציון,2013,4
+odata_all_cities,מסילת ציון,2014,2
+odata_all_cities,מסילת ציון,2016,4
+odata_all_cities,מסילת ציון,2017,2
+odata_all_cities,מסילת ציון,2018,4
+odata_all_cities,מסילת ציון,2020,2
+odata_all_cities,מסילת ציון,2021,4
+odata_all_cities,מסילת ציון,2023,4
+odata_all_cities,מסילת ציון,2024,2
+odata_all_cities,מעונה,2006,2
+odata_all_cities,מעונה,2007,2
+odata_all_cities,מעונה,2008,4
+odata_all_cities,מעונה,2009,2
+odata_all_cities,מעונה,2010,8
+odata_all_cities,מעונה,2011,6
+odata_all_cities,מעונה,2012,6
+odata_all_cities,מעונה,2013,2
+odata_all_cities,מעונה,2014,4
+odata_all_cities,מעונה,2016,2
+odata_all_cities,מעונה,2017,2
+odata_all_cities,מעונה,2018,2
+odata_all_cities,מעונה,2019,2
+odata_all_cities,מעונה,2021,6
+odata_all_cities,מעונה,2022,2
+odata_all_cities,מעונה,2023,4
+odata_all_cities,מעונה,2024,2
+odata_all_cities,מעלה אדומים,1998,219
+odata_all_cities,מעלה אדומים,1999,226
+odata_all_cities,מעלה אדומים,2000,217
+odata_all_cities,מעלה אדומים,2001,200
+odata_all_cities,מעלה אדומים,2002,119
+odata_all_cities,מעלה אדומים,2003,214
+odata_all_cities,מעלה אדומים,2004,338
+odata_all_cities,מעלה אדומים,2005,345
+odata_all_cities,מעלה אדומים,2006,311
+odata_all_cities,מעלה אדומים,2007,517
+odata_all_cities,מעלה אדומים,2008,470
+odata_all_cities,מעלה אדומים,2009,488
+odata_all_cities,מעלה אדומים,2010,531
+odata_all_cities,מעלה אדומים,2011,376
+odata_all_cities,מעלה אדומים,2012,487
+odata_all_cities,מעלה אדומים,2013,545
+odata_all_cities,מעלה אדומים,2014,510
+odata_all_cities,מעלה אדומים,2015,536
+odata_all_cities,מעלה אדומים,2016,451
+odata_all_cities,מעלה אדומים,2017,414
+odata_all_cities,מעלה אדומים,2018,389
+odata_all_cities,מעלה אדומים,2019,398
+odata_all_cities,מעלה אדומים,2020,411
+odata_all_cities,מעלה אדומים,2021,614
+odata_all_cities,מעלה אדומים,2022,411
+odata_all_cities,מעלה אדומים,2023,293
+odata_all_cities,מעלה אדומים,2024,220
+odata_all_cities,מעלה אפרים,2000,1
+odata_all_cities,מעלה אפרים,2013,1
+odata_all_cities,מעלה אפרים,2014,1
+odata_all_cities,מעלה אפרים,2015,2
+odata_all_cities,מעלה אפרים,2017,3
+odata_all_cities,מעלה אפרים,2019,1
+odata_all_cities,מעלה אפרים,2020,2
+odata_all_cities,מעלה אפרים,2021,1
+odata_all_cities,מעלות-תרשיחא,1998,67
+odata_all_cities,מעלות-תרשיחא,1999,54
+odata_all_cities,מעלות-תרשיחא,2000,45
+odata_all_cities,מעלות-תרשיחא,2001,34
+odata_all_cities,מעלות-תרשיחא,2002,26
+odata_all_cities,מעלות-תרשיחא,2003,29
+odata_all_cities,מעלות-תרשיחא,2004,18
+odata_all_cities,מעלות-תרשיחא,2005,23
+odata_all_cities,מעלות-תרשיחא,2006,19
+odata_all_cities,מעלות-תרשיחא,2007,41
+odata_all_cities,מעלות-תרשיחא,2008,68
+odata_all_cities,מעלות-תרשיחא,2009,70
+odata_all_cities,מעלות-תרשיחא,2010,99
+odata_all_cities,מעלות-תרשיחא,2011,83
+odata_all_cities,מעלות-תרשיחא,2012,100
+odata_all_cities,מעלות-תרשיחא,2013,109
+odata_all_cities,מעלות-תרשיחא,2014,103
+odata_all_cities,מעלות-תרשיחא,2015,95
+odata_all_cities,מעלות-תרשיחא,2016,112
+odata_all_cities,מעלות-תרשיחא,2017,87
+odata_all_cities,מעלות-תרשיחא,2018,87
+odata_all_cities,מעלות-תרשיחא,2019,93
+odata_all_cities,מעלות-תרשיחא,2020,140
+odata_all_cities,מעלות-תרשיחא,2021,179
+odata_all_cities,מעלות-תרשיחא,2022,197
+odata_all_cities,מעלות-תרשיחא,2023,160
+odata_all_cities,מעלות-תרשיחא,2024,69
+odata_all_cities,מצליח,2002,1
+odata_all_cities,מצליח,2005,2
+odata_all_cities,מצליח,2006,1
+odata_all_cities,מצליח,2008,1
+odata_all_cities,מצליח,2009,1
+odata_all_cities,מצליח,2010,1
+odata_all_cities,מצליח,2013,1
+odata_all_cities,מצליח,2015,2
+odata_all_cities,מצליח,2019,1
+odata_all_cities,מצליח,2021,1
+odata_all_cities,מצפה יריחו,2016,1
+odata_all_cities,מצפה יריחו,2017,2
+odata_all_cities,מצפה יריחו,2018,3
+odata_all_cities,מצפה יריחו,2019,2
+odata_all_cities,מצפה יריחו,2020,1
+odata_all_cities,מצפה יריחו,2021,3
+odata_all_cities,מצפה יריחו,2024,1
+odata_all_cities,מצפה רמון,1998,8
+odata_all_cities,מצפה רמון,1999,11
+odata_all_cities,מצפה רמון,2000,9
+odata_all_cities,מצפה רמון,2001,7
+odata_all_cities,מצפה רמון,2002,6
+odata_all_cities,מצפה רמון,2003,11
+odata_all_cities,מצפה רמון,2004,14
+odata_all_cities,מצפה רמון,2005,6
+odata_all_cities,מצפה רמון,2006,5
+odata_all_cities,מצפה רמון,2007,8
+odata_all_cities,מצפה רמון,2008,13
+odata_all_cities,מצפה רמון,2009,16
+odata_all_cities,מצפה רמון,2010,33
+odata_all_cities,מצפה רמון,2011,25
+odata_all_cities,מצפה רמון,2012,28
+odata_all_cities,מצפה רמון,2013,30
+odata_all_cities,מצפה רמון,2014,36
+odata_all_cities,מצפה רמון,2015,28
+odata_all_cities,מצפה רמון,2016,36
+odata_all_cities,מצפה רמון,2017,48
+odata_all_cities,מצפה רמון,2018,44
+odata_all_cities,מצפה רמון,2019,50
+odata_all_cities,מצפה רמון,2020,29
+odata_all_cities,מצפה רמון,2021,74
+odata_all_cities,מצפה רמון,2022,68
+odata_all_cities,מצפה רמון,2023,36
+odata_all_cities,מצפה רמון,2024,39
+odata_all_cities,מרכז שפירא,1998,1
+odata_all_cities,מרכז שפירא,1999,3
+odata_all_cities,מרכז שפירא,2002,1
+odata_all_cities,מרכז שפירא,2007,2
+odata_all_cities,מרכז שפירא,2008,2
+odata_all_cities,מרכז שפירא,2010,3
+odata_all_cities,מרכז שפירא,2011,4
+odata_all_cities,מרכז שפירא,2012,7
+odata_all_cities,מרכז שפירא,2013,2
+odata_all_cities,מרכז שפירא,2014,6
+odata_all_cities,מרכז שפירא,2015,4
+odata_all_cities,מרכז שפירא,2016,4
+odata_all_cities,מרכז שפירא,2017,5
+odata_all_cities,מרכז שפירא,2018,4
+odata_all_cities,מרכז שפירא,2019,9
+odata_all_cities,מרכז שפירא,2020,9
+odata_all_cities,מרכז שפירא,2021,11
+odata_all_cities,מרכז שפירא,2022,3
+odata_all_cities,מרכז שפירא,2023,2
+odata_all_cities,מרכז שפירא,2024,1
+odata_all_cities,משהד,1998,2
+odata_all_cities,משהד,1999,21
+odata_all_cities,משהד,2000,23
+odata_all_cities,משהד,2001,25
+odata_all_cities,משהד,2002,13
+odata_all_cities,משהד,2003,9
+odata_all_cities,משהד,2004,10
+odata_all_cities,משהד,2005,7
+odata_all_cities,משהד,2006,4
+odata_all_cities,משהד,2007,3
+odata_all_cities,משהד,2008,4
+odata_all_cities,משהד,2009,13
+odata_all_cities,משהד,2010,5
+odata_all_cities,משהד,2011,3
+odata_all_cities,משהד,2012,4
+odata_all_cities,משהד,2013,1
+odata_all_cities,משהד,2014,2
+odata_all_cities,משהד,2015,2
+odata_all_cities,משהד,2016,2
+odata_all_cities,משהד,2017,4
+odata_all_cities,משהד,2018,8
+odata_all_cities,משהד,2019,2
+odata_all_cities,משהד,2020,3
+odata_all_cities,משהד,2021,6
+odata_all_cities,משהד,2022,2
+odata_all_cities,משהד,2023,1
+odata_all_cities,משהד,2024,1
+odata_all_cities,משמר השבעה,2006,1
+odata_all_cities,משמר השבעה,2007,1
+odata_all_cities,משמר השבעה,2010,1
+odata_all_cities,משמר השבעה,2013,2
+odata_all_cities,משמר השבעה,2014,2
+odata_all_cities,משמר השבעה,2015,1
+odata_all_cities,משמר השבעה,2016,2
+odata_all_cities,משמר השבעה,2017,1
+odata_all_cities,משמר השבעה,2018,2
+odata_all_cities,משמר השבעה,2020,1
+odata_all_cities,משמר השבעה,2021,3
+odata_all_cities,משמר השבעה,2022,1
+odata_all_cities,משמר השבעה,2023,2
+odata_all_cities,משמר השבעה,2024,3
+odata_all_cities,מתן,1998,1
+odata_all_cities,מתן,2004,15
+odata_all_cities,מתן,2005,10
+odata_all_cities,מתן,2006,7
+odata_all_cities,מתן,2007,4
+odata_all_cities,מתן,2008,6
+odata_all_cities,מתן,2009,12
+odata_all_cities,מתן,2010,14
+odata_all_cities,מתן,2011,5
+odata_all_cities,מתן,2012,9
+odata_all_cities,מתן,2013,9
+odata_all_cities,מתן,2014,7
+odata_all_cities,מתן,2015,12
+odata_all_cities,מתן,2016,7
+odata_all_cities,מתן,2017,14
+odata_all_cities,מתן,2018,15
+odata_all_cities,מתן,2019,14
+odata_all_cities,מתן,2020,11
+odata_all_cities,מתן,2021,17
+odata_all_cities,מתן,2022,17
+odata_all_cities,מתן,2023,8
+odata_all_cities,מתן,2024,6
+odata_all_cities,מתתיהו,2017,1
+odata_all_cities,מתתיהו,2018,1
+odata_all_cities,מתתיהו,2019,2
+odata_all_cities,נהורה,1998,1
+odata_all_cities,נהורה,1999,3
+odata_all_cities,נהורה,2000,3
+odata_all_cities,נהורה,2001,5
+odata_all_cities,נהורה,2002,1
+odata_all_cities,נהורה,2003,4
+odata_all_cities,נהורה,2004,2
+odata_all_cities,נהורה,2005,2
+odata_all_cities,נהורה,2006,3
+odata_all_cities,נהורה,2007,6
+odata_all_cities,נהורה,2008,4
+odata_all_cities,נהורה,2009,2
+odata_all_cities,נהורה,2010,7
+odata_all_cities,נהורה,2011,7
+odata_all_cities,נהורה,2012,4
+odata_all_cities,נהורה,2013,9
+odata_all_cities,נהורה,2014,3
+odata_all_cities,נהורה,2015,12
+odata_all_cities,נהורה,2016,1
+odata_all_cities,נהורה,2017,3
+odata_all_cities,נהורה,2018,2
+odata_all_cities,נהורה,2020,4
+odata_all_cities,נהורה,2021,2
+odata_all_cities,נהורה,2022,3
+odata_all_cities,נהורה,2023,2
+odata_all_cities,נהרייה,1998,139
+odata_all_cities,נהרייה,1999,211
+odata_all_cities,נהרייה,2000,270
+odata_all_cities,נהרייה,2001,312
+odata_all_cities,נהרייה,2002,285
+odata_all_cities,נהרייה,2003,246
+odata_all_cities,נהרייה,2004,211
+odata_all_cities,נהרייה,2005,205
+odata_all_cities,נהרייה,2006,168
+odata_all_cities,נהרייה,2007,302
+odata_all_cities,נהרייה,2008,386
+odata_all_cities,נהרייה,2009,417
+odata_all_cities,נהרייה,2010,481
+odata_all_cities,נהרייה,2011,457
+odata_all_cities,נהרייה,2012,521
+odata_all_cities,נהרייה,2013,596
+odata_all_cities,נהרייה,2014,552
+odata_all_cities,נהרייה,2015,579
+odata_all_cities,נהרייה,2016,717
+odata_all_cities,נהרייה,2017,570
+odata_all_cities,נהרייה,2018,678
+odata_all_cities,נהרייה,2019,747
+odata_all_cities,נהרייה,2020,660
+odata_all_cities,נהרייה,2021,1040
+odata_all_cities,נהרייה,2022,871
+odata_all_cities,נהרייה,2023,605
+odata_all_cities,נהרייה,2024,369
+odata_all_cities,נווה אילן,2020,3
+odata_all_cities,נווה אילן,2022,1
+odata_all_cities,נווה אילן,2023,1
+odata_all_cities,נווה אילן,2024,3
+odata_all_cities,נווה דניאל,2014,1
+odata_all_cities,נווה דניאל,2015,1
+odata_all_cities,נווה דניאל,2016,1
+odata_all_cities,נווה דניאל,2017,3
+odata_all_cities,נווה דניאל,2018,2
+odata_all_cities,נווה דניאל,2019,2
+odata_all_cities,נווה דניאל,2020,2
+odata_all_cities,נווה דניאל,2022,1
+odata_all_cities,נווה דניאל,2023,2
+odata_all_cities,נווה זיו,2006,1
+odata_all_cities,נווה זיו,2009,2
+odata_all_cities,נווה זיו,2010,2
+odata_all_cities,נווה זיו,2011,2
+odata_all_cities,נווה זיו,2012,1
+odata_all_cities,נווה זיו,2013,2
+odata_all_cities,נווה זיו,2015,2
+odata_all_cities,נווה זיו,2016,1
+odata_all_cities,נווה זיו,2020,1
+odata_all_cities,נווה זיו,2021,5
+odata_all_cities,נווה זיו,2023,1
+odata_all_cities,נווה ימין,2004,2
+odata_all_cities,נווה ימין,2006,5
+odata_all_cities,נווה ימין,2007,1
+odata_all_cities,נווה ימין,2008,3
+odata_all_cities,נווה ימין,2009,4
+odata_all_cities,נווה ימין,2010,1
+odata_all_cities,נווה ימין,2012,2
+odata_all_cities,נווה ימין,2013,1
+odata_all_cities,נווה ימין,2015,1
+odata_all_cities,נווה ימין,2016,2
+odata_all_cities,נווה ימין,2017,3
+odata_all_cities,נווה ימין,2018,4
+odata_all_cities,נווה ימין,2019,3
+odata_all_cities,נווה ימין,2020,1
+odata_all_cities,נווה ימין,2021,1
+odata_all_cities,נווה ימין,2023,1
+odata_all_cities,נווה ירק,2003,1
+odata_all_cities,נווה ירק,2006,1
+odata_all_cities,נווה ירק,2007,3
+odata_all_cities,נווה ירק,2008,1
+odata_all_cities,נווה ירק,2009,1
+odata_all_cities,נווה ירק,2010,4
+odata_all_cities,נווה ירק,2011,3
+odata_all_cities,נווה ירק,2012,2
+odata_all_cities,נווה ירק,2013,3
+odata_all_cities,נווה ירק,2016,3
+odata_all_cities,נווה ירק,2017,2
+odata_all_cities,נווה ירק,2019,1
+odata_all_cities,נווה ירק,2020,3
+odata_all_cities,נווה ירק,2021,1
+odata_all_cities,נווה ירק,2023,1
+odata_all_cities,נווה מבטח,2008,2
+odata_all_cities,נווה מבטח,2009,1
+odata_all_cities,נווה מבטח,2011,1
+odata_all_cities,נווה מבטח,2015,2
+odata_all_cities,נווה מבטח,2016,1
+odata_all_cities,נווה מבטח,2019,1
+odata_all_cities,נוף איילון,2001,1
+odata_all_cities,נוף איילון,2005,1
+odata_all_cities,נוף איילון,2012,1
+odata_all_cities,נוף איילון,2013,3
+odata_all_cities,נוף איילון,2014,2
+odata_all_cities,נוף איילון,2015,4
+odata_all_cities,נוף איילון,2018,6
+odata_all_cities,נוף איילון,2019,2
+odata_all_cities,נוף איילון,2020,3
+odata_all_cities,נוף איילון,2021,5
+odata_all_cities,נוף איילון,2022,6
+odata_all_cities,נוף איילון,2023,1
+odata_all_cities,נוף איילון,2024,1
+odata_all_cities,נופית,1998,1
+odata_all_cities,נופית,2002,1
+odata_all_cities,נופית,2003,2
+odata_all_cities,נופית,2005,2
+odata_all_cities,נופית,2006,2
+odata_all_cities,נופית,2007,6
+odata_all_cities,נופית,2008,4
+odata_all_cities,נופית,2009,10
+odata_all_cities,נופית,2010,10
+odata_all_cities,נופית,2011,10
+odata_all_cities,נופית,2012,9
+odata_all_cities,נופית,2013,12
+odata_all_cities,נופית,2014,6
+odata_all_cities,נופית,2015,8
+odata_all_cities,נופית,2016,2
+odata_all_cities,נופית,2017,1
+odata_all_cities,נופית,2018,12
+odata_all_cities,נופית,2019,12
+odata_all_cities,נופית,2020,9
+odata_all_cities,נופית,2021,16
+odata_all_cities,נופית,2022,13
+odata_all_cities,נופית,2023,8
+odata_all_cities,נופית,2024,1
+odata_all_cities,נורדייה,2000,6
+odata_all_cities,נורדייה,2001,1
+odata_all_cities,נורדייה,2002,2
+odata_all_cities,נורדייה,2003,3
+odata_all_cities,נורדייה,2004,3
+odata_all_cities,נורדייה,2005,3
+odata_all_cities,נורדייה,2006,5
+odata_all_cities,נורדייה,2007,4
+odata_all_cities,נורדייה,2008,3
+odata_all_cities,נורדייה,2009,2
+odata_all_cities,נורדייה,2010,1
+odata_all_cities,נורדייה,2012,2
+odata_all_cities,נורדייה,2013,7
+odata_all_cities,נורדייה,2014,6
+odata_all_cities,נורדייה,2015,4
+odata_all_cities,נורדייה,2016,5
+odata_all_cities,נורדייה,2017,2
+odata_all_cities,נורדייה,2018,6
+odata_all_cities,נורדייה,2019,7
+odata_all_cities,נורדייה,2020,2
+odata_all_cities,נורדייה,2021,8
+odata_all_cities,נורדייה,2022,4
+odata_all_cities,נורדייה,2024,2
+odata_all_cities,נחלים,2004,1
+odata_all_cities,נחלים,2005,1
+odata_all_cities,נחלים,2006,1
+odata_all_cities,נחלים,2008,1
+odata_all_cities,נחלים,2009,6
+odata_all_cities,נחלים,2010,44
+odata_all_cities,נחלים,2011,9
+odata_all_cities,נחלים,2012,42
+odata_all_cities,נחלים,2013,63
+odata_all_cities,נחלים,2014,30
+odata_all_cities,נחלים,2015,4
+odata_all_cities,נחלים,2016,4
+odata_all_cities,נחלים,2017,2
+odata_all_cities,נחלים,2019,2
+odata_all_cities,נחלים,2020,2
+odata_all_cities,נחלים,2021,3
+odata_all_cities,נחלים,2022,2
+odata_all_cities,נחלים,2024,3
+odata_all_cities,נטע,2022,1
+odata_all_cities,נטע,2024,1
+odata_all_cities,"ניל""י",2012,1
+odata_all_cities,"ניל""י",2014,1
+odata_all_cities,ניצן,2018,1
+odata_all_cities,ניצן,2020,1
+odata_all_cities,ניצן,2021,5
+odata_all_cities,ניצן,2022,10
+odata_all_cities,ניצן,2023,4
+odata_all_cities,ניצן,2024,5
+odata_all_cities,ניר גלים,2011,1
+odata_all_cities,ניר גלים,2012,1
+odata_all_cities,ניר גלים,2013,4
+odata_all_cities,ניר גלים,2014,7
+odata_all_cities,ניר גלים,2015,3
+odata_all_cities,ניר גלים,2016,1
+odata_all_cities,ניר גלים,2017,2
+odata_all_cities,ניר גלים,2018,1
+odata_all_cities,ניר גלים,2019,1
+odata_all_cities,ניר גלים,2020,3
+odata_all_cities,ניר גלים,2021,5
+odata_all_cities,ניר גלים,2022,7
+odata_all_cities,ניר גלים,2023,3
+odata_all_cities,ניר גלים,2024,1
+odata_all_cities,ניר צבי,2005,1
+odata_all_cities,ניר צבי,2007,1
+odata_all_cities,ניר צבי,2009,3
+odata_all_cities,ניר צבי,2014,2
+odata_all_cities,ניר צבי,2016,1
+odata_all_cities,ניר צבי,2021,4
+odata_all_cities,ניר צבי,2022,1
+odata_all_cities,ניר צבי,2023,1
+odata_all_cities,נירית,1999,2
+odata_all_cities,נירית,2001,2
+odata_all_cities,נירית,2004,6
+odata_all_cities,נירית,2006,4
+odata_all_cities,נירית,2007,4
+odata_all_cities,נירית,2008,1
+odata_all_cities,נירית,2009,2
+odata_all_cities,נירית,2010,1
+odata_all_cities,נירית,2011,1
+odata_all_cities,נירית,2012,2
+odata_all_cities,נירית,2014,4
+odata_all_cities,נירית,2015,3
+odata_all_cities,נירית,2016,3
+odata_all_cities,נירית,2017,5
+odata_all_cities,נירית,2018,3
+odata_all_cities,נירית,2019,4
+odata_all_cities,נירית,2020,2
+odata_all_cities,נירית,2021,1
+odata_all_cities,נירית,2023,3
+odata_all_cities,נס הרים,2023,2
+odata_all_cities,נס ציונה,1998,63
+odata_all_cities,נס ציונה,1999,71
+odata_all_cities,נס ציונה,2000,82
+odata_all_cities,נס ציונה,2001,150
+odata_all_cities,נס ציונה,2002,210
+odata_all_cities,נס ציונה,2003,155
+odata_all_cities,נס ציונה,2004,180
+odata_all_cities,נס ציונה,2005,157
+odata_all_cities,נס ציונה,2006,183
+odata_all_cities,נס ציונה,2007,452
+odata_all_cities,נס ציונה,2008,352
+odata_all_cities,נס ציונה,2009,697
+odata_all_cities,נס ציונה,2010,657
+odata_all_cities,נס ציונה,2011,416
+odata_all_cities,נס ציונה,2012,572
+odata_all_cities,נס ציונה,2013,746
+odata_all_cities,נס ציונה,2014,802
+odata_all_cities,נס ציונה,2015,772
+odata_all_cities,נס ציונה,2016,590
+odata_all_cities,נס ציונה,2017,502
+odata_all_cities,נס ציונה,2018,579
+odata_all_cities,נס ציונה,2019,639
+odata_all_cities,נס ציונה,2020,599
+odata_all_cities,נס ציונה,2021,895
+odata_all_cities,נס ציונה,2022,716
+odata_all_cities,נס ציונה,2023,357
+odata_all_cities,נס ציונה,2024,240
+odata_all_cities,נעלה,2010,1
+odata_all_cities,נעלה,2014,1
+odata_all_cities,נעלה,2015,1
+odata_all_cities,נעלה,2016,2
+odata_all_cities,נעלה,2017,2
+odata_all_cities,נעלה,2018,2
+odata_all_cities,נעלה,2019,2
+odata_all_cities,נעלה,2020,4
+odata_all_cities,נעלה,2021,1
+odata_all_cities,נעלה,2022,3
+odata_all_cities,נצרת,1998,10
+odata_all_cities,נצרת,1999,10
+odata_all_cities,נצרת,2000,6
+odata_all_cities,נצרת,2001,8
+odata_all_cities,נצרת,2002,18
+odata_all_cities,נצרת,2003,8
+odata_all_cities,נצרת,2004,16
+odata_all_cities,נצרת,2005,9
+odata_all_cities,נצרת,2006,7
+odata_all_cities,נצרת,2007,17
+odata_all_cities,נצרת,2008,15
+odata_all_cities,נצרת,2009,13
+odata_all_cities,נצרת,2010,20
+odata_all_cities,נצרת,2011,13
+odata_all_cities,נצרת,2012,20
+odata_all_cities,נצרת,2013,26
+odata_all_cities,נצרת,2014,12
+odata_all_cities,נצרת,2015,14
+odata_all_cities,נצרת,2016,16
+odata_all_cities,נצרת,2017,7
+odata_all_cities,נצרת,2018,17
+odata_all_cities,נצרת,2019,30
+odata_all_cities,נצרת,2020,29
+odata_all_cities,נצרת,2021,17
+odata_all_cities,נצרת,2022,19
+odata_all_cities,נצרת,2023,20
+odata_all_cities,נצרת,2024,11
+odata_all_cities,נשר,1998,51
+odata_all_cities,נשר,1999,91
+odata_all_cities,נשר,2000,63
+odata_all_cities,נשר,2001,63
+odata_all_cities,נשר,2002,64
+odata_all_cities,נשר,2003,72
+odata_all_cities,נשר,2004,91
+odata_all_cities,נשר,2005,108
+odata_all_cities,נשר,2006,103
+odata_all_cities,נשר,2007,134
+odata_all_cities,נשר,2008,169
+odata_all_cities,נשר,2009,212
+odata_all_cities,נשר,2010,195
+odata_all_cities,נשר,2011,165
+odata_all_cities,נשר,2012,284
+odata_all_cities,נשר,2013,258
+odata_all_cities,נשר,2014,197
+odata_all_cities,נשר,2015,231
+odata_all_cities,נשר,2016,211
+odata_all_cities,נשר,2017,218
+odata_all_cities,נשר,2018,209
+odata_all_cities,נשר,2019,235
+odata_all_cities,נשר,2020,231
+odata_all_cities,נשר,2021,384
+odata_all_cities,נשר,2022,381
+odata_all_cities,נשר,2023,244
+odata_all_cities,נשר,2024,193
+odata_all_cities,נתיבות,1998,17
+odata_all_cities,נתיבות,1999,30
+odata_all_cities,נתיבות,2000,30
+odata_all_cities,נתיבות,2001,41
+odata_all_cities,נתיבות,2002,34
+odata_all_cities,נתיבות,2003,25
+odata_all_cities,נתיבות,2004,24
+odata_all_cities,נתיבות,2005,32
+odata_all_cities,נתיבות,2006,20
+odata_all_cities,נתיבות,2007,27
+odata_all_cities,נתיבות,2008,41
+odata_all_cities,נתיבות,2009,38
+odata_all_cities,נתיבות,2010,104
+odata_all_cities,נתיבות,2011,118
+odata_all_cities,נתיבות,2012,75
+odata_all_cities,נתיבות,2013,94
+odata_all_cities,נתיבות,2014,143
+odata_all_cities,נתיבות,2015,183
+odata_all_cities,נתיבות,2016,236
+odata_all_cities,נתיבות,2017,272
+odata_all_cities,נתיבות,2018,176
+odata_all_cities,נתיבות,2019,143
+odata_all_cities,נתיבות,2020,149
+odata_all_cities,נתיבות,2021,227
+odata_all_cities,נתיבות,2022,229
+odata_all_cities,נתיבות,2023,141
+odata_all_cities,נתיבות,2024,154
+odata_all_cities,נתניה,1998,559
+odata_all_cities,נתניה,1999,735
+odata_all_cities,נתניה,2000,617
+odata_all_cities,נתניה,2001,815
+odata_all_cities,נתניה,2002,865
+odata_all_cities,נתניה,2003,898
+odata_all_cities,נתניה,2004,1001
+odata_all_cities,נתניה,2005,1208
+odata_all_cities,נתניה,2006,1222
+odata_all_cities,נתניה,2007,1622
+odata_all_cities,נתניה,2008,1431
+odata_all_cities,נתניה,2009,1499
+odata_all_cities,נתניה,2010,1504
+odata_all_cities,נתניה,2011,1341
+odata_all_cities,נתניה,2012,1596
+odata_all_cities,נתניה,2013,1741
+odata_all_cities,נתניה,2014,1677
+odata_all_cities,נתניה,2015,1987
+odata_all_cities,נתניה,2016,1684
+odata_all_cities,נתניה,2017,1333
+odata_all_cities,נתניה,2018,1273
+odata_all_cities,נתניה,2019,1506
+odata_all_cities,נתניה,2020,1494
+odata_all_cities,נתניה,2021,2803
+odata_all_cities,נתניה,2022,2394
+odata_all_cities,נתניה,2023,1281
+odata_all_cities,נתניה,2024,878
+odata_all_cities,סאג'ור,2004,1
+odata_all_cities,סאג'ור,2011,1
+odata_all_cities,סאג'ור,2012,3
+odata_all_cities,סאג'ור,2017,3
+odata_all_cities,סאג'ור,2018,6
+odata_all_cities,סאג'ור,2019,2
+odata_all_cities,סאג'ור,2020,1
+odata_all_cities,סאג'ור,2021,6
+odata_all_cities,סאג'ור,2022,7
+odata_all_cities,סאג'ור,2023,7
+odata_all_cities,סאג'ור,2024,3
+odata_all_cities,סביון,1998,10
+odata_all_cities,סביון,1999,19
+odata_all_cities,סביון,2000,22
+odata_all_cities,סביון,2001,10
+odata_all_cities,סביון,2002,11
+odata_all_cities,סביון,2003,11
+odata_all_cities,סביון,2004,19
+odata_all_cities,סביון,2005,10
+odata_all_cities,סביון,2006,21
+odata_all_cities,סביון,2007,10
+odata_all_cities,סביון,2008,7
+odata_all_cities,סביון,2009,2
+odata_all_cities,סביון,2010,1
+odata_all_cities,סביון,2011,1
+odata_all_cities,סביון,2012,8
+odata_all_cities,סביון,2013,13
+odata_all_cities,סביון,2014,11
+odata_all_cities,סביון,2015,18
+odata_all_cities,סביון,2016,18
+odata_all_cities,סביון,2017,15
+odata_all_cities,סביון,2018,27
+odata_all_cities,סביון,2019,26
+odata_all_cities,סביון,2020,35
+odata_all_cities,סביון,2021,57
+odata_all_cities,סביון,2022,31
+odata_all_cities,סביון,2023,23
+odata_all_cities,סביון,2024,2
+odata_all_cities,סגולה,2012,1
+odata_all_cities,סגולה,2016,1
+odata_all_cities,סגולה,2018,1
+odata_all_cities,סגולה,2019,1
+odata_all_cities,סגולה,2022,1
+odata_all_cities,ספיר,1999,1
+odata_all_cities,ספיר,2000,2
+odata_all_cities,ספיר,2002,2
+odata_all_cities,ספיר,2003,1
+odata_all_cities,ספיר,2004,1
+odata_all_cities,ספיר,2007,1
+odata_all_cities,ספיר,2008,6
+odata_all_cities,ספיר,2009,1
+odata_all_cities,ספיר,2010,1
+odata_all_cities,ספיר,2011,6
+odata_all_cities,ספיר,2012,3
+odata_all_cities,ספיר,2013,1
+odata_all_cities,ספיר,2014,2
+odata_all_cities,ספיר,2015,2
+odata_all_cities,ספיר,2016,8
+odata_all_cities,ספיר,2017,1
+odata_all_cities,ספיר,2018,4
+odata_all_cities,ספיר,2019,1
+odata_all_cities,ספיר,2020,6
+odata_all_cities,ספיר,2021,1
+odata_all_cities,ספיר,2022,3
+odata_all_cities,ספיר,2023,1
+odata_all_cities,עדי,2000,2
+odata_all_cities,עדי,2002,1
+odata_all_cities,עדי,2003,2
+odata_all_cities,עדי,2004,2
+odata_all_cities,עדי,2006,5
+odata_all_cities,עדי,2007,6
+odata_all_cities,עדי,2008,7
+odata_all_cities,עדי,2009,8
+odata_all_cities,עדי,2010,5
+odata_all_cities,עדי,2011,3
+odata_all_cities,עדי,2012,2
+odata_all_cities,עדי,2013,4
+odata_all_cities,עדי,2014,1
+odata_all_cities,עדי,2015,4
+odata_all_cities,עדי,2016,6
+odata_all_cities,עדי,2017,3
+odata_all_cities,עדי,2018,3
+odata_all_cities,עדי,2019,1
+odata_all_cities,עדי,2020,4
+odata_all_cities,עדי,2021,5
+odata_all_cities,עדי,2022,8
+odata_all_cities,עדי,2023,1
+odata_all_cities,עדי,2024,1
+odata_all_cities,עומר,1998,13
+odata_all_cities,עומר,1999,20
+odata_all_cities,עומר,2000,8
+odata_all_cities,עומר,2001,13
+odata_all_cities,עומר,2002,13
+odata_all_cities,עומר,2003,16
+odata_all_cities,עומר,2004,21
+odata_all_cities,עומר,2005,10
+odata_all_cities,עומר,2006,7
+odata_all_cities,עומר,2007,30
+odata_all_cities,עומר,2008,25
+odata_all_cities,עומר,2009,23
+odata_all_cities,עומר,2010,44
+odata_all_cities,עומר,2011,32
+odata_all_cities,עומר,2012,42
+odata_all_cities,עומר,2013,64
+odata_all_cities,עומר,2014,45
+odata_all_cities,עומר,2015,49
+odata_all_cities,עומר,2016,50
+odata_all_cities,עומר,2017,48
+odata_all_cities,עומר,2018,56
+odata_all_cities,עומר,2019,53
+odata_all_cities,עומר,2020,44
+odata_all_cities,עומר,2021,83
+odata_all_cities,עומר,2022,55
+odata_all_cities,עומר,2023,33
+odata_all_cities,עומר,2024,30
+odata_all_cities,עילוט,2000,1
+odata_all_cities,עילוט,2003,1
+odata_all_cities,עילוט,2009,1
+odata_all_cities,עילוט,2011,1
+odata_all_cities,עילוט,2012,1
+odata_all_cities,עילוט,2014,1
+odata_all_cities,עילוט,2015,1
+odata_all_cities,עילוט,2016,2
+odata_all_cities,עילוט,2017,2
+odata_all_cities,עילוט,2018,9
+odata_all_cities,עילוט,2019,4
+odata_all_cities,עילוט,2020,5
+odata_all_cities,עילוט,2021,6
+odata_all_cities,עילוט,2022,4
+odata_all_cities,עילוט,2023,9
+odata_all_cities,עילוט,2024,2
+odata_all_cities,עין איילה,2005,1
+odata_all_cities,עין ורד,2000,2
+odata_all_cities,עין ורד,2004,1
+odata_all_cities,עין ורד,2006,1
+odata_all_cities,עין ורד,2010,1
+odata_all_cities,עין ורד,2011,1
+odata_all_cities,עין ורד,2012,2
+odata_all_cities,עין ורד,2013,3
+odata_all_cities,עין ורד,2014,5
+odata_all_cities,עין ורד,2015,2
+odata_all_cities,עין ורד,2016,6
+odata_all_cities,עין ורד,2017,2
+odata_all_cities,עין ורד,2018,1
+odata_all_cities,עין ורד,2019,1
+odata_all_cities,עין ורד,2020,4
+odata_all_cities,עין ורד,2021,8
+odata_all_cities,עין ורד,2022,6
+odata_all_cities,עין ורד,2023,2
+odata_all_cities,עין ורד,2024,2
+odata_all_cities,עין יעקב,2006,2
+odata_all_cities,עין יעקב,2007,1
+odata_all_cities,עין יעקב,2008,3
+odata_all_cities,עין יעקב,2009,1
+odata_all_cities,עין יעקב,2010,3
+odata_all_cities,עין יעקב,2011,4
+odata_all_cities,עין יעקב,2012,6
+odata_all_cities,עין יעקב,2013,6
+odata_all_cities,עין יעקב,2014,2
+odata_all_cities,עין יעקב,2015,5
+odata_all_cities,עין יעקב,2016,3
+odata_all_cities,עין יעקב,2018,4
+odata_all_cities,עין יעקב,2019,1
+odata_all_cities,עין יעקב,2020,3
+odata_all_cities,עין יעקב,2021,7
+odata_all_cities,עין צורים,2022,5
+odata_all_cities,עין ראפה,2018,1
+odata_all_cities,עין ראפה,2021,1
+odata_all_cities,עין שריד,2000,1
+odata_all_cities,עין שריד,2003,2
+odata_all_cities,עין שריד,2006,6
+odata_all_cities,עין שריד,2007,2
+odata_all_cities,עין שריד,2008,5
+odata_all_cities,עין שריד,2009,4
+odata_all_cities,עין שריד,2010,5
+odata_all_cities,עין שריד,2011,2
+odata_all_cities,עין שריד,2012,1
+odata_all_cities,עין שריד,2013,4
+odata_all_cities,עין שריד,2014,5
+odata_all_cities,עין שריד,2015,5
+odata_all_cities,עין שריד,2016,5
+odata_all_cities,עין שריד,2017,7
+odata_all_cities,עין שריד,2018,9
+odata_all_cities,עין שריד,2019,7
+odata_all_cities,עין שריד,2020,10
+odata_all_cities,עין שריד,2021,8
+odata_all_cities,עין שריד,2022,6
+odata_all_cities,עין שריד,2023,2
+odata_all_cities,עין שריד,2024,2
+odata_all_cities,עכו,1998,134
+odata_all_cities,עכו,1999,212
+odata_all_cities,עכו,2000,120
+odata_all_cities,עכו,2001,173
+odata_all_cities,עכו,2002,130
+odata_all_cities,עכו,2003,155
+odata_all_cities,עכו,2004,142
+odata_all_cities,עכו,2005,143
+odata_all_cities,עכו,2006,118
+odata_all_cities,עכו,2007,169
+odata_all_cities,עכו,2008,220
+odata_all_cities,עכו,2009,229
+odata_all_cities,עכו,2010,276
+odata_all_cities,עכו,2011,263
+odata_all_cities,עכו,2012,361
+odata_all_cities,עכו,2013,421
+odata_all_cities,עכו,2014,382
+odata_all_cities,עכו,2015,388
+odata_all_cities,עכו,2016,404
+odata_all_cities,עכו,2017,401
+odata_all_cities,עכו,2018,422
+odata_all_cities,עכו,2019,440
+odata_all_cities,עכו,2020,440
+odata_all_cities,עכו,2021,641
+odata_all_cities,עכו,2022,601
+odata_all_cities,עכו,2023,454
+odata_all_cities,עכו,2024,272
+odata_all_cities,עלי,2016,1
+odata_all_cities,עלי,2017,4
+odata_all_cities,עלי,2018,4
+odata_all_cities,עלי,2019,8
+odata_all_cities,עלי,2020,1
+odata_all_cities,עמנואל,1998,1
+odata_all_cities,עמנואל,1999,4
+odata_all_cities,עמנואל,2001,1
+odata_all_cities,עמנואל,2002,1
+odata_all_cities,עמנואל,2003,3
+odata_all_cities,עמנואל,2004,3
+odata_all_cities,עמנואל,2005,1
+odata_all_cities,עמנואל,2006,7
+odata_all_cities,עמנואל,2007,9
+odata_all_cities,עמנואל,2008,7
+odata_all_cities,עמנואל,2009,7
+odata_all_cities,עמנואל,2010,11
+odata_all_cities,עמנואל,2011,8
+odata_all_cities,עמנואל,2012,9
+odata_all_cities,עמנואל,2013,6
+odata_all_cities,עמנואל,2014,6
+odata_all_cities,עמנואל,2015,5
+odata_all_cities,עמנואל,2016,8
+odata_all_cities,עמנואל,2017,7
+odata_all_cities,עמנואל,2018,10
+odata_all_cities,עמנואל,2019,2
+odata_all_cities,עמנואל,2020,20
+odata_all_cities,עמנואל,2021,16
+odata_all_cities,עמנואל,2022,9
+odata_all_cities,עמנואל,2023,7
+odata_all_cities,עמנואל,2024,3
+odata_all_cities,עפולה,1998,163
+odata_all_cities,עפולה,1999,218
+odata_all_cities,עפולה,2000,210
+odata_all_cities,עפולה,2001,224
+odata_all_cities,עפולה,2002,175
+odata_all_cities,עפולה,2003,149
+odata_all_cities,עפולה,2004,157
+odata_all_cities,עפולה,2005,187
+odata_all_cities,עפולה,2006,96
+odata_all_cities,עפולה,2007,264
+odata_all_cities,עפולה,2008,317
+odata_all_cities,עפולה,2009,406
+odata_all_cities,עפולה,2010,544
+odata_all_cities,עפולה,2011,362
+odata_all_cities,עפולה,2012,486
+odata_all_cities,עפולה,2013,551
+odata_all_cities,עפולה,2014,653
+odata_all_cities,עפולה,2015,1130
+odata_all_cities,עפולה,2016,699
+odata_all_cities,עפולה,2017,575
+odata_all_cities,עפולה,2018,458
+odata_all_cities,עפולה,2019,554
+odata_all_cities,עפולה,2020,664
+odata_all_cities,עפולה,2021,1142
+odata_all_cities,עפולה,2022,1013
+odata_all_cities,עפולה,2023,606
+odata_all_cities,עפולה,2024,431
+odata_all_cities,עפרה,1999,1
+odata_all_cities,עפרה,2004,1
+odata_all_cities,עפרה,2005,1
+odata_all_cities,עפרה,2007,5
+odata_all_cities,עפרה,2008,3
+odata_all_cities,עפרה,2009,3
+odata_all_cities,עפרה,2010,1
+odata_all_cities,עפרה,2011,2
+odata_all_cities,עפרה,2012,2
+odata_all_cities,עפרה,2013,3
+odata_all_cities,עפרה,2014,3
+odata_all_cities,עפרה,2015,4
+odata_all_cities,עפרה,2016,2
+odata_all_cities,עפרה,2017,1
+odata_all_cities,עפרה,2018,2
+odata_all_cities,עפרה,2019,4
+odata_all_cities,עפרה,2020,6
+odata_all_cities,עפרה,2021,1
+odata_all_cities,עפרה,2022,2
+odata_all_cities,עפרה,2024,1
+odata_all_cities,עראבה,1999,1
+odata_all_cities,עראבה,2002,1
+odata_all_cities,עראבה,2003,1
+odata_all_cities,עראבה,2010,1
+odata_all_cities,עראבה,2011,1
+odata_all_cities,עראבה,2012,1
+odata_all_cities,עראבה,2013,1
+odata_all_cities,עראבה,2014,1
+odata_all_cities,עראבה,2015,1
+odata_all_cities,עראבה,2016,7
+odata_all_cities,עראבה,2017,7
+odata_all_cities,עראבה,2018,13
+odata_all_cities,עראבה,2019,13
+odata_all_cities,עראבה,2020,14
+odata_all_cities,עראבה,2021,7
+odata_all_cities,עראבה,2022,7
+odata_all_cities,עראבה,2023,9
+odata_all_cities,עראבה,2024,4
+odata_all_cities,ערד,1998,33
+odata_all_cities,ערד,1999,60
+odata_all_cities,ערד,2000,56
+odata_all_cities,ערד,2001,79
+odata_all_cities,ערד,2002,46
+odata_all_cities,ערד,2003,57
+odata_all_cities,ערד,2004,36
+odata_all_cities,ערד,2005,44
+odata_all_cities,ערד,2006,33
+odata_all_cities,ערד,2007,54
+odata_all_cities,ערד,2008,82
+odata_all_cities,ערד,2009,81
+odata_all_cities,ערד,2010,169
+odata_all_cities,ערד,2011,214
+odata_all_cities,ערד,2012,281
+odata_all_cities,ערד,2013,259
+odata_all_cities,ערד,2014,251
+odata_all_cities,ערד,2015,220
+odata_all_cities,ערד,2016,296
+odata_all_cities,ערד,2017,333
+odata_all_cities,ערד,2018,348
+odata_all_cities,ערד,2019,354
+odata_all_cities,ערד,2020,345
+odata_all_cities,ערד,2021,466
+odata_all_cities,ערד,2022,395
+odata_all_cities,ערד,2023,319
+odata_all_cities,ערד,2024,260
+odata_all_cities,ערוגות,2006,4
+odata_all_cities,ערוגות,2007,1
+odata_all_cities,ערוגות,2008,2
+odata_all_cities,ערוגות,2009,2
+odata_all_cities,ערוגות,2011,1
+odata_all_cities,ערוגות,2012,1
+odata_all_cities,ערוגות,2013,5
+odata_all_cities,ערוגות,2014,1
+odata_all_cities,ערוגות,2015,1
+odata_all_cities,ערוגות,2016,1
+odata_all_cities,ערוגות,2017,3
+odata_all_cities,ערוגות,2018,2
+odata_all_cities,ערוגות,2023,1
+odata_all_cities,עשרת,2000,1
+odata_all_cities,עשרת,2005,1
+odata_all_cities,עשרת,2006,1
+odata_all_cities,עשרת,2007,2
+odata_all_cities,עשרת,2008,7
+odata_all_cities,עשרת,2009,3
+odata_all_cities,עשרת,2010,1
+odata_all_cities,עשרת,2011,1
+odata_all_cities,עשרת,2014,2
+odata_all_cities,עשרת,2015,5
+odata_all_cities,עשרת,2016,1
+odata_all_cities,עשרת,2017,2
+odata_all_cities,עשרת,2018,1
+odata_all_cities,עשרת,2019,2
+odata_all_cities,עשרת,2020,4
+odata_all_cities,עשרת,2021,8
+odata_all_cities,עשרת,2022,3
+odata_all_cities,עשרת,2023,3
+odata_all_cities,עשרת,2024,2
+odata_all_cities,עתלית,1998,5
+odata_all_cities,עתלית,1999,13
+odata_all_cities,עתלית,2000,11
+odata_all_cities,עתלית,2001,13
+odata_all_cities,עתלית,2002,11
+odata_all_cities,עתלית,2003,14
+odata_all_cities,עתלית,2004,15
+odata_all_cities,עתלית,2005,15
+odata_all_cities,עתלית,2006,35
+odata_all_cities,עתלית,2007,41
+odata_all_cities,עתלית,2008,35
+odata_all_cities,עתלית,2009,52
+odata_all_cities,עתלית,2010,46
+odata_all_cities,עתלית,2011,39
+odata_all_cities,עתלית,2012,48
+odata_all_cities,עתלית,2013,60
+odata_all_cities,עתלית,2014,56
+odata_all_cities,עתלית,2015,34
+odata_all_cities,עתלית,2016,56
+odata_all_cities,עתלית,2017,48
+odata_all_cities,עתלית,2018,82
+odata_all_cities,עתלית,2019,78
+odata_all_cities,עתלית,2020,80
+odata_all_cities,עתלית,2021,133
+odata_all_cities,עתלית,2022,80
+odata_all_cities,עתלית,2023,46
+odata_all_cities,עתלית,2024,42
+odata_all_cities,פרדס חנה-כרכור,1998,50
+odata_all_cities,פרדס חנה-כרכור,1999,75
+odata_all_cities,פרדס חנה-כרכור,2000,45
+odata_all_cities,פרדס חנה-כרכור,2001,48
+odata_all_cities,פרדס חנה-כרכור,2002,54
+odata_all_cities,פרדס חנה-כרכור,2003,57
+odata_all_cities,פרדס חנה-כרכור,2004,78
+odata_all_cities,פרדס חנה-כרכור,2005,74
+odata_all_cities,פרדס חנה-כרכור,2006,126
+odata_all_cities,פרדס חנה-כרכור,2007,182
+odata_all_cities,פרדס חנה-כרכור,2008,156
+odata_all_cities,פרדס חנה-כרכור,2009,173
+odata_all_cities,פרדס חנה-כרכור,2010,260
+odata_all_cities,פרדס חנה-כרכור,2011,218
+odata_all_cities,פרדס חנה-כרכור,2012,221
+odata_all_cities,פרדס חנה-כרכור,2013,298
+odata_all_cities,פרדס חנה-כרכור,2014,233
+odata_all_cities,פרדס חנה-כרכור,2015,280
+odata_all_cities,פרדס חנה-כרכור,2016,344
+odata_all_cities,פרדס חנה-כרכור,2017,323
+odata_all_cities,פרדס חנה-כרכור,2018,256
+odata_all_cities,פרדס חנה-כרכור,2019,290
+odata_all_cities,פרדס חנה-כרכור,2020,317
+odata_all_cities,פרדס חנה-כרכור,2021,552
+odata_all_cities,פרדס חנה-כרכור,2022,403
+odata_all_cities,פרדס חנה-כרכור,2023,216
+odata_all_cities,פרדס חנה-כרכור,2024,191
+odata_all_cities,פרדסייה,1998,13
+odata_all_cities,פרדסייה,1999,17
+odata_all_cities,פרדסייה,2000,13
+odata_all_cities,פרדסייה,2001,18
+odata_all_cities,פרדסייה,2002,13
+odata_all_cities,פרדסייה,2003,14
+odata_all_cities,פרדסייה,2004,22
+odata_all_cities,פרדסייה,2005,25
+odata_all_cities,פרדסייה,2006,20
+odata_all_cities,פרדסייה,2007,34
+odata_all_cities,פרדסייה,2008,23
+odata_all_cities,פרדסייה,2009,16
+odata_all_cities,פרדסייה,2010,20
+odata_all_cities,פרדסייה,2011,20
+odata_all_cities,פרדסייה,2012,20
+odata_all_cities,פרדסייה,2013,26
+odata_all_cities,פרדסייה,2014,17
+odata_all_cities,פרדסייה,2015,32
+odata_all_cities,פרדסייה,2016,32
+odata_all_cities,פרדסייה,2017,19
+odata_all_cities,פרדסייה,2018,14
+odata_all_cities,פרדסייה,2019,17
+odata_all_cities,פרדסייה,2020,22
+odata_all_cities,פרדסייה,2021,50
+odata_all_cities,פרדסייה,2022,14
+odata_all_cities,פרדסייה,2023,1
+odata_all_cities,פרדסייה,2024,8
+odata_all_cities,פתח תקווה,1998,767
+odata_all_cities,פתח תקווה,1999,652
+odata_all_cities,פתח תקווה,2000,493
+odata_all_cities,פתח תקווה,2001,532
+odata_all_cities,פתח תקווה,2002,716
+odata_all_cities,פתח תקווה,2003,623
+odata_all_cities,פתח תקווה,2004,657
+odata_all_cities,פתח תקווה,2005,842
+odata_all_cities,פתח תקווה,2006,1013
+odata_all_cities,פתח תקווה,2007,1764
+odata_all_cities,פתח תקווה,2008,1755
+odata_all_cities,פתח תקווה,2009,1797
+odata_all_cities,פתח תקווה,2010,1987
+odata_all_cities,פתח תקווה,2011,1385
+odata_all_cities,פתח תקווה,2012,1748
+odata_all_cities,פתח תקווה,2013,2150
+odata_all_cities,פתח תקווה,2014,1838
+odata_all_cities,פתח תקווה,2015,2269
+odata_all_cities,פתח תקווה,2016,1960
+odata_all_cities,פתח תקווה,2017,1727
+odata_all_cities,פתח תקווה,2018,1787
+odata_all_cities,פתח תקווה,2019,2056
+odata_all_cities,פתח תקווה,2020,1830
+odata_all_cities,פתח תקווה,2021,2949
+odata_all_cities,פתח תקווה,2022,2419
+odata_all_cities,פתח תקווה,2023,1723
+odata_all_cities,פתח תקווה,2024,1464
+odata_all_cities,פתח תקווה,2027,1
+odata_all_cities,צוקי ים,2002,1
+odata_all_cities,צוקי ים,2004,1
+odata_all_cities,צוקי ים,2005,1
+odata_all_cities,צוקי ים,2006,1
+odata_all_cities,צוקי ים,2007,1
+odata_all_cities,צוקי ים,2008,2
+odata_all_cities,צוקי ים,2010,1
+odata_all_cities,צוקי ים,2011,1
+odata_all_cities,צוקי ים,2015,1
+odata_all_cities,צוקי ים,2017,2
+odata_all_cities,צוקי ים,2018,1
+odata_all_cities,צוקי ים,2021,3
+odata_all_cities,צוקי ים,2022,3
+odata_all_cities,צוקי ים,2023,1
+odata_all_cities,צור הדסה,1998,7
+odata_all_cities,צור הדסה,1999,9
+odata_all_cities,צור הדסה,2000,4
+odata_all_cities,צור הדסה,2001,1
+odata_all_cities,צור הדסה,2003,6
+odata_all_cities,צור הדסה,2004,11
+odata_all_cities,צור הדסה,2005,16
+odata_all_cities,צור הדסה,2006,12
+odata_all_cities,צור הדסה,2007,49
+odata_all_cities,צור הדסה,2008,46
+odata_all_cities,צור הדסה,2009,43
+odata_all_cities,צור הדסה,2010,79
+odata_all_cities,צור הדסה,2011,40
+odata_all_cities,צור הדסה,2012,45
+odata_all_cities,צור הדסה,2013,71
+odata_all_cities,צור הדסה,2014,62
+odata_all_cities,צור הדסה,2015,101
+odata_all_cities,צור הדסה,2016,172
+odata_all_cities,צור הדסה,2017,168
+odata_all_cities,צור הדסה,2018,78
+odata_all_cities,צור הדסה,2019,51
+odata_all_cities,צור הדסה,2020,68
+odata_all_cities,צור הדסה,2021,98
+odata_all_cities,צור הדסה,2022,41
+odata_all_cities,צור הדסה,2023,34
+odata_all_cities,צור הדסה,2024,32
+odata_all_cities,צור יצחק,2005,3
+odata_all_cities,צור יצחק,2006,2
+odata_all_cities,צור יצחק,2007,9
+odata_all_cities,צור יצחק,2008,9
+odata_all_cities,צור יצחק,2009,120
+odata_all_cities,צור יצחק,2010,122
+odata_all_cities,צור יצחק,2011,29
+odata_all_cities,צור יצחק,2012,73
+odata_all_cities,צור יצחק,2013,129
+odata_all_cities,צור יצחק,2014,99
+odata_all_cities,צור יצחק,2015,74
+odata_all_cities,צור יצחק,2016,82
+odata_all_cities,צור יצחק,2017,54
+odata_all_cities,צור יצחק,2018,62
+odata_all_cities,צור יצחק,2019,82
+odata_all_cities,צור יצחק,2020,82
+odata_all_cities,צור יצחק,2021,188
+odata_all_cities,צור יצחק,2022,63
+odata_all_cities,צור יצחק,2023,47
+odata_all_cities,צור יצחק,2024,37
+odata_all_cities,צור יצחק,2030,2
+odata_all_cities,צור משה,2000,8
+odata_all_cities,צור משה,2001,1
+odata_all_cities,צור משה,2002,4
+odata_all_cities,צור משה,2003,32
+odata_all_cities,צור משה,2004,24
+odata_all_cities,צור משה,2005,5
+odata_all_cities,צור משה,2006,10
+odata_all_cities,צור משה,2007,6
+odata_all_cities,צור משה,2008,10
+odata_all_cities,צור משה,2009,9
+odata_all_cities,צור משה,2010,11
+odata_all_cities,צור משה,2011,10
+odata_all_cities,צור משה,2012,14
+odata_all_cities,צור משה,2013,13
+odata_all_cities,צור משה,2014,7
+odata_all_cities,צור משה,2015,14
+odata_all_cities,צור משה,2016,12
+odata_all_cities,צור משה,2017,6
+odata_all_cities,צור משה,2018,12
+odata_all_cities,צור משה,2019,10
+odata_all_cities,צור משה,2020,4
+odata_all_cities,צור משה,2021,13
+odata_all_cities,צור משה,2022,5
+odata_all_cities,צור משה,2023,5
+odata_all_cities,צור משה,2024,3
+odata_all_cities,צורית,2002,1
+odata_all_cities,צורית,2003,1
+odata_all_cities,צורית,2006,1
+odata_all_cities,צורית,2007,1
+odata_all_cities,צורית,2008,2
+odata_all_cities,צורית,2009,1
+odata_all_cities,צורית,2010,1
+odata_all_cities,צורית,2011,2
+odata_all_cities,צורית,2012,1
+odata_all_cities,צורית,2013,2
+odata_all_cities,צורית,2014,1
+odata_all_cities,צורית,2015,1
+odata_all_cities,צורית,2016,6
+odata_all_cities,צורית,2017,2
+odata_all_cities,צורית,2018,2
+odata_all_cities,צורית,2019,2
+odata_all_cities,צורית,2020,3
+odata_all_cities,צורית,2021,3
+odata_all_cities,צורית,2022,2
+odata_all_cities,צורית,2023,3
+odata_all_cities,צלפון,2023,1
+odata_all_cities,צפרייה,2011,1
+odata_all_cities,צפרייה,2016,1
+odata_all_cities,צפרייה,2019,1
+odata_all_cities,צפת,1998,31
+odata_all_cities,צפת,1999,43
+odata_all_cities,צפת,2000,24
+odata_all_cities,צפת,2001,53
+odata_all_cities,צפת,2002,39
+odata_all_cities,צפת,2003,62
+odata_all_cities,צפת,2004,45
+odata_all_cities,צפת,2005,42
+odata_all_cities,צפת,2006,39
+odata_all_cities,צפת,2007,77
+odata_all_cities,צפת,2008,129
+odata_all_cities,צפת,2009,144
+odata_all_cities,צפת,2010,175
+odata_all_cities,צפת,2011,159
+odata_all_cities,צפת,2012,166
+odata_all_cities,צפת,2013,197
+odata_all_cities,צפת,2014,177
+odata_all_cities,צפת,2015,166
+odata_all_cities,צפת,2016,163
+odata_all_cities,צפת,2017,194
+odata_all_cities,צפת,2018,246
+odata_all_cities,צפת,2019,212
+odata_all_cities,צפת,2020,281
+odata_all_cities,צפת,2021,396
+odata_all_cities,צפת,2022,363
+odata_all_cities,צפת,2023,255
+odata_all_cities,צפת,2024,111
+odata_all_cities,קדומים,2016,3
+odata_all_cities,קדומים,2018,2
+odata_all_cities,קדומים,2019,3
+odata_all_cities,קדומים,2020,1
+odata_all_cities,קדימה-צורן,1998,32
+odata_all_cities,קדימה-צורן,1999,46
+odata_all_cities,קדימה-צורן,2000,31
+odata_all_cities,קדימה-צורן,2001,40
+odata_all_cities,קדימה-צורן,2002,39
+odata_all_cities,קדימה-צורן,2003,31
+odata_all_cities,קדימה-צורן,2004,61
+odata_all_cities,קדימה-צורן,2005,66
+odata_all_cities,קדימה-צורן,2006,68
+odata_all_cities,קדימה-צורן,2007,71
+odata_all_cities,קדימה-צורן,2008,61
+odata_all_cities,קדימה-צורן,2009,69
+odata_all_cities,קדימה-צורן,2010,88
+odata_all_cities,קדימה-צורן,2011,106
+odata_all_cities,קדימה-צורן,2012,154
+odata_all_cities,קדימה-צורן,2013,193
+odata_all_cities,קדימה-צורן,2014,120
+odata_all_cities,קדימה-צורן,2015,169
+odata_all_cities,קדימה-צורן,2016,182
+odata_all_cities,קדימה-צורן,2017,131
+odata_all_cities,קדימה-צורן,2018,145
+odata_all_cities,קדימה-צורן,2019,127
+odata_all_cities,קדימה-צורן,2020,178
+odata_all_cities,קדימה-צורן,2021,225
+odata_all_cities,קדימה-צורן,2022,107
+odata_all_cities,קדימה-צורן,2023,54
+odata_all_cities,קדימה-צורן,2024,55
+odata_all_cities,קדרון,2000,1
+odata_all_cities,קדרון,2003,1
+odata_all_cities,קדרון,2009,3
+odata_all_cities,קדרון,2013,2
+odata_all_cities,קדרון,2014,3
+odata_all_cities,קדרון,2015,1
+odata_all_cities,קדרון,2016,3
+odata_all_cities,קדרון,2017,2
+odata_all_cities,קדרון,2018,2
+odata_all_cities,קדרון,2019,1
+odata_all_cities,קדרון,2020,3
+odata_all_cities,קדרון,2021,2
+odata_all_cities,קדרון,2023,2
+odata_all_cities,קורנית,2007,2
+odata_all_cities,קורנית,2008,1
+odata_all_cities,קורנית,2014,1
+odata_all_cities,קורנית,2015,1
+odata_all_cities,קורנית,2016,1
+odata_all_cities,קורנית,2018,3
+odata_all_cities,קורנית,2019,2
+odata_all_cities,קורנית,2020,1
+odata_all_cities,קורנית,2021,2
+odata_all_cities,קורנית,2022,1
+odata_all_cities,קורנית,2023,1
+odata_all_cities,קורנית,2024,1
+odata_all_cities,קיסריה,1998,42
+odata_all_cities,קיסריה,1999,39
+odata_all_cities,קיסריה,2000,25
+odata_all_cities,קיסריה,2001,36
+odata_all_cities,קיסריה,2002,37
+odata_all_cities,קיסריה,2003,39
+odata_all_cities,קיסריה,2004,42
+odata_all_cities,קיסריה,2005,48
+odata_all_cities,קיסריה,2006,51
+odata_all_cities,קיסריה,2007,68
+odata_all_cities,קיסריה,2008,38
+odata_all_cities,קיסריה,2009,44
+odata_all_cities,קיסריה,2010,39
+odata_all_cities,קיסריה,2011,36
+odata_all_cities,קיסריה,2012,15
+odata_all_cities,קיסריה,2013,38
+odata_all_cities,קיסריה,2014,28
+odata_all_cities,קיסריה,2015,54
+odata_all_cities,קיסריה,2016,39
+odata_all_cities,קיסריה,2017,38
+odata_all_cities,קיסריה,2018,42
+odata_all_cities,קיסריה,2019,55
+odata_all_cities,קיסריה,2020,68
+odata_all_cities,קיסריה,2021,88
+odata_all_cities,קיסריה,2022,74
+odata_all_cities,קיסריה,2023,27
+odata_all_cities,קיסריה,2024,16
+odata_all_cities,קציר,2005,2
+odata_all_cities,קציר,2006,7
+odata_all_cities,קציר,2007,10
+odata_all_cities,קציר,2008,8
+odata_all_cities,קציר,2009,11
+odata_all_cities,קציר,2010,8
+odata_all_cities,קציר,2011,13
+odata_all_cities,קציר,2012,25
+odata_all_cities,קציר,2013,14
+odata_all_cities,קציר,2014,22
+odata_all_cities,קציר,2015,25
+odata_all_cities,קציר,2016,25
+odata_all_cities,קציר,2017,30
+odata_all_cities,קציר,2018,16
+odata_all_cities,קציר,2019,17
+odata_all_cities,קציר,2020,23
+odata_all_cities,קציר,2021,36
+odata_all_cities,קציר,2022,27
+odata_all_cities,קציר,2023,9
+odata_all_cities,קציר,2024,8
+odata_all_cities,קצרין,1998,1
+odata_all_cities,קצרין,1999,3
+odata_all_cities,קצרין,2002,1
+odata_all_cities,קצרין,2006,1
+odata_all_cities,קצרין,2007,1
+odata_all_cities,קצרין,2009,1
+odata_all_cities,קצרין,2010,2
+odata_all_cities,קצרין,2011,2
+odata_all_cities,קצרין,2012,1
+odata_all_cities,קצרין,2013,1
+odata_all_cities,קצרין,2014,13
+odata_all_cities,קצרין,2015,17
+odata_all_cities,קצרין,2016,19
+odata_all_cities,קצרין,2017,34
+odata_all_cities,קצרין,2018,17
+odata_all_cities,קצרין,2019,74
+odata_all_cities,קצרין,2020,98
+odata_all_cities,קצרין,2021,127
+odata_all_cities,קצרין,2022,111
+odata_all_cities,קצרין,2023,66
+odata_all_cities,קצרין,2024,31
+odata_all_cities,קריית אונו,1998,120
+odata_all_cities,קריית אונו,1999,147
+odata_all_cities,קריית אונו,2000,127
+odata_all_cities,קריית אונו,2001,162
+odata_all_cities,קריית אונו,2002,176
+odata_all_cities,קריית אונו,2003,140
+odata_all_cities,קריית אונו,2004,121
+odata_all_cities,קריית אונו,2005,189
+odata_all_cities,קריית אונו,2006,191
+odata_all_cities,קריית אונו,2007,256
+odata_all_cities,קריית אונו,2008,223
+odata_all_cities,קריית אונו,2009,223
+odata_all_cities,קריית אונו,2010,228
+odata_all_cities,קריית אונו,2011,160
+odata_all_cities,קריית אונו,2012,246
+odata_all_cities,קריית אונו,2013,292
+odata_all_cities,קריית אונו,2014,243
+odata_all_cities,קריית אונו,2015,231
+odata_all_cities,קריית אונו,2016,254
+odata_all_cities,קריית אונו,2017,220
+odata_all_cities,קריית אונו,2018,297
+odata_all_cities,קריית אונו,2019,316
+odata_all_cities,קריית אונו,2020,360
+odata_all_cities,קריית אונו,2021,814
+odata_all_cities,קריית אונו,2022,465
+odata_all_cities,קריית אונו,2023,248
+odata_all_cities,קריית אונו,2024,335
+odata_all_cities,קריית ארבע,2005,1
+odata_all_cities,קריית ארבע,2009,4
+odata_all_cities,קריית ארבע,2010,5
+odata_all_cities,קריית ארבע,2011,4
+odata_all_cities,קריית ארבע,2012,3
+odata_all_cities,קריית ארבע,2013,4
+odata_all_cities,קריית ארבע,2014,4
+odata_all_cities,קריית ארבע,2015,3
+odata_all_cities,קריית ארבע,2016,7
+odata_all_cities,קריית ארבע,2017,16
+odata_all_cities,קריית ארבע,2018,25
+odata_all_cities,קריית ארבע,2019,24
+odata_all_cities,קריית ארבע,2020,5
+odata_all_cities,קריית ארבע,2021,16
+odata_all_cities,קריית ארבע,2022,12
+odata_all_cities,קריית ארבע,2023,15
+odata_all_cities,קריית ארבע,2024,8
+odata_all_cities,קריית אתא,1998,218
+odata_all_cities,קריית אתא,1999,339
+odata_all_cities,קריית אתא,2000,158
+odata_all_cities,קריית אתא,2001,170
+odata_all_cities,קריית אתא,2002,203
+odata_all_cities,קריית אתא,2003,211
+odata_all_cities,קריית אתא,2004,214
+odata_all_cities,קריית אתא,2005,224
+odata_all_cities,קריית אתא,2006,215
+odata_all_cities,קריית אתא,2007,339
+odata_all_cities,קריית אתא,2008,462
+odata_all_cities,קריית אתא,2009,683
+odata_all_cities,קריית אתא,2010,621
+odata_all_cities,קריית אתא,2011,557
+odata_all_cities,קריית אתא,2012,630
+odata_all_cities,קריית אתא,2013,856
+odata_all_cities,קריית אתא,2014,802
+odata_all_cities,קריית אתא,2015,971
+odata_all_cities,קריית אתא,2016,990
+odata_all_cities,קריית אתא,2017,865
+odata_all_cities,קריית אתא,2018,809
+odata_all_cities,קריית אתא,2019,839
+odata_all_cities,קריית אתא,2020,975
+odata_all_cities,קריית אתא,2021,1454
+odata_all_cities,קריית אתא,2022,1618
+odata_all_cities,קריית אתא,2023,1011
+odata_all_cities,קריית אתא,2024,667
+odata_all_cities,קריית ביאליק,1998,76
+odata_all_cities,קריית ביאליק,1999,88
+odata_all_cities,קריית ביאליק,2000,80
+odata_all_cities,קריית ביאליק,2001,85
+odata_all_cities,קריית ביאליק,2002,69
+odata_all_cities,קריית ביאליק,2003,83
+odata_all_cities,קריית ביאליק,2004,83
+odata_all_cities,קריית ביאליק,2005,71
+odata_all_cities,קריית ביאליק,2006,74
+odata_all_cities,קריית ביאליק,2007,118
+odata_all_cities,קריית ביאליק,2008,141
+odata_all_cities,קריית ביאליק,2009,248
+odata_all_cities,קריית ביאליק,2010,243
+odata_all_cities,קריית ביאליק,2011,211
+odata_all_cities,קריית ביאליק,2012,241
+odata_all_cities,קריית ביאליק,2013,215
+odata_all_cities,קריית ביאליק,2014,196
+odata_all_cities,קריית ביאליק,2015,225
+odata_all_cities,קריית ביאליק,2016,233
+odata_all_cities,קריית ביאליק,2017,205
+odata_all_cities,קריית ביאליק,2018,243
+odata_all_cities,קריית ביאליק,2019,297
+odata_all_cities,קריית ביאליק,2020,261
+odata_all_cities,קריית ביאליק,2021,435
+odata_all_cities,קריית ביאליק,2022,431
+odata_all_cities,קריית ביאליק,2023,235
+odata_all_cities,קריית ביאליק,2024,197
+odata_all_cities,קריית גת,1998,19
+odata_all_cities,קריית גת,1999,18
+odata_all_cities,קריית גת,2000,24
+odata_all_cities,קריית גת,2001,41
+odata_all_cities,קריית גת,2002,36
+odata_all_cities,קריית גת,2003,27
+odata_all_cities,קריית גת,2004,25
+odata_all_cities,קריית גת,2005,23
+odata_all_cities,קריית גת,2006,27
+odata_all_cities,קריית גת,2007,50
+odata_all_cities,קריית גת,2008,41
+odata_all_cities,קריית גת,2009,52
+odata_all_cities,קריית גת,2010,242
+odata_all_cities,קריית גת,2011,213
+odata_all_cities,קריית גת,2012,296
+odata_all_cities,קריית גת,2013,320
+odata_all_cities,קריית גת,2014,346
+odata_all_cities,קריית גת,2015,647
+odata_all_cities,קריית גת,2016,560
+odata_all_cities,קריית גת,2017,444
+odata_all_cities,קריית גת,2018,526
+odata_all_cities,קריית גת,2019,608
+odata_all_cities,קריית גת,2020,653
+odata_all_cities,קריית גת,2021,1285
+odata_all_cities,קריית גת,2022,1073
+odata_all_cities,קריית גת,2023,652
+odata_all_cities,קריית גת,2024,521
+odata_all_cities,קריית ים,1998,122
+odata_all_cities,קריית ים,1999,196
+odata_all_cities,קריית ים,2000,110
+odata_all_cities,קריית ים,2001,84
+odata_all_cities,קריית ים,2002,111
+odata_all_cities,קריית ים,2003,104
+odata_all_cities,קריית ים,2004,104
+odata_all_cities,קריית ים,2005,115
+odata_all_cities,קריית ים,2006,117
+odata_all_cities,קריית ים,2007,212
+odata_all_cities,קריית ים,2008,276
+odata_all_cities,קריית ים,2009,315
+odata_all_cities,קריית ים,2010,285
+odata_all_cities,קריית ים,2011,267
+odata_all_cities,קריית ים,2012,317
+odata_all_cities,קריית ים,2013,303
+odata_all_cities,קריית ים,2014,310
+odata_all_cities,קריית ים,2015,344
+odata_all_cities,קריית ים,2016,323
+odata_all_cities,קריית ים,2017,308
+odata_all_cities,קריית ים,2018,287
+odata_all_cities,קריית ים,2019,340
+odata_all_cities,קריית ים,2020,397
+odata_all_cities,קריית ים,2021,680
+odata_all_cities,קריית ים,2022,639
+odata_all_cities,קריית ים,2023,462
+odata_all_cities,קריית ים,2024,348
+odata_all_cities,קריית יערים,1998,2
+odata_all_cities,קריית יערים,1999,1
+odata_all_cities,קריית יערים,2003,1
+odata_all_cities,קריית יערים,2005,1
+odata_all_cities,קריית יערים,2007,1
+odata_all_cities,קריית יערים,2008,1
+odata_all_cities,קריית יערים,2009,1
+odata_all_cities,קריית יערים,2010,4
+odata_all_cities,קריית יערים,2011,2
+odata_all_cities,קריית יערים,2012,6
+odata_all_cities,קריית יערים,2013,3
+odata_all_cities,קריית יערים,2014,2
+odata_all_cities,קריית יערים,2016,1
+odata_all_cities,קריית יערים,2017,1
+odata_all_cities,קריית יערים,2019,3
+odata_all_cities,קריית יערים,2020,3
+odata_all_cities,קריית יערים,2021,2
+odata_all_cities,קריית יערים,2022,3
+odata_all_cities,קריית יערים,2023,1
+odata_all_cities,קריית מוצקין,1998,6
+odata_all_cities,קריית מוצקין,1999,11
+odata_all_cities,קריית מוצקין,2000,6
+odata_all_cities,קריית מוצקין,2001,12
+odata_all_cities,קריית מוצקין,2002,25
+odata_all_cities,קריית מוצקין,2003,18
+odata_all_cities,קריית מוצקין,2004,18
+odata_all_cities,קריית מוצקין,2005,17
+odata_all_cities,קריית מוצקין,2006,19
+odata_all_cities,קריית מוצקין,2007,37
+odata_all_cities,קריית מוצקין,2008,92
+odata_all_cities,קריית מוצקין,2009,109
+odata_all_cities,קריית מוצקין,2010,94
+odata_all_cities,קריית מוצקין,2011,70
+odata_all_cities,קריית מוצקין,2012,53
+odata_all_cities,קריית מוצקין,2013,70
+odata_all_cities,קריית מוצקין,2014,97
+odata_all_cities,קריית מוצקין,2015,102
+odata_all_cities,קריית מוצקין,2016,51
+odata_all_cities,קריית מוצקין,2017,95
+odata_all_cities,קריית מוצקין,2018,80
+odata_all_cities,קריית מוצקין,2019,85
+odata_all_cities,קריית מוצקין,2020,88
+odata_all_cities,קריית מוצקין,2021,164
+odata_all_cities,קריית מוצקין,2022,100
+odata_all_cities,קריית מוצקין,2023,98
+odata_all_cities,קריית מוצקין,2024,70
+odata_all_cities,קריית מלאכי,1998,18
+odata_all_cities,קריית מלאכי,1999,33
+odata_all_cities,קריית מלאכי,2000,17
+odata_all_cities,קריית מלאכי,2001,50
+odata_all_cities,קריית מלאכי,2002,46
+odata_all_cities,קריית מלאכי,2003,73
+odata_all_cities,קריית מלאכי,2004,34
+odata_all_cities,קריית מלאכי,2005,39
+odata_all_cities,קריית מלאכי,2006,33
+odata_all_cities,קריית מלאכי,2007,61
+odata_all_cities,קריית מלאכי,2008,84
+odata_all_cities,קריית מלאכי,2009,90
+odata_all_cities,קריית מלאכי,2010,114
+odata_all_cities,קריית מלאכי,2011,68
+odata_all_cities,קריית מלאכי,2012,147
+odata_all_cities,קריית מלאכי,2013,137
+odata_all_cities,קריית מלאכי,2014,116
+odata_all_cities,קריית מלאכי,2015,357
+odata_all_cities,קריית מלאכי,2016,292
+odata_all_cities,קריית מלאכי,2017,202
+odata_all_cities,קריית מלאכי,2018,181
+odata_all_cities,קריית מלאכי,2019,244
+odata_all_cities,קריית מלאכי,2020,255
+odata_all_cities,קריית מלאכי,2021,413
+odata_all_cities,קריית מלאכי,2022,339
+odata_all_cities,קריית מלאכי,2023,235
+odata_all_cities,קריית מלאכי,2024,148
+odata_all_cities,קריית עקרון,1998,8
+odata_all_cities,קריית עקרון,1999,2
+odata_all_cities,קריית עקרון,2000,8
+odata_all_cities,קריית עקרון,2001,10
+odata_all_cities,קריית עקרון,2002,7
+odata_all_cities,קריית עקרון,2003,10
+odata_all_cities,קריית עקרון,2004,13
+odata_all_cities,קריית עקרון,2005,13
+odata_all_cities,קריית עקרון,2006,19
+odata_all_cities,קריית עקרון,2007,43
+odata_all_cities,קריית עקרון,2008,52
+odata_all_cities,קריית עקרון,2009,33
+odata_all_cities,קריית עקרון,2010,37
+odata_all_cities,קריית עקרון,2011,22
+odata_all_cities,קריית עקרון,2012,45
+odata_all_cities,קריית עקרון,2013,53
+odata_all_cities,קריית עקרון,2014,42
+odata_all_cities,קריית עקרון,2015,43
+odata_all_cities,קריית עקרון,2016,64
+odata_all_cities,קריית עקרון,2017,40
+odata_all_cities,קריית עקרון,2018,48
+odata_all_cities,קריית עקרון,2019,40
+odata_all_cities,קריית עקרון,2020,41
+odata_all_cities,קריית עקרון,2021,65
+odata_all_cities,קריית עקרון,2022,62
+odata_all_cities,קריית עקרון,2023,23
+odata_all_cities,קריית עקרון,2024,20
+odata_all_cities,קריית שמונה,1998,12
+odata_all_cities,קריית שמונה,1999,10
+odata_all_cities,קריית שמונה,2000,11
+odata_all_cities,קריית שמונה,2001,68
+odata_all_cities,קריית שמונה,2002,47
+odata_all_cities,קריית שמונה,2003,40
+odata_all_cities,קריית שמונה,2004,26
+odata_all_cities,קריית שמונה,2005,41
+odata_all_cities,קריית שמונה,2006,35
+odata_all_cities,קריית שמונה,2007,41
+odata_all_cities,קריית שמונה,2008,53
+odata_all_cities,קריית שמונה,2009,76
+odata_all_cities,קריית שמונה,2010,80
+odata_all_cities,קריית שמונה,2011,101
+odata_all_cities,קריית שמונה,2012,130
+odata_all_cities,קריית שמונה,2013,108
+odata_all_cities,קריית שמונה,2014,97
+odata_all_cities,קריית שמונה,2015,107
+odata_all_cities,קריית שמונה,2016,121
+odata_all_cities,קריית שמונה,2017,119
+odata_all_cities,קריית שמונה,2018,215
+odata_all_cities,קריית שמונה,2019,237
+odata_all_cities,קריית שמונה,2020,207
+odata_all_cities,קריית שמונה,2021,295
+odata_all_cities,קריית שמונה,2022,294
+odata_all_cities,קריית שמונה,2023,185
+odata_all_cities,קריית שמונה,2024,41
+odata_all_cities,קרית טבעון,1998,54
+odata_all_cities,קרית טבעון,1999,59
+odata_all_cities,קרית טבעון,2000,44
+odata_all_cities,קרית טבעון,2001,38
+odata_all_cities,קרית טבעון,2002,42
+odata_all_cities,קרית טבעון,2003,33
+odata_all_cities,קרית טבעון,2004,55
+odata_all_cities,קרית טבעון,2005,60
+odata_all_cities,קרית טבעון,2006,48
+odata_all_cities,קרית טבעון,2007,88
+odata_all_cities,קרית טבעון,2008,113
+odata_all_cities,קרית טבעון,2009,137
+odata_all_cities,קרית טבעון,2010,116
+odata_all_cities,קרית טבעון,2011,88
+odata_all_cities,קרית טבעון,2012,99
+odata_all_cities,קרית טבעון,2013,92
+odata_all_cities,קרית טבעון,2014,90
+odata_all_cities,קרית טבעון,2015,85
+odata_all_cities,קרית טבעון,2016,109
+odata_all_cities,קרית טבעון,2017,105
+odata_all_cities,קרית טבעון,2018,94
+odata_all_cities,קרית טבעון,2019,109
+odata_all_cities,קרית טבעון,2020,126
+odata_all_cities,קרית טבעון,2021,173
+odata_all_cities,קרית טבעון,2022,119
+odata_all_cities,קרית טבעון,2023,101
+odata_all_cities,קרית טבעון,2024,48
+odata_all_cities,קרני שומרון,1998,7
+odata_all_cities,קרני שומרון,1999,14
+odata_all_cities,קרני שומרון,2000,8
+odata_all_cities,קרני שומרון,2001,3
+odata_all_cities,קרני שומרון,2003,3
+odata_all_cities,קרני שומרון,2004,3
+odata_all_cities,קרני שומרון,2005,2
+odata_all_cities,קרני שומרון,2006,8
+odata_all_cities,קרני שומרון,2007,4
+odata_all_cities,קרני שומרון,2008,5
+odata_all_cities,קרני שומרון,2009,7
+odata_all_cities,קרני שומרון,2010,6
+odata_all_cities,קרני שומרון,2011,10
+odata_all_cities,קרני שומרון,2012,7
+odata_all_cities,קרני שומרון,2013,9
+odata_all_cities,קרני שומרון,2014,3
+odata_all_cities,קרני שומרון,2015,8
+odata_all_cities,קרני שומרון,2016,23
+odata_all_cities,קרני שומרון,2017,16
+odata_all_cities,קרני שומרון,2018,21
+odata_all_cities,קרני שומרון,2019,34
+odata_all_cities,קרני שומרון,2020,16
+odata_all_cities,קרני שומרון,2021,34
+odata_all_cities,קרני שומרון,2022,14
+odata_all_cities,קרני שומרון,2023,14
+odata_all_cities,קרני שומרון,2024,18
+odata_all_cities,ראש העין,1998,64
+odata_all_cities,ראש העין,1999,38
+odata_all_cities,ראש העין,2000,38
+odata_all_cities,ראש העין,2001,56
+odata_all_cities,ראש העין,2002,71
+odata_all_cities,ראש העין,2003,79
+odata_all_cities,ראש העין,2004,113
+odata_all_cities,ראש העין,2005,116
+odata_all_cities,ראש העין,2006,150
+odata_all_cities,ראש העין,2007,222
+odata_all_cities,ראש העין,2008,184
+odata_all_cities,ראש העין,2009,151
+odata_all_cities,ראש העין,2010,141
+odata_all_cities,ראש העין,2011,148
+odata_all_cities,ראש העין,2012,235
+odata_all_cities,ראש העין,2013,942
+odata_all_cities,ראש העין,2014,1034
+odata_all_cities,ראש העין,2015,1460
+odata_all_cities,ראש העין,2016,1247
+odata_all_cities,ראש העין,2017,1397
+odata_all_cities,ראש העין,2018,838
+odata_all_cities,ראש העין,2019,708
+odata_all_cities,ראש העין,2020,647
+odata_all_cities,ראש העין,2021,943
+odata_all_cities,ראש העין,2022,621
+odata_all_cities,ראש העין,2023,363
+odata_all_cities,ראש העין,2024,446
+odata_all_cities,ראש פינה,1998,2
+odata_all_cities,ראש פינה,1999,4
+odata_all_cities,ראש פינה,2000,6
+odata_all_cities,ראש פינה,2001,1
+odata_all_cities,ראש פינה,2002,7
+odata_all_cities,ראש פינה,2003,3
+odata_all_cities,ראש פינה,2004,6
+odata_all_cities,ראש פינה,2005,8
+odata_all_cities,ראש פינה,2006,13
+odata_all_cities,ראש פינה,2007,16
+odata_all_cities,ראש פינה,2008,6
+odata_all_cities,ראש פינה,2009,10
+odata_all_cities,ראש פינה,2010,10
+odata_all_cities,ראש פינה,2011,6
+odata_all_cities,ראש פינה,2012,11
+odata_all_cities,ראש פינה,2013,14
+odata_all_cities,ראש פינה,2014,7
+odata_all_cities,ראש פינה,2015,13
+odata_all_cities,ראש פינה,2016,11
+odata_all_cities,ראש פינה,2017,19
+odata_all_cities,ראש פינה,2018,18
+odata_all_cities,ראש פינה,2019,30
+odata_all_cities,ראש פינה,2020,16
+odata_all_cities,ראש פינה,2021,40
+odata_all_cities,ראש פינה,2022,31
+odata_all_cities,ראש פינה,2023,12
+odata_all_cities,ראש פינה,2024,5
+odata_all_cities,ראשון לציון,1998,835
+odata_all_cities,ראשון לציון,1999,1043
+odata_all_cities,ראשון לציון,2000,1053
+odata_all_cities,ראשון לציון,2001,1213
+odata_all_cities,ראשון לציון,2002,1326
+odata_all_cities,ראשון לציון,2003,1190
+odata_all_cities,ראשון לציון,2004,1094
+odata_all_cities,ראשון לציון,2005,842
+odata_all_cities,ראשון לציון,2006,701
+odata_all_cities,ראשון לציון,2007,2061
+odata_all_cities,ראשון לציון,2008,1859
+odata_all_cities,ראשון לציון,2009,1978
+odata_all_cities,ראשון לציון,2010,2013
+odata_all_cities,ראשון לציון,2011,1720
+odata_all_cities,ראשון לציון,2012,2028
+odata_all_cities,ראשון לציון,2013,2258
+odata_all_cities,ראשון לציון,2014,2155
+odata_all_cities,ראשון לציון,2015,2210
+odata_all_cities,ראשון לציון,2016,2182
+odata_all_cities,ראשון לציון,2017,1825
+odata_all_cities,ראשון לציון,2018,2060
+odata_all_cities,ראשון לציון,2019,1937
+odata_all_cities,ראשון לציון,2020,2056
+odata_all_cities,ראשון לציון,2021,2978
+odata_all_cities,ראשון לציון,2022,2142
+odata_all_cities,ראשון לציון,2023,1276
+odata_all_cities,ראשון לציון,2024,994
+odata_all_cities,רגבה,2003,1
+odata_all_cities,רגבה,2004,2
+odata_all_cities,רגבה,2005,1
+odata_all_cities,רגבה,2006,1
+odata_all_cities,רגבה,2008,3
+odata_all_cities,רגבה,2009,3
+odata_all_cities,רגבה,2010,2
+odata_all_cities,רגבה,2012,1
+odata_all_cities,רגבה,2013,6
+odata_all_cities,רגבה,2014,3
+odata_all_cities,רגבה,2015,1
+odata_all_cities,רגבה,2016,2
+odata_all_cities,רגבה,2017,1
+odata_all_cities,רגבה,2018,6
+odata_all_cities,רגבה,2019,5
+odata_all_cities,רגבה,2020,3
+odata_all_cities,רגבה,2021,1
+odata_all_cities,רגבה,2023,4
+odata_all_cities,רהט,2014,1
+odata_all_cities,רהט,2015,1
+odata_all_cities,רהט,2016,1
+odata_all_cities,רהט,2017,2
+odata_all_cities,רהט,2018,3
+odata_all_cities,רהט,2019,3
+odata_all_cities,רהט,2020,2
+odata_all_cities,רהט,2021,4
+odata_all_cities,רהט,2022,2
+odata_all_cities,רהט,2023,2
+odata_all_cities,רהט,2024,3
+odata_all_cities,רחובות,1998,198
+odata_all_cities,רחובות,1999,225
+odata_all_cities,רחובות,2000,199
+odata_all_cities,רחובות,2001,221
+odata_all_cities,רחובות,2002,269
+odata_all_cities,רחובות,2003,230
+odata_all_cities,רחובות,2004,247
+odata_all_cities,רחובות,2005,263
+odata_all_cities,רחובות,2006,323
+odata_all_cities,רחובות,2007,484
+odata_all_cities,רחובות,2008,504
+odata_all_cities,רחובות,2009,512
+odata_all_cities,רחובות,2010,536
+odata_all_cities,רחובות,2011,466
+odata_all_cities,רחובות,2012,668
+odata_all_cities,רחובות,2013,726
+odata_all_cities,רחובות,2014,656
+odata_all_cities,רחובות,2015,854
+odata_all_cities,רחובות,2016,759
+odata_all_cities,רחובות,2017,539
+odata_all_cities,רחובות,2018,538
+odata_all_cities,רחובות,2019,667
+odata_all_cities,רחובות,2020,733
+odata_all_cities,רחובות,2021,1063
+odata_all_cities,רחובות,2022,840
+odata_all_cities,רחובות,2023,588
+odata_all_cities,רחובות,2024,374
+odata_all_cities,רמלה,1998,24
+odata_all_cities,רמלה,1999,39
+odata_all_cities,רמלה,2000,44
+odata_all_cities,רמלה,2001,41
+odata_all_cities,רמלה,2002,39
+odata_all_cities,רמלה,2003,29
+odata_all_cities,רמלה,2004,41
+odata_all_cities,רמלה,2005,32
+odata_all_cities,רמלה,2006,35
+odata_all_cities,רמלה,2007,103
+odata_all_cities,רמלה,2008,89
+odata_all_cities,רמלה,2009,129
+odata_all_cities,רמלה,2010,206
+odata_all_cities,רמלה,2011,144
+odata_all_cities,רמלה,2012,191
+odata_all_cities,רמלה,2013,254
+odata_all_cities,רמלה,2014,215
+odata_all_cities,רמלה,2015,143
+odata_all_cities,רמלה,2016,170
+odata_all_cities,רמלה,2017,137
+odata_all_cities,רמלה,2018,155
+odata_all_cities,רמלה,2019,182
+odata_all_cities,רמלה,2020,165
+odata_all_cities,רמלה,2021,268
+odata_all_cities,רמלה,2022,265
+odata_all_cities,רמלה,2023,170
+odata_all_cities,רמלה,2024,105
+odata_all_cities,רמת גן,1998,608
+odata_all_cities,רמת גן,1999,690
+odata_all_cities,רמת גן,2000,620
+odata_all_cities,רמת גן,2001,632
+odata_all_cities,רמת גן,2002,696
+odata_all_cities,רמת גן,2003,665
+odata_all_cities,רמת גן,2004,790
+odata_all_cities,רמת גן,2005,733
+odata_all_cities,רמת גן,2006,829
+odata_all_cities,רמת גן,2007,1225
+odata_all_cities,רמת גן,2008,1024
+odata_all_cities,רמת גן,2009,1010
+odata_all_cities,רמת גן,2010,929
+odata_all_cities,רמת גן,2011,783
+odata_all_cities,רמת גן,2012,1001
+odata_all_cities,רמת גן,2013,1260
+odata_all_cities,רמת גן,2014,1164
+odata_all_cities,רמת גן,2015,1543
+odata_all_cities,רמת גן,2016,1247
+odata_all_cities,רמת גן,2017,1166
+odata_all_cities,רמת גן,2018,1297
+odata_all_cities,רמת גן,2019,1494
+odata_all_cities,רמת גן,2020,1626
+odata_all_cities,רמת גן,2021,2573
+odata_all_cities,רמת גן,2022,1834
+odata_all_cities,רמת גן,2023,1539
+odata_all_cities,רמת גן,2024,1069
+odata_all_cities,רמת גן,2025,1
+odata_all_cities,רמת השרון,1998,119
+odata_all_cities,רמת השרון,1999,180
+odata_all_cities,רמת השרון,2000,150
+odata_all_cities,רמת השרון,2001,130
+odata_all_cities,רמת השרון,2002,173
+odata_all_cities,רמת השרון,2003,200
+odata_all_cities,רמת השרון,2004,204
+odata_all_cities,רמת השרון,2005,201
+odata_all_cities,רמת השרון,2006,274
+odata_all_cities,רמת השרון,2007,377
+odata_all_cities,רמת השרון,2008,355
+odata_all_cities,רמת השרון,2009,342
+odata_all_cities,רמת השרון,2010,380
+odata_all_cities,רמת השרון,2011,267
+odata_all_cities,רמת השרון,2012,278
+odata_all_cities,רמת השרון,2013,276
+odata_all_cities,רמת השרון,2014,264
+odata_all_cities,רמת השרון,2015,293
+odata_all_cities,רמת השרון,2016,274
+odata_all_cities,רמת השרון,2017,395
+odata_all_cities,רמת השרון,2018,318
+odata_all_cities,רמת השרון,2019,284
+odata_all_cities,רמת השרון,2020,368
+odata_all_cities,רמת השרון,2021,668
+odata_all_cities,רמת השרון,2022,563
+odata_all_cities,רמת השרון,2023,468
+odata_all_cities,רמת השרון,2024,311
+odata_all_cities,רמת ישי,1998,22
+odata_all_cities,רמת ישי,1999,19
+odata_all_cities,רמת ישי,2000,19
+odata_all_cities,רמת ישי,2001,16
+odata_all_cities,רמת ישי,2002,21
+odata_all_cities,רמת ישי,2003,23
+odata_all_cities,רמת ישי,2004,23
+odata_all_cities,רמת ישי,2005,22
+odata_all_cities,רמת ישי,2006,44
+odata_all_cities,רמת ישי,2007,79
+odata_all_cities,רמת ישי,2008,88
+odata_all_cities,רמת ישי,2009,58
+odata_all_cities,רמת ישי,2010,57
+odata_all_cities,רמת ישי,2011,51
+odata_all_cities,רמת ישי,2012,53
+odata_all_cities,רמת ישי,2013,47
+odata_all_cities,רמת ישי,2014,48
+odata_all_cities,רמת ישי,2015,64
+odata_all_cities,רמת ישי,2016,55
+odata_all_cities,רמת ישי,2017,64
+odata_all_cities,רמת ישי,2018,53
+odata_all_cities,רמת ישי,2019,53
+odata_all_cities,רמת ישי,2020,66
+odata_all_cities,רמת ישי,2021,100
+odata_all_cities,רמת ישי,2022,78
+odata_all_cities,רמת ישי,2023,63
+odata_all_cities,רמת ישי,2024,34
+odata_all_cities,רעננה,1998,348
+odata_all_cities,רעננה,1999,448
+odata_all_cities,רעננה,2000,362
+odata_all_cities,רעננה,2001,406
+odata_all_cities,רעננה,2002,453
+odata_all_cities,רעננה,2003,413
+odata_all_cities,רעננה,2004,483
+odata_all_cities,רעננה,2005,434
+odata_all_cities,רעננה,2006,440
+odata_all_cities,רעננה,2007,520
+odata_all_cities,רעננה,2008,421
+odata_all_cities,רעננה,2009,454
+odata_all_cities,רעננה,2010,477
+odata_all_cities,רעננה,2011,395
+odata_all_cities,רעננה,2012,460
+odata_all_cities,רעננה,2013,578
+odata_all_cities,רעננה,2014,604
+odata_all_cities,רעננה,2015,747
+odata_all_cities,רעננה,2016,718
+odata_all_cities,רעננה,2017,704
+odata_all_cities,רעננה,2018,711
+odata_all_cities,רעננה,2019,724
+odata_all_cities,רעננה,2020,668
+odata_all_cities,רעננה,2021,1133
+odata_all_cities,רעננה,2022,954
+odata_all_cities,רעננה,2023,610
+odata_all_cities,רעננה,2024,376
+odata_all_cities,שאר ישוב,2002,2
+odata_all_cities,שאר ישוב,2017,1
+odata_all_cities,שבי ציון,1998,2
+odata_all_cities,שבי ציון,1999,1
+odata_all_cities,שבי ציון,2000,3
+odata_all_cities,שבי ציון,2001,1
+odata_all_cities,שבי ציון,2002,1
+odata_all_cities,שבי ציון,2003,2
+odata_all_cities,שבי ציון,2004,2
+odata_all_cities,שבי ציון,2005,1
+odata_all_cities,שבי ציון,2006,5
+odata_all_cities,שבי ציון,2007,4
+odata_all_cities,שבי ציון,2008,1
+odata_all_cities,שבי ציון,2009,2
+odata_all_cities,שבי ציון,2010,4
+odata_all_cities,שבי ציון,2011,1
+odata_all_cities,שבי ציון,2012,3
+odata_all_cities,שבי ציון,2013,1
+odata_all_cities,שבי ציון,2014,3
+odata_all_cities,שבי ציון,2015,4
+odata_all_cities,שבי ציון,2016,2
+odata_all_cities,שבי ציון,2017,2
+odata_all_cities,שבי ציון,2018,2
+odata_all_cities,שבי ציון,2019,1
+odata_all_cities,שבי ציון,2020,2
+odata_all_cities,שבי ציון,2021,7
+odata_all_cities,שבי ציון,2022,4
+odata_all_cities,שבי ציון,2023,3
+odata_all_cities,שבי ציון,2024,1
+odata_all_cities,שבלי - אום אל-גנם,1998,1
+odata_all_cities,שבלי - אום אל-גנם,1999,1
+odata_all_cities,שבלי - אום אל-גנם,2000,2
+odata_all_cities,שבלי - אום אל-גנם,2002,2
+odata_all_cities,שבלי - אום אל-גנם,2003,1
+odata_all_cities,שבלי - אום אל-גנם,2007,1
+odata_all_cities,שבלי - אום אל-גנם,2015,2
+odata_all_cities,שבלי - אום אל-גנם,2016,1
+odata_all_cities,שבלי - אום אל-גנם,2018,10
+odata_all_cities,שבלי - אום אל-גנם,2019,8
+odata_all_cities,שבלי - אום אל-גנם,2020,7
+odata_all_cities,שבלי - אום אל-גנם,2021,3
+odata_all_cities,שבלי - אום אל-גנם,2022,3
+odata_all_cities,שבלי - אום אל-גנם,2023,4
+odata_all_cities,שבלי - אום אל-גנם,2024,3
+odata_all_cities,שגב-שלום,2007,1
+odata_all_cities,שגב-שלום,2012,1
+odata_all_cities,שגב-שלום,2016,1
+odata_all_cities,שגב-שלום,2017,1
+odata_all_cities,שגב-שלום,2018,3
+odata_all_cities,שגב-שלום,2019,2
+odata_all_cities,שגב-שלום,2021,1
+odata_all_cities,שגב-שלום,2022,1
+odata_all_cities,שגב-שלום,2023,3
+odata_all_cities,שדה ורבורג,2000,4
+odata_all_cities,שדה ורבורג,2001,1
+odata_all_cities,שדה ורבורג,2002,1
+odata_all_cities,שדה ורבורג,2003,4
+odata_all_cities,שדה ורבורג,2004,3
+odata_all_cities,שדה ורבורג,2005,5
+odata_all_cities,שדה ורבורג,2006,4
+odata_all_cities,שדה ורבורג,2007,4
+odata_all_cities,שדה ורבורג,2008,2
+odata_all_cities,שדה ורבורג,2009,4
+odata_all_cities,שדה ורבורג,2010,5
+odata_all_cities,שדה ורבורג,2011,1
+odata_all_cities,שדה ורבורג,2012,1
+odata_all_cities,שדה ורבורג,2013,4
+odata_all_cities,שדה ורבורג,2014,4
+odata_all_cities,שדה ורבורג,2015,4
+odata_all_cities,שדה ורבורג,2016,5
+odata_all_cities,שדה ורבורג,2017,3
+odata_all_cities,שדה ורבורג,2018,1
+odata_all_cities,שדה ורבורג,2019,1
+odata_all_cities,שדה ורבורג,2020,2
+odata_all_cities,שדה ורבורג,2021,2
+odata_all_cities,שדה ורבורג,2022,2
+odata_all_cities,שדה ורבורג,2023,2
+odata_all_cities,שדה יעקב,2014,1
+odata_all_cities,שדה יעקב,2021,2
+odata_all_cities,שדה יעקב,2024,1
+odata_all_cities,שדי חמד,1999,1
+odata_all_cities,שדי חמד,2004,2
+odata_all_cities,שדי חמד,2005,4
+odata_all_cities,שדי חמד,2007,2
+odata_all_cities,שדי חמד,2008,1
+odata_all_cities,שדי חמד,2009,1
+odata_all_cities,שדי חמד,2012,1
+odata_all_cities,שדי חמד,2013,2
+odata_all_cities,שדי חמד,2015,3
+odata_all_cities,שדי חמד,2016,3
+odata_all_cities,שדי חמד,2018,1
+odata_all_cities,שדי חמד,2019,2
+odata_all_cities,שדי חמד,2021,1
+odata_all_cities,שדי חמד,2022,1
+odata_all_cities,שדרות,1998,38
+odata_all_cities,שדרות,1999,81
+odata_all_cities,שדרות,2000,58
+odata_all_cities,שדרות,2001,38
+odata_all_cities,שדרות,2002,48
+odata_all_cities,שדרות,2003,46
+odata_all_cities,שדרות,2004,33
+odata_all_cities,שדרות,2005,27
+odata_all_cities,שדרות,2006,18
+odata_all_cities,שדרות,2007,27
+odata_all_cities,שדרות,2008,42
+odata_all_cities,שדרות,2009,70
+odata_all_cities,שדרות,2010,334
+odata_all_cities,שדרות,2011,254
+odata_all_cities,שדרות,2012,368
+odata_all_cities,שדרות,2013,366
+odata_all_cities,שדרות,2014,368
+odata_all_cities,שדרות,2015,503
+odata_all_cities,שדרות,2016,465
+odata_all_cities,שדרות,2017,288
+odata_all_cities,שדרות,2018,262
+odata_all_cities,שדרות,2019,297
+odata_all_cities,שדרות,2020,267
+odata_all_cities,שדרות,2021,589
+odata_all_cities,שדרות,2022,560
+odata_all_cities,שדרות,2023,335
+odata_all_cities,שדרות,2024,164
+odata_all_cities,שוהם,1998,50
+odata_all_cities,שוהם,1999,28
+odata_all_cities,שוהם,2000,14
+odata_all_cities,שוהם,2001,8
+odata_all_cities,שוהם,2002,24
+odata_all_cities,שוהם,2003,42
+odata_all_cities,שוהם,2004,50
+odata_all_cities,שוהם,2005,76
+odata_all_cities,שוהם,2006,102
+odata_all_cities,שוהם,2007,240
+odata_all_cities,שוהם,2008,256
+odata_all_cities,שוהם,2009,308
+odata_all_cities,שוהם,2010,188
+odata_all_cities,שוהם,2011,126
+odata_all_cities,שוהם,2012,452
+odata_all_cities,שוהם,2013,336
+odata_all_cities,שוהם,2014,260
+odata_all_cities,שוהם,2015,254
+odata_all_cities,שוהם,2016,290
+odata_all_cities,שוהם,2017,252
+odata_all_cities,שוהם,2018,322
+odata_all_cities,שוהם,2019,276
+odata_all_cities,שוהם,2020,294
+odata_all_cities,שוהם,2021,456
+odata_all_cities,שוהם,2022,228
+odata_all_cities,שוהם,2023,146
+odata_all_cities,שוהם,2024,82
+odata_all_cities,שלומי,1998,6
+odata_all_cities,שלומי,1999,80
+odata_all_cities,שלומי,2000,30
+odata_all_cities,שלומי,2001,60
+odata_all_cities,שלומי,2002,26
+odata_all_cities,שלומי,2003,8
+odata_all_cities,שלומי,2004,8
+odata_all_cities,שלומי,2005,10
+odata_all_cities,שלומי,2006,20
+odata_all_cities,שלומי,2007,38
+odata_all_cities,שלומי,2008,50
+odata_all_cities,שלומי,2009,54
+odata_all_cities,שלומי,2010,64
+odata_all_cities,שלומי,2011,48
+odata_all_cities,שלומי,2012,72
+odata_all_cities,שלומי,2013,48
+odata_all_cities,שלומי,2014,38
+odata_all_cities,שלומי,2015,80
+odata_all_cities,שלומי,2016,76
+odata_all_cities,שלומי,2017,54
+odata_all_cities,שלומי,2018,62
+odata_all_cities,שלומי,2019,66
+odata_all_cities,שלומי,2020,76
+odata_all_cities,שלומי,2021,106
+odata_all_cities,שלומי,2022,112
+odata_all_cities,שלומי,2023,70
+odata_all_cities,שלומי,2024,12
+odata_all_cities,שמרת,2020,4
+odata_all_cities,שמרת,2022,4
+odata_all_cities,שמרת,2024,2
+odata_all_cities,שמשית,2002,2
+odata_all_cities,שמשית,2005,2
+odata_all_cities,שמשית,2008,2
+odata_all_cities,שמשית,2009,2
+odata_all_cities,שמשית,2010,6
+odata_all_cities,שמשית,2011,4
+odata_all_cities,שמשית,2012,16
+odata_all_cities,שמשית,2013,24
+odata_all_cities,שמשית,2014,18
+odata_all_cities,שמשית,2015,30
+odata_all_cities,שמשית,2016,8
+odata_all_cities,שמשית,2017,10
+odata_all_cities,שמשית,2018,12
+odata_all_cities,שמשית,2019,28
+odata_all_cities,שמשית,2020,20
+odata_all_cities,שמשית,2021,22
+odata_all_cities,שמשית,2022,6
+odata_all_cities,שמשית,2023,10
+odata_all_cities,שמשית,2024,6
+odata_all_cities,שניר,2012,2
+odata_all_cities,שניר,2014,2
+odata_all_cities,שניר,2018,4
+odata_all_cities,שניר,2021,2
+odata_all_cities,שניר,2022,2
+odata_all_cities,שניר,2023,2
+odata_all_cities,שפיר,2003,2
+odata_all_cities,שפיר,2006,2
+odata_all_cities,שפיר,2007,2
+odata_all_cities,שפיר,2009,4
+odata_all_cities,שפיר,2010,4
+odata_all_cities,שפיר,2011,2
+odata_all_cities,שפיר,2012,2
+odata_all_cities,שפיר,2017,2
+odata_all_cities,שפיר,2018,4
+odata_all_cities,שפיר,2022,2
+odata_all_cities,שתולים,2007,2
+odata_all_cities,שתולים,2010,2
+odata_all_cities,שתולים,2013,2
+odata_all_cities,שתולים,2016,2
+odata_all_cities,שתולים,2018,2
+odata_all_cities,שתולים,2022,4
+odata_all_cities,שתולים,2023,2
+odata_all_cities,תל אביב -יפו,1998,2225
+odata_all_cities,תל אביב -יפו,1999,2940
+odata_all_cities,תל אביב -יפו,2000,2416
+odata_all_cities,תל אביב -יפו,2001,2612
+odata_all_cities,תל אביב -יפו,2002,3187
+odata_all_cities,תל אביב -יפו,2003,3074
+odata_all_cities,תל אביב -יפו,2004,4028
+odata_all_cities,תל אביב -יפו,2005,4302
+odata_all_cities,תל אביב -יפו,2006,4714
+odata_all_cities,תל אביב -יפו,2007,5884
+odata_all_cities,תל אביב -יפו,2008,4507
+odata_all_cities,תל אביב -יפו,2009,5051
+odata_all_cities,תל אביב -יפו,2010,5515
+odata_all_cities,תל אביב -יפו,2011,4362
+odata_all_cities,תל אביב -יפו,2012,5232
+odata_all_cities,תל אביב -יפו,2013,5750
+odata_all_cities,תל אביב -יפו,2014,5015
+odata_all_cities,תל אביב -יפו,2015,5782
+odata_all_cities,תל אביב -יפו,2016,4835
+odata_all_cities,תל אביב -יפו,2017,4397
+odata_all_cities,תל אביב -יפו,2018,4741
+odata_all_cities,תל אביב -יפו,2019,4970
+odata_all_cities,תל אביב -יפו,2020,4768
+odata_all_cities,תל אביב -יפו,2021,8974
+odata_all_cities,תל אביב -יפו,2022,6362
+odata_all_cities,תל אביב -יפו,2023,4051
+odata_all_cities,תל אביב -יפו,2024,3041
+odata_all_cities,תל אביב -יפו,2025,1
+odata_all_cities,תל אביב -יפו,2026,2
+old_current_data,אשדוד,1998,546
+old_current_data,אשדוד,1999,693
+old_current_data,אשדוד,2000,424
+old_current_data,אשדוד,2001,415
+old_current_data,אשדוד,2002,467
+old_current_data,אשדוד,2003,484
+old_current_data,אשדוד,2004,501
+old_current_data,אשדוד,2005,338
+old_current_data,אשדוד,2006,463
+old_current_data,אשדוד,2007,1081
+old_current_data,אשדוד,2008,1189
+old_current_data,אשדוד,2009,1326
+old_current_data,אשדוד,2010,1448
+old_current_data,אשדוד,2011,1267
+old_current_data,אשדוד,2012,1509
+old_current_data,אשדוד,2013,1633
+old_current_data,אשדוד,2014,1644
+old_current_data,אשדוד,2015,2028
+old_current_data,אשדוד,2016,1728
+old_current_data,אשדוד,2017,1448
+old_current_data,אשדוד,2018,1799
+old_current_data,אשדוד,2019,1898
+old_current_data,אשדוד,2020,1976
+old_current_data,אשדוד,2021,2878
+old_current_data,אשדוד,2022,2496
+old_current_data,אשדוד,2023,1358
+old_current_data,אשדוד,2024,1083
+old_current_data,אשקלון,1998,153
+old_current_data,אשקלון,1999,207
+old_current_data,אשקלון,2000,207
+old_current_data,אשקלון,2001,202
+old_current_data,אשקלון,2002,243
+old_current_data,אשקלון,2003,204
+old_current_data,אשקלון,2004,239
+old_current_data,אשקלון,2005,199
+old_current_data,אשקלון,2006,194
+old_current_data,אשקלון,2007,431
+old_current_data,אשקלון,2008,456
+old_current_data,אשקלון,2009,709
+old_current_data,אשקלון,2010,975
+old_current_data,אשקלון,2011,914
+old_current_data,אשקלון,2012,1135
+old_current_data,אשקלון,2013,1409
+old_current_data,אשקלון,2014,1405
+old_current_data,אשקלון,2015,1607
+old_current_data,אשקלון,2016,1439
+old_current_data,אשקלון,2017,1129
+old_current_data,אשקלון,2018,1057
+old_current_data,אשקלון,2019,1153
+old_current_data,אשקלון,2020,1210
+old_current_data,אשקלון,2021,2253
+old_current_data,אשקלון,2022,1623
+old_current_data,אשקלון,2023,1173
+old_current_data,אשקלון,2024,850
+old_current_data,באר שבע,1998,471
+old_current_data,באר שבע,1999,494
+old_current_data,באר שבע,2000,376
+old_current_data,באר שבע,2001,615
+old_current_data,באר שבע,2002,567
+old_current_data,באר שבע,2003,538
+old_current_data,באר שבע,2004,457
+old_current_data,באר שבע,2005,312
+old_current_data,באר שבע,2006,260
+old_current_data,באר שבע,2007,486
+old_current_data,באר שבע,2008,700
+old_current_data,באר שבע,2009,673
+old_current_data,באר שבע,2010,1354
+old_current_data,באר שבע,2011,1421
+old_current_data,באר שבע,2012,2063
+old_current_data,באר שבע,2013,2449
+old_current_data,באר שבע,2014,2099
+old_current_data,באר שבע,2015,2535
+old_current_data,באר שבע,2016,2694
+old_current_data,באר שבע,2017,2270
+old_current_data,באר שבע,2018,2228
+old_current_data,באר שבע,2019,2321
+old_current_data,באר שבע,2020,2420
+old_current_data,באר שבע,2021,3785
+old_current_data,באר שבע,2022,3801
+old_current_data,באר שבע,2023,2582
+old_current_data,באר שבע,2024,2106
+old_current_data,בית שמש,1998,78
+old_current_data,בית שמש,1999,152
+old_current_data,בית שמש,2000,123
+old_current_data,בית שמש,2001,151
+old_current_data,בית שמש,2002,166
+old_current_data,בית שמש,2003,214
+old_current_data,בית שמש,2004,195
+old_current_data,בית שמש,2005,164
+old_current_data,בית שמש,2006,116
+old_current_data,בית שמש,2007,331
+old_current_data,בית שמש,2008,363
+old_current_data,בית שמש,2009,434
+old_current_data,בית שמש,2010,466
+old_current_data,בית שמש,2011,549
+old_current_data,בית שמש,2012,617
+old_current_data,בית שמש,2013,605
+old_current_data,בית שמש,2014,602
+old_current_data,בית שמש,2015,641
+old_current_data,בית שמש,2016,674
+old_current_data,בית שמש,2017,612
+old_current_data,בית שמש,2018,615
+old_current_data,בית שמש,2019,1123
+old_current_data,בית שמש,2020,1109
+old_current_data,בית שמש,2021,1288
+old_current_data,בית שמש,2022,829
+old_current_data,בית שמש,2023,549
+old_current_data,בית שמש,2024,383
+old_current_data,בני ברק,1998,378
+old_current_data,בני ברק,1999,454
+old_current_data,בני ברק,2000,383
+old_current_data,בני ברק,2001,493
+old_current_data,בני ברק,2002,591
+old_current_data,בני ברק,2003,653
+old_current_data,בני ברק,2004,647
+old_current_data,בני ברק,2005,750
+old_current_data,בני ברק,2006,620
+old_current_data,בני ברק,2007,792
+old_current_data,בני ברק,2008,787
+old_current_data,בני ברק,2009,769
+old_current_data,בני ברק,2010,829
+old_current_data,בני ברק,2011,782
+old_current_data,בני ברק,2012,890
+old_current_data,בני ברק,2013,1118
+old_current_data,בני ברק,2014,994
+old_current_data,בני ברק,2015,1124
+old_current_data,בני ברק,2016,1143
+old_current_data,בני ברק,2017,1088
+old_current_data,בני ברק,2018,1244
+old_current_data,בני ברק,2019,1154
+old_current_data,בני ברק,2020,1159
+old_current_data,בני ברק,2021,1641
+old_current_data,בני ברק,2022,1668
+old_current_data,בני ברק,2023,1172
+old_current_data,בני ברק,2024,801
+old_current_data,בת ים,1998,723
+old_current_data,בת ים,1999,803
+old_current_data,בת ים,2000,831
+old_current_data,בת ים,2001,726
+old_current_data,בת ים,2002,782
+old_current_data,בת ים,2003,739
+old_current_data,בת ים,2004,786
+old_current_data,בת ים,2005,962
+old_current_data,בת ים,2006,1039
+old_current_data,בת ים,2007,1363
+old_current_data,בת ים,2008,1075
+old_current_data,בת ים,2009,1120
+old_current_data,בת ים,2010,1053
+old_current_data,בת ים,2011,863
+old_current_data,בת ים,2012,1076
+old_current_data,בת ים,2013,1131
+old_current_data,בת ים,2014,1052
+old_current_data,בת ים,2015,1319
+old_current_data,בת ים,2016,1398
+old_current_data,בת ים,2017,1110
+old_current_data,בת ים,2018,1212
+old_current_data,בת ים,2019,1257
+old_current_data,בת ים,2020,1171
+old_current_data,בת ים,2021,2099
+old_current_data,בת ים,2022,1606
+old_current_data,בת ים,2023,1019
+old_current_data,בת ים,2024,842
+old_current_data,הרצלייה,1998,364
+old_current_data,הרצלייה,1999,342
+old_current_data,הרצלייה,2000,368
+old_current_data,הרצלייה,2001,432
+old_current_data,הרצלייה,2002,471
+old_current_data,הרצלייה,2003,503
+old_current_data,הרצלייה,2004,570
+old_current_data,הרצלייה,2005,674
+old_current_data,הרצלייה,2006,742
+old_current_data,הרצלייה,2007,815
+old_current_data,הרצלייה,2008,622
+old_current_data,הרצלייה,2009,834
+old_current_data,הרצלייה,2010,728
+old_current_data,הרצלייה,2011,575
+old_current_data,הרצלייה,2012,692
+old_current_data,הרצלייה,2013,737
+old_current_data,הרצלייה,2014,676
+old_current_data,הרצלייה,2015,782
+old_current_data,הרצלייה,2016,798
+old_current_data,הרצלייה,2017,686
+old_current_data,הרצלייה,2018,879
+old_current_data,הרצלייה,2019,869
+old_current_data,הרצלייה,2020,845
+old_current_data,הרצלייה,2021,1427
+old_current_data,הרצלייה,2022,925
+old_current_data,הרצלייה,2023,620
+old_current_data,הרצלייה,2024,408
+old_current_data,חדרה,1998,247
+old_current_data,חדרה,1999,229
+old_current_data,חדרה,2000,194
+old_current_data,חדרה,2001,202
+old_current_data,חדרה,2002,211
+old_current_data,חדרה,2003,263
+old_current_data,חדרה,2004,277
+old_current_data,חדרה,2005,283
+old_current_data,חדרה,2006,356
+old_current_data,חדרה,2007,529
+old_current_data,חדרה,2008,692
+old_current_data,חדרה,2009,639
+old_current_data,חדרה,2010,707
+old_current_data,חדרה,2011,619
+old_current_data,חדרה,2012,693
+old_current_data,חדרה,2013,831
+old_current_data,חדרה,2014,783
+old_current_data,חדרה,2015,1138
+old_current_data,חדרה,2016,1404
+old_current_data,חדרה,2017,1016
+old_current_data,חדרה,2018,1062
+old_current_data,חדרה,2019,983
+old_current_data,חדרה,2020,1009
+old_current_data,חדרה,2021,1707
+old_current_data,חדרה,2022,1060
+old_current_data,חדרה,2023,682
+old_current_data,חדרה,2024,540
+old_current_data,חולון,1998,846
+old_current_data,חולון,1999,972
+old_current_data,חולון,2000,903
+old_current_data,חולון,2001,967
+old_current_data,חולון,2002,1026
+old_current_data,חולון,2003,1013
+old_current_data,חולון,2004,950
+old_current_data,חולון,2005,1030
+old_current_data,חולון,2006,1203
+old_current_data,חולון,2007,1814
+old_current_data,חולון,2008,1594
+old_current_data,חולון,2009,1488
+old_current_data,חולון,2010,1308
+old_current_data,חולון,2011,1081
+old_current_data,חולון,2012,1440
+old_current_data,חולון,2013,1590
+old_current_data,חולון,2014,1425
+old_current_data,חולון,2015,1724
+old_current_data,חולון,2016,1862
+old_current_data,חולון,2017,1503
+old_current_data,חולון,2018,1554
+old_current_data,חולון,2019,1683
+old_current_data,חולון,2020,1498
+old_current_data,חולון,2021,2276
+old_current_data,חולון,2022,1731
+old_current_data,חולון,2023,1052
+old_current_data,חולון,2024,819
+old_current_data,חיפה,1998,1034
+old_current_data,חיפה,1999,1140
+old_current_data,חיפה,2000,1025
+old_current_data,חיפה,2001,989
+old_current_data,חיפה,2002,990
+old_current_data,חיפה,2003,1075
+old_current_data,חיפה,2004,1023
+old_current_data,חיפה,2005,1100
+old_current_data,חיפה,2006,964
+old_current_data,חיפה,2007,1560
+old_current_data,חיפה,2008,2054
+old_current_data,חיפה,2009,2532
+old_current_data,חיפה,2010,2341
+old_current_data,חיפה,2011,2149
+old_current_data,חיפה,2012,2607
+old_current_data,חיפה,2013,2710
+old_current_data,חיפה,2014,2701
+old_current_data,חיפה,2015,2822
+old_current_data,חיפה,2016,2976
+old_current_data,חיפה,2017,2981
+old_current_data,חיפה,2018,2923
+old_current_data,חיפה,2019,3164
+old_current_data,חיפה,2020,3140
+old_current_data,חיפה,2021,5028
+old_current_data,חיפה,2022,5024
+old_current_data,חיפה,2023,3920
+old_current_data,חיפה,2024,2499
+old_current_data,חיפה,2027,1
+old_current_data,ירושלים,1998,975
+old_current_data,ירושלים,1999,1358
+old_current_data,ירושלים,2000,1031
+old_current_data,ירושלים,2001,1144
+old_current_data,ירושלים,2002,1208
+old_current_data,ירושלים,2003,1323
+old_current_data,ירושלים,2004,1680
+old_current_data,ירושלים,2005,1605
+old_current_data,ירושלים,2006,1428
+old_current_data,ירושלים,2007,2361
+old_current_data,ירושלים,2008,2130
+old_current_data,ירושלים,2009,2498
+old_current_data,ירושלים,2010,2589
+old_current_data,ירושלים,2011,2270
+old_current_data,ירושלים,2012,2859
+old_current_data,ירושלים,2013,3416
+old_current_data,ירושלים,2014,2834
+old_current_data,ירושלים,2015,3406
+old_current_data,ירושלים,2016,3247
+old_current_data,ירושלים,2017,2729
+old_current_data,ירושלים,2018,2996
+old_current_data,ירושלים,2019,3028
+old_current_data,ירושלים,2020,3021
+old_current_data,ירושלים,2021,4755
+old_current_data,ירושלים,2022,4063
+old_current_data,ירושלים,2023,3186
+old_current_data,ירושלים,2024,2364
+old_current_data,כפר סבא,1998,342
+old_current_data,כפר סבא,1999,417
+old_current_data,כפר סבא,2000,421
+old_current_data,כפר סבא,2001,394
+old_current_data,כפר סבא,2002,400
+old_current_data,כפר סבא,2003,279
+old_current_data,כפר סבא,2004,361
+old_current_data,כפר סבא,2005,464
+old_current_data,כפר סבא,2006,517
+old_current_data,כפר סבא,2007,718
+old_current_data,כפר סבא,2008,656
+old_current_data,כפר סבא,2009,871
+old_current_data,כפר סבא,2010,785
+old_current_data,כפר סבא,2011,576
+old_current_data,כפר סבא,2012,789
+old_current_data,כפר סבא,2013,884
+old_current_data,כפר סבא,2014,749
+old_current_data,כפר סבא,2015,918
+old_current_data,כפר סבא,2016,806
+old_current_data,כפר סבא,2017,625
+old_current_data,כפר סבא,2018,685
+old_current_data,כפר סבא,2019,727
+old_current_data,כפר סבא,2020,744
+old_current_data,כפר סבא,2021,1240
+old_current_data,כפר סבא,2022,755
+old_current_data,כפר סבא,2023,553
+old_current_data,כפר סבא,2024,399
+old_current_data,כפר סבא,2026,1
+old_current_data,מודיעין-מכבים-רעות,1998,132
+old_current_data,מודיעין-מכבים-רעות,1999,116
+old_current_data,מודיעין-מכבים-רעות,2000,84
+old_current_data,מודיעין-מכבים-רעות,2001,108
+old_current_data,מודיעין-מכבים-רעות,2002,225
+old_current_data,מודיעין-מכבים-רעות,2003,218
+old_current_data,מודיעין-מכבים-רעות,2004,229
+old_current_data,מודיעין-מכבים-רעות,2005,178
+old_current_data,מודיעין-מכבים-רעות,2006,224
+old_current_data,מודיעין-מכבים-רעות,2007,708
+old_current_data,מודיעין-מכבים-רעות,2008,616
+old_current_data,מודיעין-מכבים-רעות,2009,865
+old_current_data,מודיעין-מכבים-רעות,2010,893
+old_current_data,מודיעין-מכבים-רעות,2011,532
+old_current_data,מודיעין-מכבים-רעות,2012,727
+old_current_data,מודיעין-מכבים-רעות,2013,851
+old_current_data,מודיעין-מכבים-רעות,2014,763
+old_current_data,מודיעין-מכבים-רעות,2015,878
+old_current_data,מודיעין-מכבים-רעות,2016,732
+old_current_data,מודיעין-מכבים-רעות,2017,524
+old_current_data,מודיעין-מכבים-רעות,2018,648
+old_current_data,מודיעין-מכבים-רעות,2019,784
+old_current_data,מודיעין-מכבים-רעות,2020,790
+old_current_data,מודיעין-מכבים-רעות,2021,1236
+old_current_data,מודיעין-מכבים-רעות,2022,686
+old_current_data,מודיעין-מכבים-רעות,2023,449
+old_current_data,מודיעין-מכבים-רעות,2024,324
+old_current_data,נתניה,1998,726
+old_current_data,נתניה,1999,908
+old_current_data,נתניה,2000,735
+old_current_data,נתניה,2001,981
+old_current_data,נתניה,2002,1137
+old_current_data,נתניה,2003,1084
+old_current_data,נתניה,2004,1155
+old_current_data,נתניה,2005,1441
+old_current_data,נתניה,2006,1414
+old_current_data,נתניה,2007,1909
+old_current_data,נתניה,2008,1908
+old_current_data,נתניה,2009,1881
+old_current_data,נתניה,2010,1936
+old_current_data,נתניה,2011,1661
+old_current_data,נתניה,2012,1964
+old_current_data,נתניה,2013,2179
+old_current_data,נתניה,2014,2063
+old_current_data,נתניה,2015,2395
+old_current_data,נתניה,2016,2188
+old_current_data,נתניה,2017,1688
+old_current_data,נתניה,2018,1653
+old_current_data,נתניה,2019,1838
+old_current_data,נתניה,2020,1899
+old_current_data,נתניה,2021,3405
+old_current_data,נתניה,2022,2746
+old_current_data,נתניה,2023,1521
+old_current_data,נתניה,2024,1056
+old_current_data,פתח תקווה,1998,923
+old_current_data,פתח תקווה,1999,796
+old_current_data,פתח תקווה,2000,596
+old_current_data,פתח תקווה,2001,653
+old_current_data,פתח תקווה,2002,837
+old_current_data,פתח תקווה,2003,735
+old_current_data,פתח תקווה,2004,820
+old_current_data,פתח תקווה,2005,1047
+old_current_data,פתח תקווה,2006,1259
+old_current_data,פתח תקווה,2007,2191
+old_current_data,פתח תקווה,2008,2125
+old_current_data,פתח תקווה,2009,2208
+old_current_data,פתח תקווה,2010,2452
+old_current_data,פתח תקווה,2011,1745
+old_current_data,פתח תקווה,2012,2200
+old_current_data,פתח תקווה,2013,2562
+old_current_data,פתח תקווה,2014,2186
+old_current_data,פתח תקווה,2015,2681
+old_current_data,פתח תקווה,2016,2314
+old_current_data,פתח תקווה,2017,2070
+old_current_data,פתח תקווה,2018,2134
+old_current_data,פתח תקווה,2019,2441
+old_current_data,פתח תקווה,2020,2219
+old_current_data,פתח תקווה,2021,3580
+old_current_data,פתח תקווה,2022,2860
+old_current_data,פתח תקווה,2023,2041
+old_current_data,פתח תקווה,2024,1732
+old_current_data,פתח תקווה,2027,1
+old_current_data,ראשון לציון,1998,773
+old_current_data,ראשון לציון,1999,961
+old_current_data,ראשון לציון,2000,917
+old_current_data,ראשון לציון,2001,1069
+old_current_data,ראשון לציון,2002,1148
+old_current_data,ראשון לציון,2003,1057
+old_current_data,ראשון לציון,2004,971
+old_current_data,ראשון לציון,2005,754
+old_current_data,ראשון לציון,2006,635
+old_current_data,ראשון לציון,2007,1859
+old_current_data,ראשון לציון,2008,1672
+old_current_data,ראשון לציון,2009,1750
+old_current_data,ראשון לציון,2010,1823
+old_current_data,ראשון לציון,2011,1568
+old_current_data,ראשון לציון,2012,1855
+old_current_data,ראשון לציון,2013,2064
+old_current_data,ראשון לציון,2014,1951
+old_current_data,ראשון לציון,2015,2007
+old_current_data,ראשון לציון,2016,1985
+old_current_data,ראשון לציון,2017,1659
+old_current_data,ראשון לציון,2018,1883
+old_current_data,ראשון לציון,2019,1775
+old_current_data,ראשון לציון,2020,1881
+old_current_data,ראשון לציון,2021,2694
+old_current_data,ראשון לציון,2022,1953
+old_current_data,ראשון לציון,2023,1165
+old_current_data,ראשון לציון,2024,901
+old_current_data,רחובות,1998,337
+old_current_data,רחובות,1999,381
+old_current_data,רחובות,2000,330
+old_current_data,רחובות,2001,367
+old_current_data,רחובות,2002,456
+old_current_data,רחובות,2003,395
+old_current_data,רחובות,2004,463
+old_current_data,רחובות,2005,415
+old_current_data,רחובות,2006,491
+old_current_data,רחובות,2007,905
+old_current_data,רחובות,2008,948
+old_current_data,רחובות,2009,1013
+old_current_data,רחובות,2010,988
+old_current_data,רחובות,2011,883
+old_current_data,רחובות,2012,1111
+old_current_data,רחובות,2013,1223
+old_current_data,רחובות,2014,1140
+old_current_data,רחובות,2015,1424
+old_current_data,רחובות,2016,1205
+old_current_data,רחובות,2017,1071
+old_current_data,רחובות,2018,1020
+old_current_data,רחובות,2019,1173
+old_current_data,רחובות,2020,1247
+old_current_data,רחובות,2021,1871
+old_current_data,רחובות,2022,1415
+old_current_data,רחובות,2023,966
+old_current_data,רחובות,2024,657
+old_current_data,רמת גן,1998,831
+old_current_data,רמת גן,1999,939
+old_current_data,רמת גן,2000,861
+old_current_data,רמת גן,2001,864
+old_current_data,רמת גן,2002,963
+old_current_data,רמת גן,2003,894
+old_current_data,רמת גן,2004,1049
+old_current_data,רמת גן,2005,1015
+old_current_data,רמת גן,2006,1172
+old_current_data,רמת גן,2007,1611
+old_current_data,רמת גן,2008,1345
+old_current_data,רמת גן,2009,1335
+old_current_data,רמת גן,2010,1229
+old_current_data,רמת גן,2011,1019
+old_current_data,רמת גן,2012,1327
+old_current_data,רמת גן,2013,1664
+old_current_data,רמת גן,2014,1434
+old_current_data,רמת גן,2015,1984
+old_current_data,רמת גן,2016,1542
+old_current_data,רמת גן,2017,1464
+old_current_data,רמת גן,2018,1661
+old_current_data,רמת גן,2019,1958
+old_current_data,רמת גן,2020,2052
+old_current_data,רמת גן,2021,3165
+old_current_data,רמת גן,2022,2398
+old_current_data,רמת גן,2023,1876
+old_current_data,רמת גן,2024,1366
+old_current_data,רמת גן,2025,1
+old_current_data,רעננה,1998,348
+old_current_data,רעננה,1999,448
+old_current_data,רעננה,2000,362
+old_current_data,רעננה,2001,406
+old_current_data,רעננה,2002,453
+old_current_data,רעננה,2003,413
+old_current_data,רעננה,2004,483
+old_current_data,רעננה,2005,434
+old_current_data,רעננה,2006,440
+old_current_data,רעננה,2007,520
+old_current_data,רעננה,2008,421
+old_current_data,רעננה,2009,454
+old_current_data,רעננה,2010,477
+old_current_data,רעננה,2011,395
+old_current_data,רעננה,2012,460
+old_current_data,רעננה,2013,578
+old_current_data,רעננה,2014,604
+old_current_data,רעננה,2015,747
+old_current_data,רעננה,2016,718
+old_current_data,רעננה,2017,704
+old_current_data,רעננה,2018,711
+old_current_data,רעננה,2019,724
+old_current_data,רעננה,2020,668
+old_current_data,רעננה,2021,1133
+old_current_data,רעננה,2022,954
+old_current_data,רעננה,2023,610
+old_current_data,רעננה,2024,376
+old_current_data,תל אביב -יפו,1998,1822
+old_current_data,תל אביב -יפו,1999,2346
+old_current_data,תל אביב -יפו,2000,1970
+old_current_data,תל אביב -יפו,2001,2092
+old_current_data,תל אביב -יפו,2002,2649
+old_current_data,תל אביב -יפו,2003,2516
+old_current_data,תל אביב -יפו,2004,3310
+old_current_data,תל אביב -יפו,2005,3526
+old_current_data,תל אביב -יפו,2006,3826
+old_current_data,תל אביב -יפו,2007,4794
+old_current_data,תל אביב -יפו,2008,3672
+old_current_data,תל אביב -יפו,2009,4081
+old_current_data,תל אביב -יפו,2010,4355
+old_current_data,תל אביב -יפו,2011,3565
+old_current_data,תל אביב -יפו,2012,4228
+old_current_data,תל אביב -יפו,2013,4687
+old_current_data,תל אביב -יפו,2014,4104
+old_current_data,תל אביב -יפו,2015,4764
+old_current_data,תל אביב -יפו,2016,4020
+old_current_data,תל אביב -יפו,2017,3612
+old_current_data,תל אביב -יפו,2018,3875
+old_current_data,תל אביב -יפו,2019,4112
+old_current_data,תל אביב -יפו,2020,3968
+old_current_data,תל אביב -יפו,2021,7316
+old_current_data,תל אביב -יפו,2022,5213
+old_current_data,תל אביב -יפו,2023,3378
+old_current_data,תל אביב -יפו,2024,2441
+old_current_data,תל אביב -יפו,2025,1
+old_current_data,תל אביב -יפו,2026,2

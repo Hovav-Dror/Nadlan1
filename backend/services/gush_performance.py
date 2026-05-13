@@ -10,6 +10,7 @@ from .calculations import (
     PRICE_TYPE_ROOM,
     apply_common_filters,
     price_used,
+    remove_outliers_from_var,
     remove_price_outliers_by_year,
     sp500_normalized,
     summary_by_city_year,
@@ -29,11 +30,11 @@ PRICE_COLUMN_BY_TYPE = {
     "n_deals": "n_deals",
 }
 DEFAULT_TOP_COUNT = 5
-DEFAULT_TYPICAL_COUNT = 5
+DEFAULT_TYPICAL_COUNT = 0
 DEFAULT_BOTTOM_COUNT = 5
-DEFAULT_MIN_DEALS_PER_GUSH = 10
+DEFAULT_MIN_DEALS_PER_GUSH = 5
 MIN_YEARS_PER_GUSH = 2
-TRIM_FRACTION = 0.1
+TRIM_FRACTION = 0.05
 
 
 class GushPerformanceError(Exception):
@@ -44,12 +45,7 @@ class GushPerformanceError(Exception):
 
 def build_gush_performance_summary_response(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     request_payload = _request_payload(payload)
-    warnings: List[str] = [
-        (
-            "City Performance was marked as not QA'd in the Shiny app; this endpoint preserves "
-            "the described YoY trimmed-mean behavior rather than replacing it with regression/CAGR."
-        )
-    ]
+    warnings: List[str] = []
 
     city = resolve_gush_performance_city(data_store, request_payload)
     city_frame = data_store.load_city(city["id"])
@@ -63,25 +59,30 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
         filtered = remove_price_outliers_by_year(filtered)
         if len(filtered) < before:
             warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
+        before = len(filtered)
+        filtered = remove_outliers_from_var(filtered, "area")
+        if len(filtered) < before:
+            warnings.append(f"Removed {before - len(filtered)} area outlier deals.")
     outlier_rows = int(len(filtered))
 
     y_variable = _y_variable(_first_present(request_payload, "yvar", "y_variable", "price_type"))
+    statistic = _statistic(_first_present(request_payload, "statistic", "stat"))
     min_deals = _positive_int(_first_present(request_payload, "min_deals_per_gush"), DEFAULT_MIN_DEALS_PER_GUSH)
     top_count = _non_negative_int(_first_present(request_payload, "top_count"), DEFAULT_TOP_COUNT)
     typical_count = _non_negative_int(_first_present(request_payload, "typical_count"), DEFAULT_TYPICAL_COUNT)
     bottom_count = _non_negative_int(_first_present(request_payload, "bottom_count"), DEFAULT_BOTTOM_COUNT)
 
-    summary = summary_by_gush_year(filtered)
+    summary = _summary_by_gush_year_for_stat(filtered, statistic)
     label_by_key = _label_by_key(data_store, city["id"])
     table = _summary_rows(summary, label_by_key, y_variable)
     qualified_table, changes = _qualified_performance(table, min_deals)
 
     selected_changes = _selected_performers(changes, top_count, typical_count, bottom_count)
     selected_keys = {row["gush_key"] for row in selected_changes}
-    selected_table = [row for row in qualified_table if row["gush_key"] in selected_keys]
-    series = _series_rows(selected_table, selected_changes)
+    selected_yearly_table = [row for row in qualified_table if row["gush_key"] in selected_keys]
+    series = _series_rows(selected_yearly_table, selected_changes)
 
-    overlays, overlay_warnings = _overlays(filtered, request_payload, y_variable)
+    overlays, overlay_warnings = _overlays(filtered, request_payload, y_variable, statistic)
     warnings.extend(overlay_warnings)
     if not table:
         warnings.append("No matching transactions were found.")
@@ -91,7 +92,8 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
     return _json_ready(
         {
             "series": series,
-            "performance_table": selected_table,
+            "performance_table": _performance_rows(selected_changes, y_variable),
+            "yearly_table": selected_yearly_table,
             "changes": {
                 "ranked": changes,
                 "selected": selected_changes,
@@ -102,6 +104,7 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
                     "min_deals_per_gush": min_deals,
                     "min_deals_comparison": ">=",
                     "yearly_slope_metric": "trimmed_mean_yoy_pct_change",
+                    "yearly_slope_note": "YoY percent changes are annualized by gap between deal years.",
                     "trim_fraction": TRIM_FRACTION,
                 },
             },
@@ -124,6 +127,7 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
             "overlays": overlays,
             "warnings": warnings,
             "y_variable": y_variable,
+            "statistic": statistic,
         }
     )
 
@@ -169,9 +173,54 @@ def _y_variable(value: Any) -> str:
         return "price_per_room"
     if normalized in {"n_deals", "deals", "count"}:
         return "n_deals"
-    if normalized in {"price_millions", "price", ""}:
+    if normalized in {"price_millions", "price"}:
         return "price_millions"
+    if normalized == "":
+        return "price_per_m2"
     raise GushPerformanceError("Unsupported y variable.")
+
+
+def _statistic(value: Any) -> str:
+    normalized = _normalize_text(value)
+    if normalized in {"", "median"}:
+        return "median"
+    if normalized == "mean":
+        return "mean"
+    raise GushPerformanceError("Unsupported statistic.")
+
+
+def _summary_by_gush_year_for_stat(df: pd.DataFrame, statistic: str) -> pd.DataFrame:
+    if statistic == "median":
+        return summary_by_gush_year(df)
+    return _summary_by_for_stat(df, [column for column in ["city", "Gush", "deal year"] if column in df.columns], statistic)
+
+
+def _summary_by_city_year_for_stat(df: pd.DataFrame, statistic: str) -> pd.DataFrame:
+    if statistic == "median":
+        return summary_by_city_year(df)
+    return _summary_by_for_stat(df, [column for column in ["city", "deal year"] if column in df.columns], statistic)
+
+
+def _summary_by_for_stat(df: pd.DataFrame, group_columns: Sequence[str], statistic: str) -> pd.DataFrame:
+    if df.empty or not group_columns:
+        return pd.DataFrame(columns=list(group_columns) + ["n_deals", "price_millions", "price_per_m2", "price_per_room"])
+    working = df.copy()
+    working["price_millions"] = pd.to_numeric(working.get("price_millions"), errors="coerce")
+    working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
+    working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
+    agg_name = "mean" if statistic == "mean" else "median"
+    return (
+        working.groupby(list(group_columns), dropna=False)
+        .agg(
+            n_deals=("price_millions", "size"),
+            price_millions=("price_millions", agg_name),
+            price_per_m2=("price_per_m2", agg_name),
+            price_per_room=("price_per_room", agg_name),
+        )
+        .reset_index()
+        .sort_values(list(group_columns))
+        .reset_index(drop=True)
+    )
 
 
 def _summary_rows(summary: pd.DataFrame, label_by_key: Mapping[str, str], y_variable: str) -> List[Dict[str, Any]]:
@@ -222,6 +271,12 @@ def _qualified_performance(table: Sequence[Mapping[str, Any]], min_deals: int) -
         yearly_slope = _trimmed_mean([row["yoy_pct_change"] for row in yoy_values if row["yoy_pct_change"] is not None])
         if yearly_slope is None:
             continue
+        first_y = _safe_number(sorted_rows[0].get("y"))
+        last_y = _safe_number(sorted_rows[-1].get("y"))
+        price_change = ((last_y - first_y) / first_y * 100) if first_y not in {None, 0} and last_y is not None else 0
+        first_year = sorted_rows[0].get("deal_year")
+        last_year = sorted_rows[-1].get("deal_year")
+        years_span = (last_year - first_year) if first_year is not None and last_year is not None else 0
 
         qualified_rows.extend([dict(row) for row in sorted_rows])
         first = sorted_rows[0]
@@ -230,12 +285,16 @@ def _qualified_performance(table: Sequence[Mapping[str, Any]], min_deals: int) -
                 "gush": first.get("gush"),
                 "gush_key": gush_key,
                 "gush_label": first.get("gush_label"),
+                "city": first.get("city"),
                 "year_count": year_count,
+                "total_deals": _compact_number(sum(value for value in yearly_deals if value is not None)),
                 "median_deals_per_year": _compact_number(deal_median),
                 "yearly_slope": _compact_number(yearly_slope),
+                "price_change": _compact_number(price_change),
                 "yoy_changes": yoy_values,
-                "first_year": sorted_rows[0].get("deal_year"),
-                "last_year": sorted_rows[-1].get("deal_year"),
+                "first_year": first_year,
+                "last_year": last_year,
+                "years_span": years_span,
                 "first_y": sorted_rows[0].get("y"),
                 "last_y": sorted_rows[-1].get("y"),
             }
@@ -256,32 +315,31 @@ def _selected_performers(
     if not changes:
         return []
 
-    used: set[str] = set()
-    selected: List[Dict[str, Any]] = []
-
-    def add(rows: Sequence[Mapping[str, Any]], group: str) -> None:
-        for row in rows:
-            key = str(row["gush_key"])
-            if key in used:
-                continue
-            used.add(key)
-            selected.append({**dict(row), "performance_group": group})
-
     ranked = list(changes)
-    add(ranked[:top_count], "top")
-    add(list(reversed(ranked))[:bottom_count], "bottom")
+    total = len(ranked)
+    top_n = min(top_count, total)
+    bottom_n = min(bottom_count, max(0, total - top_n))
+    available_middle = max(0, total - top_n - bottom_n)
+    typical_n = min(typical_count, available_middle)
 
-    remaining = [row for row in ranked if str(row["gush_key"]) not in used]
-    slopes = [_safe_number(row.get("yearly_slope")) for row in ranked]
-    median_slope = _median([value for value in slopes if value is not None])
-    # "Central typical" is not specified more exactly in the plan; closest to
-    # the median trimmed YoY slope gives stable representative middle performers.
-    if median_slope is not None:
-        remaining.sort(key=lambda row: (abs(float(row["yearly_slope"]) - median_slope), str(row["gush_label"])))
-    add(remaining[:typical_count], "typical")
+    selected: List[Dict[str, Any]] = []
+    selected.extend({**dict(row), "performance_group": "top", "position_in_group": index} for index, row in enumerate(ranked[:top_n], start=1))
+    if typical_n > 0 and available_middle > 0:
+        middle = ranked[top_n : total - bottom_n]
+        start = max(0, int((len(middle) - typical_n) // 2))
+        selected.extend(
+            {**dict(row), "performance_group": "typical", "position_in_group": index}
+            for index, row in enumerate(middle[start : start + typical_n], start=1)
+        )
+    if bottom_n > 0:
+        bottom = list(reversed(ranked))[:bottom_n]
+        selected.extend(
+            {**dict(row), "performance_group": "bottom", "position_in_group": index}
+            for index, row in enumerate(bottom, start=1)
+        )
 
     group_order = {"top": 0, "typical": 1, "bottom": 2}
-    return sorted(selected, key=lambda row: (group_order.get(str(row["performance_group"]), 9), row["rank"]))
+    return sorted(selected, key=lambda row: (group_order.get(str(row["performance_group"]), 9), row["position_in_group"]))
 
 
 def _yoy_changes(rows: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
@@ -290,13 +348,17 @@ def _yoy_changes(rows: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
     for row in rows:
         current_y = _safe_number(row.get("y"))
         previous_y = _safe_number(previous.get("y")) if previous is not None else None
+        previous_year = _safe_number(previous.get("deal_year")) if previous is not None else None
+        current_year = _safe_number(row.get("deal_year"))
         yoy = None
-        if current_y is not None and previous_y is not None and previous_y > 0:
-            yoy = ((current_y / previous_y) - 1) * 100
+        year_diff = (current_year - previous_year) if current_year is not None and previous_year is not None else None
+        if current_y is not None and previous_y is not None and previous_y > 0 and year_diff and year_diff > 0:
+            yoy = ((current_y / previous_y) - 1) / year_diff * 100
         changes.append(
             {
                 "from_year": previous.get("deal_year") if previous is not None else None,
                 "to_year": row.get("deal_year"),
+                "year_diff": _compact_number(year_diff),
                 "previous_y": _compact_number(previous_y),
                 "current_y": _compact_number(current_y),
                 "yoy_pct_change": _compact_number(yoy),
@@ -306,11 +368,40 @@ def _yoy_changes(rows: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
     return changes
 
 
+def _performance_rows(selected_changes: Sequence[Mapping[str, Any]], y_variable: str) -> List[Dict[str, Any]]:
+    rows: List[Dict[str, Any]] = []
+    for row in selected_changes:
+        rows.append(
+            {
+                "performance_group": row.get("performance_group"),
+                "rank": row.get("rank"),
+                "position_in_group": row.get("position_in_group"),
+                "city": row.get("city"),
+                "gush": row.get("gush"),
+                "gush_key": row.get("gush_key"),
+                "gush_label": row.get("gush_label"),
+                "price_change": row.get("price_change"),
+                "yearly_slope": row.get("yearly_slope"),
+                "first_year": row.get("first_year"),
+                "last_year": row.get("last_year"),
+                "years_span": row.get("years_span"),
+                "first_y": row.get("first_y"),
+                "last_y": row.get("last_y"),
+                "median_deals_per_year": row.get("median_deals_per_year"),
+                "total_deals": row.get("total_deals"),
+                "y_variable": y_variable,
+            }
+        )
+    return sorted(rows, key=lambda item: (-float(item.get("price_change") or 0), str(item.get("gush_label"))))
+
+
 def _series_rows(table: Sequence[Mapping[str, Any]], selected_changes: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
     group_by_key = {str(row["gush_key"]): row.get("performance_group") for row in selected_changes}
+    change_by_key = {str(row["gush_key"]): row for row in selected_changes}
     grouped: Dict[str, Dict[str, Any]] = {}
     for row in table:
         series_id = str(row["series_id"])
+        performance = change_by_key.get(str(row["gush_key"]), {})
         grouped.setdefault(
             series_id,
             {
@@ -320,6 +411,11 @@ def _series_rows(table: Sequence[Mapping[str, Any]], selected_changes: Sequence[
                 "gush": row["gush"],
                 "gush_label": row["gush_label"],
                 "performance_group": group_by_key.get(str(row["gush_key"])),
+                "rank": performance.get("rank"),
+                "position_in_group": performance.get("position_in_group"),
+                "yearly_slope": performance.get("yearly_slope"),
+                "price_change": performance.get("price_change"),
+                "color": _series_color(performance),
                 "points": [],
             },
         )
@@ -332,21 +428,51 @@ def _series_rows(table: Sequence[Mapping[str, Any]], selected_changes: Sequence[
                 "price_millions": row["price_millions"],
                 "price_per_m2": row["price_per_m2"],
                 "price_per_room": row["price_per_room"],
+                "tooltip": _series_tooltip(row, performance),
             }
         )
     return list(grouped.values())
+
+
+def _series_color(performance: Mapping[str, Any]) -> str:
+    group = performance.get("performance_group")
+    if group == "top":
+        return "#0050b3"
+    if group == "bottom":
+        return "#ff6600"
+    if group == "typical":
+        return "#8b9298"
+    return "#186c72"
+
+
+def _series_tooltip(row: Mapping[str, Any], performance: Mapping[str, Any]) -> str:
+    group_label = {
+        "top": "Top Performers",
+        "typical": "Typical Performers",
+        "bottom": "Bottom Performers",
+    }.get(str(performance.get("performance_group")), "Qualified Gush")
+    pieces = [
+        str(row.get("series_label") or row.get("gush") or ""),
+        f"Year: {row.get('deal_year')}",
+        f"Deals: {row.get('n_deals')}",
+        f"Value: {row.get('y')}",
+        f"{group_label} #{performance.get('rank')}",
+        f"Yearly change: {performance.get('yearly_slope')}%",
+    ]
+    return "<br>".join(piece for piece in pieces if piece and "None" not in piece)
 
 
 def _overlays(
     selected_deals: pd.DataFrame,
     payload: Mapping[str, Any],
     y_variable: str,
+    statistic: str,
 ) -> tuple[Dict[str, Any], List[str]]:
     overlays: Dict[str, Any] = {"city": [], "sp500": []}
     warnings: List[str] = []
 
     if payload.get("show_city") is True:
-        overlays["city"] = _city_overlay_rows(summary_by_city_year(selected_deals), y_variable)
+        overlays["city"] = _city_overlay_rows(_summary_by_city_year_for_stat(selected_deals, statistic), y_variable)
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:
         yearly = _yearly_selected_medians(selected_deals, y_variable)

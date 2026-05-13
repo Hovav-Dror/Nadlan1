@@ -1,0 +1,55 @@
+dataset,subset,field,rows,present_rows,missing_rows,present_pct
+old_current_data,20 current cities,city,711876,711876,0,100.0
+old_current_data,20 current cities,street,711876,711876,0,100.0
+old_current_data,20 current cities,Gush,711876,711876,0,100.0
+old_current_data,20 current cities,GUSH,711876,711876,0,100.0
+old_current_data,20 current cities,FULLADRESS,711876,704371,7505,98.95
+old_current_data,20 current cities,date,711876,711876,0,100.0
+old_current_data,20 current cities,deal year,711876,711876,0,100.0
+old_current_data,20 current cities,price_millions,711876,711876,0,100.0
+old_current_data,20 current cities,area,711876,700300,11576,98.37
+old_current_data,20 current cities,rooms,711876,661606,50270,92.94
+old_current_data,20 current cities,floor,711876,711846,30,100.0
+old_current_data,20 current cities,roof,711876,711876,0,100.0
+old_current_data,20 current cities,apt type,711876,711876,0,100.0
+old_current_data,20 current cities,New_Project,711876,711876,0,100.0
+old_current_data,20 current cities,build_year,711876,702130,9746,98.63
+old_current_data,20 current cities,building age,711876,702130,9746,98.63
+old_current_data,20 current cities,build_floors,711876,670366,41510,94.17
+old_current_data,20 current cities,story,711876,711876,0,100.0
+odata,20 current cities,city,718610,718610,0,100.0
+odata,20 current cities,street,718610,718610,0,100.0
+odata,20 current cities,Gush,718610,718610,0,100.0
+odata,20 current cities,GUSH,718610,718610,0,100.0
+odata,20 current cities,FULLADRESS,718610,718610,0,100.0
+odata,20 current cities,date,718610,718610,0,100.0
+odata,20 current cities,deal year,718610,718610,0,100.0
+odata,20 current cities,price_millions,718610,718610,0,100.0
+odata,20 current cities,area,718610,705966,12644,98.24
+odata,20 current cities,rooms,718610,0,718610,0.0
+odata,20 current cities,floor,718610,650542,68068,90.53
+odata,20 current cities,roof,718610,718610,0,100.0
+odata,20 current cities,apt type,718610,718610,0,100.0
+odata,20 current cities,New_Project,718610,718610,0,100.0
+odata,20 current cities,build_year,718610,709544,9066,98.74
+odata,20 current cities,building age,718610,709544,9066,98.74
+odata,20 current cities,build_floors,718610,677632,40978,94.3
+odata,20 current cities,story,718610,718610,0,100.0
+odata,all 292 cities,city,1072778,1072778,0,100.0
+odata,all 292 cities,street,1072778,1072778,0,100.0
+odata,all 292 cities,Gush,1072778,1072778,0,100.0
+odata,all 292 cities,GUSH,1072778,1072778,0,100.0
+odata,all 292 cities,FULLADRESS,1072778,1072778,0,100.0
+odata,all 292 cities,date,1072778,1072778,0,100.0
+odata,all 292 cities,deal year,1072778,1072778,0,100.0
+odata,all 292 cities,price_millions,1072778,1072778,0,100.0
+odata,all 292 cities,area,1072778,1056975,15803,98.53
+odata,all 292 cities,rooms,1072778,0,1072778,0.0
+odata,all 292 cities,floor,1072778,940113,132665,87.63
+odata,all 292 cities,roof,1072778,1072778,0,100.0
+odata,all 292 cities,apt type,1072778,1072778,0,100.0
+odata,all 292 cities,New_Project,1072778,1072778,0,100.0
+odata,all 292 cities,build_year,1072778,1056034,16744,98.44
+odata,all 292 cities,building age,1072778,1056034,16744,98.44
+odata,all 292 cities,build_floors,1072778,965007,107771,89.95
+odata,all 292 cities,story,1072778,1072778,0,100.0

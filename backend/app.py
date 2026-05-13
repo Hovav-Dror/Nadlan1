@@ -29,7 +29,7 @@ from .services.downloads import (
     build_gush_performance_raw_download,
     build_gush_performance_summary_download,
 )
-from .services.filter_metadata import FilterMetadataError, build_filter_options, gush_detail, street_search_results
+from .services.filter_metadata import FilterMetadataError, build_filter_options, gush_detail, gush_search_results, street_search_results
 from .services.gush_performance import GushPerformanceError, build_gush_performance_summary_response
 
 
@@ -182,6 +182,26 @@ def register_routes(app: Flask) -> None:
         return jsonify(
             _api_response(
                 data={"query": query, "city": city, "results": results},
+                meta={"status": "ok", "limit": limit},
+                warnings=[],
+                started=started,
+            )
+        )
+
+    @app.get("/api/gush-search")
+    def gush_search():
+        started = time.perf_counter()
+        query = request.args.get("q", "")
+        limit = _query_limit(request.args.get("limit"), default=30, maximum=100)
+        try:
+            results = gush_search_results(_data_store(), query, limit=limit)
+        except DataStoreError as exc:
+            current_app.logger.warning("Gush search failed: %s", exc, exc_info=True)
+            return _error_response(exc.public_message, started, status_code=400)
+
+        return jsonify(
+            _api_response(
+                data={"query": query, "results": results},
                 meta={"status": "ok", "limit": limit},
                 warnings=[],
                 started=started,

@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 class Config:
-    APP_NAME = os.environ.get("NADLAN2_APP_NAME", "nadlan2")
+    APP_NAME = os.environ.get("NADLAN2_APP_NAME", "Real Estate Analysis")
     APP_VERSION = os.environ.get("NADLAN2_VERSION", "0.2.0")
 
     PROJECT_ROOT = Path(__file__).resolve().parents[1]

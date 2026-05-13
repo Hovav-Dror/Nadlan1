@@ -21,3 +21,21 @@ Rscript scripts/convert_nadlan2_data.R
 ```
 
 Use `--source-root` and `--output-root` to override the default source and target directories.
+
+Experimental OData import:
+
+```sh
+python3 scripts/import_odata_nadlan.py --inspect-only
+python3 scripts/import_odata_nadlan.py --download --output-root data_odata --cities all
+```
+
+The OData importer reads the current CSV resources from
+<https://www.odata.org.il/dataset/nadlan>, maps them into the same runtime
+columns, rebuilds the city parquet files and metadata, and writes an
+`odata_import_report.json` with row counts and date ranges. Use
+`--cities current` to keep only the 20 cities currently present in the app, or
+`--merge-existing` to append the current app data. Native OData rows are kept by
+their `resource_id + row_num` row identity; when merging legacy rows, transaction
+fields such as date, price, Gush, address details, area, rooms, and floor are
+used only to avoid keeping a duplicate legacy row. Repeat sales of the same
+property on different dates are retained.

@@ -12,7 +12,6 @@ from .calculations import (
     price_used,
     remove_price_outliers_by_year,
     sp500_normalized,
-    summary_by_city_year,
 )
 from .data_store import DataStore
 
@@ -47,13 +46,21 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
             warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
     outlier_rows = int(len(filtered))
 
-    summary = summary_by_city_year(filtered)
+    statistic = _statistic(request_payload)
+    summary = _summary_by_city_year(filtered, statistic)
     if summary.empty:
         warnings.append("No matching transactions were found.")
 
     y_variable = _y_variable(request_payload.get("y_variable", request_payload.get("price_type")))
     table = build_city_year_rows(summary, y_variable)
+    min_deals = _min_deals_per_year(request_payload)
+    if min_deals > 1:
+        before = len(table)
+        table = [row for row in table if _safe_int(row.get("n_deals")) is not None and int(row["n_deals"]) >= min_deals]
+        if len(table) < before:
+            warnings.append(f"Hidden {before - len(table)} city/year points below {min_deals} deals.")
     series = build_city_year_series(table)
+    city_stats = build_city_stats(table, selection["cities"], y_variable)
     overlays, overlay_warnings = _overlays(filtered, request_payload, y_variable)
     warnings.extend(overlay_warnings)
 
@@ -67,14 +74,17 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
                 "outlier_deals": outlier_rows,
                 "summary_points": len(table),
                 "unique_cities": len(selection["cities"]),
-                "unique_years": _nunique(summary.get("deal year")),
+                "plotted_cities": len(series),
+                "unique_years": len({row.get("deal_year") for row in table if row.get("deal_year") is not None}),
             },
             "selection": {
                 "cities": selection["cities"],
             },
             "overlays": overlays,
+            "city_stats": city_stats,
             "warnings": warnings,
             "y_variable": y_variable,
+            "statistic": statistic,
         }
     )
 
@@ -87,6 +97,7 @@ def build_city_comparison_raw_response(data_store: DataStore, payload: Optional[
         "selection": response["selection"],
         "warnings": response["warnings"],
         "y_variable": response["y_variable"],
+        "statistic": response.get("statistic"),
     }
 
 
@@ -167,6 +178,89 @@ def build_city_year_series(table: Sequence[Mapping[str, Any]]) -> List[Dict[str,
     return list(grouped.values())
 
 
+def build_city_stats(
+    table: Sequence[Mapping[str, Any]],
+    selected_cities: Sequence[Mapping[str, Any]],
+    y_variable: str,
+) -> Dict[str, Any]:
+    if not table:
+        return {"cards": [], "ranking": [], "year_range": None}
+
+    by_city: Dict[str, List[Mapping[str, Any]]] = {}
+    for row in table:
+        city = str(row.get("city") or row.get("city_label") or "")
+        if city:
+            by_city.setdefault(city, []).append(row)
+
+    first_years = []
+    last_years = []
+    ranking: List[Dict[str, Any]] = []
+    for city, rows in by_city.items():
+        ordered = sorted(
+            [row for row in rows if row.get("deal_year") is not None],
+            key=lambda row: int(row["deal_year"]),
+        )
+        if not ordered:
+            continue
+        first = ordered[0]
+        last = ordered[-1]
+        first_y = _safe_float(first.get("y"))
+        last_y = _safe_float(last.get("y"))
+        first_years.append(first.get("deal_year"))
+        last_years.append(last.get("deal_year"))
+        pct_change = None
+        absolute_change = None
+        if first_y is not None and last_y is not None:
+            absolute_change = _compact_number(last_y - first_y)
+            if first_y != 0:
+                pct_change = _compact_number(((last_y / first_y) - 1) * 100)
+        ranking.append(
+            {
+                "city": city,
+                "city_label": city,
+                "first_year": first.get("deal_year"),
+                "last_year": last.get("deal_year"),
+                "first_value": first.get("y"),
+                "last_value": last.get("y"),
+                "absolute_change": absolute_change,
+                "pct_change": pct_change,
+                "years": len(ordered),
+                "total_deals": _compact_number(sum((_safe_float(row.get("n_deals")) or 0) for row in ordered)),
+                "avg_deals_per_year": _compact_number(
+                    sum((_safe_float(row.get("n_deals")) or 0) for row in ordered) / len(ordered)
+                ),
+            }
+        )
+
+    ranking = sorted(
+        ranking,
+        key=lambda row: (row.get("pct_change") is None, 0 if row.get("pct_change") is None else -float(row["pct_change"]), str(row.get("city") or "")),
+    )
+
+    cards = _city_stat_cards(ranking, len(selected_cities), y_variable)
+    year_range = None
+    all_years = [year for year in first_years + last_years if year is not None]
+    if all_years:
+        year_range = {"min": min(all_years), "max": max(all_years)}
+    return {"cards": cards, "ranking": ranking, "year_range": year_range}
+
+
+def _city_stat_cards(ranking: Sequence[Mapping[str, Any]], selected_count: int, y_variable: str) -> List[Dict[str, Any]]:
+    cards: List[Dict[str, Any]] = [
+        {"label": "Selected cities", "value": selected_count},
+        {"label": "Plotted cities", "value": len(ranking)},
+    ]
+    comparable = [row for row in ranking if row.get("pct_change") is not None]
+    if comparable:
+        best = comparable[0]
+        cards.append({"label": "Strongest change", "value": best.get("city"), "detail": f"{best.get('pct_change')}%"})
+        last_values = [row for row in ranking if row.get("last_value") is not None]
+        if last_values:
+            highest = sorted(last_values, key=lambda row: (-float(row["last_value"]), str(row.get("city") or "")))[0]
+            cards.append({"label": f"Highest latest {_y_label(y_variable)}", "value": highest.get("city"), "detail": highest.get("last_value")})
+    return cards
+
+
 def _request_payload(payload: Optional[Mapping[str, Any]]) -> Mapping[str, Any]:
     if payload is None:
         return {}
@@ -240,6 +334,45 @@ def _y_variable(value: Any) -> str:
     if normalized in {"price_millions", "price", ""}:
         return "price_millions"
     raise CityComparisonError("Unsupported y variable.")
+
+
+def _statistic(payload: Mapping[str, Any]) -> str:
+    normalized = _normalize_text(_first_present(payload, "statistic", "stat"))
+    if normalized in {"mean", "average", "avg"}:
+        return "mean"
+    return "median"
+
+
+def _summary_by_city_year(df: pd.DataFrame, statistic: str) -> pd.DataFrame:
+    if df.empty:
+        return pd.DataFrame(columns=["city", "deal year", "n_deals", "price_millions", "price_per_m2", "price_per_room"])
+    working = df.copy()
+    working["price_millions"] = pd.to_numeric(working.get("price_millions"), errors="coerce")
+    working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
+    working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
+    aggregator = "mean" if statistic == "mean" else "median"
+    return (
+        working.groupby(["city", "deal year"], dropna=False)
+        .agg(
+            n_deals=("price_millions", "size"),
+            price_millions=("price_millions", aggregator),
+            price_per_m2=("price_per_m2", aggregator),
+            price_per_room=("price_per_room", aggregator),
+        )
+        .reset_index()
+        .sort_values(["city", "deal year"])
+        .reset_index(drop=True)
+    )
+
+
+def _min_deals_per_year(payload: Mapping[str, Any]) -> int:
+    value = _first_present(payload, "min_deals_per_year", "min_deals")
+    if value is None:
+        value = _first_present(payload.get("filters", {}) if isinstance(payload.get("filters"), Mapping) else {}, "min_deals_per_year")
+    try:
+        return max(1, int(value))
+    except (TypeError, ValueError):
+        return 1
 
 
 def _overlays(
@@ -330,6 +463,24 @@ def _safe_int(value: Any) -> Optional[int]:
         return int(value)
     except (TypeError, ValueError):
         return None
+
+
+def _safe_float(value: Any) -> Optional[float]:
+    try:
+        if pd.isna(value):
+            return None
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _y_label(y_variable: str) -> str:
+    return {
+        "price_millions": "price",
+        "price_per_m2": "price / m²",
+        "price_per_room": "price / room",
+        "n_deals": "deal count",
+    }.get(y_variable, "value")
 
 
 def _nunique(values: Any) -> int:

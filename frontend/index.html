@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="./">
-    <title>Nadlan2</title>
+    <title>Real Estate Analysis</title>
     <link rel="stylesheet" href="assets/app.css">
     <script src="assets/plotly.min.js" defer></script>
     <script src="assets/app.js" defer></script>
@@ -12,8 +12,8 @@
   <body>
     <header class="topbar">
       <div>
-        <h1>Nadlan2</h1>
-        <p id="app-status">Loading status...</p>
+        <h1>Real Estate Analysis</h1>
+        <p id="app-status"></p>
       </div>
       <div class="summary-strip" id="global-summary"></div>
     </header>
@@ -24,7 +24,7 @@
         <button class="tab is-active" data-tab="analysis">Analysis Deals</button>
         <button class="tab" data-tab="compare">Compare Areas</button>
         <button class="tab" data-tab="city">City Comparison</button>
-        <button class="tab" data-tab="gush">City Performance <span class="tab-note">QA needed</span></button>
+        <button class="tab" data-tab="gush">City Performance</button>
         <span class="tab-group-label">Utilities</span>
         <button class="tab tab-secondary" data-tab="about">About</button>
         <button class="tab tab-secondary" data-tab="metadata">Data Health</button>
@@ -512,7 +512,7 @@
                   </div>
                   <div>
                     <dt>Use when</dt>
-                    <dd>You already know which streets or Gush areas you want to compare side by side.</dd>
+                    <dd>You want to discover the relevant Gush areas from a street name, or compare known blocks side by side.</dd>
                   </div>
                 </dl>
               </div>
@@ -525,7 +525,7 @@
             <div class="panel-heading">
               <div>
                 <h2>Compare Areas</h2>
-                <p>Gush/year summaries for up to 15 selected Gush areas.</p>
+                <p>Search streets or Gush descriptions across all cities, then compare up to 15 Gush areas.</p>
               </div>
               <div class="actions">
                 <button id="run-compare" type="button">Update compare</button>
@@ -533,10 +533,37 @@
                 <button class="secondary" data-download="compare-raw" type="button">Raw CSV</button>
               </div>
             </div>
-            <section class="workflow-filter-panel" aria-label="Compare filters">
+            <section class="compare-area-panel" aria-label="Compare area selection">
+              <div class="workflow-filter-heading">
+                <div>
+                  <h3>Step 1: Select Areas</h3>
+                  <p>Pick Gush blocks directly, or type a street name and add the matching Gush areas from the results.</p>
+                </div>
+              </div>
+              <div class="compare-area-grid">
+                <div class="picker-block">
+                  <label for="compare-gush-search">Pick blocks (Gush numbers)</label>
+                  <input id="compare-gush-search" autocomplete="off" placeholder="Search Gush number, city, label, or street">
+                  <div id="compare-gush-selected" class="selected-chips"></div>
+                  <div id="compare-gush-results" class="picker-results" aria-live="polite"></div>
+                </div>
+                <div class="lookup-box compare-lookup-box">
+                  <label>
+                    Find Gush by street name
+                    <span class="search-row">
+                      <input id="compare-street-search" autocomplete="off" placeholder="Type a street name">
+                      <button id="run-compare-street-search" class="secondary" type="button">Search</button>
+                    </span>
+                  </label>
+                  <div id="compare-street-results" class="search-results"></div>
+                </div>
+              </div>
+            </section>
+            <section class="workflow-filter-panel compare-requires-selection" aria-label="Compare filters">
               <div class="workflow-filter-heading">
                 <h3>Compare controls</h3>
                 <div class="workflow-filter-actions">
+                  <label><input id="auto-update-compare" type="checkbox" checked> Auto update</label>
                   <label><input id="compare-remove-price-outliers" type="checkbox" checked> Price outliers</label>
                   <label><input id="compare-show-sp500" type="checkbox"> S&P 500</label>
                   <label><input id="compare-show-city-overlay" type="checkbox"> City-wide</label>
@@ -544,40 +571,83 @@
               </div>
               <div class="workflow-quick-grid">
                 <label>Y value<select id="compare-y-variable"><option value="price_millions">Price</option><option value="price_per_m2">Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
+                <label>Statistic<select id="compare-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                <label>Color palette<select id="compare-color-palette"><option value="okabe">Okabe-Ito</option><option value="default">Default</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option><option value="category20">Category20</option><option value="grey">Grey</option></select></label>
+                <label>Shape palette<select id="compare-shape-palette"><option value="default">Default</option><option value="open">Open</option><option value="solid">Solid</option><option value="mixed">Mixed</option></select></label>
+                <label class="checkbox-field"><input id="compare-reverse-colors" type="checkbox"> Reverse colors</label>
                 <label>Year min<input id="compare-filter-year-min" inputmode="numeric"></label>
                 <label>Year max<input id="compare-filter-year-max" inputmode="numeric"></label>
                 <label>Price min (₪m)<input id="compare-filter-price-min" inputmode="decimal"></label>
                 <label>Price max (₪m)<input id="compare-filter-price-max" inputmode="decimal"></label>
               </div>
-              <details class="advanced-filters">
+              <details class="advanced-filters compare-filter-details" open>
                 <summary>Advanced filters</summary>
-                <div class="range-grid">
-                  <label>Price / m² min (₪k)<input id="compare-filter-price-m2-min" inputmode="decimal"></label>
-                  <label>Price / m² max (₪k)<input id="compare-filter-price-m2-max" inputmode="decimal"></label>
-                  <label>Area min (m²)<input id="compare-filter-area-min" inputmode="decimal"></label>
-                  <label>Area max (m²)<input id="compare-filter-area-max" inputmode="decimal"></label>
-                  <label>Floor min<input id="compare-filter-floor-min" inputmode="numeric"></label>
-                  <label>Floor max<input id="compare-filter-floor-max" inputmode="numeric"></label>
-                  <label>Building floors min<input id="compare-filter-building-floors-min" inputmode="numeric"></label>
-                  <label>Building floors max<input id="compare-filter-building-floors-max" inputmode="numeric"></label>
-                  <label>Built year min<input id="compare-filter-built-year-min" inputmode="numeric"></label>
-                  <label>Built year max<input id="compare-filter-built-year-max" inputmode="numeric"></label>
-                  <label>Building age min<input id="compare-filter-building-age-min" inputmode="numeric"></label>
-                  <label>Building age max<input id="compare-filter-building-age-max" inputmode="numeric"></label>
-                  <label>Rooms<select id="compare-rooms-select" multiple size="4"></select></label>
-                  <label>Apartment types<select id="compare-apartment-type-select" multiple size="4"></select></label>
-                  <label>Top floor / roof<select id="compare-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
-                  <label>New project<select id="compare-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                <div class="compare-filter-layout">
+                  <div class="filter-cluster">
+                    <h3>Market</h3>
+                    <div class="range-grid">
+                      <label>Price / m² min (₪k)<input id="compare-filter-price-m2-min" inputmode="decimal"></label>
+                      <label>Price / m² max (₪k)<input id="compare-filter-price-m2-max" inputmode="decimal"></label>
+                    </div>
+                  </div>
+                  <div class="filter-cluster">
+                    <div class="room-filter-header">
+                      <span>Rooms</span>
+                      <button id="compare-clear-rooms" class="secondary compact-button" type="button">All rooms</button>
+                    </div>
+                    <div id="compare-rooms-chip-group" class="filter-chip-group" aria-label="Compare rooms"></div>
+                    <select id="compare-rooms-select" class="native-filter-select" multiple size="4"></select>
+                    <div class="range-grid">
+                      <label>Area min (m²)<input id="compare-filter-area-min" inputmode="decimal"></label>
+                      <label>Area max (m²)<input id="compare-filter-area-max" inputmode="decimal"></label>
+                      <label>Floor min<input id="compare-filter-floor-min" inputmode="numeric"></label>
+                      <label>Floor max<input id="compare-filter-floor-max" inputmode="numeric"></label>
+                      <label>Building floors min<input id="compare-filter-building-floors-min" inputmode="numeric"></label>
+                      <label>Building floors max<input id="compare-filter-building-floors-max" inputmode="numeric"></label>
+                      <label>Built year min<input id="compare-filter-built-year-min" inputmode="numeric"></label>
+                      <label>Built year max<input id="compare-filter-built-year-max" inputmode="numeric"></label>
+                      <label>Building age min<input id="compare-filter-building-age-min" inputmode="numeric"></label>
+                      <label>Building age max<input id="compare-filter-building-age-max" inputmode="numeric"></label>
+                    </div>
+                  </div>
+                  <div class="filter-cluster">
+                    <h3>Status</h3>
+                    <div class="segmented-field">
+                      <span>Top floor / roof</span>
+                      <select id="compare-roof-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                      <div class="segmented-control" data-select="compare-roof-select">
+                        <button type="button" data-value="both">Both</button>
+                        <button type="button" data-value="yes">Yes</button>
+                        <button type="button" data-value="no">No</button>
+                      </div>
+                    </div>
+                    <div class="segmented-field">
+                      <span>New project</span>
+                      <select id="compare-new-project-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                      <div class="segmented-control" data-select="compare-new-project-select">
+                        <button type="button" data-value="both">Both</button>
+                        <button type="button" data-value="yes">Yes</button>
+                        <button type="button" data-value="no">No</button>
+                      </div>
+                    </div>
+                    <label>
+                      Apartment types
+                      <input id="compare-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
+                      <div id="compare-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Compare apartment types"></div>
+                      <select id="compare-apartment-type-select" class="native-filter-select" multiple size="4"></select>
+                    </label>
+                  </div>
                 </div>
               </details>
             </section>
             <div id="compare-state" class="state"></div>
+            <div id="compare-context" class="compare-context compare-requires-selection"></div>
             <div id="compare-chart" class="chart chart-guide">
               <div class="chart-guide-content">
                 <h3>Getting Started</h3>
                 <ol>
-                  <li><strong>Select a city</strong> in the shared control panel.</li>
-                  <li><strong>Choose streets or Gush areas</strong> to compare.</li>
+                  <li><strong>Search a street across all cities</strong> or pick known Gush areas.</li>
+                  <li><strong>Add matching Gush areas</strong> directly from the search results.</li>
                   <li><strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.</li>
                   <li><strong>Update compare</strong> to draw yearly lines and fill the summary table.</li>
                 </ol>
@@ -592,6 +662,10 @@
               </div>
             </div>
             <div id="compare-counts" class="metrics"></div>
+            <div class="actions compare-requires-selection compare-table-actions">
+              <button id="load-compare-raw" class="secondary" type="button">Load raw deals preview</button>
+            </div>
+            <div id="compare-raw-table" class="table-wrap compare-raw-table"></div>
             <div id="compare-table" class="table-wrap"></div>
           </section>
 
@@ -626,19 +700,39 @@
                 <p>City/year summaries. Run explicitly because broad city selections can be expensive.</p>
               </div>
               <div class="actions">
-                <button id="run-city" type="button">Update cities</button>
                 <button class="secondary" data-download="city-comparison-summary" type="button">Summary CSV</button>
                 <button class="secondary" data-download="city-comparison-raw" type="button">Raw CSV</button>
               </div>
             </div>
-            <label class="wide-label">
-              Cities
-              <select id="city-comparison-select" multiple size="8"></select>
-            </label>
+            <div class="city-workflow-grid">
+              <aside class="city-filter-rail">
+            <section class="city-selector-panel" aria-label="City selection">
+              <div class="city-selector-heading">
+                <div>
+                  <h3>Step 1: Select Cities</h3>
+                  <p>Search, pin cities, or start from a preset group.</p>
+                </div>
+                <div class="city-selector-actions">
+                  <button class="secondary compact-button" data-city-preset="largest" type="button">Largest</button>
+                  <button class="secondary compact-button" data-city-preset="central" type="button">Central</button>
+                  <button class="secondary compact-button" data-city-preset="clear" type="button">Clear</button>
+                </div>
+              </div>
+              <div class="city-picker-layout">
+                <div class="picker-block">
+                  <label for="city-comparison-search">Select Cities to Compare</label>
+                  <input id="city-comparison-search" autocomplete="off" placeholder="Search city name">
+                  <div id="city-comparison-selected" class="selected-chips"></div>
+                  <div id="city-comparison-results" class="picker-results" aria-live="polite"></div>
+                  <select id="city-comparison-select" class="native-picker-select" multiple size="8"></select>
+                </div>
+              </div>
+            </section>
             <section class="workflow-filter-panel" aria-label="City comparison filters">
-              <h3>City comparison filters</h3>
-              <div class="range-grid">
-                <label>Y value<select id="city-y-variable"><option value="price_millions">Price</option><option value="price_per_m2">Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
+              <div class="workflow-filter-heading">
+                <h3>Step 2: Additional filters</h3>
+              </div>
+              <div class="range-grid city-filter-range-grid">
                 <label>Year min<input id="city-filter-year-min" inputmode="numeric"></label>
                 <label>Year max<input id="city-filter-year-max" inputmode="numeric"></label>
                 <label>Price min (₪m)<input id="city-filter-price-min" inputmode="decimal"></label>
@@ -659,34 +753,67 @@
                 <label>Apartment types<select id="city-apartment-type-select" multiple size="4"></select></label>
                 <label>Top floor / roof<select id="city-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 <label>New project<select id="city-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                <label>Min deals / year<input id="city-min-deals" inputmode="numeric" value="1"></label>
               </div>
               <div class="inline-controls">
-                <label><input id="city-remove-price-outliers" type="checkbox" checked> Price outliers</label>
-                <label><input id="city-show-sp500" type="checkbox"> S&P 500</label>
+                <label><input id="city-remove-price-outliers" type="checkbox" checked> Remove outliers</label>
               </div>
             </section>
-            <div id="city-state" class="state"></div>
-            <div id="city-chart" class="chart chart-guide">
-              <div class="chart-guide-content">
-                <h3>Getting Started</h3>
-                <ol>
-                  <li><strong>Select cities</strong> from the city list.</li>
-                  <li><strong>Choose a Y value</strong> for the comparison.</li>
-                  <li><strong>Adjust filters</strong> only if you want a narrower city-level slice.</li>
-                  <li><strong>Update cities</strong> to draw city trend lines and generate the table.</li>
-                </ol>
-                <div class="chart-guide-tips">
-                  <strong>Tips</strong>
-                  <ul>
-                    <li>Deal count is useful for market activity, not just price movement.</li>
-                    <li>Keep filters broad when comparing cities with different housing mixes.</li>
-                    <li>Use Raw CSV when you need to audit which transactions entered the summary.</li>
-                  </ul>
-                </div>
-              </div>
+              </aside>
+              <section class="city-main-stage">
+                <section class="city-update-panel">
+                  <h3>Update Analysis</h3>
+                  <button id="run-city" type="button">Update Plot</button>
+                  <label><input id="auto-update-city" type="checkbox" checked> Auto-update for small datasets (&lt;500 records)</label>
+                </section>
+                <section class="plot-controls city-plot-controls" aria-label="City plot controls">
+                  <div class="plot-controls-heading">
+                    <h3>Plot Controls</h3>
+                  </div>
+                  <div class="plot-control-grid">
+                    <label>Y-axis Variable<select id="city-y-variable"><option value="price_millions">Price</option><option value="price_per_m2" selected>Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
+                    <label>Statistic<select id="city-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                    <label>Chart mode<select id="city-chart-mode"><option value="absolute">Absolute</option><option value="indexed">Index to first year</option><option value="change">Change from first year</option></select></label>
+                    <label>Palette<select id="city-color-palette"><option value="default">Category20</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option></select></label>
+                  </div>
+                  <div class="plot-toggle-row city-plot-options">
+                    <label><input id="city-reverse-colors" type="checkbox"> Reverse color order</label>
+                    <label><input id="city-show-points" type="checkbox" checked> Show points</label>
+                    <label>Point min<input id="city-point-size-min" inputmode="decimal" value="0.7"></label>
+                    <label>Point max<input id="city-point-size-max" inputmode="decimal" value="6"></label>
+                    <label><input id="city-show-sp500" type="checkbox"> S&amp;P 500</label>
+                  </div>
+                </section>
+                <section class="city-plot-panel">
+                  <div class="city-plot-title">Plot</div>
+                  <div id="city-state" class="state"></div>
+                  <div id="city-filter-summary" class="performance-summary"></div>
+                  <div id="city-data-info" class="performance-info"></div>
+                  <div id="city-chart" class="chart chart-guide">
+                    <div class="chart-guide-content">
+                      <h3>Getting Started</h3>
+                      <ol>
+                        <li><strong>Select cities</strong> from the city list.</li>
+                        <li><strong>Choose a Y value</strong> for the comparison.</li>
+                        <li><strong>Adjust filters</strong> only if you want a narrower city-level slice.</li>
+                        <li><strong>Update cities</strong> to draw city trend lines and generate the table.</li>
+                      </ol>
+                      <div class="chart-guide-tips">
+                        <strong>Tips</strong>
+                        <ul>
+                          <li>Deal count is useful for market activity, not just price movement.</li>
+                          <li>Keep filters broad when comparing cities with different housing mixes.</li>
+                          <li>Use Raw CSV when you need to audit which transactions entered the summary.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                <div id="city-insights" class="city-insights"></div>
+                <div id="city-counts" class="metrics"></div>
+                <div id="city-table" class="table-wrap"></div>
+              </section>
             </div>
-            <div id="city-counts" class="metrics"></div>
-            <div id="city-table" class="table-wrap"></div>
           </section>
 
           <section class="tab-panel" id="panel-gush">
@@ -717,26 +844,64 @@
             <div class="panel-heading">
               <div>
                 <h2>City Performance</h2>
-                <p>Top, typical, and bottom Gush performers inside one city. This migrated workflow still needs baseline QA against the Shiny app.</p>
+                <p>Top, typical, and bottom Gush performers inside one city, matching the original Shiny ranking workflow.</p>
               </div>
               <div class="actions">
-                <button id="run-gush" type="button">Update performance</button>
                 <button class="secondary" data-download="gush-performance-summary" type="button">Summary CSV</button>
                 <button class="secondary" data-download="gush-performance-raw" type="button">Raw CSV</button>
               </div>
             </div>
-            <div class="grid-4">
-              <label>Top<input id="gush-top-count" inputmode="numeric" value="5"></label>
-              <label>Typical<input id="gush-typical-count" inputmode="numeric" value="5"></label>
-              <label>Bottom<input id="gush-bottom-count" inputmode="numeric" value="5"></label>
-              <label>Min deals<input id="gush-min-deals" inputmode="numeric" value="10"></label>
-            </div>
+            <div class="performance-workflow-grid">
+              <aside class="performance-filter-rail">
+                <section class="city-selector-panel" aria-label="City performance city">
+                  <div class="city-selector-heading">
+                    <div>
+                      <h3>Step 1: Select City</h3>
+                      <p>City Performance ranks Gush areas inside this city.</p>
+                    </div>
+                    <button id="use-tel-aviv-performance" class="secondary compact-button" type="button">Tel Aviv</button>
+                  </div>
+                  <label>
+                    City
+                    <select id="gush-city-select"></select>
+                  </label>
+                  <div id="gush-city-current" class="selected-city-readout"></div>
+                </section>
             <section class="workflow-filter-panel" aria-label="Gush performance filters">
-              <h3>Gush performance filters</h3>
-              <div class="range-grid">
-                <label>Y value<select id="gush-y-variable"><option value="price_millions">Price</option><option value="price_per_m2">Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
-                <label>Year min<input id="gush-filter-year-min" inputmode="numeric"></label>
-                <label>Year max<input id="gush-filter-year-max" inputmode="numeric"></label>
+              <div class="workflow-filter-heading">
+                <h3>Step 2: Performance Parameters</h3>
+                <div class="workflow-filter-actions">
+                  <label><input id="gush-remove-price-outliers" type="checkbox" checked> Remove outliers</label>
+                </div>
+              </div>
+              <div class="workflow-quick-grid performance-quick-grid">
+                <label>Top<input id="gush-top-count" inputmode="numeric" value="5"></label>
+                <label>Typical<input id="gush-typical-count" inputmode="numeric" value="0"></label>
+                <label>Bottom<input id="gush-bottom-count" inputmode="numeric" value="5"></label>
+                <label>Min deals<input id="gush-min-deals" inputmode="numeric" value="5"></label>
+              </div>
+              <details class="advanced-filters" open>
+                <summary>Step 3: Additional filters</summary>
+                <div class="range-grid">
+                  <label>Deal year min<input id="gush-filter-year-min" inputmode="numeric"></label>
+                  <label>Deal year max<input id="gush-filter-year-max" inputmode="numeric"></label>
+                </div>
+                <div class="room-filter-header">
+                  <span>Rooms</span>
+                  <button id="smart-reset-gush-rooms" class="secondary compact-button" type="button">Smart reset</button>
+                </div>
+                <div id="gush-rooms-chip-group" class="filter-chip-group" aria-label="Gush performance rooms"></div>
+                <select id="gush-rooms-select" class="native-filter-select" multiple size="4"></select>
+                <div class="room-actions">
+                  <button id="clear-gush-rooms" class="secondary" type="button">All rooms</button>
+                </div>
+                <label>
+                  Apartment types
+                  <input id="gush-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
+                  <div id="gush-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Gush performance apartment types"></div>
+                  <select id="gush-apartment-type-select" class="native-filter-select" multiple size="4"></select>
+                </label>
+                <div class="range-grid">
                 <label>Price min (₪m)<input id="gush-filter-price-min" inputmode="decimal"></label>
                 <label>Price max (₪m)<input id="gush-filter-price-max" inputmode="decimal"></label>
                 <label>Price / m² min (₪k)<input id="gush-filter-price-m2-min" inputmode="decimal"></label>
@@ -751,23 +916,44 @@
                 <label>Built year max<input id="gush-filter-built-year-max" inputmode="numeric"></label>
                 <label>Building age min<input id="gush-filter-building-age-min" inputmode="numeric"></label>
                 <label>Building age max<input id="gush-filter-building-age-max" inputmode="numeric"></label>
-                <label>Rooms<select id="gush-rooms-select" multiple size="4"></select></label>
-                <label>Apartment types<select id="gush-apartment-type-select" multiple size="4"></select></label>
                 <label>Top floor / roof<select id="gush-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 <label>New project<select id="gush-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
-              </div>
-              <div class="inline-controls">
-                <label><input id="gush-remove-price-outliers" type="checkbox" checked> Price outliers</label>
-                <label><input id="gush-show-sp500" type="checkbox"> S&P 500</label>
-                <label><input id="gush-show-city-overlay" type="checkbox"> City-wide</label>
-              </div>
+                </div>
+              </details>
             </section>
+              </aside>
+              <section class="performance-main-stage">
+                <section class="city-update-panel performance-update-panel">
+                  <h3>Update Analysis</h3>
+                  <button id="run-gush" type="button">Update Plot</button>
+                  <label><input id="auto-update-gush" type="checkbox" checked> Auto-update</label>
+                </section>
+                <section class="plot-controls performance-plot-controls" aria-label="Gush performance plot controls">
+                  <div class="plot-controls-heading">
+                    <h3>Plot Controls</h3>
+                  </div>
+                  <div class="plot-control-grid">
+                    <label>Y-axis Variable<select id="gush-y-variable"><option value="price_millions">Median price (M₪)</option><option value="price_per_m2" selected>Median price / m² (k₪)</option><option value="price_per_room">Median price / room</option><option value="n_deals">Number of deals</option></select></label>
+                    <label>Statistic<select id="gush-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                  </div>
+                  <div class="plot-toggle-row">
+                    <label><input id="gush-show-sp500" type="checkbox"> S&amp;P 500</label>
+                    <label><input id="gush-show-city-overlay" type="checkbox"> City-wide</label>
+                  </div>
+                </section>
             <div id="gush-state" class="state"></div>
+            <div id="gush-filter-summary" class="performance-summary"></div>
+            <div id="gush-performance-info" class="performance-info"></div>
+            <div class="performance-actions">
+              <button id="select-gush-performance-all" class="secondary" type="button">Use shown Gushes in Analysis</button>
+              <button id="select-gush-performance-top" class="secondary" type="button">Use top performers</button>
+              <button id="select-gush-performance-bottom" class="secondary" type="button">Use bottom performers</button>
+            </div>
             <div id="gush-chart" class="chart chart-guide">
               <div class="chart-guide-content">
                 <h3>Getting Started</h3>
                 <ol>
-                  <li><strong>Select one city</strong> in the shared control panel.</li>
+                  <li><strong>Select one city</strong> in the City Performance rail.</li>
                   <li><strong>Set group sizes</strong> for top, typical, and bottom performers.</li>
                   <li><strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.</li>
                   <li><strong>Update performance</strong> to draw qualified Gush trend lines and rankings.</li>
@@ -784,6 +970,8 @@
             </div>
             <div id="gush-counts" class="metrics"></div>
             <div id="gush-table" class="table-wrap"></div>
+              </section>
+            </div>
           </section>
 
           <section class="tab-panel" id="panel-downloads">

@@ -771,7 +771,9 @@ def verify_gush_performance_helpers() -> dict[str, object]:
     assert response["counts"]["selected_gushes"] == 3
     assert len(response["series"]) == 3
     assert response["series"][0]["points"][1]["y"] == 1.1
-    assert response["performance_table"][0]["price_per_m2"] == 10
+    assert response["performance_table"][0]["price_change"] == 21
+    assert response["performance_table"][0]["first_y"] == 1
+    assert response["yearly_table"][0]["price_per_m2"] == 10
     assert response["overlays"]["city"]
     assert response["overlays"]["sp500"]
     assert "parquet" not in str(response)
@@ -1173,7 +1175,7 @@ def verify_real_city_services(data_store, client) -> dict[str, object]:
     assert gush_performance["performance_table"]
     assert gush_performance["changes"]["selected"]
     assert gush_performance["performance_table"][0]["city"] == "תל אביב -יפו"
-    assert gush_performance["performance_table"][0]["price_per_m2"] is not None
+    assert gush_performance["performance_table"][0]["last_y"] is not None
     assert gush_performance["overlays"]["city"]
     assert gush_performance["overlays"]["sp500"]
     assert "parquet" not in str(gush_performance)

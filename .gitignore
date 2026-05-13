@@ -22,3 +22,8 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Generated OData import artifacts
+data/raw/
+data_odata/
+data_odata_current/

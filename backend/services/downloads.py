@@ -59,6 +59,18 @@ SUMMARY_COLUMN_NAMES = {
     "price_per_room": "Price Per Room",
     "y": "Selected Value",
     "performance_group": "Performance Group",
+    "rank": "Rank",
+    "position_in_group": "Position In Group",
+    "price_change": "Price Change %",
+    "yearly_slope": "Annualized YoY Change %",
+    "first_year": "First Year",
+    "last_year": "Last Year",
+    "years_span": "Years Span",
+    "first_y": "First Selected Value",
+    "last_y": "Last Selected Value",
+    "median_deals_per_year": "Median Deals Per Year",
+    "total_deals": "Total Deals",
+    "y_variable": "Y Variable",
 }
 
 
@@ -124,22 +136,15 @@ def build_gush_performance_raw_download(data_store: DataStore, payload: Optional
     filtered = apply_common_filters(city_frame, _non_city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_by_year(filtered)
+        filtered = remove_outliers_from_var(filtered, "area")
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_gush_performance_raw.csv", column_names=RAW_COLUMN_NAMES)
 
 
 def build_gush_performance_summary_download(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     response = build_gush_performance_summary_response(data_store, _request_payload(payload))
-    group_by_key = {
-        str(row.get("gush_key")): row.get("performance_group")
-        for row in response.get("changes", {}).get("selected", [])
-    }
-    rows = [
-        {**dict(row), "performance_group": group_by_key.get(str(row.get("gush_key")))}
-        for row in response["performance_table"]
-    ]
     return _download_payload(
-        rows,
+        response["performance_table"],
         filename="nadlan_gush_performance_summary.csv",
         column_names=SUMMARY_COLUMN_NAMES,
     )
