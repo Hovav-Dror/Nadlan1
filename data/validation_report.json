@@ -1,0 +1,361 @@
+{
+  "generated_at": "2026-05-12T11:20:08+0300",
+  "all_city_row_counts_match": true,
+  "all_city_columns_match": true,
+  "all_city_dates_parse": true,
+  "all_city_hebrew_roundtrip_ok": true,
+  "metadata": {
+    "gush_descriptions": {
+      "file": "gush_descriptions.parquet",
+      "source_file": "GushDescriptions.fst",
+      "row_count_original": 2376,
+      "row_count_converted": 2376,
+      "columns": ["city", "Gush", "street", "n", "Gush_desc"],
+      "columns_match": true,
+      "row_count_match": true
+    },
+    "unique_gush_streets": {
+      "file": "unique_gush_streets.parquet",
+      "source_file": "unique_gush_streets.fst",
+      "row_count_original": 16827,
+      "row_count_converted": 16827,
+      "columns": ["city", "Gush", "street"],
+      "columns_match": true,
+      "row_count_match": true
+    },
+    "apt_types": {
+      "file": "apt_types.json",
+      "row_count_original": 46,
+      "row_count_converted": 46,
+      "row_count_match": true,
+      "hebrew_roundtrip_ok": true
+    },
+    "sp500_shekels": {
+      "file": "sp500_shekels.csv",
+      "copied": true,
+      "bytes": 1932
+    }
+  },
+  "cities": {
+    "אשדוד": {
+      "city": "אשדוד",
+      "file": "ashdod.parquet",
+      "source_file": "fst_data/fst_אשדוד.fst",
+      "row_count": 34120,
+      "validation": {
+        "row_count_original": 34120,
+        "row_count_converted": 34120,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "אשקלון": {
+      "city": "אשקלון",
+      "file": "ashkelon.parquet",
+      "source_file": "fst_data/fst_אשקלון.fst",
+      "row_count": 22776,
+      "validation": {
+        "row_count_original": 22776,
+        "row_count_converted": 22776,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "באר שבע": {
+      "city": "באר שבע",
+      "file": "beer_sheva.parquet",
+      "source_file": "fst_data/fst_באר שבע.fst",
+      "row_count": 42077,
+      "validation": {
+        "row_count_original": 42077,
+        "row_count_converted": 42077,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "בית שמש": {
+      "city": "בית שמש",
+      "file": "beit_shemesh.parquet",
+      "source_file": "fst_data/fst_בית שמש.fst",
+      "row_count": 13149,
+      "validation": {
+        "row_count_original": 13149,
+        "row_count_converted": 13149,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "בני ברק": {
+      "city": "בני ברק",
+      "file": "bnei_brak.parquet",
+      "source_file": "fst_data/fst_בני ברק.fst",
+      "row_count": 24124,
+      "validation": {
+        "row_count_original": 24124,
+        "row_count_converted": 24124,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "בת ים": {
+      "city": "בת ים",
+      "file": "bat_yam.parquet",
+      "source_file": "fst_data/fst_בת ים.fst",
+      "row_count": 29157,
+      "validation": {
+        "row_count_original": 29157,
+        "row_count_converted": 29157,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "הרצלייה": {
+      "city": "הרצלייה",
+      "file": "herzliya.parquet",
+      "source_file": "fst_data/fst_הרצלייה.fst",
+      "row_count": 18384,
+      "validation": {
+        "row_count_original": 18384,
+        "row_count_converted": 18384,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "חדרה": {
+      "city": "חדרה",
+      "file": "hadera.parquet",
+      "source_file": "fst_data/fst_חדרה.fst",
+      "row_count": 18356,
+      "validation": {
+        "row_count_original": 18356,
+        "row_count_converted": 18356,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "חולון": {
+      "city": "חולון",
+      "file": "holon.parquet",
+      "source_file": "fst_data/fst_חולון.fst",
+      "row_count": 36352,
+      "validation": {
+        "row_count_original": 36352,
+        "row_count_converted": 36352,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "חיפה": {
+      "city": "חיפה",
+      "file": "haifa.parquet",
+      "source_file": "fst_data/fst_חיפה.fst",
+      "row_count": 62472,
+      "validation": {
+        "row_count_original": 62472,
+        "row_count_converted": 62472,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "ירושלים": {
+      "city": "ירושלים",
+      "file": "jerusalem.parquet",
+      "source_file": "fst_data/fst_ירושלים.fst",
+      "row_count": 65504,
+      "validation": {
+        "row_count_original": 65504,
+        "row_count_converted": 65504,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "כפר סבא": {
+      "city": "כפר סבא",
+      "file": "kfar_saba.parquet",
+      "source_file": "fst_data/fst_כפר סבא.fst",
+      "row_count": 17076,
+      "validation": {
+        "row_count_original": 17076,
+        "row_count_converted": 17076,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "מודיעין-מכבים-רעות": {
+      "city": "מודיעין-מכבים-רעות",
+      "file": "modiin_maccabim_reut.parquet",
+      "source_file": "fst_data/fst_מודיעין-מכבים-רעות.fst",
+      "row_count": 14520,
+      "validation": {
+        "row_count_original": 14520,
+        "row_count_converted": 14520,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "נתניה": {
+      "city": "נתניה",
+      "file": "netanya.parquet",
+      "source_file": "fst_data/fst_נתניה.fst",
+      "row_count": 45471,
+      "validation": {
+        "row_count_original": 45471,
+        "row_count_converted": 45471,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "פתח תקווה": {
+      "city": "פתח תקווה",
+      "file": "petah_tikva.parquet",
+      "source_file": "fst_data/fst_פתח תקווה.fst",
+      "row_count": 49408,
+      "validation": {
+        "row_count_original": 49408,
+        "row_count_converted": 49408,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "ראשון לציון": {
+      "city": "ראשון לציון",
+      "file": "rishon_lezion.parquet",
+      "source_file": "fst_data/fst_ראשון לציון.fst",
+      "row_count": 40730,
+      "validation": {
+        "row_count_original": 40730,
+        "row_count_converted": 40730,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "רחובות": {
+      "city": "רחובות",
+      "file": "rehovot.parquet",
+      "source_file": "fst_data/fst_רחובות.fst",
+      "row_count": 23895,
+      "validation": {
+        "row_count_original": 23895,
+        "row_count_converted": 23895,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "רמת גן": {
+      "city": "רמת גן",
+      "file": "ramat_gan.parquet",
+      "source_file": "fst_data/fst_רמת גן.fst",
+      "row_count": 39019,
+      "validation": {
+        "row_count_original": 39019,
+        "row_count_converted": 39019,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "רעננה": {
+      "city": "רעננה",
+      "file": "raanana.parquet",
+      "source_file": "fst_data/fst_רעננה.fst",
+      "row_count": 15041,
+      "validation": {
+        "row_count_original": 15041,
+        "row_count_converted": 15041,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    },
+    "תל אביב -יפו": {
+      "city": "תל אביב -יפו",
+      "file": "tel_aviv_yafo.parquet",
+      "source_file": "fst_data/fst_תל אביב -יפו.fst",
+      "row_count": 100245,
+      "validation": {
+        "row_count_original": 100245,
+        "row_count_converted": 100245,
+        "columns_match": true,
+        "missing_columns": [],
+        "extra_columns": [],
+        "date_class": "Date",
+        "date_parse_ok": true,
+        "hebrew_roundtrip_ok": true
+      }
+    }
+  }
+}

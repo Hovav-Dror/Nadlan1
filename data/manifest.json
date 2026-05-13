@@ -1,0 +1,108 @@
+{
+  "app": "nadlan2",
+  "generated_at": "2026-05-12T11:20:08+0300",
+  "source_root": "/Users/hovav/Documents/R projects/nadlan2",
+  "required_city_columns": ["city", "street", "Gush", "GUSH", "FULLADRESS", "date", "deal year", "price_millions", "area", "rooms", "floor", "roof", "apt type", "New_Project", "build_year", "building age", "build_floors", "story"],
+  "city_count": 20,
+  "total_city_rows": 711876,
+  "cities": {
+    "אשדוד": {
+      "file": "ashdod.parquet",
+      "rows": 34120
+    },
+    "אשקלון": {
+      "file": "ashkelon.parquet",
+      "rows": 22776
+    },
+    "באר שבע": {
+      "file": "beer_sheva.parquet",
+      "rows": 42077
+    },
+    "בית שמש": {
+      "file": "beit_shemesh.parquet",
+      "rows": 13149
+    },
+    "בני ברק": {
+      "file": "bnei_brak.parquet",
+      "rows": 24124
+    },
+    "בת ים": {
+      "file": "bat_yam.parquet",
+      "rows": 29157
+    },
+    "הרצלייה": {
+      "file": "herzliya.parquet",
+      "rows": 18384
+    },
+    "חדרה": {
+      "file": "hadera.parquet",
+      "rows": 18356
+    },
+    "חולון": {
+      "file": "holon.parquet",
+      "rows": 36352
+    },
+    "חיפה": {
+      "file": "haifa.parquet",
+      "rows": 62472
+    },
+    "ירושלים": {
+      "file": "jerusalem.parquet",
+      "rows": 65504
+    },
+    "כפר סבא": {
+      "file": "kfar_saba.parquet",
+      "rows": 17076
+    },
+    "מודיעין-מכבים-רעות": {
+      "file": "modiin_maccabim_reut.parquet",
+      "rows": 14520
+    },
+    "נתניה": {
+      "file": "netanya.parquet",
+      "rows": 45471
+    },
+    "פתח תקווה": {
+      "file": "petah_tikva.parquet",
+      "rows": 49408
+    },
+    "ראשון לציון": {
+      "file": "rishon_lezion.parquet",
+      "rows": 40730
+    },
+    "רחובות": {
+      "file": "rehovot.parquet",
+      "rows": 23895
+    },
+    "רמת גן": {
+      "file": "ramat_gan.parquet",
+      "rows": 39019
+    },
+    "רעננה": {
+      "file": "raanana.parquet",
+      "rows": 15041
+    },
+    "תל אביב -יפו": {
+      "file": "tel_aviv_yafo.parquet",
+      "rows": 100245
+    }
+  },
+  "metadata": {
+    "gush_descriptions": {
+      "file": "metadata/gush_descriptions.parquet",
+      "rows": 2376
+    },
+    "unique_gush_streets": {
+      "file": "metadata/unique_gush_streets.parquet",
+      "rows": 16827
+    },
+    "apt_types": {
+      "file": "metadata/apt_types.json",
+      "rows": 46
+    },
+    "sp500_shekels": {
+      "file": "metadata/sp500_shekels.csv",
+      "bytes": 1932
+    }
+  }
+}

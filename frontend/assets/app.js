@@ -1,0 +1,2126 @@
+(function () {
+  "use strict";
+
+  var state = {
+    meta: null,
+    streets: [],
+    gushes: [],
+    filterOptions: null,
+    filterOptionsSignature: "",
+    latestPayloads: {},
+    latestAnalysisRows: [],
+    selectedPointId: null,
+    tableStates: {},
+    roomsSelectionInitialized: false,
+    filterOptionsTimer: null,
+    filterOptionsRequestId: 0,
+    autoAnalysisTimer: null,
+    analysisRequestId: 0
+  };
+
+  var AUTO_ANALYSIS_POINT_LIMIT = 1500;
+  var AUTO_ANALYSIS_SERVER_ROW_LIMIT = 6000;
+  var ANALYSIS_FACET_LIMIT = 12;
+
+  var pickerConfig = {
+    streets: {
+      selectId: "street-select",
+      searchId: "street-picker-search",
+      resultsId: "street-picker-results",
+      selectedId: "street-selected",
+      emptyText: "Start typing to find streets.",
+      oppositeSelectId: "gush-select"
+    },
+    gushes: {
+      selectId: "gush-select",
+      searchId: "gush-picker-search",
+      resultsId: "gush-picker-results",
+      selectedId: "gush-selected",
+      emptyText: "Start typing to find Gush areas.",
+      oppositeSelectId: "street-select"
+    }
+  };
+
+  var endpoints = {
+    status: "api/status",
+    meta: "api/meta",
+    filterOptions: "api/filter-options",
+    analysis: "api/analysis/deals",
+    compareSummary: "api/compare/summary",
+    citySummary: "api/city-comparison/summary",
+    gushSummary: "api/gush-performance/summary",
+    downloads: {
+      analysis: "api/download/analysis",
+      "compare-raw": "api/download/compare-raw",
+      "compare-summary": "api/download/compare-summary",
+      "city-comparison-raw": "api/download/city-comparison-raw",
+      "city-comparison-summary": "api/download/city-comparison-summary",
+      "gush-performance-raw": "api/download/gush-performance-raw",
+      "gush-performance-summary": "api/download/gush-performance-summary"
+    }
+  };
+
+  var labels = {
+    raw_deals: "Raw deals",
+    selected_deals: "Selected deals",
+    filtered_deals: "Filtered deals",
+    outlier_deals: "After outliers",
+    summary_points: "Summary points",
+    unique_gushes: "Gush areas",
+    unique_years: "Years",
+    unique_cities: "Cities",
+    city_rows: "City rows",
+    location_rows: "Location rows",
+    pre_outlier_rows: "Before outliers",
+    filtered_rows: "Filtered rows",
+    outlier_rows: "After outliers",
+    returned_rows: "Returned rows",
+    qualified_gushes: "Qualified Gushes",
+    selected_gushes: "Selected Gushes",
+    qualified_summary_points: "Qualified points"
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.body.dataset.activeTab = "analysis";
+    bindTabs();
+    bindControls();
+    setNotice("analysis-state", "Choose a city and search for streets or Gush areas. Metadata loads automatically.", "ok");
+    setNotice("compare-state", "Select one or more Gush areas before updating compare.", "ok");
+    setNotice("city-state", "Select cities and click update. No city summary is loaded automatically.", "ok");
+    setNotice("gush-state", "Choose one city and update performance.", "ok");
+    setNotice("download-state", "Downloads use the filter panel for the workflow you export.", "ok");
+    refreshStatus();
+    loadMeta();
+  });
+
+  function bindTabs() {
+    document.querySelectorAll(".tab").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var tab = button.dataset.tab;
+        document.body.dataset.activeTab = tab;
+        document.querySelectorAll(".tab").forEach(function (item) {
+          item.classList.toggle("is-active", item === button);
+        });
+        document.querySelectorAll(".tab-panel").forEach(function (panel) {
+          panel.classList.toggle("is-active", panel.id === "panel-" + tab);
+        });
+        updateSelectionSummary();
+      });
+    });
+  }
+
+  function bindControls() {
+    byId("refresh-meta").addEventListener("click", loadMeta);
+    byId("random-city").addEventListener("click", chooseRandomCity);
+    byId("city-select").addEventListener("change", function () {
+      clearSelect(byId("street-select"));
+      clearSelect(byId("gush-select"));
+      state.streets = [];
+      state.gushes = [];
+      state.filterOptions = null;
+      state.filterOptionsSignature = "";
+      state.roomsSelectionInitialized = false;
+      byId("street-search-results").innerHTML = "";
+      renderLocationPickers();
+      updateSelectionSummary();
+      loadLocationMetadata();
+    });
+    byId("run-analysis").addEventListener("click", runAnalysis);
+    byId("auto-update-analysis").addEventListener("change", function () {
+      scheduleAnalysisAutoUpdate("auto-toggle");
+    });
+    byId("run-compare").addEventListener("click", runCompare);
+    byId("run-city").addEventListener("click", runCityComparison);
+    byId("run-gush").addEventListener("click", runGushPerformance);
+    byId("add-gush-streets").addEventListener("click", addStreetsFromSelectedGushes);
+    byId("select-street-gushes").addEventListener("click", selectGushesFromSelectedStreets);
+    byId("smart-reset-rooms").addEventListener("click", applySmartRoomSelection);
+    byId("clear-rooms").addEventListener("click", clearRoomSelection);
+    byId("reset-filters").addEventListener("click", resetFilterRanges);
+    byId("run-street-search").addEventListener("click", runStreetSearch);
+    byId("street-search").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        runStreetSearch();
+      }
+    });
+    ["street-select", "gush-select", "rooms-select", "apartment-type-select"].forEach(function (id) {
+      byId(id).addEventListener("change", updateSelectionSummary);
+      byId(id).addEventListener("change", function () {
+        if (id === "rooms-select") state.roomsSelectionInitialized = true;
+        if (id === "rooms-select" || id === "apartment-type-select") scheduleAnalysisAutoUpdate(id);
+      });
+    });
+    byId("rooms-select").addEventListener("change", renderRoomChips);
+    byId("apartment-type-select").addEventListener("change", renderApartmentTypeChips);
+    byId("apartment-type-search").addEventListener("input", renderApartmentTypeChips);
+    [
+      "filter-year-min", "filter-year-max", "filter-price-min", "filter-price-max",
+      "filter-price-m2-min", "filter-price-m2-max", "filter-area-min", "filter-area-max",
+      "filter-floor-min", "filter-floor-max", "filter-building-floors-min", "filter-building-floors-max",
+      "filter-built-year-min", "filter-built-year-max", "filter-building-age-min", "filter-building-age-max",
+      "roof-select", "new-project-select", "remove-price-outliers", "remove-area-outliers"
+    ].forEach(function (id) {
+      byId(id).addEventListener("change", updateSelectionSummary);
+      byId(id).addEventListener("input", updateSelectionSummary);
+      byId(id).addEventListener("change", function () { scheduleAnalysisAutoUpdate(id); });
+      byId(id).addEventListener("input", function () { scheduleAnalysisAutoUpdate(id); });
+    });
+    [
+      "row-limit", "analysis-color-var", "analysis-shape-var", "analysis-size-var",
+      "analysis-facet-var", "analysis-color-palette", "analysis-shape-palette", "analysis-price-type",
+      "show-sp500", "show-city-overlay"
+    ].forEach(function (id) {
+      byId(id).addEventListener("change", function () { scheduleAnalysisAutoUpdate(id); });
+      byId(id).addEventListener("input", function () { scheduleAnalysisAutoUpdate(id); });
+    });
+    document.querySelectorAll(".segmented-control").forEach(function (control) {
+      control.addEventListener("click", function (event) {
+        var button = event.target.closest("button[data-value]");
+        if (!button) return;
+        byId(control.dataset.select).value = button.dataset.value;
+        syncSegmentedControls();
+        updateSelectionSummary();
+        scheduleAnalysisAutoUpdate(control.dataset.select);
+      });
+    });
+    Object.keys(pickerConfig).forEach(function (key) {
+      var config = pickerConfig[key];
+      byId(config.searchId).addEventListener("input", function () {
+        renderPicker(key);
+      });
+    });
+    document.querySelectorAll("[data-download]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        downloadCsv(button.dataset.download);
+      });
+    });
+  }
+
+  async function refreshStatus() {
+    try {
+      var status = await getJson(endpoints.status);
+      byId("app-status").textContent = status.app + " " + status.version + " is " + status.status;
+    } catch (error) {
+      byId("app-status").textContent = "Status unavailable: " + error.message;
+    }
+  }
+
+  async function loadMeta() {
+    setNotice("metadata-state", "Loading application metadata...", "loading");
+    try {
+      var response = await getJson(endpoints.meta);
+      state.meta = response.data;
+      populateMetaControls(response.data);
+      renderMetaSummary(response.data);
+      setNotice("metadata-state", warningText(response) || "Metadata loaded.", warningText(response) ? "warning" : "ok");
+      if (byId("city-select").value && !state.streets.length) {
+        await loadLocationMetadata();
+      }
+    } catch (error) {
+      setNotice("metadata-state", error.message, "error");
+    }
+  }
+
+  function populateMetaControls(meta) {
+    var cityOptions = (meta.cities || []).map(function (city) {
+      return { value: city.id, label: city.name };
+    });
+    setOptions(byId("city-select"), cityOptions, false);
+    setOptions(byId("city-comparison-select"), cityOptions, true);
+
+    var defaultCityIds = (meta.cities || []).slice(-3).map(function (city) { return city.id; });
+    setSelectedValues(byId("city-comparison-select"), defaultCityIds);
+
+    var apartmentTypes = (meta.apartment_types || []).map(function (value) {
+      return { value: value, label: value };
+    });
+    setOptions(byId("apartment-type-select"), apartmentTypes, true);
+    ["compare", "city", "gush"].forEach(function (scope) {
+      setOptions(byId(scope + "-apartment-type-select"), apartmentTypes, true);
+    });
+    setSelectedValues(byId("apartment-type-select"), []);
+    renderApartmentTypeChips();
+
+    if (cityOptions.length && !byId("city-select").value) {
+      byId("city-select").value = cityOptions[0].value;
+    }
+    updateSelectionSummary();
+  }
+
+  async function loadLocationMetadata() {
+    var city = byId("city-select").value;
+    if (!city) {
+      setNotice("metadata-state", "Choose a city first.", "warning");
+      return;
+    }
+    setNotice("metadata-state", "Loading streets and Gush areas...", "loading");
+    try {
+      var results = await Promise.all([
+        getJson("api/cities/" + encodeURIComponent(city) + "/streets"),
+        getJson("api/cities/" + encodeURIComponent(city) + "/gushes")
+      ]);
+      state.streets = results[0].data.streets || [];
+      state.gushes = results[1].data.gushes || [];
+      setOptions(byId("street-select"), state.streets.map(function (street) {
+        return { value: street, label: street };
+      }), true);
+      setOptions(byId("gush-select"), state.gushes.map(function (gush) {
+        return { value: gush.id, label: gush.label + " (" + gush.id + ")" };
+      }), true);
+      setNotice("metadata-state", "Loaded " + state.streets.length + " streets and " + state.gushes.length + " Gush areas.", "ok");
+      setNotice("analysis-state", "City metadata loaded. Search streets or Gush areas, then update analysis.", "ok");
+      renderMetaSummary(state.meta);
+      renderLocationPickers();
+      updateSelectionSummary();
+      scheduleFilterOptions();
+    } catch (error) {
+      setNotice("metadata-state", error.message, "error");
+    }
+  }
+
+  async function loadFilterOptions() {
+    var city = byId("city-select").value;
+    if (!city) {
+      setNotice("metadata-state", "Choose a city first.", "warning");
+      return;
+    }
+    var requestId = ++state.filterOptionsRequestId;
+    var payload = {
+      city: city,
+      streets: activeStreetSelection(),
+      gushes: activeGushSelection()
+    };
+    var selectionSignature = filterOptionsSignature(payload);
+    setNotice("metadata-state", "Loading dynamic filter ranges...", "loading");
+    try {
+      var response = await postJson(endpoints.filterOptions, payload);
+      if (requestId !== state.filterOptionsRequestId || selectionSignature !== currentFilterOptionsSignature()) {
+        return;
+      }
+      state.filterOptions = response.data;
+      applyFilterDefaults(response.data);
+      state.filterOptionsSignature = selectionSignature;
+      renderFilterSummary(response.data);
+      setNotice("metadata-state", warningText(response) || "Filter options loaded.", warningText(response) ? "warning" : "ok");
+      updateSelectionSummary();
+      scheduleAnalysisAutoUpdate("filter-options");
+    } catch (error) {
+      setNotice("metadata-state", error.message, "error");
+    }
+  }
+
+  async function chooseRandomCity() {
+    var cities = randomCityCandidates();
+    if (!cities.length) return;
+    setBusy("random-city", true);
+    try {
+      for (var index = 0; index < cities.length; index += 1) {
+        var city = cities[index];
+        byId("city-select").value = city.value;
+        resetCitySelectionState();
+        await loadLocationMetadata();
+
+        var gush = randomRunnableGush(state.gushes);
+        if (gush) {
+          setSelectedValues(byId("street-select"), []);
+          setSelectedValues(byId("gush-select"), [gush.id]);
+          renderLocationPickers();
+          updateSelectionSummary();
+          scheduleFilterOptions();
+          scheduleAnalysisAutoUpdate("random");
+          setNotice(
+            "analysis-state",
+            "Random runnable case: " + city.label + " / " + gush.label + " (" + gush.id + ").",
+            "ok"
+          );
+          return;
+        }
+      }
+
+      var fallback = cities[0];
+      byId("city-select").value = fallback.value;
+      resetCitySelectionState();
+      await loadLocationMetadata();
+      setNotice("analysis-state", "Random city selected. Pick a smaller Gush if auto update pauses.", "warning");
+    } finally {
+      setBusy("random-city", false);
+    }
+  }
+
+  function randomCityCandidates() {
+    var cities = state.meta && state.meta.cities && state.meta.cities.length
+      ? state.meta.cities.map(function (city) {
+          return { value: city.id, label: city.name };
+        })
+      : Array.from(byId("city-select").options || [])
+          .filter(function (option) { return option.value; })
+          .map(function (option) { return { value: option.value, label: option.textContent }; });
+    return shuffleCopy(cities);
+  }
+
+  function randomRunnableGush(gushes) {
+    var rowLimit = intValue("row-limit", 2000);
+    if (rowLimit < 1) rowLimit = 2000;
+    var pointBudget = Math.min(rowLimit, AUTO_ANALYSIS_POINT_LIMIT);
+    var eligible = (gushes || []).filter(function (gush) {
+      var deals = Number(gush.deals || 0);
+      return Number.isFinite(deals) && deals > 0 && deals <= pointBudget;
+    });
+    if (!eligible.length) return null;
+    return eligible[Math.floor(Math.random() * eligible.length)];
+  }
+
+  function resetCitySelectionState() {
+    clearSelect(byId("street-select"));
+    clearSelect(byId("gush-select"));
+    state.streets = [];
+    state.gushes = [];
+    state.filterOptions = null;
+    state.filterOptionsSignature = "";
+    state.roomsSelectionInitialized = false;
+    byId("street-search-results").innerHTML = "";
+    renderLocationPickers();
+    updateSelectionSummary();
+  }
+
+  function shuffleCopy(values) {
+    var shuffled = values.slice();
+    for (var index = shuffled.length - 1; index > 0; index -= 1) {
+      var swapIndex = Math.floor(Math.random() * (index + 1));
+      var current = shuffled[index];
+      shuffled[index] = shuffled[swapIndex];
+      shuffled[swapIndex] = current;
+    }
+    return shuffled;
+  }
+
+  async function addStreetsFromSelectedGushes() {
+    var city = byId("city-select").value;
+    var gushes = selectedValues(byId("gush-select"));
+    if (!city || !gushes.length) {
+      setNotice("analysis-state", "Select one or more Gush areas first.", "warning");
+      return;
+    }
+    setBusy("add-gush-streets", true);
+    try {
+      var response = await postJson("api/cities/" + encodeURIComponent(city) + "/selection", { gushes: gushes });
+      setSelectedValues(byId("gush-select"), []);
+      setSelectedValues(byId("street-select"), response.data.streets || []);
+      renderLocationPickers();
+      updateSelectionSummary();
+      scheduleFilterOptions();
+      scheduleAnalysisAutoUpdate("gush-streets");
+      setNotice("analysis-state", "Using " + (response.data.streets || []).length + " streets from the selected Gush areas.", "ok");
+    } catch (error) {
+      setNotice("analysis-state", error.message, "error");
+    } finally {
+      setBusy("add-gush-streets", false);
+    }
+  }
+
+  async function selectGushesFromSelectedStreets() {
+    var city = byId("city-select").value;
+    var streets = selectedValues(byId("street-select"));
+    if (!city || !streets.length) {
+      setNotice("analysis-state", "Select one or more streets first.", "warning");
+      return;
+    }
+    setBusy("select-street-gushes", true);
+    try {
+      var response = await postJson("api/cities/" + encodeURIComponent(city) + "/selection", { streets: streets });
+      setSelectedValues(byId("street-select"), []);
+      setSelectedValues(byId("gush-select"), (response.data.gushes || []).map(function (gush) { return gush.id; }));
+      renderLocationPickers();
+      updateSelectionSummary();
+      scheduleFilterOptions();
+      scheduleAnalysisAutoUpdate("street-gushes");
+      setNotice("analysis-state", "Using " + (response.data.gushes || []).length + " whole Gush areas from the selected streets.", "ok");
+    } catch (error) {
+      setNotice("analysis-state", error.message, "error");
+    } finally {
+      setBusy("select-street-gushes", false);
+    }
+  }
+
+  async function runStreetSearch() {
+    var query = byId("street-search").value.trim();
+    var city = byId("city-select").value;
+    var target = byId("street-search-results");
+    if (!query) {
+      target.innerHTML = "";
+      return;
+    }
+    target.innerHTML = '<div class="mini-notice">Searching...</div>';
+    try {
+      var url = "api/street-search?q=" + encodeURIComponent(query) + "&limit=8";
+      if (city) url += "&city=" + encodeURIComponent(city);
+      var response = await getJson(url);
+      renderStreetSearchResults(response.data.results || []);
+    } catch (error) {
+      target.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
+    }
+  }
+
+  function renderStreetSearchResults(results) {
+    var target = byId("street-search-results");
+    if (!results.length) {
+      target.innerHTML = '<div class="mini-notice">No matching streets.</div>';
+      return;
+    }
+    target.innerHTML = results.map(function (result, index) {
+      var gushes = result.gushes || [];
+      var gushText = gushes.map(function (gush) { return gush.label + " (" + gush.id + ")"; }).join(", ");
+      return '<button class="search-result" type="button" data-index="' + index + '">' +
+        '<strong class="' + textDirectionClass(result.street) + '">' + escapeHtml(result.street) + "</strong>" +
+        '<span class="' + textDirectionClass(gushText) + '">' + escapeHtml(gushText || result.city) + "</span>" +
+        "</button>";
+    }).join("");
+    target.querySelectorAll(".search-result").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var result = results[Number(button.dataset.index)];
+        setSelectedValues(byId("gush-select"), []);
+        selectAdditionalValues(byId("street-select"), [result.street]);
+        renderLocationPickers();
+        updateSelectionSummary();
+        scheduleFilterOptions();
+        scheduleAnalysisAutoUpdate("street-search");
+        setNotice("analysis-state", "Using selected street. Choose \"Use whole Gush\" to broaden it.", "ok");
+      });
+    });
+  }
+
+  async function runAnalysis(options) {
+    options = options || {};
+    var payload = buildAnalysisPayload();
+    if (!payload.city && !payload.gushes.length) {
+      setNotice("analysis-state", "Choose a city or Gush area first.", "warning");
+      return;
+    }
+    var requestId = ++state.analysisRequestId;
+    state.latestPayloads.analysis = payload;
+    setNotice("analysis-state", options.auto ? "Auto-updating analysis..." : "Loading analysis deals...", "loading");
+    setAnalysisBusy(true);
+    try {
+      var response = await postJson(endpoints.analysis, payload);
+      if (requestId !== state.analysisRequestId) return;
+      var data = response.data || {};
+      state.latestAnalysisRows = data.table_rows || [];
+      state.selectedPointId = null;
+      renderAnalysisChart(data);
+      renderSelectedDeal(null);
+      renderMetrics("analysis-counts", data.counts);
+      renderTable("analysis-table", data.table_rows || [], analysisColumns(), {
+        selectable: true,
+        sortable: true,
+        filterable: true,
+        resetState: true
+      });
+      setNotice("analysis-state", warningText(response) || emptyText(data.table_rows, "Analysis updated.", "No matching transactions."), warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      if (requestId !== state.analysisRequestId) return;
+      setNotice("analysis-state", error.message, "error");
+    } finally {
+      if (requestId === state.analysisRequestId) setAnalysisBusy(false);
+    }
+  }
+
+  async function runCompare() {
+    var payload = buildComparePayload();
+    if (!payload.gushes.length && !payload.streets.length) {
+      setNotice("compare-state", "Select Gush areas or streets before updating compare.", "warning");
+      return;
+    }
+    state.latestPayloads["compare-summary"] = payload;
+    state.latestPayloads["compare-raw"] = payload;
+    setNotice("compare-state", "Loading Gush comparison...", "loading");
+    setBusy("run-compare", true);
+    try {
+      var response = await postJson(endpoints.compareSummary, payload);
+      var data = response.data || {};
+      renderSeriesChart("compare-chart", data.series || [], data.overlays || {}, "Compare Areas", yLabel(data.y_variable));
+      renderMetrics("compare-counts", data.counts);
+      renderTable("compare-table", data.table || [], summaryColumns());
+      setNotice("compare-state", warningText(response) || emptyText(data.table, "Compare summary updated.", "No matching summary rows."), warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      setNotice("compare-state", error.message, "error");
+    } finally {
+      setBusy("run-compare", false);
+    }
+  }
+
+  async function runCityComparison() {
+    var payload = buildCityPayload();
+    if (!payload.cities.length) {
+      setNotice("city-state", "Select at least one city.", "warning");
+      return;
+    }
+    state.latestPayloads["city-comparison-summary"] = payload;
+    state.latestPayloads["city-comparison-raw"] = payload;
+    setNotice("city-state", "Loading city comparison...", "loading");
+    setBusy("run-city", true);
+    try {
+      var response = await postJson(endpoints.citySummary, payload);
+      var data = response.data || {};
+      renderSeriesChart("city-chart", data.series || [], data.overlays || {}, "City Comparison", yLabel(data.y_variable));
+      renderMetrics("city-counts", data.counts);
+      renderTable("city-table", data.table || [], summaryColumns(["city_label"]));
+      setNotice("city-state", warningText(response) || emptyText(data.table, "City comparison updated.", "No matching city rows."), warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      setNotice("city-state", error.message, "error");
+    } finally {
+      setBusy("run-city", false);
+    }
+  }
+
+  async function runGushPerformance() {
+    var payload = buildGushPayload();
+    if (!payload.city) {
+      setNotice("gush-state", "Choose one city first.", "warning");
+      return;
+    }
+    state.latestPayloads["gush-performance-summary"] = payload;
+    state.latestPayloads["gush-performance-raw"] = payload;
+    setNotice("gush-state", "Loading Gush performance...", "loading");
+    setBusy("run-gush", true);
+    try {
+      var response = await postJson(endpoints.gushSummary, payload);
+      var data = response.data || {};
+      renderSeriesChart("gush-chart", data.series || [], data.overlays || {}, "Gush Performance", yLabel(data.y_variable));
+      renderMetrics("gush-counts", data.counts);
+      renderTable("gush-table", data.performance_table || [], summaryColumns(["gush_label"]));
+      setNotice("gush-state", warningText(response) || emptyText(data.performance_table, "Gush performance updated.", "No qualified Gush performance rows."), warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      setNotice("gush-state", error.message, "error");
+    } finally {
+      setBusy("run-gush", false);
+    }
+  }
+
+  async function downloadCsv(kind) {
+    var endpoint = endpoints.downloads[kind];
+    if (!endpoint) return;
+    var payload = state.latestPayloads[kind] || payloadForDownload(kind);
+    setNotice("download-state", "Preparing " + kind + " CSV...", "loading");
+    try {
+      var response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error(await responseMessage(response));
+      }
+      var blob = await response.blob();
+      var filename = filenameFromDisposition(response.headers.get("Content-Disposition")) || kind + ".csv";
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setNotice("download-state", filename + " downloaded. Rows: " + (response.headers.get("X-Row-Count") || "unknown"), "ok");
+    } catch (error) {
+      setNotice("download-state", error.message, "error");
+    }
+  }
+
+  function buildAnalysisPayload() {
+    var gushes = activeGushSelection();
+    var priceType = byId("analysis-price-type").value;
+    var payload = {
+      city: byId("city-select").value,
+      streets: gushes.length ? [] : activeStreetSelection(),
+      gushes: gushes,
+      filters: buildFilters("analysis"),
+      y_variable: yVariableForPriceType(priceType),
+      price_type: priceType,
+      show_sp500: byId("show-sp500").checked,
+      show_city_comparison: byId("show-city-overlay").checked,
+      remove_price_outliers: byId("remove-price-outliers").checked,
+      remove_area_outliers: byId("remove-area-outliers").checked,
+      limit: intValue("row-limit", 2000),
+      sample_seed: 1
+    };
+    addOptionalPayloadValue(payload, "color_var", "analysis-color-var");
+    addOptionalPayloadValue(payload, "shape_var", "analysis-shape-var");
+    addOptionalPayloadValue(payload, "size_var", "analysis-size-var");
+    addOptionalPayloadValue(payload, "facet_var", "analysis-facet-var");
+    return payload;
+  }
+
+  function buildComparePayload() {
+    var gushes = activeGushSelection();
+    var streets = gushes.length ? [] : activeStreetSelection();
+    return {
+      city: streets.length ? byId("city-select").value : "",
+      streets: streets,
+      gushes: gushes,
+      filters: buildFilters("compare"),
+      y_variable: byId("compare-y-variable").value,
+      show_sp500: byId("compare-show-sp500").checked,
+      show_city_comparison: byId("compare-show-city-overlay").checked,
+      remove_price_outliers: byId("compare-remove-price-outliers").checked
+    };
+  }
+
+  function buildCityPayload() {
+    return {
+      cities: selectedValues(byId("city-comparison-select")),
+      filters: buildFilters("city"),
+      y_variable: byId("city-y-variable").value,
+      show_sp500: byId("city-show-sp500").checked,
+      remove_price_outliers: byId("city-remove-price-outliers").checked,
+      exclude_2027: true
+    };
+  }
+
+  function buildGushPayload() {
+    return {
+      city: byId("city-select").value,
+      filters: buildFilters("gush"),
+      yvar: byId("gush-y-variable").value,
+      top_count: intValue("gush-top-count", 5),
+      typical_count: intValue("gush-typical-count", 5),
+      bottom_count: intValue("gush-bottom-count", 5),
+      min_deals_per_gush: intValue("gush-min-deals", 10),
+      show_city: byId("gush-show-city-overlay").checked,
+      show_sp500: byId("gush-show-sp500").checked,
+      remove_price_outliers: byId("gush-remove-price-outliers").checked
+    };
+  }
+
+  function buildFilters(scope) {
+    scope = scope || "analysis";
+    var filters = {};
+    addRange(filters, "deal_year_range", filterControlId(scope, "filter-year-min"), filterControlId(scope, "filter-year-max"));
+    addRange(filters, "price_range", filterControlId(scope, "filter-price-min"), filterControlId(scope, "filter-price-max"));
+    addRange(filters, "price_per_m2_range", filterControlId(scope, "filter-price-m2-min"), filterControlId(scope, "filter-price-m2-max"));
+    addRange(filters, "area_range", filterControlId(scope, "filter-area-min"), filterControlId(scope, "filter-area-max"));
+    addRange(filters, "floor_range", filterControlId(scope, "filter-floor-min"), filterControlId(scope, "filter-floor-max"));
+    addRange(filters, "building_floors_range", filterControlId(scope, "filter-building-floors-min"), filterControlId(scope, "filter-building-floors-max"));
+    addRange(filters, "built_year_range", filterControlId(scope, "filter-built-year-min"), filterControlId(scope, "filter-built-year-max"));
+    addRange(filters, "building_age_range", filterControlId(scope, "filter-building-age-min"), filterControlId(scope, "filter-building-age-max"));
+    var rooms = selectedValues(byId(filterControlId(scope, "rooms-select"))).map(Number).filter(Number.isFinite);
+    if (rooms.length) filters.rooms = rooms;
+    addOptionalFilter(filters, "roof_select", filterControlId(scope, "roof-select"), "both");
+    addOptionalFilter(filters, "new_project_select", filterControlId(scope, "new-project-select"), "both");
+    var apartmentTypes = selectedValues(byId(filterControlId(scope, "apartment-type-select")));
+    if (apartmentTypes.length) filters.apartment_types = apartmentTypes;
+    return filters;
+  }
+
+  function payloadForDownload(kind) {
+    if (kind === "analysis") return buildAnalysisPayload();
+    if (kind.indexOf("compare-") === 0) return buildComparePayload();
+    if (kind.indexOf("city-comparison-") === 0) return buildCityPayload();
+    if (kind.indexOf("gush-performance-") === 0) return buildGushPayload();
+    return {};
+  }
+
+  function yVariableForPriceType(priceType) {
+    var variableByLabel = {
+      "Price": "price_millions",
+      "Price / m²": "price_per_m2",
+      "Price / Room": "price_per_room"
+    };
+    return variableByLabel[priceType] || "price_millions";
+  }
+
+  function renderAnalysisChart(data) {
+    var points = data.points || [];
+    var chartSpec = analysisChartSpec(points, data);
+    Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout).then(function () {
+      var chart = byId("analysis-chart");
+      if (chart.removeAllListeners) chart.removeAllListeners("plotly_click");
+      chart.on("plotly_click", function (event) {
+        var point = event.points && event.points[0];
+        if (point && point.customdata) selectDeal(point.customdata);
+      });
+      markSelectedDealOnChart(state.selectedPointId);
+    });
+  }
+
+  function analysisChartSpec(points, data) {
+    var facetValues = limitedCategories(points.map(function (point) { return categoryValue(point.facet); }), ANALYSIS_FACET_LIMIT);
+    var facets = facetValues.length ? facetValues : ["All"];
+    var traces = [];
+    var colorVar = byId("analysis-color-var").value;
+    var colors = colorPalette(byId("analysis-color-palette").value, colorVar);
+    var symbolPalette = shapeSymbols(byId("analysis-shape-palette").value);
+    var colorValues = limitedCategories(points.map(function (point) { return categoryValue(point.color); }), colors.length);
+    var shapeValues = limitedCategories(points.map(function (point) { return categoryValue(point.shape); }), symbolPalette.length);
+    var colorByValue = mapByValue(colorValues, colors);
+    var symbolByValue = mapByValue(shapeValues, symbolPalette);
+    var sizes = scaledSizes(points);
+
+    facets.forEach(function (facet, facetIndex) {
+      var facetPoints = facet === "All" ? points : points.filter(function (point) {
+        return categoryValue(point.facet) === facet;
+      });
+      var groups = groupPoints(facetPoints);
+      orderedGroupKeys(groups, colorValues, shapeValues).forEach(function (key) {
+        var group = groups[key];
+        var first = group[0] || {};
+        var colorValue = categoryValue(first.color);
+        var shapeValue = categoryValue(first.shape);
+        var axisIndex = facetIndex + 1;
+        traces.push({
+          name: traceName(colorValue, shapeValue, colorValues.length, shapeValues.length),
+          type: "scatter",
+          mode: "markers",
+          x: group.map(function (row) { return row.date; }),
+          y: group.map(function (row) { return row.y; }),
+          text: group.map(function (row) { return row.tooltip; }),
+          customdata: group.map(function (row) { return row.id; }),
+          hovertemplate: "%{text}<extra></extra>",
+          marker: {
+            color: colorByValue[colorValue] || colors[0],
+            size: group.map(function (row) { return sizes[row.id] || 8; }),
+            symbol: symbolByValue[shapeValue] || symbolPalette[0],
+            opacity: 0.78,
+            line: { width: 0.5, color: "#fff" }
+          },
+          selected: {
+            marker: {
+              opacity: 1,
+              size: 18,
+              line: { width: 4, color: "#d02f2f" }
+            }
+          },
+          unselected: {
+            marker: { opacity: 0.28 }
+          },
+          xaxis: axisName("x", axisIndex),
+          yaxis: axisName("y", axisIndex),
+          showlegend: facetIndex === 0
+        });
+      });
+    });
+
+    var layout = chartLayout("Analysis Deals", yLabel(data.summary && data.summary.price_type));
+    if (facets.length > 1) {
+      addOverlayTraces(traces, data.overlays || {}, { facets: facets });
+      applyFacetLayout(layout, facets, {
+        facetLabel: selectedOptionText("analysis-facet-var"),
+        xAxisTitle: "Date",
+        xRange: dateAxisRange(points),
+        yAxis: numericAxisSpec(points.map(function (point) { return point.y; }))
+      });
+    } else {
+      addOverlayTraces(traces, data.overlays || {});
+    }
+    return { traces: traces, layout: layout };
+  }
+
+  function renderSeriesChart(targetId, series, overlays, title, yAxisTitle) {
+    var traces = (series || []).map(function (item) {
+      return {
+        name: item.label,
+        type: "scatter",
+        mode: "lines+markers",
+        x: (item.points || []).map(function (point) { return point.date || point.year; }),
+        y: (item.points || []).map(function (point) { return point.y; }),
+        text: (item.points || []).map(function (point) {
+          return item.label + "<br>Year: " + valueOrDash(point.year) + "<br>Deals: " + valueOrDash(point.n_deals) + "<br>Value: " + valueOrDash(point.y);
+        }),
+        hovertemplate: "%{text}<extra></extra>",
+        marker: { size: 6 }
+      };
+    });
+    addOverlayTraces(traces, overlays || {});
+    Plotly.react(targetId, traces, chartLayout(title, yAxisTitle));
+  }
+
+  function addOverlayTraces(traces, overlays, options) {
+    options = options || {};
+    var facets = options.facets || null;
+    if (Array.isArray(overlays.sp500) && overlays.sp500.length) {
+      addOverlayTrace(traces, {
+        _rows: overlays.sp500,
+        name: "S&P 500",
+        type: "scatter",
+        mode: "lines",
+        x: overlays.sp500.map(function (row) { return row.date || row.year; }),
+        y: overlays.sp500.map(function (row) { return row.y; }),
+        text: overlays.sp500.map(function (row) { return row.tooltip || "S&P 500"; }),
+        hovertemplate: "%{text}<extra></extra>",
+        line: { color: "#222", dash: "dot" }
+      }, facets);
+    }
+    ["city", "city_wide", "city_comparison", "selected"].forEach(function (key) {
+      if (Array.isArray(overlays[key]) && overlays[key].length) {
+        addOverlayTrace(traces, {
+          _rows: overlays[key],
+          name: key === "city_comparison" ? "City-wide" : key.replace("_", " "),
+          type: "scatter",
+          mode: "lines",
+          x: overlays[key].map(function (row) { return row.date || row.year; }),
+          y: overlays[key].map(function (row) { return row.y; }),
+          text: overlays[key].map(function (row) { return row.tooltip || key; }),
+          hovertemplate: "%{text}<extra></extra>",
+          line: { color: "#7b4d87", dash: "dash" }
+        }, facets);
+      }
+    });
+  }
+
+  function addOverlayTrace(traces, trace, facets) {
+    if (!facets || facets.length <= 1) {
+      delete trace._rows;
+      traces.push(trace);
+      return;
+    }
+    facets.forEach(function (facet, index) {
+      var rows = (trace._rows || []).filter(function (row) {
+        return row.facet === undefined || row.facet === null || categoryValue(row.facet) === facet;
+      });
+      var traceForFacet = Object.assign({}, trace, {
+        xaxis: axisName("x", index + 1),
+        yaxis: axisName("y", index + 1),
+        showlegend: index === 0,
+        name: index === 0 ? trace.name : trace.name + " (" + facet + ")"
+      });
+      delete traceForFacet._rows;
+      if (rows.length && trace._rows) {
+        traceForFacet.x = rows.map(function (row) { return row.date || row.year; });
+        traceForFacet.y = rows.map(function (row) { return row.y; });
+        traceForFacet.text = rows.map(function (row) { return row.tooltip || trace.name; });
+      }
+      traces.push(traceForFacet);
+    });
+  }
+
+  function chartLayout(title, yAxisTitle) {
+    return {
+      title: { text: title },
+      margin: { t: 46, r: 24, b: 48, l: 62 },
+      xaxis: { title: "Year / date", automargin: true },
+      yaxis: { title: yAxisTitle || "Value", automargin: true },
+      legend: { orientation: "h" },
+      hoverlabel: { align: "left" },
+      hovermode: "closest"
+    };
+  }
+
+  function addOptionalPayloadValue(payload, key, selectId) {
+    var value = byId(selectId).value;
+    if (value) payload[key] = value;
+  }
+
+  function shapeSymbols(palette) {
+    if (palette === "open") return ["circle-open", "square-open", "diamond-open", "cross-open", "triangle-up-open", "x-open"];
+    if (palette === "solid") return ["circle", "square", "diamond", "cross", "triangle-up", "x"];
+    return ["circle", "square", "diamond", "cross", "triangle-up", "x", "star", "hexagon"];
+  }
+
+  function colorPalette(palette, colorVar) {
+    var palettes = {
+      default: ["#186c72", "#b04a4a", "#3478b9", "#8a6f2a", "#7a4f9d", "#208557", "#c06624", "#5f6b73"],
+      bold: ["#0072b2", "#d55e00", "#009e73", "#cc79a7", "#f0e442", "#56b4e9", "#e69f00", "#000000"],
+      soft: ["#6f9db2", "#d58f7d", "#8bbf9f", "#c6a15b", "#9c89b8", "#d6a2b8", "#8f9a6c", "#7e8d94"],
+      contrast: ["#004488", "#ddaa33", "#bb5566", "#000000", "#33bbc5", "#994455", "#228833", "#eeeeee"],
+      earth: ["#2f6f5e", "#9f6b43", "#6f7f3f", "#b27a2f", "#536878", "#8f4f39", "#7d6f55", "#3f3f3f"]
+    };
+    var colors = palettes[palette] || palettes.default;
+    return colorVar ? colors : ["#4a4a4a"].concat(colors);
+  }
+
+  function categoryValue(value) {
+    return value === null || value === undefined || value === "" ? "All" : String(value);
+  }
+
+  function limitedCategories(values, limit) {
+    var seen = [];
+    values.forEach(function (value) {
+      var category = categoryValue(value);
+      if (category !== "All" && seen.indexOf(category) === -1) seen.push(category);
+    });
+    return seen.sort(compareCategoryValues).slice(0, limit);
+  }
+
+  function compareCategoryValues(a, b) {
+    var aLeading = leadingNumber(a);
+    var bLeading = leadingNumber(b);
+    if (aLeading !== null && bLeading !== null && aLeading !== bLeading) return aLeading - bLeading;
+    var aNumber = Number(a);
+    var bNumber = Number(b);
+    var aIsNumber = Number.isFinite(aNumber);
+    var bIsNumber = Number.isFinite(bNumber);
+    if (aIsNumber && bIsNumber && aNumber !== bNumber) return aNumber - bNumber;
+    if (aIsNumber !== bIsNumber) return aIsNumber ? -1 : 1;
+    return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: "base" });
+  }
+
+  function leadingNumber(value) {
+    var match = String(value).trim().match(/^-?\d+(?:\.\d+)?/);
+    return match ? Number(match[0]) : null;
+  }
+
+  function mapByValue(values, palette) {
+    var result = {};
+    values.forEach(function (value, index) {
+      result[value] = palette[index % palette.length];
+    });
+    result.All = palette[0];
+    return result;
+  }
+
+  function scaledSizes(points) {
+    var numeric = points.map(function (point) {
+      return { id: point.id, value: Number(point.size) };
+    }).filter(function (item) {
+      return Number.isFinite(item.value);
+    });
+    if (!numeric.length) return {};
+    var min = Math.min.apply(null, numeric.map(function (item) { return item.value; }));
+    var max = Math.max.apply(null, numeric.map(function (item) { return item.value; }));
+    var result = {};
+    numeric.forEach(function (item) {
+      result[item.id] = max === min ? 9 : 6 + ((item.value - min) / (max - min)) * 12;
+    });
+    return result;
+  }
+
+  function groupPoints(points) {
+    return points.reduce(function (groups, point) {
+      var key = categoryValue(point.color) + "||" + categoryValue(point.shape);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(point);
+      return groups;
+    }, {});
+  }
+
+  function orderedGroupKeys(groups, colorValues, shapeValues) {
+    var colorOrder = categoryOrder(colorValues);
+    var shapeOrder = categoryOrder(shapeValues);
+    return Object.keys(groups).sort(function (a, b) {
+      var aParts = a.split("||");
+      var bParts = b.split("||");
+      var colorComparison = compareWithOrder(aParts[0], bParts[0], colorOrder);
+      if (colorComparison !== 0) return colorComparison;
+      return compareWithOrder(aParts[1], bParts[1], shapeOrder);
+    });
+  }
+
+  function categoryOrder(values) {
+    return values.reduce(function (order, value, index) {
+      order[value] = index;
+      return order;
+    }, { All: -1 });
+  }
+
+  function compareWithOrder(a, b, order) {
+    var aIndex = Object.prototype.hasOwnProperty.call(order, a) ? order[a] : null;
+    var bIndex = Object.prototype.hasOwnProperty.call(order, b) ? order[b] : null;
+    if (aIndex !== null && bIndex !== null && aIndex !== bIndex) return aIndex - bIndex;
+    if (aIndex !== null || bIndex !== null) return aIndex !== null ? -1 : 1;
+    return compareCategoryValues(a, b);
+  }
+
+  function traceName(colorValue, shapeValue, hasColor, hasShape) {
+    var parts = [];
+    if (hasColor) parts.push(colorValue);
+    if (hasShape && shapeValue !== colorValue) parts.push(shapeValue);
+    return parts.length ? parts.join(" / ") : "Deals";
+  }
+
+  function axisName(prefix, index) {
+    return index === 1 ? prefix : prefix + index;
+  }
+
+  function layoutAxisName(prefix, index) {
+    return index === 1 ? prefix : prefix + index;
+  }
+
+  function dateAxisRange(points) {
+    var dates = points.map(function (point) {
+      var value = point.date ? new Date(point.date) : null;
+      return value && Number.isFinite(value.getTime()) ? value : null;
+    }).filter(Boolean);
+    if (!dates.length) return null;
+    var years = dates.map(function (date) { return date.getFullYear(); });
+    var minYear = Math.min.apply(null, years);
+    var maxYear = Math.max.apply(null, years);
+    return [String(minYear) + "-01-01", String(maxYear + 1) + "-01-01"];
+  }
+
+  function numericAxisSpec(values) {
+    var numeric = values.map(Number).filter(Number.isFinite);
+    if (!numeric.length) return null;
+    var maxValue = Math.max.apply(null, numeric);
+    var minValue = Math.min.apply(null, numeric);
+    var lower = minValue < 0 ? niceFloor(minValue) : 0;
+    var upper = niceCeil(maxValue);
+    var dtick = niceTick(Math.max(upper - lower, upper || 1), 8);
+    return { range: [lower, Math.max(upper, lower + dtick)], dtick: dtick };
+  }
+
+  function niceTick(span, targetTicks) {
+    var raw = Math.abs(span || 1) / Math.max(targetTicks || 6, 1);
+    var magnitude = Math.pow(10, Math.floor(Math.log10(raw)));
+    var normalized = raw / magnitude;
+    var steps = [1, 2, 2.5, 5, 10];
+    var step = steps.find(function (candidate) { return normalized <= candidate; }) || 10;
+    return step * magnitude;
+  }
+
+  function niceCeil(value) {
+    var tick = niceTick(Math.abs(value || 1), 8);
+    return Math.ceil(value / tick) * tick;
+  }
+
+  function niceFloor(value) {
+    var tick = niceTick(Math.abs(value || 1), 8);
+    return Math.floor(value / tick) * tick;
+  }
+
+  function applyFacetLayout(layout, facets, options) {
+    options = options || {};
+    var columns = Math.min(3, facets.length);
+    var rows = Math.ceil(facets.length / columns);
+    var xAxisTitle = options.xAxisTitle || (layout.xaxis && layout.xaxis.title) || "Date";
+    var yAxisTitle = (layout.yaxis && layout.yaxis.title) || "Value";
+    var horizontalGap = columns > 1 ? 0.026 : 0;
+    var verticalGap = rows > 1 ? 0.085 : 0;
+    var columnWidth = (1 - horizontalGap * (columns - 1)) / columns;
+    var rowHeight = (1 - verticalGap * (rows - 1)) / rows;
+    var stripHeight = Math.min(0.108, Math.max(0.082, 0.25 / rows));
+    var stripGap = Math.min(0.018, rowHeight * 0.09);
+    var facetLabel = options.facetLabel ? options.facetLabel.toLowerCase() : "facet";
+    delete layout.grid;
+    layout.height = Math.max(450, rows * 255 + 165);
+    layout.margin.t = 98;
+    layout.margin.b = 88;
+    layout.margin.l = Math.max(layout.margin.l || 0, 78);
+    layout.shapes = (layout.shapes || []).concat(facets.map(function (_, index) {
+      var column = index % columns;
+      var row = Math.floor(index / columns);
+      var x0 = column * (columnWidth + horizontalGap);
+      var x1 = x0 + columnWidth;
+      var yTop = 1 - row * (rowHeight + verticalGap);
+      return {
+        type: "rect",
+        xref: "paper",
+        yref: "paper",
+        x0: x0,
+        x1: x1,
+        y0: yTop - stripHeight,
+        y1: yTop,
+        line: { width: 0 },
+        fillcolor: "#000",
+        layer: "above"
+      };
+    }));
+    layout.annotations = facets.map(function (facet, index) {
+      var column = index % columns;
+      var row = Math.floor(index / columns);
+      var x0 = column * (columnWidth + horizontalGap);
+      var x1 = x0 + columnWidth;
+      var yTop = 1 - row * (rowHeight + verticalGap);
+      return {
+        text: "<b>" + escapeHtml(facetLabel + ": " + facet) + "</b>",
+        x: (x0 + x1) / 2,
+        y: yTop - (stripHeight / 2),
+        xref: "paper",
+        yref: "paper",
+        showarrow: false,
+        yanchor: "middle",
+        font: { size: 14, color: "#fff" }
+      };
+    }).concat([
+      {
+        text: escapeHtml(xAxisTitle || "Date"),
+        x: 0.5,
+        y: -0.105,
+        xref: "paper",
+        yref: "paper",
+        showarrow: false,
+        font: { size: 13, color: "#26383c" }
+      },
+      {
+        text: escapeHtml(yAxisTitle || "Value"),
+        x: -0.052,
+        y: 0.5,
+        xref: "paper",
+        yref: "paper",
+        textangle: -90,
+        showarrow: false,
+        font: { size: 13, color: "#26383c" }
+      }
+    ]);
+    facets.forEach(function (_, index) {
+      var axisIndex = index + 1;
+      var column = index % columns;
+      var row = Math.floor(index / columns);
+      var isBottomRow = row === rows - 1;
+      var isFirstColumn = column === 0;
+      var x0 = column * (columnWidth + horizontalGap);
+      var x1 = x0 + columnWidth;
+      var yTop = 1 - row * (rowHeight + verticalGap);
+      var yBottom = yTop - rowHeight;
+      var xAxisKey = layoutAxisName("xaxis", axisIndex);
+      var yAxisKey = layoutAxisName("yaxis", axisIndex);
+      var xAxisUpdate = {
+        title: "",
+        domain: [x0, x1],
+        automargin: true,
+        tick0: "2000-01-01",
+        dtick: "M60",
+        tickformat: "%Y",
+        showticklabels: isBottomRow
+      };
+      if (options.xRange) xAxisUpdate.range = options.xRange;
+      var yAxisUpdate = {
+        title: "",
+        domain: [yBottom, Math.max(yBottom + 0.05, yTop - stripHeight - stripGap)],
+        automargin: true,
+        tick0: 0,
+        showticklabels: isFirstColumn
+      };
+      if (options.yAxis) {
+        yAxisUpdate.range = options.yAxis.range;
+        yAxisUpdate.dtick = options.yAxis.dtick;
+      }
+      layout[xAxisKey] = Object.assign({}, layout[xAxisKey] || {}, xAxisUpdate);
+      layout[yAxisKey] = Object.assign({}, layout[yAxisKey] || {}, yAxisUpdate);
+    });
+  }
+
+  function renderTable(targetId, rows, columns, options) {
+    var target = byId(targetId);
+    options = options || {};
+    var shouldResetState = options.resetState;
+    options = Object.assign({}, options, { resetState: false });
+    if (!rows || !rows.length) {
+      target.innerHTML = '<div class="notice">No rows to display.</div>';
+      return;
+    }
+    if (shouldResetState || !state.tableStates[targetId]) {
+      state.tableStates[targetId] = { sortKey: "", sortDirection: "asc", filters: {}, globalFilter: "" };
+    }
+    var tableState = state.tableStates[targetId];
+    var processedRows = tableRowsForDisplay(rows, columns, tableState, options);
+    var visibleRows = processedRows.slice(0, 500);
+    var html = "";
+    if (options.filterable) {
+      html += '<div class="table-controls">' +
+        '<label>Filter all columns<input class="table-global-filter" value="' + escapeHtml(tableState.globalFilter || "") + '" placeholder="Search rows"></label>' +
+        '<button class="secondary compact-button table-clear-filters" type="button">Clear filters</button>' +
+        "</div>";
+    }
+    html += "<table><thead><tr>" + columns.map(function (column) {
+      var sorted = tableState.sortKey === column.key;
+      var sortLabel = sorted ? (tableState.sortDirection === "asc" ? " ▲" : " ▼") : "";
+      if (!options.sortable) return "<th>" + escapeHtml(column.label) + "</th>";
+      return '<th><button class="table-sort" type="button" data-key="' + escapeHtml(column.key) + '">' +
+        escapeHtml(column.label + sortLabel) +
+        "</button></th>";
+    }).join("") + "</tr>";
+    if (options.filterable) {
+      html += '<tr class="column-filter-row">' + columns.map(function (column) {
+        if (column.filter === "range") {
+          var rangeFilter = rangeFilterValue(tableState.filters[column.key]);
+          return '<th><span class="table-range-filter">' +
+            '<input class="table-column-filter" data-filter-kind="min" data-key="' + escapeHtml(column.key) + '" value="' +
+            escapeHtml(rangeFilter.min) + '" placeholder="Min">' +
+            '<input class="table-column-filter" data-filter-kind="max" data-key="' + escapeHtml(column.key) + '" value="' +
+            escapeHtml(rangeFilter.max) + '" placeholder="Max">' +
+            "</span></th>";
+        }
+        return '<th><input class="table-column-filter" data-key="' + escapeHtml(column.key) + '" value="' +
+          escapeHtml(tableState.filters[column.key] || "") + '" placeholder="Filter"></th>';
+      }).join("") + "</tr>";
+    }
+    html += "</thead><tbody>" + visibleRows.map(function (row) {
+      return '<tr data-row-id="' + escapeHtml(row.id || "") + '">' + columns.map(function (column) {
+        var value = row[column.key];
+        return '<td class="' + textDirectionClass(value) + '">' + escapeHtml(valueOrDash(value)) + "</td>";
+      }).join("") + "</tr>";
+    }).join("") + "</tbody></table>";
+    if (processedRows.length > visibleRows.length || processedRows.length !== rows.length) {
+      html += '<div class="notice">Showing ' + visibleRows.length + " of " + processedRows.length +
+        " matching rows" + (processedRows.length !== rows.length ? " from " + rows.length + " total" : "") + ".</div>";
+    }
+    target.innerHTML = html;
+    bindTableControls(target, targetId, rows, columns, options);
+    if (options && options.selectable) {
+      target.querySelectorAll("tbody tr").forEach(function (rowEl) {
+        rowEl.addEventListener("click", function () {
+          target.querySelectorAll("tr").forEach(function (item) { item.classList.remove("is-selected"); });
+          rowEl.classList.add("is-selected");
+          selectDeal(rowEl.dataset.rowId);
+        });
+      });
+    }
+  }
+
+  function selectDeal(rowId, markerTarget) {
+    state.selectedPointId = rowId;
+    document.querySelectorAll('#analysis-table tbody tr').forEach(function (rowEl) {
+      rowEl.classList.toggle("is-selected", rowEl.dataset.rowId === rowId);
+    });
+    var row = state.latestAnalysisRows.find(function (item) { return item.id === rowId; });
+    renderSelectedDeal(row || null);
+    markSelectedDealOnChart(rowId, markerTarget);
+  }
+
+  function tableRowsForDisplay(rows, columns, tableState, options) {
+    var result = rows.slice();
+    if (options.filterable) {
+      result = result.filter(function (row) {
+        var globalFilter = normalizeSearch(tableState.globalFilter || "");
+        var matchesGlobal = !globalFilter || columns.some(function (column) {
+          return normalizeSearch(valueOrDash(row[column.key])).indexOf(globalFilter) !== -1;
+        });
+        if (!matchesGlobal) return false;
+        return columns.every(function (column) {
+          return matchesColumnFilter(row[column.key], tableState.filters && tableState.filters[column.key], column);
+        });
+      });
+    }
+    if (options.sortable && tableState.sortKey) {
+      result.sort(function (left, right) {
+        var comparison = compareTableValues(left[tableState.sortKey], right[tableState.sortKey]);
+        return tableState.sortDirection === "desc" ? -comparison : comparison;
+      });
+    }
+    return result;
+  }
+
+  function bindTableControls(target, targetId, rows, columns, options) {
+    var tableState = state.tableStates[targetId];
+    target.querySelectorAll(".table-sort").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var key = button.dataset.key;
+        if (tableState.sortKey === key) {
+          tableState.sortDirection = tableState.sortDirection === "asc" ? "desc" : "asc";
+        } else {
+          tableState.sortKey = key;
+          tableState.sortDirection = "asc";
+        }
+        renderTable(targetId, rows, columns, options);
+      });
+    });
+    var globalFilter = target.querySelector(".table-global-filter");
+    if (globalFilter) {
+      globalFilter.addEventListener("input", function () {
+        tableState.globalFilter = globalFilter.value;
+        renderTable(targetId, rows, columns, options);
+        focusTableFilter(targetId, "global", "");
+      });
+    }
+    target.querySelectorAll(".table-column-filter").forEach(function (input) {
+      input.addEventListener("input", function () {
+        if (input.dataset.filterKind) {
+          var current = rangeFilterValue(tableState.filters[input.dataset.key]);
+          current[input.dataset.filterKind] = input.value;
+          tableState.filters[input.dataset.key] = current;
+        } else {
+          tableState.filters[input.dataset.key] = input.value;
+        }
+        renderTable(targetId, rows, columns, options);
+        focusTableFilter(targetId, "column", input.dataset.key, input.dataset.filterKind || "");
+      });
+    });
+    var clearButton = target.querySelector(".table-clear-filters");
+    if (clearButton) {
+      clearButton.addEventListener("click", function () {
+        tableState.filters = {};
+        tableState.globalFilter = "";
+        renderTable(targetId, rows, columns, options);
+      });
+    }
+  }
+
+  function focusTableFilter(targetId, type, key, filterKind) {
+    window.setTimeout(function () {
+      var selector = type === "global" ? ".table-global-filter" : '.table-column-filter[data-key="' + cssEscape(key) + '"]';
+      if (filterKind) selector += '[data-filter-kind="' + cssEscape(filterKind) + '"]';
+      var input = byId(targetId).querySelector(selector);
+      if (input) {
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    }, 0);
+  }
+
+  function compareTableValues(left, right) {
+    var leftNumber = parseComparableNumber(left);
+    var rightNumber = parseComparableNumber(right);
+    if (leftNumber !== null || rightNumber !== null) {
+      if (leftNumber === null) return 1;
+      if (rightNumber === null) return -1;
+      return leftNumber - rightNumber;
+    }
+    return String(valueOrDash(left)).localeCompare(String(valueOrDash(right)), undefined, { numeric: true, sensitivity: "base" });
+  }
+
+  function rangeFilterValue(value) {
+    if (value && typeof value === "object") {
+      return { min: value.min || "", max: value.max || "" };
+    }
+    return { min: "", max: "" };
+  }
+
+  function matchesColumnFilter(value, filterValue, column) {
+    if (column.filter !== "range") {
+      var textFilter = normalizeSearch(filterValue || "");
+      return !textFilter || normalizeSearch(valueOrDash(value)).indexOf(textFilter) !== -1;
+    }
+    var range = rangeFilterValue(filterValue);
+    var min = parseFilterBoundary(range.min, column);
+    var max = parseFilterBoundary(range.max, column);
+    var comparable = comparableValue(value, column);
+    if (comparable === null) return min === null && max === null;
+    if (min !== null && comparable < min) return false;
+    if (max !== null && comparable > max) return false;
+    return true;
+  }
+
+  function parseFilterBoundary(value, column) {
+    if (value === null || value === undefined || String(value).trim() === "") return null;
+    return column.type === "date" ? parseDateBoundary(value) : parseComparableNumber(value);
+  }
+
+  function comparableValue(value, column) {
+    if (column.type === "date") return parseDateBoundary(value);
+    return parseComparableNumber(value);
+  }
+
+  function parseDateBoundary(value) {
+    var parsed = Date.parse(String(value || "").trim());
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  function parseComparableNumber(value) {
+    if (value === null || value === undefined || value === "") return null;
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    var text = String(value).replace(/,/g, "").trim();
+    if (!text) return null;
+    var number = Number(text);
+    if (Number.isFinite(number)) return number;
+    var date = Date.parse(text);
+    return Number.isFinite(date) ? date : null;
+  }
+
+  function markSelectedDealOnChart(rowId) {
+    var chart = byId("analysis-chart");
+    if (!chart || !chart.data) return;
+    var updates = [];
+    var traceIndexes = [];
+    (chart.data || []).forEach(function (trace, traceIndex) {
+      if (!trace.customdata) return;
+      var selectedIndexes = [];
+      (trace.customdata || []).forEach(function (id, pointIndex) {
+        if (String(id) === String(rowId)) selectedIndexes.push(pointIndex);
+      });
+      updates.push(rowId ? selectedIndexes : null);
+      traceIndexes.push(traceIndex);
+    });
+    if (traceIndexes.length) Plotly.restyle(chart, { selectedpoints: updates }, traceIndexes);
+  }
+
+  function renderSelectedDeal(row) {
+    var target = byId("selected-deal");
+    if (!target) return;
+    if (!row) {
+      target.innerHTML = "";
+      return;
+    }
+    var fields = [
+      ["Date", row.date],
+      ["Street", row.street],
+      ["Gush", row.gush],
+      ["Price", row.price_millions],
+      ["Area", row.area],
+      ["Rooms", row.rooms],
+      ["Type", row.apartment_type],
+      ["Address", row.address]
+    ];
+    target.innerHTML = '<div class="deal-card"><h3>Selected deal</h3><dl>' + fields.map(function (field) {
+      return "<div><dt>" + escapeHtml(field[0]) + "</dt><dd class='" + textDirectionClass(field[1]) + "'>" + escapeHtml(valueOrDash(field[1])) + "</dd></div>";
+    }).join("") + "</dl></div>";
+  }
+
+  function renderMetrics(targetId, counts) {
+    var target = byId(targetId);
+    if (!counts || !Object.keys(counts).length) {
+      target.innerHTML = "";
+      return;
+    }
+    target.innerHTML = Object.keys(counts).map(function (key) {
+      return '<div class="metric"><span>' + escapeHtml(labels[key] || key) + '</span><strong>' + escapeHtml(formatNumber(counts[key])) + "</strong></div>";
+    }).join("");
+  }
+
+  function renderMetaSummary(meta) {
+    var target = byId("metadata-summary");
+    if (!meta) {
+      target.innerHTML = "";
+      return;
+    }
+    var cards = [
+      ["Cities", meta.data_summary && meta.data_summary.city_count],
+      ["Rows", meta.data_summary && meta.data_summary.total_city_rows],
+      ["Apartment types", (meta.apartment_types || []).length],
+      ["Loaded streets", state.streets.length],
+      ["Loaded Gush areas", state.gushes.length],
+      ["Generated", meta.data_summary && meta.data_summary.generated_at]
+    ];
+    target.innerHTML = cards.map(infoCard).join("");
+    byId("global-summary").innerHTML = cards.slice(0, 3).map(function (card) {
+      return '<div class="metric-pill"><strong>' + escapeHtml(formatNumber(card[1])) + '</strong> ' + escapeHtml(card[0]) + "</div>";
+    }).join("");
+  }
+
+  function renderFilterSummary(data) {
+    var target = byId("filter-summary");
+    if (!data) {
+      target.innerHTML = "";
+      return;
+    }
+    var ranges = data.ranges || {};
+    var cards = [
+      ["Before outlier removal", data.counts && data.counts.before_outlier_removal],
+      ["After outlier removal", data.counts && data.counts.after_outlier_removal],
+      ["Year range", rangeText(ranges.deal_year)],
+      ["Price range", rangeText(ranges.price_millions)],
+      ["Price / m² range", rangeText(ranges.price_per_m2)],
+      ["Area range", rangeText(ranges.area)],
+      ["Floor range", rangeText(ranges.floor)],
+      ["Building floors", rangeText(ranges.build_floors)],
+      ["Available apartment types", data.apartment_types && data.apartment_types.available && data.apartment_types.available.length]
+    ];
+    target.innerHTML = cards.map(infoCard).join("");
+  }
+
+  function applyFilterDefaults(data) {
+    var ranges = data.ranges || {};
+    setRangeInputs("filter-year", ranges.deal_year);
+    setRangeInputs("filter-price", ranges.price_millions);
+    setRangeInputs("filter-price-m2", ranges.price_per_m2);
+    setRangeInputs("filter-area", ranges.area);
+    setRangeInputs("filter-floor", ranges.floor);
+    setRangeInputs("filter-building-floors", ranges.build_floors);
+    setRangeInputs("filter-built-year", ranges.build_year);
+    setRangeInputs("filter-building-age", ranges.building_age);
+    ["compare", "city", "gush"].forEach(function (scope) {
+      setRangeInputs(scope + "-filter-year", ranges.deal_year);
+      setRangeInputs(scope + "-filter-price", ranges.price_millions);
+      setRangeInputs(scope + "-filter-price-m2", ranges.price_per_m2);
+      setRangeInputs(scope + "-filter-area", ranges.area);
+      setRangeInputs(scope + "-filter-floor", ranges.floor);
+      setRangeInputs(scope + "-filter-building-floors", ranges.build_floors);
+      setRangeInputs(scope + "-filter-built-year", ranges.build_year);
+      setRangeInputs(scope + "-filter-building-age", ranges.building_age);
+    });
+    var selectedRooms = selectedValues(byId("rooms-select"));
+    var smartRooms = data.rooms && data.rooms.smart_selected || [];
+    var roomChoices = data.rooms && data.rooms.choices || [];
+    var nextSelectedRooms = smartRoomSelectionForOptions(selectedRooms, roomChoices, smartRooms);
+    var roomOptions = (data.rooms && data.rooms.choices || []).map(function (value) {
+      return { value: value, label: value };
+    });
+    setOptions(byId("rooms-select"), roomOptions, true);
+    ["compare", "city", "gush"].forEach(function (scope) {
+      var select = byId(scope + "-rooms-select");
+      var selected = selectedValues(select);
+      setOptions(select, roomOptions, true);
+      setSelectedValues(select, selected);
+    });
+    setSelectedValues(byId("rooms-select"), nextSelectedRooms);
+    state.roomsSelectionInitialized = true;
+    renderRoomChips();
+    syncSegmentedControls();
+    if (data.apartment_types && data.apartment_types.available && data.apartment_types.available.length) {
+      var selectedApartmentTypes = selectedValues(byId("apartment-type-select"));
+      setOptions(byId("apartment-type-select"), data.apartment_types.available.map(function (value) {
+        return { value: value, label: value };
+      }), true);
+      setSelectedValues(byId("apartment-type-select"), selectedApartmentTypes);
+      renderApartmentTypeChips();
+    }
+  }
+
+  function applySmartRoomSelection() {
+    var smartRooms = state.filterOptions && state.filterOptions.rooms && state.filterOptions.rooms.smart_selected;
+    if (!smartRooms || !smartRooms.length) {
+      setNotice("metadata-state", "No smart room selection is available for the current filters.", "warning");
+      return;
+    }
+    setSelectedValues(byId("rooms-select"), smartRooms);
+    state.roomsSelectionInitialized = true;
+    renderRoomChips();
+    updateSelectionSummary();
+    scheduleAnalysisAutoUpdate("rooms");
+    setNotice("metadata-state", "Applied smart room selection: " + smartRooms.join(", ") + ".", "ok");
+  }
+
+  function smartRoomSelectionForOptions(currentSelected, roomChoices, smartRooms) {
+    var choices = (roomChoices || []).map(String);
+    var selected = (currentSelected || []).map(String);
+    var smart = (smartRooms || []).map(String);
+    if (!state.roomsSelectionInitialized) {
+      return smart.length ? smart : choices;
+    }
+
+    var choiceSet = new Set(choices);
+    var selectedSet = new Set(selected);
+    var nextSelected = selected.filter(function (value) {
+      return choiceSet.has(value);
+    });
+    choices.forEach(function (value) {
+      if (!selectedSet.has(value)) nextSelected.push(value);
+    });
+
+    if (!nextSelected.length) {
+      return smart.length ? smart : choices;
+    }
+    return nextSelected;
+  }
+
+  function clearRoomSelection() {
+    setSelectedValues(byId("rooms-select"), []);
+    state.roomsSelectionInitialized = true;
+    renderRoomChips();
+    updateSelectionSummary();
+    scheduleAnalysisAutoUpdate("rooms");
+    setNotice("metadata-state", "Room filter cleared.", "ok");
+  }
+
+  function resetFilterRanges() {
+    if (state.filterOptions) {
+      applyFilterDefaults(state.filterOptions);
+    }
+    byId("roof-select").value = "both";
+    byId("new-project-select").value = "both";
+    syncSegmentedControls();
+    updateSelectionSummary();
+    scheduleAnalysisAutoUpdate("reset-filters");
+    setNotice("metadata-state", "Filter ranges reset to the current selection.", "ok");
+  }
+
+  function analysisColumns() {
+    return [
+      ["date", "Date", "date"], ["city", "City"], ["street", "Street"], ["gush", "Gush", "number"],
+      ["price_millions", "Price", "number"], ["price_per_m2", "Price / m²", "number"], ["price_per_room", "Price / Room", "number"],
+      ["area", "Area", "number"], ["rooms", "Rooms", "number"], ["floor", "Floor", "number"], ["apartment_type", "Type"],
+      ["address", "Address"]
+    ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
+  }
+
+  function summaryColumns(extra) {
+    var keys = (extra || []).concat(["series_label", "deal_year", "n_deals", "price_millions", "price_per_m2", "price_per_room", "y"]);
+    var labelByKey = {
+      city_label: "City",
+      gush_label: "Gush",
+      series_label: "Series",
+      deal_year: "Year",
+      n_deals: "Deals",
+      price_millions: "Price",
+      price_per_m2: "Price / m²",
+      price_per_room: "Price / Room",
+      y: "Selected value"
+    };
+    return keys.map(function (key) { return { key: key, label: labelByKey[key] || key }; });
+  }
+
+  async function getJson(url) {
+    var response = await fetch(url, { headers: { "Accept": "application/json" } });
+    if (!response.ok) throw new Error(await responseMessage(response));
+    return response.json();
+  }
+
+  async function postJson(url, payload) {
+    var response = await fetch(url, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error(await responseMessage(response));
+    return response.json();
+  }
+
+  async function responseMessage(response) {
+    var text = await response.text();
+    try {
+      var parsed = JSON.parse(text);
+      if (parsed.warnings && parsed.warnings.length) return parsed.warnings.join(" ");
+    } catch (error) {
+      return text || response.statusText;
+    }
+    return response.statusText;
+  }
+
+  function setOptions(select, options, multiple) {
+    select.innerHTML = "";
+    if (!multiple) {
+      var blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "Choose...";
+      select.appendChild(blank);
+    }
+    options.forEach(function (option) {
+      var el = document.createElement("option");
+      el.value = option.value;
+      el.textContent = option.label;
+      if (hasHebrew(option.label)) el.className = "rtl-text";
+      select.appendChild(el);
+    });
+  }
+
+  function renderLocationPickers() {
+    renderPicker("streets");
+    renderPicker("gushes");
+  }
+
+  function renderPicker(key) {
+    var config = pickerConfig[key];
+    var select = byId(config.selectId);
+    var search = byId(config.searchId);
+    var results = byId(config.resultsId);
+    var selectedTarget = byId(config.selectedId);
+    if (!select || !search || !results || !selectedTarget) return;
+
+    var options = Array.from(select.options || []).filter(function (option) { return option.value; });
+    var selected = new Set(selectedValues(select).map(String));
+    var query = normalizeSearch(search.value);
+    var visible = query ? options.filter(function (option) {
+      return selected.has(String(option.value)) || normalizeSearch(option.textContent).indexOf(query) !== -1;
+    }).slice(0, 24) : [];
+
+    selectedTarget.innerHTML = "";
+    Array.from(selected).forEach(function (value) {
+      var option = optionForValue(select, value);
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "selection-chip";
+      chip.textContent = (option ? option.textContent : value) + " ×";
+      chip.addEventListener("click", function () {
+        setOptionSelected(select, value, false);
+        renderLocationPickers();
+        updateSelectionSummary();
+        scheduleFilterOptions();
+        scheduleAnalysisAutoUpdate("location-chip");
+      });
+      selectedTarget.appendChild(chip);
+    });
+
+    results.innerHTML = "";
+    if (!options.length) {
+      results.innerHTML = '<div class="mini-notice">' + escapeHtml(config.emptyText) + "</div>";
+      return;
+    }
+    if (!query) {
+      results.innerHTML = '<div class="mini-notice">Search to narrow the list. Selected items stay pinned above.</div>';
+      return;
+    }
+    if (!visible.length) {
+      results.innerHTML = '<div class="mini-notice">No matches.</div>';
+      return;
+    }
+    visible.forEach(function (option) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "picker-option";
+      button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.textContent = option.textContent;
+      if (hasHebrew(option.textContent)) button.classList.add("rtl-text");
+      button.addEventListener("click", function () {
+        togglePickerValue(key, option.value);
+      });
+      results.appendChild(button);
+    });
+  }
+
+  function togglePickerValue(key, value) {
+    var config = pickerConfig[key];
+    var select = byId(config.selectId);
+    var option = optionForValue(select, value);
+    if (!option) return;
+    if (!option.selected) {
+      setSelectedValues(byId(config.oppositeSelectId), []);
+      option.selected = true;
+    } else {
+      option.selected = false;
+    }
+    renderLocationPickers();
+    updateSelectionSummary();
+    scheduleFilterOptions();
+    scheduleAnalysisAutoUpdate("location");
+  }
+
+  function scheduleFilterOptions() {
+    if (state.filterOptionsTimer) window.clearTimeout(state.filterOptionsTimer);
+    if (!byId("city-select").value) return;
+    state.filterOptionsTimer = window.setTimeout(loadFilterOptions, 450);
+  }
+
+  function scheduleAnalysisAutoUpdate(reason) {
+    if (state.autoAnalysisTimer) window.clearTimeout(state.autoAnalysisTimer);
+    if (!byId("auto-update-analysis").checked) return;
+    state.autoAnalysisTimer = window.setTimeout(function () {
+      runAnalysisAutoUpdate(reason);
+    }, 750);
+  }
+
+  function runAnalysisAutoUpdate(reason) {
+    var decision = autoAnalysisDecision();
+    if (decision.status === "run") {
+      runAnalysis({ auto: true });
+      return;
+    }
+    if (decision.status === "skip-size") {
+      setNotice("analysis-state", decision.message, "warning");
+    }
+  }
+
+  function autoAnalysisDecision() {
+    if (!byId("auto-update-analysis").checked) return { status: "off" };
+    if (!byId("city-select").value && !activeGushSelection().length) return { status: "missing-selection" };
+    if (!state.filterOptions || state.filterOptionsSignature !== currentFilterOptionsSignature()) {
+      return { status: "waiting" };
+    }
+    var counts = state.filterOptions.counts || {};
+    var estimate = Number(counts.after_outlier_removal || counts.before_outlier_removal || 0);
+    if (!Number.isFinite(estimate) || estimate <= 0) return { status: "run" };
+    var rowLimit = intValue("row-limit", 2000);
+    if (rowLimit < 1) rowLimit = 2000;
+    var renderedPoints = Math.min(rowLimit, estimate);
+    if (estimate > AUTO_ANALYSIS_SERVER_ROW_LIMIT) {
+      return {
+        status: "skip-size",
+        message: "Auto update paused for " + formatNumber(estimate) + " estimated matching deals. Click Update analysis to run it."
+      };
+    }
+    if (renderedPoints > AUTO_ANALYSIS_POINT_LIMIT) {
+      return {
+        status: "skip-size",
+        message: "Auto update paused because this would render about " + formatNumber(renderedPoints) + " points. Lower the row limit or click Update analysis."
+      };
+    }
+    return { status: "run" };
+  }
+
+  function filterOptionsSignature(payload) {
+    return JSON.stringify({
+      city: payload.city || "",
+      streets: (payload.streets || []).map(String).sort(),
+      gushes: (payload.gushes || []).map(String).sort()
+    });
+  }
+
+  function currentFilterOptionsSignature() {
+    return filterOptionsSignature({
+      city: byId("city-select").value,
+      streets: activeStreetSelection(),
+      gushes: activeGushSelection()
+    });
+  }
+
+  function activeStreetSelection() {
+    return selectedValues(byId("street-select"));
+  }
+
+  function activeGushSelection() {
+    return selectedValues(byId("gush-select"));
+  }
+
+  function optionForValue(select, value) {
+    return Array.from(select.options || []).find(function (option) {
+      return String(option.value) === String(value);
+    });
+  }
+
+  function setOptionSelected(select, value, selected) {
+    var option = optionForValue(select, value);
+    if (option) option.selected = selected;
+  }
+
+  function clearSelect(select) {
+    select.innerHTML = "";
+  }
+
+  function selectedValues(select) {
+    return Array.from(select.selectedOptions || []).map(function (option) { return option.value; }).filter(Boolean);
+  }
+
+  function setSelectedValues(select, values) {
+    var normalized = new Set((values || []).map(String));
+    Array.from(select.options || []).forEach(function (option) {
+      option.selected = normalized.has(String(option.value));
+    });
+  }
+
+  function renderRoomChips() {
+    var target = byId("rooms-chip-group");
+    var select = byId("rooms-select");
+    if (!target || !select) return;
+    var selected = new Set(selectedValues(select).map(String));
+    var options = Array.from(select.options || []).filter(function (option) { return option.value; });
+    if (!options.length) {
+      target.innerHTML = '<div class="mini-notice">Room options load with the selected area.</div>';
+      return;
+    }
+    target.innerHTML = "";
+    options.forEach(function (option) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "filter-chip";
+      button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.textContent = option.textContent;
+      button.addEventListener("click", function () {
+        option.selected = !option.selected;
+        renderRoomChips();
+        updateSelectionSummary();
+        scheduleAnalysisAutoUpdate("rooms");
+      });
+      target.appendChild(button);
+    });
+  }
+
+  function renderApartmentTypeChips() {
+    var target = byId("apartment-type-chip-group");
+    var select = byId("apartment-type-select");
+    var search = byId("apartment-type-search");
+    if (!target || !select || !search) return;
+
+    var selected = new Set(selectedValues(select).map(String));
+    var query = normalizeSearch(search.value);
+    var options = Array.from(select.options || []).filter(function (option) {
+      return option.value && (selected.has(String(option.value)) || !query || normalizeSearch(option.textContent).indexOf(query) !== -1);
+    });
+    var visible = options.slice(0, query ? 24 : 12);
+
+    target.innerHTML = "";
+    if (!visible.length) {
+      target.innerHTML = '<div class="mini-notice">No matching apartment types.</div>';
+      return;
+    }
+    visible.forEach(function (option) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = "filter-chip";
+      button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.textContent = option.textContent;
+      if (hasHebrew(option.textContent)) button.classList.add("rtl-text");
+      button.addEventListener("click", function () {
+        option.selected = !option.selected;
+        renderApartmentTypeChips();
+        updateSelectionSummary();
+        scheduleAnalysisAutoUpdate("apartment-types");
+      });
+      target.appendChild(button);
+    });
+  }
+
+  function syncSegmentedControls() {
+    document.querySelectorAll(".segmented-control").forEach(function (control) {
+      var select = byId(control.dataset.select);
+      Array.from(control.querySelectorAll("button[data-value]")).forEach(function (button) {
+        button.classList.toggle("is-selected", select && String(select.value) === String(button.dataset.value));
+      });
+    });
+  }
+
+  function selectAdditionalValues(select, values) {
+    var normalized = new Set(selectedValues(select).map(String));
+    (values || []).forEach(function (value) { normalized.add(String(value)); });
+    setSelectedValues(select, Array.from(normalized));
+  }
+
+  function addRange(filters, key, minId, maxId) {
+    var min = numberValue(minId);
+    var max = numberValue(maxId);
+    if (min !== null || max !== null) filters[key] = [min, max];
+  }
+
+  function addOptionalFilter(filters, key, selectId, emptyValue) {
+    var value = byId(selectId).value;
+    if (value && value !== emptyValue) filters[key] = value;
+  }
+
+  function filterControlId(scope, baseId) {
+    return scope === "analysis" ? baseId : scope + "-" + baseId;
+  }
+
+  function setRangeInputs(prefix, range) {
+    if (!range) return;
+    byId(prefix + "-min").value = valueOrEmpty(range.min);
+    byId(prefix + "-max").value = valueOrEmpty(range.max);
+  }
+
+  function numberValue(id) {
+    var value = byId(id).value.trim();
+    if (!value) return null;
+    var number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function intValue(id, fallback) {
+    var number = parseInt(byId(id).value, 10);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  function setNotice(id, message, kind) {
+    var target = byId(id);
+    if (!target) return;
+    target.innerHTML = message ? '<div class="notice ' + (kind || "") + '">' + escapeHtml(message) + "</div>" : "";
+  }
+
+  function setBusy(id, busy) {
+    var button = byId(id);
+    if (button) button.disabled = busy;
+  }
+
+  function setAnalysisBusy(busy) {
+    setBusy("run-analysis", busy);
+    setBusy("run-analysis-side", busy);
+  }
+
+  function updateSelectionSummary() {
+    var target = byId("selection-summary");
+    if (!target) return;
+    var citySelect = byId("city-select");
+    var city = citySelect && citySelect.selectedOptions[0] ? citySelect.selectedOptions[0].textContent : "No city";
+    var pieces = [
+      ["City", city.replace(/\s+\([0-9,]+\)$/, "")],
+      ["Streets", selectedValues(byId("street-select")).length],
+      ["Gush areas", selectedValues(byId("gush-select")).length]
+    ];
+    if (document.body.dataset.activeTab === "analysis") {
+      pieces = pieces.concat([
+        ["Rooms", selectedValues(byId("rooms-select")).length || "All"],
+        ["Status", statusFilterText()],
+        ["Custom ranges", customRangeFilterCount()]
+      ]);
+    }
+    target.innerHTML = pieces.map(function (piece) {
+      return '<div><span>' + escapeHtml(piece[0]) + '</span><strong>' + escapeHtml(piece[1]) + "</strong></div>";
+    }).join("");
+  }
+
+  function byId(id) {
+    return document.getElementById(id);
+  }
+
+  function cssEscape(value) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(value);
+    return String(value).replace(/["\\]/g, "\\$&");
+  }
+
+  function statusFilterText() {
+    var labels = [];
+    if (byId("roof-select").value !== "both") labels.push("roof " + byId("roof-select").value);
+    if (byId("new-project-select").value !== "both") labels.push("project " + byId("new-project-select").value);
+    return labels.length ? labels.join(", ") : "Both";
+  }
+
+  function customRangeFilterCount() {
+    var defaults = state.filterOptions && state.filterOptions.ranges || {};
+    var rangeMap = [
+      ["filter-year", defaults.deal_year],
+      ["filter-price", defaults.price_millions],
+      ["filter-price-m2", defaults.price_per_m2],
+      ["filter-area", defaults.area],
+      ["filter-floor", defaults.floor],
+      ["filter-building-floors", defaults.build_floors],
+      ["filter-built-year", defaults.build_year],
+      ["filter-building-age", defaults.building_age]
+    ];
+    return rangeMap.reduce(function (count, item) {
+      var prefix = item[0];
+      var range = item[1] || {};
+      var min = numberValue(prefix + "-min");
+      var max = numberValue(prefix + "-max");
+      var hasValue = min !== null || max !== null;
+      var matchesDefault = String(valueOrEmpty(range.min)) === byId(prefix + "-min").value.trim() &&
+        String(valueOrEmpty(range.max)) === byId(prefix + "-max").value.trim();
+      return count + (hasValue && !matchesDefault ? 1 : 0);
+    }, 0);
+  }
+
+  function warningText(response) {
+    var warnings = [];
+    if (response && response.warnings) warnings = warnings.concat(response.warnings);
+    if (response && response.data && response.data.warnings) warnings = warnings.concat(response.data.warnings);
+    warnings = Array.from(new Set(warnings.filter(Boolean)));
+    return warnings.length ? warnings.join(" ") : "";
+  }
+
+  function emptyText(rows, okText, emptyMessage) {
+    return rows && rows.length ? okText : emptyMessage;
+  }
+
+  function infoCard(card) {
+    return '<div class="info-card"><span>' + escapeHtml(card[0]) + '</span><strong>' + escapeHtml(formatNumber(card[1])) + "</strong></div>";
+  }
+
+  function rangeText(range) {
+    if (!range || range.min === null || range.max === null) return "Unavailable";
+    return formatNumber(range.min) + " - " + formatNumber(range.max);
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    if (typeof value === "number") return new Intl.NumberFormat().format(Math.round(value * 100) / 100);
+    return String(value);
+  }
+
+  function valueOrDash(value) {
+    return value === null || value === undefined || value === "" ? "-" : value;
+  }
+
+  function valueOrEmpty(value) {
+    return value === null || value === undefined ? "" : value;
+  }
+
+  function selectedOptionText(selectId) {
+    var select = byId(selectId);
+    if (!select || !select.selectedOptions || !select.selectedOptions.length) return "";
+    return select.selectedOptions[0].textContent.trim();
+  }
+
+  function yLabel(value) {
+    var map = {
+      "Price": "Price (Million Shekels)",
+      "Price / m²": "Price / m²",
+      "Price / Room": "Price / Room",
+      price_millions: "Price (Million Shekels)",
+      price_per_m2: "Price / m²",
+      price_per_room: "Price / Room",
+      n_deals: "Deals"
+    };
+    return map[value] || "Value";
+  }
+
+  function filenameFromDisposition(header) {
+    if (!header) return "";
+    var match = /filename="?([^"]+)"?/i.exec(header);
+    return match ? match[1] : "";
+  }
+
+  function textDirectionClass(value) {
+    return hasHebrew(value) ? "rtl-text" : "ltr-text";
+  }
+
+  function hasHebrew(value) {
+    return /[\u0590-\u05ff]/.test(String(value || ""));
+  }
+
+  function normalizeSearch(value) {
+    return String(value || "").trim().toLocaleLowerCase();
+  }
+
+  function escapeHtml(value) {
+    return String(value === null || value === undefined ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+})();
