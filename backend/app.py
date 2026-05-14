@@ -31,6 +31,7 @@ from .services.downloads import (
 )
 from .services.filter_metadata import FilterMetadataError, build_filter_options, gush_detail, gush_search_results, street_search_results
 from .services.gush_performance import GushPerformanceError, build_gush_performance_summary_response
+from .services.gush_map import GushMapError, build_gush_map_response
 
 
 def create_app(config_object: Optional[type] = None) -> Flask:
@@ -352,6 +353,28 @@ def register_routes(app: Flask) -> None:
         except (DataStoreError, GushPerformanceError) as exc:
             public_message = getattr(exc, "public_message", "Gush performance data could not be loaded.")
             current_app.logger.warning("Gush performance summary failed: %s", exc, exc_info=True)
+            return _error_response(public_message, started, status_code=400)
+
+        return jsonify(
+            _api_response(
+                data=data,
+                meta={"status": "ok"},
+                warnings=data.get("warnings", []),
+                started=started,
+            )
+        )
+
+    @app.post("/api/gush-map")
+    def gush_map():
+        started = time.perf_counter()
+        payload = request.get_json(silent=True) or {}
+        if not isinstance(payload, dict):
+            return _error_response("Request body must be a JSON object.", started, status_code=400)
+        try:
+            data = build_gush_map_response(_data_store(), payload)
+        except (DataStoreError, GushMapError) as exc:
+            public_message = getattr(exc, "public_message", "Gush map data could not be loaded.")
+            current_app.logger.warning("Gush map failed: %s", exc, exc_info=True)
             return _error_response(public_message, started, status_code=400)
 
         return jsonify(

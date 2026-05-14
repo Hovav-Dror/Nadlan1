@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="./">
     <title>ניתוח נדל"ן</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
     <link rel="stylesheet" href="assets/app.css">
     <script src="assets/plotly.min.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     <script src="assets/app.js" defer></script>
   </head>
   <body>
@@ -25,6 +27,7 @@
         <button class="tab" id="tab-compare" data-tab="compare" role="tab" aria-controls="panel-compare" aria-selected="false">Compare Areas</button>
         <button class="tab" id="tab-city" data-tab="city" role="tab" aria-controls="panel-city" aria-selected="false">City Comparison</button>
         <button class="tab" id="tab-gush" data-tab="gush" role="tab" aria-controls="panel-gush" aria-selected="false">City Performance</button>
+        <button class="tab" id="tab-map" data-tab="map" role="tab" aria-controls="panel-map" aria-selected="false">Gush Map</button>
         <span class="tab-group-label">Utilities</span>
         <button class="tab tab-secondary" id="tab-metadata" data-tab="metadata" role="tab" aria-controls="panel-metadata" aria-selected="false">Data Health</button>
         <button class="tab tab-secondary" id="tab-downloads" data-tab="downloads" role="tab" aria-controls="panel-downloads" aria-selected="false">Exports</button>
@@ -346,7 +349,7 @@
                 </label>
                 <label>
                   Row Limit
-                  <input id="row-limit" inputmode="numeric" type="number" min="1" max="5000" step="1" value="2000">
+                  <input id="row-limit" inputmode="numeric" type="number" min="1" max="5000" step="1" value="3000">
                 </label>
               </div>
               <div class="plot-toggle-row">
@@ -378,6 +381,51 @@
             <div id="selected-deal" class="selected-deal"></div>
             <div id="analysis-counts" class="metrics"></div>
             <div id="analysis-table" class="table-wrap"></div>
+          </section>
+
+          <section class="tab-panel" id="panel-map" role="tabpanel" aria-labelledby="tab-map">
+            <div class="workflow-banner">
+              <div>
+                <h2>Gush Map</h2>
+                <dl class="workflow-explainer">
+                  <div>
+                    <dt>What you see</dt>
+                    <dd>Cached cadastral block polygons for the selected city.</dd>
+                  </div>
+                  <div>
+                    <dt>Best for</dt>
+                    <dd>Seeing where selected Gush areas sit geographically before running analysis.</dd>
+                  </div>
+                  <div>
+                    <dt>Use when</dt>
+                    <dd>You want to select blocks visually or jump back to the current selection.</dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="workflow-tags">
+                <span>Local cache</span>
+                <span>Click to select</span>
+                <span>City polygons</span>
+              </div>
+            </div>
+            <div class="panel-heading">
+              <div>
+                <h2>Gush Map</h2>
+                <p>Visual selection layer backed by the local cached Gush polygon file.</p>
+              </div>
+              <div class="actions">
+                <button id="run-map" type="button">Update map</button>
+                <button id="fit-map-selection" class="secondary" type="button">Show selection</button>
+              </div>
+            </div>
+            <section class="map-toolbar" aria-label="Map controls">
+              <label>Color by<select id="map-color-mode"><option value="selection">Selection</option><option value="deals">Deal count</option></select></label>
+              <label class="checkbox-field"><input id="map-show-labels" type="checkbox"> Labels</label>
+            </section>
+            <div id="map-state" class="state"></div>
+            <div id="map-counts" class="metrics"></div>
+            <div id="gush-map-chart" class="chart map-chart" data-empty-label="Choose a city, then update map"></div>
+            <div id="map-source-note" class="source-note"></div>
           </section>
 
           <section class="tab-panel" id="panel-metadata" role="tabpanel" aria-labelledby="tab-metadata">

@@ -110,6 +110,9 @@ class DataStore:
 
         required_columns = list(manifest.get("required_city_columns", []))
         apartment_types = list(apt_types_payload.get("apt_types", []))
+        map_state = self.gush_polygon_state()
+        tab_availability = dict(TAB_AVAILABILITY)
+        tab_availability["map"] = bool(map_state["available"])
 
         return {
             "cities": self.list_cities(),
@@ -119,7 +122,8 @@ class DataStore:
                 "categorical": _filter_known(CATEGORICAL_VARIABLES, required_columns),
             },
             "default_filters": self._default_filters(apartment_types),
-            "tab_availability": TAB_AVAILABILITY,
+            "tab_availability": tab_availability,
+            "map": map_state,
             "data_summary": {
                 "city_count": len(manifest.get("cities", {})),
                 "total_city_rows": manifest.get("total_city_rows"),
@@ -159,6 +163,42 @@ class DataStore:
             }
 
         return self.metadata_cache.get_or_set("metadata", load)
+
+    def gush_polygon_state(self) -> Dict[str, Any]:
+        manifest = self.load_manifest()
+        metadata = manifest.get("metadata", {})
+        record = metadata.get("gush_polygons") if isinstance(metadata, Mapping) else None
+        file_name = record.get("file") if isinstance(record, Mapping) else "metadata/gush_polygons.geojson"
+        path = self.data_dir / file_name
+        available = path.exists()
+        return {
+            "available": available,
+            "file": file_name,
+            "features": record.get("features") if isinstance(record, Mapping) else None,
+            "fetched_at": record.get("fetched_at") if isinstance(record, Mapping) else None,
+        }
+
+    def load_gush_polygons(self) -> Dict[str, Any]:
+        def load() -> Dict[str, Any]:
+            manifest = self.load_manifest()
+            metadata = manifest.get("metadata", {})
+            record = metadata.get("gush_polygons") if isinstance(metadata, Mapping) else None
+            file_name = record.get("file") if isinstance(record, Mapping) else "metadata/gush_polygons.geojson"
+            path = self.data_dir / file_name
+            try:
+                with path.open("r", encoding="utf-8") as handle:
+                    payload = json.load(handle)
+            except FileNotFoundError as exc:
+                raise DataStoreError("Cached Gush polygons are missing. Run scripts/fetch_gush_polygons.py first.") from exc
+            except json.JSONDecodeError as exc:
+                raise DataStoreError("Cached Gush polygons could not be parsed.") from exc
+            except OSError as exc:
+                raise DataStoreError("Cached Gush polygons could not be loaded.") from exc
+            if not isinstance(payload, Mapping) or payload.get("type") != "FeatureCollection":
+                raise DataStoreError("Cached Gush polygons are not in the expected GeoJSON format.")
+            return dict(payload)
+
+        return self.metadata_cache.get_or_set("gush_polygons", load)
 
     def list_cities(self) -> List[Dict[str, Any]]:
         return self._city_choices(self.load_manifest())

@@ -17,6 +17,7 @@
     selectedPointId: null,
     tableStates: {},
     roomsSelectionInitialized: false,
+    compareRoomsSelectionInitialized: false,
     filterOptionsTimer: null,
     filterOptionsRequestId: 0,
     compareGushSearchTimer: null,
@@ -26,19 +27,25 @@
     autoCompareTimer: null,
     autoCityTimer: null,
     autoGushTimer: null,
+    autoMapTimer: null,
     cityFilterOptionsTimer: null,
     gushFilterOptionsTimer: null,
     analysisRequestId: 0,
     compareRequestId: 0,
     cityRequestId: 0,
     gushRequestId: 0,
+    mapRequestId: 0,
     cityFilterOptionsRequestId: 0,
     gushFilterOptionsRequestId: 0,
     cityHasRun: false,
+    latestMapData: null,
+    leafletMap: null,
+    gushMapLayer: null,
     requestControllers: {}
   };
 
-  var AUTO_ANALYSIS_POINT_LIMIT = 1500;
+  var DEFAULT_ANALYSIS_ROW_LIMIT = 3000;
+  var AUTO_ANALYSIS_POINT_LIMIT = 3000;
   var AUTO_ANALYSIS_SERVER_ROW_LIMIT = 6000;
   var ANALYSIS_FACET_LIMIT = 12;
   var TEL_AVIV_CITY_NAMES = ["תל אביב -יפו", "תל אביב-יפו", "תל אביב יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"];
@@ -70,6 +77,7 @@
     compareSummary: "api/compare/summary",
     citySummary: "api/city-comparison/summary",
     gushSummary: "api/gush-performance/summary",
+    gushMap: "api/gush-map",
     downloads: {
       analysis: "api/download/analysis",
       "compare-raw": "api/download/compare-raw",
@@ -99,7 +107,9 @@
     returned_rows: "שורות שהוחזרו",
     qualified_gushes: "גושים כשירים",
     selected_gushes: "גושים שנבחרו",
-    qualified_summary_points: "נקודות כשירות"
+    qualified_summary_points: "נקודות כשירות",
+    features: "מצולעים",
+    missing_gushes: "גושים חסרים"
   };
 
   var uiTranslations = {
@@ -109,11 +119,13 @@
     "Compare Areas": "השוואת אזורים",
     "City Comparison": "השוואת ערים",
     "City Performance": "ביצועי עיר",
+    "Gush Map": "מפת גושים",
     "Gush Performance": "ביצועי גושים",
     "Utilities": "כלים",
     "Data Health": "בריאות נתונים",
     "Exports": "ייצוא",
     "About": "אודות",
+    "Map controls": "פקדי מפה",
     "Controls": "פקדים",
     "Step 1": "שלב 1",
     "Step 2": "שלב 2",
@@ -127,6 +139,19 @@
     "Cities": "ערים",
     "Streets": "רחובות",
     "Gush areas": "גושים",
+    "Color by": "צבע לפי",
+    "Selection": "בחירה",
+    "Deal count": "מספר עסקאות",
+    "Labels": "תוויות",
+    "Local cache": "מטמון מקומי",
+    "Click to select": "לחיצה לבחירה",
+    "City polygons": "מצולעי עיר",
+    "Update map": "עדכון מפה",
+    "Show selection": "הצגת הבחירה",
+    "Cached cadastral block polygons for the selected city.": "מצולעי גושים קדסטריים מהמטמון המקומי לעיר שנבחרה.",
+    "Seeing where selected Gush areas sit geographically before running analysis.": "בדיקה גיאוגרפית של מיקום הגושים שנבחרו לפני הרצת ניתוח.",
+    "You want to select blocks visually or jump back to the current selection.": "כשרוצים לבחור גושים ויזואלית או לחזור למיקום הבחירה הנוכחית.",
+    "Visual selection layer backed by the local cached Gush polygon file.": "שכבת בחירה ויזואלית שמגובה בקובץ מצולעי הגושים המקומי.",
     "Pick a random city and Gush that can auto update": "בחירת עיר וגוש אקראיים שמתאימים לעדכון אוטומטי",
     "Pick random runnable analysis": "בחירת ניתוח אקראי שניתן להריץ",
     "Random": "אקראי",
@@ -376,6 +401,7 @@
     setNotice("compare-state", "Select streets or Gush areas. Compare updates automatically when the selection is small enough.", "ok");
     setNotice("city-state", "Select cities and click update. No city summary is loaded automatically.", "ok");
     setNotice("gush-state", "Choose one city and update performance.", "ok");
+    setNotice("map-state", "Choose a city, then update the local Gush polygon map.", "ok");
     setNotice("download-state", "Downloads use the filter panel for the workflow you export.", "ok");
     refreshStatus();
     loadMeta();
@@ -420,6 +446,8 @@
       }
       scheduleGushAutoUpdate("tab");
     }
+    if (tab === "analysis") schedulePlotResize("analysis-chart");
+    if (tab === "map") scheduleMapAutoUpdate("tab");
   }
 
   function bindTabs() {
@@ -441,11 +469,13 @@
       state.filterOptions = null;
       state.filterOptionsSignature = "";
       state.roomsSelectionInitialized = false;
+      state.compareRoomsSelectionInitialized = false;
       byId("street-search-results").innerHTML = "";
       renderLocationPickers();
       updateSelectionSummary();
       updateCompareSelectionState();
       loadLocationMetadata();
+      scheduleMapAutoUpdate("city");
     });
     byId("run-analysis").addEventListener("click", runAnalysis);
     byId("cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
@@ -491,6 +521,14 @@
     byId("select-gush-performance-bottom").addEventListener("click", function () {
       selectGushPerformanceRows("bottom");
     });
+    byId("run-map").addEventListener("click", runGushMap);
+    byId("fit-map-selection").addEventListener("click", fitMapToSelection);
+    byId("map-color-mode").addEventListener("change", function () {
+      renderGushMap(state.latestMapData, { fitSelection: false });
+    });
+    byId("map-show-labels").addEventListener("change", function () {
+      renderGushMap(state.latestMapData, { fitSelection: false });
+    });
     byId("add-gush-streets").addEventListener("click", addStreetsFromSelectedGushes);
     byId("select-street-gushes").addEventListener("click", selectGushesFromSelectedStreets);
     byId("smart-reset-rooms").addEventListener("click", applySmartRoomSelection);
@@ -523,6 +561,7 @@
         if (id === "rooms-select") state.roomsSelectionInitialized = true;
         if (id === "rooms-select" || id === "apartment-type-select") scheduleAnalysisAutoUpdate(id);
         if (id === "street-select" || id === "gush-select") scheduleCompareAutoUpdate(id);
+        if (id === "street-select" || id === "gush-select") scheduleMapAutoUpdate(id);
       });
     });
     byId("rooms-select").addEventListener("change", renderRoomChips);
@@ -570,7 +609,10 @@
     ].forEach(function (id) {
       byId(id).addEventListener("change", updateSelectionSummary);
       byId(id).addEventListener("input", updateSelectionSummary);
-      byId(id).addEventListener("change", function () { scheduleCompareAutoUpdate(id); });
+      byId(id).addEventListener("change", function () {
+        if (id === "compare-rooms-select") state.compareRoomsSelectionInitialized = true;
+        scheduleCompareAutoUpdate(id);
+      });
       byId(id).addEventListener("input", function () { scheduleCompareAutoUpdate(id); });
     });
     [
@@ -774,6 +816,7 @@
       scheduleFilterOptions();
       scheduleCompareAutoUpdate("metadata");
       scheduleGushAutoUpdate("metadata");
+      scheduleMapAutoUpdate("metadata");
     } catch (error) {
       setNotice("metadata-state", error.message, "error");
     }
@@ -907,8 +950,8 @@
   }
 
   function randomRunnableGush(gushes) {
-    var rowLimit = intValue("row-limit", 2000);
-    if (rowLimit < 1) rowLimit = 2000;
+    var rowLimit = intValue("row-limit", DEFAULT_ANALYSIS_ROW_LIMIT);
+    if (rowLimit < 1) rowLimit = DEFAULT_ANALYSIS_ROW_LIMIT;
     var pointBudget = Math.min(rowLimit, AUTO_ANALYSIS_POINT_LIMIT);
     var eligible = (gushes || []).filter(function (gush) {
       var deals = Number(gush.deals || 0);
@@ -984,6 +1027,7 @@
     state.filterOptionsSignature = "";
     state.latestGushPerformance = null;
     state.roomsSelectionInitialized = false;
+    state.compareRoomsSelectionInitialized = false;
     byId("street-search-results").innerHTML = "";
     renderLocationPickers();
     updateSelectionSummary();
@@ -1359,6 +1403,38 @@
     }
   }
 
+  async function runGushMap(options) {
+    options = options || {};
+    var payload = buildMapPayload();
+    if (!payload.city && !payload.gushes.length) {
+      setNotice("map-state", "Choose a city or selected Gush area before loading the map.", "warning");
+      return;
+    }
+    var requestId = ++state.mapRequestId;
+    setBusy("run-map", true);
+    setNotice("map-state", options.auto ? "Auto-updating map..." : "Loading cached Gush polygons...", "loading");
+    try {
+      var response = await postJson(endpoints.gushMap, payload);
+      if (requestId !== state.mapRequestId) return;
+      var data = response.data || {};
+      state.latestMapData = data;
+      renderGushMap(data, {
+        fitSelection: options.fitSelection !== false,
+        fitAll: options.fitSelection !== false
+      });
+      renderMetrics("map-counts", data.counts);
+      renderMapSourceNote(data.source);
+      setNotice("map-state", warningText(response) || "Map updated. Click a polygon to add or remove a Gush.", warningText(response) ? "warning" : "ok");
+    } catch (error) {
+      if (requestId !== state.mapRequestId) return;
+      state.latestMapData = null;
+      renderGushMap(null);
+      setNotice("map-state", error.message, "error");
+    } finally {
+      if (requestId === state.mapRequestId) setBusy("run-map", false);
+    }
+  }
+
   async function downloadCsv(kind) {
     var endpoint = endpoints.downloads[kind];
     if (!endpoint) return;
@@ -1403,7 +1479,7 @@
       show_city_comparison: byId("show-city-overlay").checked,
       remove_price_outliers: byId("remove-price-outliers").checked,
       remove_area_outliers: byId("remove-area-outliers").checked,
-      limit: intValue("row-limit", 2000, 1, 5000),
+      limit: intValue("row-limit", DEFAULT_ANALYSIS_ROW_LIMIT, 1, 5000),
       sample_seed: 1
     };
     addOptionalPayloadValue(payload, "color_var", "analysis-color-var");
@@ -1455,6 +1531,13 @@
       show_city: byId("gush-show-city-overlay").checked,
       show_sp500: byId("gush-show-sp500").checked,
       remove_price_outliers: byId("gush-remove-price-outliers").checked
+    };
+  }
+
+  function buildMapPayload() {
+    return {
+      city: byId("city-select").value,
+      gushes: activeGushSelection()
     };
   }
 
@@ -1523,7 +1606,17 @@
         if (point && point.customdata) selectDeal(point.customdata);
       });
       markSelectedDealOnChart(state.selectedPointId);
+      schedulePlotResize("analysis-chart");
     });
+  }
+
+  function schedulePlotResize(targetId) {
+    window.setTimeout(function () {
+      var chart = byId(targetId);
+      if (window.Plotly && chart && chart.classList.contains("js-plotly-plot")) {
+        Plotly.Plots.resize(chart);
+      }
+    }, 80);
   }
 
   function renderAnalysisChartGuide(data) {
@@ -1664,6 +1757,208 @@
     });
     addOverlayTraces(traces, overlays || {});
     Plotly.react(targetId, traces, chartLayout(title, yAxisTitle));
+  }
+
+  function renderGushMap(data, options) {
+    options = options || {};
+    var chart = byId("gush-map-chart");
+    if (!data || !data.geojson || !(data.geojson.features || []).length) {
+      destroyLeafletMap();
+      chart.className = "chart map-chart chart-guide";
+      chart.innerHTML = '<div class="chart-guide-content"><h3>מפת גושים</h3><ol>' +
+        "<li><strong>בחרו עיר</strong> בפאנל הבחירה.</li>" +
+        "<li><strong>עדכנו מפה</strong> כדי לטעון את מצולעי הגושים מהמטמון המקומי.</li>" +
+        "<li><strong>לחצו על גוש</strong> כדי להוסיף או להסיר אותו מהבחירה המשותפת.</li>" +
+        "</ol></div>";
+      return;
+    }
+    if (!window.L) {
+      destroyLeafletMap();
+      chart.className = "chart map-chart chart-guide";
+      chart.innerHTML = '<div class="chart-guide-content"><h3>מפת גושים</h3><p>ספריית המפה לא נטענה. בדקו חיבור רשת ואז רעננו את העמוד.</p></div>';
+      return;
+    }
+
+    var geojson = data.geojson;
+    var features = geojson.features || [];
+    var selectedFeatures = features.filter(function (feature) {
+      return feature.properties && feature.properties.selected;
+    });
+    var mode = byId("map-color-mode").value;
+
+    chart.className = "chart map-chart leaflet-map";
+    if (!state.leafletMap) {
+      chart.innerHTML = "";
+      state.leafletMap = L.map(chart, {
+        zoomControl: true,
+        scrollWheelZoom: true,
+        preferCanvas: true
+      });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(state.leafletMap);
+    }
+    if (state.gushMapLayer) {
+      state.gushMapLayer.remove();
+      state.gushMapLayer = null;
+    }
+
+    var maxDeals = Math.max.apply(null, features.map(function (feature) {
+      return Number((feature.properties || {}).deals || 0);
+    }).concat([1]));
+    state.gushMapLayer = L.geoJSON(geojson, {
+      style: function (feature) {
+        return mapFeatureStyle(feature, mode, maxDeals);
+      },
+      onEachFeature: function (feature, layer) {
+        var properties = feature.properties || {};
+        if (byId("map-show-labels").checked) {
+          layer.bindTooltip(String(properties.gush || ""), {
+            permanent: true,
+            direction: "center",
+            className: "gush-map-label"
+          });
+          layer.bindPopup(mapHoverText(feature), { className: "gush-map-tooltip" });
+        } else {
+          layer.bindTooltip(mapHoverText(feature), {
+            direction: "top",
+            sticky: true,
+            className: "gush-map-tooltip"
+          });
+        }
+        layer.on("click", function (event) {
+          if (event && event.originalEvent) L.DomEvent.stop(event.originalEvent);
+          toggleMapGushSelection(mapCustomData(feature));
+        });
+        layer.on("mouseover", function () {
+          layer.setStyle({ weight: properties.selected ? 3.8 : 2.4, fillOpacity: properties.selected ? 0.72 : 0.3 });
+        });
+        layer.on("mouseout", function () {
+          layer.setStyle(mapFeatureStyle(feature, mode, maxDeals));
+        });
+      }
+    }).addTo(state.leafletMap);
+
+    window.setTimeout(function () {
+      state.leafletMap.invalidateSize();
+      if (!options.fitSelection && !options.fitAll) return;
+      var targetLayer = options.fitSelection && selectedFeatures.length
+        ? L.geoJSON({ type: "FeatureCollection", features: selectedFeatures })
+        : state.gushMapLayer;
+      var bounds = targetLayer.getBounds();
+      if (bounds && bounds.isValid()) {
+        state.leafletMap.fitBounds(bounds, { padding: [28, 28], maxZoom: selectedFeatures.length ? 16 : 14 });
+      }
+      if (targetLayer !== state.gushMapLayer) targetLayer.remove();
+    }, 0);
+  }
+
+  function destroyLeafletMap() {
+    if (state.leafletMap) {
+      state.leafletMap.remove();
+      state.leafletMap = null;
+      state.gushMapLayer = null;
+    }
+  }
+
+  function mapFeatureStyle(feature, mode, maxDeals) {
+    var properties = feature.properties || {};
+    var selected = Boolean(properties.selected);
+    var fill = selected ? "#b04a4a" : "#cfd9d6";
+    if (mode === "deals" && !selected) {
+      fill = mapDealColor(Number(properties.deals || 0), maxDeals);
+    }
+    return {
+      color: selected ? "#8f2e2e" : "#5f777b",
+      weight: selected ? 2.8 : 1.35,
+      opacity: selected ? 0.98 : 0.82,
+      fillColor: fill,
+      fillOpacity: selected ? 0.62 : 0.14
+    };
+  }
+
+  function mapDealColor(value, maxDeals) {
+    var ratio = Math.max(0, Math.min(1, Number(value || 0) / Math.max(maxDeals || 1, 1)));
+    if (ratio > 0.75) return "#0d4d54";
+    if (ratio > 0.5) return "#277989";
+    if (ratio > 0.25) return "#6aa6b1";
+    if (ratio > 0.05) return "#b9d4d7";
+    return "#e8eeeb";
+  }
+
+  function mapHoverText(feature) {
+    var properties = feature.properties || {};
+    return [
+      "<b>" + escapeHtml(properties.label || ("גוש " + valueOrDash(properties.gush))) + "</b>",
+      "עיר: " + escapeHtml(valueOrDash(properties.city)),
+      "גוש: " + escapeHtml(valueOrDash(properties.gush)),
+      "עסקאות: " + escapeHtml(valueOrDash(properties.deals)),
+      properties.representative_street ? "רחוב מייצג: " + escapeHtml(properties.representative_street) : "",
+      properties.STATUS_TEX ? "סטטוס: " + escapeHtml(properties.STATUS_TEX) : "",
+      properties.selected ? "<b>נבחר</b>" : "לחצו לבחירה"
+    ].filter(Boolean).join("<br>");
+  }
+
+  function mapCustomData(feature) {
+    var properties = feature.properties || {};
+    return {
+      gush: properties.gush,
+      label: properties.label,
+      city: properties.city,
+      selected: Boolean(properties.selected)
+    };
+  }
+
+  function toggleMapGushSelection(custom) {
+    var select = byId("gush-select");
+    var value = String(custom.gush);
+    var option = optionForValue(select, value);
+    if (!option) {
+      ensureSelectOption(select, {
+        value: value,
+        label: custom.label || ("גוש " + value),
+        searchText: [custom.city, custom.label, value].filter(Boolean).join(" ")
+      });
+    }
+    var selected = new Set(selectedValues(select).map(String));
+    if (selected.has(value)) {
+      selected.delete(value);
+      setNotice("map-state", "Gush removed from selection.", "ok");
+    } else {
+      selected.add(value);
+      setNotice("map-state", "Gush added to selection.", "ok");
+    }
+    setSelectedValues(select, Array.from(selected));
+    renderLocationPickers();
+    updateSelectionSummary();
+    updateCompareSelectionState();
+    scheduleFilterOptions();
+    scheduleAnalysisAutoUpdate("map-selection");
+    scheduleCompareAutoUpdate("map-selection");
+    runGushMap({ auto: true, fitSelection: false, reason: "map-selection" });
+  }
+
+  function fitMapToSelection() {
+    if (!state.latestMapData) {
+      runGushMap();
+      return;
+    }
+    renderGushMap(state.latestMapData, { fitSelection: true });
+  }
+
+  function renderMapSourceNote(source) {
+    var target = byId("map-source-note");
+    if (!target) return;
+    if (!source) {
+      target.innerHTML = "";
+      return;
+    }
+    var parts = [];
+    if (source.name) parts.push(source.name);
+    if (source.fetched_at) parts.push("Fetched: " + source.fetched_at);
+    if (source.disclaimer) parts.push(source.disclaimer);
+    target.textContent = parts.join(" · ");
   }
 
   function seriesHasPoints(series) {
@@ -2694,7 +2989,7 @@
 
   function applyFilterDefaults(data) {
     var ranges = data.ranges || {};
-    applyScopedFilterDefaults("analysis", data);
+    applyScopedFilterDefaults("analysis", data, { skipRooms: true });
     ["compare", "gush"].forEach(function (scope) {
       setRangeInputs(scope + "-filter-year", ranges.deal_year);
       setRangeInputs(scope + "-filter-price", ranges.price_millions);
@@ -2717,7 +3012,13 @@
       var select = byId(scope + "-rooms-select");
       var selected = selectedValues(select);
       setOptions(select, roomOptions, true);
-      setSelectedValues(select, selected);
+      if (scope === "compare" && !state.compareRoomsSelectionInitialized) {
+        setSelectedValues(select, smartRooms.length ? smartRooms : roomChoices);
+      } else {
+        setSelectedValues(select, selected.filter(function (value) {
+          return roomChoices.map(String).indexOf(String(value)) !== -1;
+        }));
+      }
     });
     setSelectedValues(byId("rooms-select"), nextSelectedRooms);
     state.roomsSelectionInitialized = true;
@@ -2744,7 +3045,8 @@
     }
   }
 
-  function applyScopedFilterDefaults(scope, data) {
+  function applyScopedFilterDefaults(scope, data, options) {
+    options = options || {};
     var ranges = data && data.ranges || {};
     setRangeInputs(filterControlPrefix(scope, "filter-year"), ranges.deal_year);
     setRangeInputs(filterControlPrefix(scope, "filter-price"), ranges.price_millions);
@@ -2758,7 +3060,7 @@
       return { value: value, label: value };
     });
     var roomsSelect = byId(filterControlId(scope, "rooms-select"));
-    if (roomsSelect) {
+    if (roomsSelect && !options.skipRooms) {
       setOptions(roomsSelect, roomOptions, true);
       setSelectedValues(roomsSelect, data.rooms && data.rooms.smart_selected || []);
     }
@@ -2859,6 +3161,7 @@
 
   function clearCompareRoomSelection() {
     setSelectedValues(byId("compare-rooms-select"), []);
+    state.compareRoomsSelectionInitialized = true;
     renderCompareRoomChips();
     updateSelectionSummary();
     scheduleCompareAutoUpdate("rooms");
@@ -2872,6 +3175,7 @@
       return;
     }
     setSelectedValues(byId("compare-rooms-select"), smartRooms);
+    state.compareRoomsSelectionInitialized = true;
     renderCompareRoomChips();
     updateSelectionSummary();
     scheduleCompareAutoUpdate("rooms");
@@ -2884,6 +3188,7 @@
     if (state.filterOptions) {
       applyScopedFilterDefaults("compare", state.filterOptions);
     }
+    state.compareRoomsSelectionInitialized = true;
     byId("compare-roof-select").value = "both";
     byId("compare-new-project-select").value = "both";
     resetIncludeUnknownFilters("compare");
@@ -3455,8 +3760,8 @@
     var counts = state.filterOptions.counts || {};
     var estimate = Number(counts.after_outlier_removal || counts.before_outlier_removal || 0);
     if (!Number.isFinite(estimate) || estimate <= 0) return { status: "run" };
-    var rowLimit = intValue("row-limit", 2000);
-    if (rowLimit < 1) rowLimit = 2000;
+    var rowLimit = intValue("row-limit", DEFAULT_ANALYSIS_ROW_LIMIT);
+    if (rowLimit < 1) rowLimit = DEFAULT_ANALYSIS_ROW_LIMIT;
     var renderedPoints = Math.min(rowLimit, estimate);
     if (estimate > AUTO_ANALYSIS_SERVER_ROW_LIMIT) {
       return {
@@ -3467,7 +3772,7 @@
     if (renderedPoints > AUTO_ANALYSIS_POINT_LIMIT) {
       return {
         status: "skip-size",
-        message: "Auto update paused because this would render about " + formatNumber(renderedPoints) + " points. Lower the row limit or click Update analysis."
+        message: "Auto update paused because this would render about " + formatNumber(renderedPoints) + " points, above the automatic limit of " + formatNumber(AUTO_ANALYSIS_POINT_LIMIT) + ". Lower the row limit or click Update analysis."
       };
     }
     return { status: "run" };
@@ -3510,6 +3815,15 @@
         setNotice("gush-state", decision.message, "warning");
       }
     }, 650);
+  }
+
+  function scheduleMapAutoUpdate(reason) {
+    if (state.autoMapTimer) window.clearTimeout(state.autoMapTimer);
+    if (document.body.dataset.activeTab !== "map") return;
+    if (!byId("city-select").value && !activeGushSelection().length) return;
+    state.autoMapTimer = window.setTimeout(function () {
+      runGushMap({ auto: true, reason: reason });
+    }, 350);
   }
 
   function autoGushDecision() {
@@ -3633,6 +3947,7 @@
       targetId: "rooms-chip-group",
       selectId: "rooms-select",
       onChange: function () {
+        state.roomsSelectionInitialized = true;
         updateSelectionSummary();
         scheduleAnalysisAutoUpdate("rooms");
       }
@@ -3644,6 +3959,7 @@
       targetId: "compare-rooms-chip-group",
       selectId: "compare-rooms-select",
       onChange: function () {
+        state.compareRoomsSelectionInitialized = true;
         updateSelectionSummary();
         scheduleCompareAutoUpdate("rooms");
       }
@@ -4104,7 +4420,8 @@
       .replace(/^Search by street name across all cities, or pick up to 15 Gush areas\.$/, "חפשו לפי שם רחוב בכל הערים, או בחרו עד 15 גושים.")
       .replace(/^Compare Areas supports up to 15 Gush areas\. Keeping the first 15 selected\.$/, "השוואת אזורים תומכת בעד 15 גושים. נשמרים 15 הראשונים שנבחרו.")
       .replace(/^Auto update paused for ([\d,]+) estimated matching deals\. Click Update analysis to run it\.$/, "העדכון האוטומטי נעצר עבור כ-$1 עסקאות מתאימות. לחצו עדכון ניתוח כדי להריץ.")
-      .replace(/^Auto update paused because this would render about ([\d,]+) points\. Lower the row limit or click Update analysis\.$/, "העדכון האוטומטי נעצר כי יוצגו בערך $1 נקודות. הורידו את מגבלת השורות או לחצו עדכון ניתוח.")
+      .replace(/^Auto update paused because this would render about ([\d,]+) points, above the automatic limit of ([\d,]+)\. Lower the row limit or click Update analysis\.$/, "העדכון האוטומטי נעצר כי יוצגו בערך $1 נקודות, מעל מגבלת העדכון האוטומטי ($2). הקטינו את מגבלת השורות או לחצו עדכון ניתוח.")
+      .replace(/^Auto update paused because this would render about ([\d,]+) points\. Lower the row limit or click Update analysis\.$/, "העדכון האוטומטי נעצר כי יוצגו בערך $1 נקודות. הקטינו את מגבלת השורות או לחצו עדכון ניתוח.")
       .replace(/^Auto update paused because Compare Areas supports up to 15 selected Gush areas\.$/, "העדכון האוטומטי נעצר כי השוואת אזורים תומכת בעד 15 גושים שנבחרו.")
       .replace(/^Choose a city or selected Gush area first\.$/, "בחרו עיר או גוש קודם.")
       .replace(/^Choose a city and search for streets or Gush areas\. Metadata loads automatically\.$/, "בחרו עיר וחפשו רחובות או גושים. המטא-דאטה נטען אוטומטית.")

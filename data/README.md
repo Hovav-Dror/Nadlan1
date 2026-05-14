@@ -9,6 +9,7 @@ Generated files:
 - `cities/*.parquet`: per-city transaction data with only runtime columns used by the app.
 - `metadata/gush_descriptions.parquet`: Gush display metadata.
 - `metadata/unique_gush_streets.parquet`: city/street/Gush lookup metadata.
+- `metadata/gush_polygons.geojson`: local cached Gush polygon geometries used by the map tab.
 - `metadata/apt_types.json`: apartment type choices.
 - `metadata/sp500_shekels.csv`: S&P 500 total-return comparison index, with dividends reinvested and converted to ILS using USD/ILS. The 2026 row is provisional/YTD as of May 2026 and should be refreshed after 2026 closes.
 - `manifest.json`: Hebrew city display names mapped to stable ASCII Parquet filenames.
@@ -21,6 +22,15 @@ Rscript scripts/convert_nadlan2_data.R
 ```
 
 Use `--source-root` and `--output-root` to override the default source and target directories.
+
+Refresh the local Gush polygon cache with:
+
+```sh
+python3 scripts/fetch_gush_polygons.py
+```
+
+The polygon cache is fetched from the public ArcGIS Gush layer and is intended
+for visual analysis, not legal cadastral proof.
 
 Experimental OData import:
 

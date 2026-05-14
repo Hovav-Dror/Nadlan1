@@ -2,7 +2,26 @@
   "app": "nadlan2",
   "generated_at": "2026-05-12T11:20:08+0300",
   "source_root": "/Users/hovav/Documents/R projects/nadlan2",
-  "required_city_columns": ["city", "street", "Gush", "GUSH", "FULLADRESS", "date", "deal year", "price_millions", "area", "rooms", "floor", "roof", "apt type", "New_Project", "build_year", "building age", "build_floors", "story"],
+  "required_city_columns": [
+    "city",
+    "street",
+    "Gush",
+    "GUSH",
+    "FULLADRESS",
+    "date",
+    "deal year",
+    "price_millions",
+    "area",
+    "rooms",
+    "floor",
+    "roof",
+    "apt type",
+    "New_Project",
+    "build_year",
+    "building age",
+    "build_floors",
+    "story"
+  ],
   "city_count": 20,
   "total_city_rows": 711876,
   "cities": {
@@ -103,6 +122,11 @@
     "sp500_shekels": {
       "file": "metadata/sp500_shekels.csv",
       "bytes": 2104
+    },
+    "gush_polygons": {
+      "file": "metadata/gush_polygons.geojson",
+      "features": 2324,
+      "fetched_at": "2026-05-14T09:35:40.770389+00:00"
     }
   }
 }
