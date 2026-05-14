@@ -143,15 +143,13 @@
     "Selection": "בחירה",
     "Deal count": "מספר עסקאות",
     "Labels": "תוויות",
-    "Local cache": "מטמון מקומי",
-    "Click to select": "לחיצה לבחירה",
-    "City polygons": "מצולעי עיר",
+    "Street map": "מפת רחובות",
     "Update map": "עדכון מפה",
     "Show selection": "הצגת הבחירה",
-    "Cached cadastral block polygons for the selected city.": "מצולעי גושים קדסטריים מהמטמון המקומי לעיר שנבחרה.",
-    "Seeing where selected Gush areas sit geographically before running analysis.": "בדיקה גיאוגרפית של מיקום הגושים שנבחרו לפני הרצת ניתוח.",
-    "You want to select blocks visually or jump back to the current selection.": "כשרוצים לבחור גושים ויזואלית או לחזור למיקום הבחירה הנוכחית.",
-    "Visual selection layer backed by the local cached Gush polygon file.": "שכבת בחירה ויזואלית שמגובה בקובץ מצולעי הגושים המקומי.",
+    "City Gush polygons over a street map. Selected Gushes are highlighted; the rest stay visible as light context.": "מצולעי הגושים של העיר על גבי מפת רחובות. גושים שנבחרו מודגשים, והשאר נשארים כרקע בהיר.",
+    "Picking nearby Gushes by location and checking that the selection matches the streets you care about.": "לבחירת גושים סמוכים לפי מיקום ולבדיקה שהבחירה תואמת לרחובות שמעניינים אתכם.",
+    "Click a polygon to select it, use Show selection to return to your picks, or color by Deal count to spot active areas.": "לחצו על מצולע כדי לבחור אותו, השתמשו בהצגת הבחירה כדי לחזור לבחירה, או צבעו לפי מספר עסקאות כדי לזהות אזורים פעילים.",
+    "Use the map to select Gushes visually, inspect where the current selection sits, and then reuse that selection in Analysis Deals or Compare Areas.": "השתמשו במפה כדי לבחור גושים ויזואלית, לבדוק איפה הבחירה הנוכחית נמצאת, ואז להשתמש באותה בחירה בניתוח עסקאות או בהשוואת אזורים.",
     "Pick a random city and Gush that can auto update": "בחירת עיר וגוש אקראיים שמתאימים לעדכון אוטומטי",
     "Pick random runnable analysis": "בחירת ניתוח אקראי שניתן להריץ",
     "Random": "אקראי",
@@ -203,11 +201,14 @@
     "What you see": "מה רואים",
     "Best for": "מתאים ל",
     "Use when": "מתי להשתמש",
+    "Map shortcut": "קיצור דרך למפה",
     "Each point is one individual deal.": "כל נקודה היא עסקה בודדת.",
     "Detailed exploration, finding specific properties, and understanding price variation within an area.": "חקירה מפורטת, איתור נכסים ספציפיים והבנת שונות מחירים בתוך אזור.",
     "You want to see all deals, inspect individual transactions, or analyze price distribution in detail.": "כשרוצים לראות את כל העסקאות, לבדוק עסקאות בודדות או לנתח התפלגות מחירים בפירוט.",
+    "Use Gush Map first to click polygons, then return here to analyze the selected deals.": "השתמשו קודם במפת הגושים כדי לבחור מצולעים, ואז חזרו לכאן לניתוח העסקאות שנבחרו.",
     "Transaction-level": "רמת עסקה",
     "Street or Gush": "רחוב או גוש",
+    "Map selection": "בחירה מהמפה",
     "CSV export": "ייצוא CSV",
     "Transaction-level scatter and table for the selected city, streets, and Gush areas.": "גרף וטבלה ברמת עסקה לעיר, לרחובות ולגושים שנבחרו.",
     "Update analysis": "עדכון ניתוח",
@@ -266,6 +267,7 @@
     "Yearly summary": "סיכום שנתי",
     "Raw + summary CSV": "CSV גולמי + סיכום",
     "Search streets or Gush descriptions across all cities, then compare up to 15 Gush areas.": "חפשו רחובות או תיאורי גושים בכל הערים והשוו עד 15 גושים.",
+    "Use Gush Map to choose nearby polygons visually, then compare the selected Gushes here.": "השתמשו במפת הגושים כדי לבחור מצולעים סמוכים ויזואלית, ואז השוו כאן את הגושים שנבחרו.",
     "Update compare": "עדכון השוואה",
     "Summary CSV": "CSV סיכום",
     "Raw CSV": "CSV גולמי",
@@ -292,6 +294,7 @@
     "Transaction filters": "מסנני עסקאות",
     "City-level": "רמת עיר",
     "Yearly trends": "מגמות שנתיות",
+    "Drill-down map": "מפת המשך",
     "Broad filters": "מסננים רחבים",
     "City/year summaries. Run explicitly because broad city selections can be expensive.": "סיכומי עיר/שנה. ההרצה ידנית כי בחירות רחבות יכולות להיות כבדות.",
     "Step 1: Select Cities": "שלב 1: בחירת ערים",
@@ -319,6 +322,7 @@
     "Largest marker size for city/year points, scaled by deal count.": "גודל הסמן הגדול ביותר לנקודות עיר/שנה, מותאם לפי מספר עסקאות.",
     "Within-city": "בתוך העיר",
     "Top / typical / bottom": "גבוהים / טיפוסיים / נמוכים",
+    "Map review": "בדיקה במפה",
     "Qualified Gushes": "גושים כשירים",
     "Step 1: Select City": "שלב 1: בחירת עיר",
     "Step 2: Performance Parameters": "שלב 2: פרמטרי ביצועים",
@@ -368,9 +372,11 @@
     "Each line is a selected city summarized by year.": "כל קו הוא עיר שנבחרה, מסוכמת לפי שנה.",
     "Broad market comparison, city-level trend checks, and ranking demand or price movement.": "השוואת שוק רחבה, בדיקת מגמות ברמת עיר ודירוג ביקוש או תנועת מחירים.",
     "You want a macro view before drilling into specific streets or Gush areas.": "כשרוצים מבט מאקרו לפני ירידה לרחובות או גושים ספציפיים.",
+    "After choosing a city, open Gush Map to inspect its internal Gush layout before drilling into areas.": "אחרי בחירת עיר, פתחו את מפת הגושים כדי לבדוק את פריסת הגושים הפנימית לפני ירידה לאזורים.",
     "Top, typical, and bottom Gush areas inside one city, summarized by year.": "גושים גבוהים, טיפוסיים ונמוכים בתוך עיר אחת, מסוכמים לפי שנה.",
     "Finding standout neighborhoods, comparing internal city segments, and screening candidates.": "איתור שכונות בולטות, השוואת אזורים בתוך עיר וסינון מועמדים.",
     "You want the app to identify which Gush areas perform differently within a selected city.": "כשרוצים שהאפליקציה תזהה אילו גושים מתנהגים אחרת בתוך העיר שנבחרה.",
+    "After ranking Gushes, send top or bottom groups to the shared selection and view their locations on Gush Map.": "אחרי דירוג הגושים, שלחו קבוצות גבוהות או נמוכות לבחירה המשותפת וצפו במיקומים שלהן במפת הגושים.",
     "Load raw deals preview": "טעינת תצוגה מקדימה של עסקאות גולמיות",
     "Median price (M₪)": "חציון מחיר (מ׳ ₪)",
     "Median price / m² (k₪)": "חציון מחיר למ\"ר (אלף ₪)",
@@ -1636,12 +1642,13 @@
       '<p>' + escapeHtml(intro) + "</p>" +
       "<ol>" +
       '<li><strong>בחרו עיר</strong> או השתמשו בכפתור "אקראי"</li>' +
-      "<li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים או הרחבת גושים לרחובות.</li>" +
+      '<li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים, הרחבת גושים לרחובות, או בחירה ויזואלית בטאב "מפת גושים".</li>' +
       "<li><strong>כוונו מסננים</strong> לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.</li>" +
       '<li>לחצו על הכפתור <strong>"עדכון ניתוח"</strong> כדי לצייר גרף פיזור והפקת טבלה של העסקאות.</li>' +
       "</ol>" +
       '<div class="chart-guide-tips"><strong>טיפים</strong><ul>' +
       "<li>השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.</li>" +
+      '<li>בטאב "מפת גושים" אפשר לראות את מיקום הגושים על מפת רחובות ולבחור אותם בלחיצה.</li>' +
       "<li>איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.</li>" +
       "<li>אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.</li>" +
       "</ul></div>" +
@@ -1992,13 +1999,14 @@
         intro: "השתמשו באזור הגרף כרשימת בדיקה להשוואת אזורים עד שהקווים השנתיים מוכנים.",
         emptyIntro: "הרחיבו את האזורים שנבחרו או שחררו מסננים, ואז עדכנו את ההשוואה שוב.",
         steps: [
-          "<strong>חפשו רחוב בכל הערים</strong> או בחרו גושים מוכרים.",
-          "<strong>הוסיפו את הגושים המתאימים</strong> ישירות מתוצאות החיפוש.",
+          '<strong>חפשו רחוב בכל הערים</strong>, בחרו גושים מוכרים, או השתמשו בטאב "מפת גושים" לבחירה ויזואלית.',
+          "<strong>הוסיפו את הגושים המתאימים</strong> מתוצאות החיפוש או מהמצולעים שבחרתם במפה.",
           "<strong>בחרו ערך Y</strong> כמו מחיר, מחיר למ\"ר, מחיר לחדר או מספר עסקאות.",
           "<strong>עדכנו השוואה</strong> כדי לצייר קווים שנתיים ולמלא את טבלת הסיכום."
         ],
         tips: [
           "השתמשו בגושים להשוואת אזורי שכונה וברחובות לבדיקות ממוקדות.",
+          "מפת גושים עוזרת לבחור אזורים סמוכים ולוודא שההשוואה היא בין אזורים הגיוניים גיאוגרפית.",
           "הפעילו כל העיר כדי לראות את העיר שנבחרה כקו ייחוס.",
           "CSV סיכום מתאים למגמות מקובצות, ו-CSV גולמי לעסקאות שמאחורי הסיכום."
         ]

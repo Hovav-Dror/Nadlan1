@@ -216,11 +216,16 @@
                     <dt>Use when</dt>
                     <dd>You want to see all deals, inspect individual transactions, or analyze price distribution in detail.</dd>
                   </div>
+                  <div>
+                    <dt>Map shortcut</dt>
+                    <dd>Use Gush Map first to click polygons, then return here to analyze the selected deals.</dd>
+                  </div>
                 </dl>
               </div>
               <div class="workflow-tags">
                 <span>Transaction-level</span>
                 <span>Street or Gush</span>
+                <span>Map selection</span>
                 <span>CSV export</span>
               </div>
             </div>
@@ -364,7 +369,7 @@
                 <h3>איך מתחילים</h3>
                 <ol>
                   <li><strong>בחרו עיר</strong> או השתמשו בכפתור "אקראי"</li>
-                  <li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים, או הרחבת גושים שנבחרו לרחובות.</li>
+                  <li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים, הרחבת גושים שנבחרו לרחובות, או בחירה ויזואלית בטאב "מפת גושים".</li>
                   <li><strong>כוונו מסננים</strong> לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.</li>
                   <li>לחצו על הכפתור <strong>"עדכון ניתוח"</strong> כדי לצייר גרף פיזור והפקת טבלה של העסקאות.</li>
                 </ol>
@@ -372,6 +377,7 @@
                   <strong>טיפים</strong>
                   <ul>
                     <li>השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.</li>
+                    <li>בטאב "מפת גושים" אפשר לראות את מיקום הגושים על מפת רחובות ולבחור אותם בלחיצה.</li>
                     <li>איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.</li>
                     <li>אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.</li>
                   </ul>
@@ -390,28 +396,28 @@
                 <dl class="workflow-explainer">
                   <div>
                     <dt>What you see</dt>
-                    <dd>Cached cadastral block polygons for the selected city.</dd>
+                    <dd>City Gush polygons over a street map. Selected Gushes are highlighted; the rest stay visible as light context.</dd>
                   </div>
                   <div>
                     <dt>Best for</dt>
-                    <dd>Seeing where selected Gush areas sit geographically before running analysis.</dd>
+                    <dd>Picking nearby Gushes by location and checking that the selection matches the streets you care about.</dd>
                   </div>
                   <div>
                     <dt>Use when</dt>
-                    <dd>You want to select blocks visually or jump back to the current selection.</dd>
+                    <dd>Click a polygon to select it, use Show selection to return to your picks, or color by Deal count to spot active areas.</dd>
                   </div>
                 </dl>
               </div>
               <div class="workflow-tags">
-                <span>Local cache</span>
-                <span>Click to select</span>
-                <span>City polygons</span>
+                <span>Map selection</span>
+                <span>Street map</span>
+                <span>Deal count</span>
               </div>
             </div>
             <div class="panel-heading">
               <div>
                 <h2>Gush Map</h2>
-                <p>Visual selection layer backed by the local cached Gush polygon file.</p>
+                <p>Use the map to select Gushes visually, inspect where the current selection sits, and then reuse that selection in Analysis Deals or Compare Areas.</p>
               </div>
               <div class="actions">
                 <button id="run-map" type="button">Update map</button>
@@ -536,6 +542,10 @@
                     <h4>4. City Performance - ביצועי עיר</h4>
                     <p>מציג גושים טובים, טיפוסיים, וגרועים בתוך עיר לפי שינויי מחירים לאורך זמן.</p>
                   </div>
+                  <div>
+                    <h4>5. Gush Map - מפת גושים</h4>
+                    <p>מציגה את הגושים על גבי מפת רחובות, מאפשרת לבחור גושים בלחיצה, ואז להשתמש באותה בחירה בניתוח עסקאות או בהשוואת אזורים.</p>
+                  </div>
                 </div>
               </section>
 
@@ -584,10 +594,15 @@
                     <dt>Use when</dt>
                     <dd>You want to discover the relevant Gush areas from a street name, or compare known blocks side by side.</dd>
                   </div>
+                  <div>
+                    <dt>Map shortcut</dt>
+                    <dd>Use Gush Map to choose nearby polygons visually, then compare the selected Gushes here.</dd>
+                  </div>
                 </dl>
               </div>
               <div class="workflow-tags">
                 <span>Area comparison</span>
+                <span>Map selection</span>
                 <span>Yearly summary</span>
                 <span>Raw + summary CSV</span>
               </div>
@@ -745,8 +760,8 @@
               <div class="chart-guide-content">
                 <h3>איך מתחילים</h3>
                 <ol>
-                  <li><strong>חפשו רחוב בכל הערים</strong> או בחרו גושים מוכרים.</li>
-                  <li><strong>הוסיפו את הגושים המתאימים</strong> ישירות מתוצאות החיפוש.</li>
+                  <li><strong>חפשו רחוב בכל הערים</strong>, בחרו גושים מוכרים, או השתמשו בטאב "מפת גושים" לבחירה ויזואלית.</li>
+                  <li><strong>הוסיפו את הגושים המתאימים</strong> מתוצאות החיפוש או מהמצולעים שבחרתם במפה.</li>
                   <li><strong>בחרו ערך Y</strong> כמו מחיר, מחיר למ"ר, מחיר לחדר או מספר עסקאות.</li>
                   <li><strong>עדכנו השוואה</strong> כדי לצייר קווים שנתיים ולמלא את טבלת הסיכום.</li>
                 </ol>
@@ -754,6 +769,7 @@
                   <strong>טיפים</strong>
                   <ul>
                     <li>השתמשו בגושים להשוואת אזורי שכונה וברחובות לבדיקות ממוקדות.</li>
+                    <li>מפת גושים עוזרת לבחור אזורים סמוכים ולוודא שההשוואה היא בין אזורים הגיוניים גיאוגרפית.</li>
                     <li>הפעילו כל העיר כדי לראות את העיר שנבחרה כקו ייחוס.</li>
                     <li>CSV סיכום מתאים למגמות מקובצות, ו-CSV גולמי לעסקאות שמאחורי הסיכום.</li>
                   </ul>
@@ -786,11 +802,16 @@
                     <dt>Use when</dt>
                     <dd>You want a macro view before drilling into specific streets or Gush areas.</dd>
                   </div>
+                  <div>
+                    <dt>Map shortcut</dt>
+                    <dd>After choosing a city, open Gush Map to inspect its internal Gush layout before drilling into areas.</dd>
+                  </div>
                 </dl>
               </div>
               <div class="workflow-tags">
                 <span>City-level</span>
                 <span>Yearly trends</span>
+                <span>Drill-down map</span>
                 <span>Broad filters</span>
               </div>
             </div>
@@ -1004,11 +1025,16 @@
                     <dt>Use when</dt>
                     <dd>You want the app to identify which Gush areas perform differently within a selected city.</dd>
                   </div>
+                  <div>
+                    <dt>Map shortcut</dt>
+                    <dd>After ranking Gushes, send top or bottom groups to the shared selection and view their locations on Gush Map.</dd>
+                  </div>
                 </dl>
               </div>
               <div class="workflow-tags">
                 <span>Within-city</span>
                 <span>Top / typical / bottom</span>
+                <span>Map review</span>
                 <span>Qualified Gushes</span>
               </div>
             </div>

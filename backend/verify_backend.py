@@ -308,7 +308,7 @@ def verify_analysis_deals_helpers() -> dict[str, object]:
                     "street": ["אלף", "אלף", "אלף", "בית", "בית", "בית"],
                     "Gush": [10, 10, 10, 11, 11, 11],
                     "GUSH": ["10-1-1", "10-1-2", "10-1-3", "11-1-1", "11-1-2", "11-1-3"],
-                    "FULLADRESS": ["אלף 1", "אלף 2", "אלף 3", "בית 1", "בית 2", "בית 3"],
+                    "FULLADRESS": [None, "אלף 2", "אלף 3", "בית 1", "בית 2", "בית 3"],
                     "date": pd.to_datetime(
                         ["2020-01-01", "2020-02-01", "2020-03-01", "2021-01-01", "2021-02-01", "2021-03-01"]
                     ).date,
@@ -386,6 +386,12 @@ def verify_analysis_deals_helpers() -> dict[str, object]:
     assert "color" in response["points"][0]
     assert "path" not in str(response).casefold()
     assert response["overlays"]["city_comparison"]
+
+    fallback_response = build_analysis_deals_response(
+        FakeStore(),
+        {"city": "בדיקה", "streets": ["אלף"], "price_type": "Price", "limit": 10},
+    )
+    assert any(row["address"] == "אלף, בדיקה" for row in fallback_response["table_rows"])
 
     repeat = build_analysis_deals_response(
         FakeStore(),

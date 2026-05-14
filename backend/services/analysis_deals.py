@@ -481,7 +481,7 @@ def _table_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
                 "city": _display_value(row.get("city")),
                 "street": _display_value(row.get("street")),
                 "gush": _display_value(row.get("Gush")),
-                "address": _display_value(row.get("FULLADRESS")),
+                "address": _display_address(row),
                 "deal_year": _compact_number(row.get("deal year")),
                 "price_millions": _compact_number(row.get("price_millions")),
                 "price_per_m2": _compact_number(row.get("price_per_m2")),
@@ -697,6 +697,17 @@ def _tooltip(row: Mapping[str, Any]) -> Optional[str]:
     if story is None or pd.isna(story):
         return None
     return str(story).replace("\r\n", "\n").replace("\r", "\n").replace("\n", "<br>")
+
+
+def _display_address(row: Mapping[str, Any]) -> Any:
+    full_address = _display_value(row.get("FULLADRESS"))
+    if full_address:
+        return full_address
+
+    street = _display_value(row.get("street"))
+    city = _display_value(row.get("city"))
+    parts = [str(value).strip() for value in (street, city) if str(value).strip()]
+    return ", ".join(parts) if parts else None
 
 
 def _date_value(value: Any) -> Optional[str]:

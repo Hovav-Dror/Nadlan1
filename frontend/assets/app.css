@@ -1589,10 +1589,12 @@ option {
 
 #panel-compare .workflow-banner {
   grid-area: banner;
+  direction: rtl;
 }
 
 #panel-compare .panel-heading {
   grid-area: heading;
+  direction: rtl;
 }
 
 #panel-compare .compare-area-panel {
@@ -1622,10 +1624,8 @@ option {
 }
 
 .workflow-banner {
-  display: flex;
-  justify-content: space-between;
-  gap: 18px;
-  align-items: flex-start;
+  display: grid;
+  gap: 14px;
   border-radius: 8px;
   background: linear-gradient(135deg, #386d9f 0%, #4d738f 52%, #6f5aa2 100%);
   color: #fff;
@@ -1642,7 +1642,7 @@ option {
 .workflow-banner p,
 .workflow-explainer {
   margin: 0;
-  max-width: 760px;
+  max-width: 980px;
   color: rgba(255, 255, 255, 0.92);
 }
 
@@ -1673,7 +1673,6 @@ option {
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 7px;
-  min-width: 210px;
 }
 
 .workflow-tags span {
