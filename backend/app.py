@@ -192,16 +192,17 @@ def register_routes(app: Flask) -> None:
     def gush_search():
         started = time.perf_counter()
         query = request.args.get("q", "")
+        city = request.args.get("city")
         limit = _query_limit(request.args.get("limit"), default=30, maximum=100)
         try:
-            results = gush_search_results(_data_store(), query, limit=limit)
+            results = gush_search_results(_data_store(), query, city=city, limit=limit)
         except DataStoreError as exc:
             current_app.logger.warning("Gush search failed: %s", exc, exc_info=True)
             return _error_response(exc.public_message, started, status_code=400)
 
         return jsonify(
             _api_response(
-                data={"query": query, "results": results},
+                data={"query": query, "city": city, "results": results},
                 meta={"status": "ok", "limit": limit},
                 warnings=[],
                 started=started,

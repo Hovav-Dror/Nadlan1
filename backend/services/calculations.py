@@ -138,18 +138,31 @@ def apply_common_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]])
         result,
         "floor",
         _range_value(filters, "floor", "floor_range"),
-        retain_special_values={SPECIAL_UNKNOWN_VALUE},
+        retain_special_values={SPECIAL_UNKNOWN_VALUE} if _include_unknown(filters, "floor") else None,
     )
-    result = _apply_rooms_filter(result, _filter_value(filters, "rooms", "rooms_select"))
+    result = _apply_rooms_filter(
+        result,
+        _filter_value(filters, "rooms", "rooms_select"),
+        include_unknown=_include_unknown(filters, "rooms"),
+    )
     result = _apply_range_filter(result, "area", _range_value(filters, "area", "area_range"))
     result = _apply_range_filter(result, "price_millions", _range_value(filters, "price_millions", "price_range"))
     result = _apply_price_per_m2_filter(result, _range_value(filters, "price_per_m2", "price_per_m2_range"))
     result = _apply_range_filter(result, "deal year", _range_value(filters, "deal year", "deal_year_range", "year"))
-    result = _apply_build_year_filter(result, _range_value(filters, "build_year", "built_year_range"))
-    result = _apply_building_age_filter(result, _range_value(filters, "building age", "building_age_range"))
+    result = _apply_build_year_filter(
+        result,
+        _range_value(filters, "build_year", "built_year_range"),
+        include_unknown=_include_unknown(filters, "build_year", "built_year"),
+    )
+    result = _apply_building_age_filter(
+        result,
+        _range_value(filters, "building age", "building_age_range"),
+        include_unknown=_include_unknown(filters, "building_age", "building age"),
+    )
     result = _apply_building_floors_filter(
         result,
         _range_value(filters, "build_floors", "building_floors_range"),
+        include_unknown=_include_unknown(filters, "build_floors", "building_floors"),
     )
     result = _apply_roof_filter(result, _filter_value(filters, "roof", "roof_select"))
     result = _apply_new_project_filter(result, _filter_value(filters, "new_project", "new_project_select"))
@@ -268,7 +281,7 @@ def _apply_range_filter(
     return df.loc[mask]
 
 
-def _apply_rooms_filter(df: pd.DataFrame, selected: Any) -> pd.DataFrame:
+def _apply_rooms_filter(df: pd.DataFrame, selected: Any, *, include_unknown: bool = True) -> pd.DataFrame:
     selected_values = _as_list(selected)
     if "rooms" not in df.columns or not selected_values:
         return df
@@ -276,7 +289,9 @@ def _apply_rooms_filter(df: pd.DataFrame, selected: Any) -> pd.DataFrame:
     selected_numbers.discard(None)
     rooms = pd.to_numeric(df["rooms"], errors="coerce")
     rounded_rooms = (rooms * 2).round() / 2
-    mask = rounded_rooms.isin(selected_numbers) | rooms.eq(SPECIAL_UNKNOWN_VALUE) | rooms.isna()
+    mask = rounded_rooms.isin(selected_numbers)
+    if include_unknown:
+        mask = mask | rooms.eq(SPECIAL_UNKNOWN_VALUE) | rooms.isna()
     return df.loc[mask]
 
 
@@ -293,34 +308,46 @@ def _apply_price_per_m2_filter(
 def _apply_build_year_filter(
     df: pd.DataFrame,
     value_range: Optional[tuple[Optional[float], Optional[float]]],
+    *,
+    include_unknown: bool = True,
 ) -> pd.DataFrame:
     if value_range is None or "build_year" not in df.columns:
         return df
     values = pd.to_numeric(df["build_year"], errors="coerce")
-    mask = values.isna() | (values < 1900) | _between_mask(values, value_range)
+    mask = _between_mask(values, value_range)
+    if include_unknown:
+        mask = mask | values.isna() | (values < 1900)
     return df.loc[mask]
 
 
 def _apply_building_age_filter(
     df: pd.DataFrame,
     value_range: Optional[tuple[Optional[float], Optional[float]]],
+    *,
+    include_unknown: bool = True,
 ) -> pd.DataFrame:
     if value_range is None or "building age" not in df.columns:
         return df
     values = pd.to_numeric(df["building age"], errors="coerce")
-    mask = values.isna() | (values > 150) | _between_mask(values, value_range)
+    mask = _between_mask(values, value_range)
+    if include_unknown:
+        mask = mask | values.isna() | (values > 150)
     return df.loc[mask]
 
 
 def _apply_building_floors_filter(
     df: pd.DataFrame,
     value_range: Optional[tuple[Optional[float], Optional[float]]],
+    *,
+    include_unknown: bool = True,
 ) -> pd.DataFrame:
     if value_range is None or "build_floors" not in df.columns:
         return df
     values = pd.to_numeric(df["build_floors"], errors="coerce")
     comparison_values = values.fillna(SPECIAL_UNKNOWN_VALUE)
-    mask = comparison_values.eq(SPECIAL_UNKNOWN_VALUE) | _between_mask(comparison_values, value_range)
+    mask = _between_mask(comparison_values, value_range)
+    if include_unknown:
+        mask = mask | comparison_values.eq(SPECIAL_UNKNOWN_VALUE)
     return df.loc[mask]
 
 
@@ -383,6 +410,31 @@ def _filter_value(filters: Mapping[str, Any], *keys: str) -> Any:
     if isinstance(categorical, Mapping):
         return _first_present(categorical, *keys)
     return None
+
+
+def _include_unknown(filters: Mapping[str, Any], *keys: str) -> bool:
+    lookup_keys = [str(key).replace(" ", "_") for key in keys]
+    include_unknown = filters.get("include_unknown")
+    if isinstance(include_unknown, Mapping):
+        for key in lookup_keys:
+            if key in include_unknown:
+                return _coerce_bool(include_unknown[key], default=True)
+    for key in lookup_keys:
+        flat_key = f"include_unknown_{key}"
+        if flat_key in filters:
+            return _coerce_bool(filters[flat_key], default=True)
+    return True
+
+
+def _coerce_bool(value: Any, *, default: bool) -> bool:
+    if isinstance(value, bool):
+        return value
+    text = _normalize_text(value)
+    if text in {"true", "1", "yes", "y", "on"}:
+        return True
+    if text in {"false", "0", "no", "n", "off"}:
+        return False
+    return default
 
 
 def _first_present(values: Mapping[str, Any], *keys: str) -> Any:

@@ -34,6 +34,7 @@ from backend.services.compare_areas import (  # noqa: E402
 )
 from backend.services.filter_metadata import (  # noqa: E402
     build_filter_options_from_frame,
+    gush_search_results,
     smart_room_defaults,
 )
 from backend.services.gush_performance import (  # noqa: E402
@@ -102,6 +103,8 @@ def main() -> int:
     search_query = sample_streets[0][: min(3, len(sample_streets[0]))]
     search_results = data_store.search_streets(search_query, city=sample_city["id"], limit=5)
     assert search_results
+    tagore_gush_results = gush_search_results(data_store, "טאגור", limit=30)
+    assert {result["id"] for result in tagore_gush_results} == {6629, 6630, 6649, 7223}
 
     search_response = client.get(
         "/api/street-search",
@@ -194,6 +197,25 @@ def verify_calculation_services() -> dict[str, object]:
         },
     )
     assert filtered["id"].tolist() == [1, 2]
+
+    filtered_without_unknowns = apply_common_filters(
+        df,
+        {
+            "floor_range": [0, 3],
+            "rooms_select": [4],
+            "built_year_range": [1990, 2022],
+            "building_age_range": [0, 80],
+            "building_floors_range": [1, 5],
+            "include_unknown": {
+                "rooms": False,
+                "floor": False,
+                "build_year": False,
+                "building_age": False,
+                "build_floors": False,
+            },
+        },
+    )
+    assert filtered_without_unknowns["id"].tolist() == [1]
 
     assert apply_common_filters(df, {"roof_select": "yes"})["id"].tolist() == [1, 2]
     assert apply_common_filters(df, {"roof_select": "no"})["id"].tolist() == [3, 4, 5]

@@ -127,14 +127,22 @@ def gush_search_results(
     data_store: DataStore,
     query: str,
     *,
+    city: Optional[str] = None,
     limit: int = 30,
 ) -> List[Dict[str, Any]]:
     normalized_query = _normalize_text(query)
     if not normalized_query:
         return []
-    descriptions = data_store.load_metadata()["gush_descriptions"].copy()
+    metadata = data_store.load_metadata()
+    normalized_city = _normalize_text(city)
+    descriptions = metadata["gush_descriptions"].copy()
     working = descriptions.dropna(subset=["Gush", "Gush_desc"]).copy()
-    haystack = (
+    if normalized_city:
+        city_values = working.get("city", pd.Series("", index=working.index)).astype(str).map(_normalize_text)
+        working = working.loc[city_values == normalized_city].copy()
+        if working.empty:
+            return []
+    description_haystack = (
         working["Gush"].astype(str).map(_normalize_text)
         + " "
         + working["Gush_desc"].astype(str).map(_normalize_text)
@@ -143,13 +151,24 @@ def gush_search_results(
         + " "
         + working.get("street", pd.Series("", index=working.index)).astype(str).map(_normalize_text)
     )
-    matches = working.loc[haystack.str.contains(normalized_query, regex=False)].copy()
-    if matches.empty:
-        return []
+    matches = working.loc[description_haystack.str.contains(normalized_query, regex=False)].copy()
     matches["_rank"] = matches["Gush_desc"].astype(str).map(
         lambda label: 0 if _normalize_text(label).startswith(normalized_query) else 1
     )
-    matches = matches.sort_values(["_rank", "city", "Gush_desc"]).head(limit)
+
+    street_matches = _gush_search_street_matches(metadata["unique_gush_streets"], working, normalized_query)
+    if street_matches:
+        matches = pd.concat([matches, pd.DataFrame(street_matches)], ignore_index=True, copy=False)
+
+    if matches.empty:
+        return []
+    matches["_gush_key"] = matches["Gush"].map(_normalize_gush_id)
+    matches = (
+        matches.dropna(subset=["_gush_key"])
+        .sort_values(["_rank", "city", "Gush_desc"])
+        .drop_duplicates(subset=["city", "_gush_key"], keep="first")
+        .head(limit)
+    )
     return _json_ready(
         [
             {
@@ -157,11 +176,43 @@ def gush_search_results(
                 "label": _safe_string(row.get("Gush_desc")) or str(row.get("Gush")),
                 "city": _safe_string(row.get("city")),
                 "representative_street": _safe_string(row.get("street")),
+                "matched_street": _safe_string(row.get("matched_street")),
                 "deals": _safe_int(row.get("n")),
             }
             for _, row in matches.iterrows()
         ]
     )
+
+
+def _gush_search_street_matches(
+    street_lookup: pd.DataFrame,
+    descriptions: pd.DataFrame,
+    normalized_query: str,
+) -> List[Dict[str, Any]]:
+    streets = street_lookup.dropna(subset=["city", "street", "Gush"]).copy()
+    streets["_street_norm"] = streets["street"].astype(str).map(_normalize_text)
+    streets = streets.loc[streets["_street_norm"].str.contains(normalized_query, regex=False)]
+    if streets.empty:
+        return []
+
+    streets["_gush_key"] = streets["Gush"].map(_normalize_gush_id)
+    description_lookup = descriptions.copy()
+    description_lookup["_gush_key"] = description_lookup["Gush"].map(_normalize_gush_id)
+
+    matches = streets.merge(
+        description_lookup[["city", "_gush_key", "Gush", "Gush_desc", "street", "n"]],
+        how="inner",
+        on=["city", "_gush_key"],
+        suffixes=("_matched", ""),
+    )
+    if matches.empty:
+        return []
+
+    matches["_rank"] = matches["street_matched"].astype(str).map(
+        lambda street: 0 if _normalize_text(street).startswith(normalized_query) else 2
+    )
+    matches["matched_street"] = matches["street_matched"]
+    return matches[["city", "Gush", "Gush_desc", "street", "matched_street", "n", "_rank"]].to_dict("records")
 
 
 def gush_detail(data_store: DataStore, gush_id: Any) -> Dict[str, Any]:

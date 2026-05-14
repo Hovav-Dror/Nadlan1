@@ -41,6 +41,7 @@
   var AUTO_ANALYSIS_POINT_LIMIT = 1500;
   var AUTO_ANALYSIS_SERVER_ROW_LIMIT = 6000;
   var ANALYSIS_FACET_LIMIT = 12;
+  var TEL_AVIV_CITY_NAMES = ["תל אביב -יפו", "תל אביב-יפו", "תל אביב יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"];
 
   var pickerConfig = {
     streets: {
@@ -165,8 +166,8 @@
     "Reset ranges": "איפוס טווחים",
     "Top floor / roof": "קומה עליונה / גג",
     "New project": "פרויקט חדש",
-    "Both": "שניהם",
-    "Yes": "כן",
+    "Both": "גם",
+    "Yes": "רק",
     "No": "לא",
     "Apartment types": "סוגי דירות",
     "Apartment type": "סוג דירה",
@@ -248,6 +249,8 @@
     "Pick blocks (Gush numbers)": "בחירת גושים",
     "Search Gush number, city, label, or street": "חיפוש מספר גוש, עיר, תיאור או רחוב",
     "Compare controls": "פקדי השוואה",
+    "Filter the transactions used for each selected Gush before aggregation.": "סננו את העסקאות שנכנסות לכל גוש לפני האגרגציה.",
+    "Filter the transactions used for each selected city before aggregation.": "סננו את העסקאות שנכנסות לכל עיר לפני האגרגציה.",
     "Y value": "ערך Y",
     "Statistic": "מדד",
     "Median": "חציון",
@@ -260,6 +263,7 @@
     "Year min": "שנה מ-",
     "Year max": "שנה עד",
     "Advanced filters": "מסננים מתקדמים",
+    "Transaction filters": "מסנני עסקאות",
     "City-level": "רמת עיר",
     "Yearly trends": "מגמות שנתיות",
     "Broad filters": "מסננים רחבים",
@@ -303,6 +307,12 @@
     "Area to (m²)": "שטח עד (מ\"ר)",
     "Apartment mix": "תמהיל דירות",
     "Smart rooms": "חדרים חכמים",
+    "Include unknown": "כולל לא ידוע",
+    "Rooms unknown": "חדרים לא ידועים",
+    "Floor unknown": "קומה לא ידועה",
+    "Building floors unknown": "קומות בבניין לא ידועות",
+    "Built year unknown": "שנת בנייה לא ידועה",
+    "Age unknown": "גיל לא ידוע",
     "Building attributes": "מאפייני בניין",
     "Floor from": "קומה מ-",
     "Floor to": "קומה עד",
@@ -317,6 +327,7 @@
     "Bottom": "נמוכים",
     "Min deals": "מינימום עסקאות",
     "Min deals / year": "מינימום עסקאות / שנה",
+    "City comparison only": "ייחודי להשוואת ערים",
     "Remove price and area outliers": "הסרת חריגי מחיר ושטח",
     "Tel Aviv": "תל אביב",
     "City Performance ranks Gush areas inside this city.": "ביצועי עיר מדרגים גושים בתוך העיר הזו.",
@@ -513,10 +524,18 @@
     byId("rooms-select").addEventListener("change", renderRoomChips);
     byId("apartment-type-select").addEventListener("change", renderApartmentTypeChips);
     byId("apartment-type-search").addEventListener("input", renderApartmentTypeChips);
+    if (byId("compare-smart-reset-rooms")) byId("compare-smart-reset-rooms").addEventListener("click", applyCompareSmartRoomSelection);
     if (byId("compare-clear-rooms")) byId("compare-clear-rooms").addEventListener("click", clearCompareRoomSelection);
+    if (byId("reset-compare-filters")) byId("reset-compare-filters").addEventListener("click", resetCompareFilterRanges);
     if (byId("compare-rooms-select")) byId("compare-rooms-select").addEventListener("change", renderCompareRoomChips);
     if (byId("compare-apartment-type-select")) byId("compare-apartment-type-select").addEventListener("change", renderCompareApartmentTypeChips);
     if (byId("compare-apartment-type-search")) byId("compare-apartment-type-search").addEventListener("input", renderCompareApartmentTypeChips);
+    if (byId("city-smart-reset-rooms")) byId("city-smart-reset-rooms").addEventListener("click", applyCitySmartRoomSelection);
+    if (byId("city-clear-rooms")) byId("city-clear-rooms").addEventListener("click", clearCityRoomSelection);
+    if (byId("reset-city-filters")) byId("reset-city-filters").addEventListener("click", resetCityFilterRanges);
+    if (byId("city-rooms-select")) byId("city-rooms-select").addEventListener("change", renderCityRoomChips);
+    if (byId("city-apartment-type-select")) byId("city-apartment-type-select").addEventListener("change", renderCityApartmentTypeChips);
+    if (byId("city-apartment-type-search")) byId("city-apartment-type-search").addEventListener("input", renderCityApartmentTypeChips);
     byId("gush-rooms-select").addEventListener("change", renderGushRoomChips);
     byId("gush-apartment-type-select").addEventListener("change", renderGushApartmentTypeChips);
     byId("gush-apartment-type-search").addEventListener("input", renderGushApartmentTypeChips);
@@ -525,6 +544,8 @@
       "filter-price-m2-min", "filter-price-m2-max", "filter-area-min", "filter-area-max",
       "filter-floor-min", "filter-floor-max", "filter-building-floors-min", "filter-building-floors-max",
       "filter-built-year-min", "filter-built-year-max", "filter-building-age-min", "filter-building-age-max",
+      "include-unknown-rooms", "include-unknown-floor", "include-unknown-building-floors",
+      "include-unknown-built-year", "include-unknown-building-age",
       "roof-select", "new-project-select", "remove-price-outliers", "remove-area-outliers"
     ].forEach(function (id) {
       byId(id).addEventListener("change", updateSelectionSummary);
@@ -539,6 +560,8 @@
       "compare-filter-price-m2-min", "compare-filter-price-m2-max", "compare-filter-area-min", "compare-filter-area-max",
       "compare-filter-floor-min", "compare-filter-floor-max", "compare-filter-building-floors-min", "compare-filter-building-floors-max",
       "compare-filter-built-year-min", "compare-filter-built-year-max", "compare-filter-building-age-min", "compare-filter-building-age-max",
+      "compare-include-unknown-rooms", "compare-include-unknown-floor", "compare-include-unknown-building-floors",
+      "compare-include-unknown-built-year", "compare-include-unknown-building-age",
       "compare-rooms-select", "compare-apartment-type-select", "compare-roof-select", "compare-new-project-select"
     ].forEach(function (id) {
       byId(id).addEventListener("change", updateSelectionSummary);
@@ -553,6 +576,8 @@
       "city-filter-price-m2-min", "city-filter-price-m2-max", "city-filter-area-min", "city-filter-area-max",
       "city-filter-floor-min", "city-filter-floor-max", "city-filter-building-floors-min", "city-filter-building-floors-max",
       "city-filter-built-year-min", "city-filter-built-year-max", "city-filter-building-age-min", "city-filter-building-age-max",
+      "city-include-unknown-rooms", "city-include-unknown-floor", "city-include-unknown-building-floors",
+      "city-include-unknown-built-year", "city-include-unknown-building-age",
       "city-rooms-select", "city-apartment-type-select", "city-roof-select", "city-new-project-select"
     ].forEach(function (id) {
       byId(id).addEventListener("change", function () { scheduleCityAutoUpdate(id); });
@@ -565,6 +590,8 @@
       "gush-filter-price-m2-min", "gush-filter-price-m2-max", "gush-filter-area-min", "gush-filter-area-max",
       "gush-filter-floor-min", "gush-filter-floor-max", "gush-filter-building-floors-min", "gush-filter-building-floors-max",
       "gush-filter-built-year-min", "gush-filter-built-year-max", "gush-filter-building-age-min", "gush-filter-building-age-max",
+      "gush-include-unknown-rooms", "gush-include-unknown-floor", "gush-include-unknown-building-floors",
+      "gush-include-unknown-built-year", "gush-include-unknown-building-age",
       "gush-rooms-select", "gush-apartment-type-select", "gush-roof-select", "gush-new-project-select"
     ].forEach(function (id) {
       byId(id).addEventListener("change", function () { scheduleGushAutoUpdate(id); });
@@ -591,7 +618,7 @@
     Object.keys(pickerConfig).forEach(function (key) {
       var config = pickerConfig[key];
       byId(config.searchId).addEventListener("input", function () {
-        if (key === "gushes" && document.body.dataset.activeTab === "compare") {
+        if (key === "gushes") {
           scheduleCompareGushSearch();
           return;
         }
@@ -683,7 +710,8 @@
     renderGushApartmentTypeChips();
 
     if (cityOptions.length && !byId("city-select").value) {
-      byId("city-select").value = cityOptions[0].value;
+      var defaultAnalysisCity = cityOptionByNames(TEL_AVIV_CITY_NAMES, byId("city-select"));
+      byId("city-select").value = defaultAnalysisCity ? defaultAnalysisCity.value : cityOptions[0].value;
     }
     setDefaultGushCity();
     renderGushCityReadout();
@@ -694,7 +722,7 @@
   function setDefaultGushCity() {
     var select = byId("gush-city-select");
     if (!select || select.value) return;
-    var telAviv = cityOptionByNames(["תל אביב -יפו", "תל אביב-יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"], select);
+    var telAviv = cityOptionByNames(TEL_AVIV_CITY_NAMES, select);
     select.value = telAviv ? telAviv.value : (select.options[1] && select.options[1].value || "");
   }
 
@@ -790,6 +818,8 @@
       state.cityFilterOptions = response.data;
       state.cityFilterOptionsSignature = signature;
       applyScopedFilterDefaults("city", response.data);
+      renderCityRoomChips();
+      renderCityApartmentTypeChips();
       renderCityComparisonPicker();
       renderCityFilterSummary();
       updateSelectionSummary();
@@ -886,7 +916,7 @@
 
   async function useTelAvivPerformanceDefault() {
     var citySelect = byId("gush-city-select");
-    var telAviv = cityOptionByNames(["תל אביב -יפו", "תל אביב-יפו", "Tel Aviv-Yafo", "tel_aviv_yafo"], citySelect);
+    var telAviv = cityOptionByNames(TEL_AVIV_CITY_NAMES, citySelect);
     if (!telAviv) {
       setNotice("gush-state", "Tel Aviv is not available in the loaded city list.", "warning");
       return;
@@ -1437,6 +1467,7 @@
     addRange(filters, "building_age_range", filterControlId(scope, "filter-building-age-min"), filterControlId(scope, "filter-building-age-max"));
     var rooms = selectedValues(byId(filterControlId(scope, "rooms-select"))).map(Number).filter(Number.isFinite);
     if (rooms.length) filters.rooms = rooms;
+    filters.include_unknown = includeUnknownFilters(scope);
     addOptionalFilter(filters, "roof_select", filterControlId(scope, "roof-select"), "both");
     addOptionalFilter(filters, "new_project_select", filterControlId(scope, "new-project-select"), "both");
     var apartmentTypes = selectedValues(byId(filterControlId(scope, "apartment-type-select")));
@@ -1463,13 +1494,25 @@
 
   function renderAnalysisChart(data) {
     var points = data.points || [];
+    var chart = byId("analysis-chart");
     if (!points.length) {
-      renderAnalysisChartGuide(data);
+      if (data && Object.prototype.hasOwnProperty.call(data, "table_rows")) {
+        if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
+          Plotly.purge(chart);
+        }
+        chart.hidden = true;
+        chart.className = "chart";
+        chart.innerHTML = "";
+        return;
+      }
+      renderAnalysisChartGuide();
       return;
     }
+    chart.hidden = false;
+    chart.className = "chart";
+    chart.innerHTML = "";
     var chartSpec = analysisChartSpec(points, data);
     Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout).then(function () {
-      var chart = byId("analysis-chart");
       if (chart.removeAllListeners) chart.removeAllListeners("plotly_click");
       chart.on("plotly_click", function (event) {
         var point = event.points && event.points[0];
@@ -1484,6 +1527,7 @@
     if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
       Plotly.purge(chart);
     }
+    chart.hidden = false;
     chart.className = "chart chart-guide";
     var hasAttemptedAnalysis = data && Object.prototype.hasOwnProperty.call(data, "table_rows");
     var title = hasAttemptedAnalysis ? "לא נמצאו עסקאות מתאימות" : "איך מתחילים";
@@ -1494,10 +1538,10 @@
       '<h3>' + escapeHtml(title) + "</h3>" +
       '<p>' + escapeHtml(intro) + "</p>" +
       "<ol>" +
-      "<li><strong>בחרו עיר</strong> או השתמשו באקראי כדי לטעון דוגמה שניתן להריץ.</li>" +
+      '<li><strong>בחרו עיר</strong> או השתמשו בכפתור "אקראי"</li>' +
       "<li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים או הרחבת גושים לרחובות.</li>" +
       "<li><strong>כוונו מסננים</strong> לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.</li>" +
-      "<li><strong>עדכנו ניתוח</strong> כדי לצייר גרף פיזור וטבלה ברמת עסקה.</li>" +
+      '<li>לחצו על הכפתור <strong>"עדכון ניתוח"</strong> כדי לצייר גרף פיזור והפקת טבלה של העסקאות.</li>' +
       "</ol>" +
       '<div class="chart-guide-tips"><strong>טיפים</strong><ul>' +
       "<li>השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.</li>" +
@@ -2312,7 +2356,7 @@
       ["כתובת", row.address]
     ];
     target.innerHTML = '<div class="deal-card"><h3>עסקה שנבחרה</h3><dl>' + fields.map(function (field) {
-      return "<div><dt>" + escapeHtml(field[0]) + "</dt><dd class='" + textDirectionClass(field[1]) + "'>" + escapeHtml(valueOrDash(field[1])) + "</dd></div>";
+      return '<div class="deal-field"><dt>' + escapeHtml(field[0]) + "</dt><dd class='" + textDirectionClass(field[1]) + "'>" + escapeHtml(valueOrDash(field[1])) + "</dd></div>";
     }).join("") + "</dl></div>";
   }
 
@@ -2368,9 +2412,9 @@
     var rooms = selectedValues(byId("compare-rooms-select"));
     if (rooms.length) parts.push("חדרים: " + rooms.join(", "));
     var roof = byId("compare-roof-select").value;
-    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "רק" : "לא"));
     var project = byId("compare-new-project-select").value;
-    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "רק" : "לא"));
     if (payload.remove_price_outliers) parts.push("חריגים הוסרו");
     return parts;
   }
@@ -2448,9 +2492,9 @@
     var apartmentTypes = selectedValues(byId("gush-apartment-type-select"));
     if (apartmentTypes.length) parts.push("סוג דירה: " + compactList(apartmentTypes, 4));
     var roof = byId("gush-roof-select").value;
-    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "רק" : "לא"));
     var project = byId("gush-new-project-select").value;
-    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "רק" : "לא"));
     if (byId("gush-remove-price-outliers").checked) parts.push("חריגי מחיר ושטח הוסרו");
     return parts;
   }
@@ -2521,9 +2565,9 @@
     var rooms = selectedValues(byId("city-rooms-select"));
     if (rooms.length) parts.push("חדרים: " + rooms.join(", "));
     var roof = byId("city-roof-select").value;
-    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "רק" : "לא"));
     var project = byId("city-new-project-select").value;
-    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "רק" : "לא"));
     if (byId("city-remove-price-outliers").checked) parts.push("חריגים הוסרו");
     return parts;
   }
@@ -2801,6 +2845,7 @@
     }
     byId("gush-roof-select").value = "both";
     byId("gush-new-project-select").value = "both";
+    resetIncludeUnknownFilters("gush");
     byId("gush-remove-price-outliers").checked = true;
     renderGushRoomChips();
     renderGushApartmentTypeChips();
@@ -2816,12 +2861,84 @@
     setNotice("compare-state", "Room filter cleared for Compare Areas.", "ok");
   }
 
+  function applyCompareSmartRoomSelection() {
+    var smartRooms = state.filterOptions && state.filterOptions.rooms && state.filterOptions.rooms.smart_selected;
+    if (!smartRooms || !smartRooms.length) {
+      setNotice("compare-state", "No smart room selection is available for the selected areas.", "warning");
+      return;
+    }
+    setSelectedValues(byId("compare-rooms-select"), smartRooms);
+    renderCompareRoomChips();
+    updateSelectionSummary();
+    scheduleCompareAutoUpdate("rooms");
+    setNotice("compare-state", "Smart room filter applied for Compare Areas.", "ok");
+  }
+
+  function resetCompareFilterRanges() {
+    var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
+    setSelectedValues(byId("compare-apartment-type-select"), defaultApartmentTypes);
+    if (state.filterOptions) {
+      applyScopedFilterDefaults("compare", state.filterOptions);
+    }
+    byId("compare-roof-select").value = "both";
+    byId("compare-new-project-select").value = "both";
+    resetIncludeUnknownFilters("compare");
+    byId("compare-remove-price-outliers").checked = true;
+    syncSegmentedControls();
+    renderCompareRoomChips();
+    renderCompareApartmentTypeChips();
+    updateSelectionSummary();
+    scheduleCompareAutoUpdate("reset-filters");
+    setNotice("compare-state", "Compare filters reset to the selected areas' available ranges.", "ok");
+  }
+
+  function applyCitySmartRoomSelection() {
+    var smartRooms = state.cityFilterOptions && state.cityFilterOptions.rooms && state.cityFilterOptions.rooms.smart_selected;
+    if (!smartRooms || !smartRooms.length) {
+      setNotice("city-state", "No smart room selection is available for the selected cities.", "warning");
+      return;
+    }
+    setSelectedValues(byId("city-rooms-select"), smartRooms);
+    renderCityRoomChips();
+    updateSelectionSummary();
+    scheduleCityAutoUpdate("rooms");
+    setNotice("city-state", "Smart room filter applied for City Comparison.", "ok");
+  }
+
+  function clearCityRoomSelection() {
+    setSelectedValues(byId("city-rooms-select"), []);
+    renderCityRoomChips();
+    updateSelectionSummary();
+    scheduleCityAutoUpdate("rooms");
+    setNotice("city-state", "Room filter cleared for City Comparison.", "ok");
+  }
+
+  function resetCityFilterRanges() {
+    var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
+    setSelectedValues(byId("city-apartment-type-select"), defaultApartmentTypes);
+    if (state.cityFilterOptions) {
+      applyScopedFilterDefaults("city", state.cityFilterOptions);
+    }
+    byId("city-roof-select").value = "both";
+    byId("city-new-project-select").value = "both";
+    resetIncludeUnknownFilters("city");
+    byId("city-remove-price-outliers").checked = true;
+    syncSegmentedControls();
+    renderCityRoomChips();
+    renderCityApartmentTypeChips();
+    renderCityFilterSummary();
+    updateSelectionSummary();
+    scheduleCityAutoUpdate("reset-filters");
+    setNotice("city-state", "City Comparison filters reset to the selected cities' available ranges.", "ok");
+  }
+
   function resetFilterRanges() {
     if (state.filterOptions) {
       applyFilterDefaults(state.filterOptions);
     }
     byId("roof-select").value = "both";
     byId("new-project-select").value = "both";
+    resetIncludeUnknownFilters("analysis");
     syncSegmentedControls();
     updateSelectionSummary();
     scheduleAnalysisAutoUpdate("reset-filters");
@@ -2999,7 +3116,7 @@
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "selection-chip";
-      chip.textContent = (option ? option.textContent : value) + " ×";
+      chip.innerHTML = chipMarkup(option ? option.textContent : value);
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
         renderCityComparisonPicker();
@@ -3082,21 +3199,30 @@
   }
 
   async function runCompareGushSearch() {
-    var search = byId("compare-gush-search") || byId("gush-picker-search");
-    var results = byId("compare-gush-results") || byId("gush-picker-results");
+    var isCompare = document.body.dataset.activeTab === "compare";
+    var search = byId(isCompare ? "compare-gush-search" : "gush-picker-search");
+    var results = byId(isCompare ? "compare-gush-results" : "gush-picker-results");
     if (!search || !results) return;
     var query = search.value.trim();
     if (query.length < 2) {
-      renderCompareGushPicker();
+      renderLocationPickers();
       return;
     }
     var requestId = ++state.compareGushSearchRequestId;
-    results.innerHTML = '<div class="mini-notice">מחפש גושים בכל הערים...</div>';
+    var citySelect = byId("city-select");
+    var cityLabel = !isCompare && citySelect && citySelect.value ? selectedOptionText("city-select") : "";
+    if (!isCompare && !cityLabel) {
+      renderPicker("gushes");
+      return;
+    }
+    var url = "api/gush-search?q=" + encodeURIComponent(query) + "&limit=100";
+    if (cityLabel) url += "&city=" + encodeURIComponent(cityLabel);
+    results.innerHTML = '<div class="mini-notice">' + (isCompare ? "מחפש גושים בכל הערים..." : "מחפש גושים לפי רחובות בעיר שנבחרה...") + "</div>";
     try {
-      var response = await getJson("api/gush-search?q=" + encodeURIComponent(query) + "&limit=30");
+      var response = await getJson(url);
       if (requestId !== state.compareGushSearchRequestId) return;
       mergeCompareGushOptions(response.data.results || []);
-      renderCompareGushPicker();
+      renderLocationPickers();
     } catch (error) {
       results.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
     }
@@ -3107,11 +3233,12 @@
     (gushes || []).forEach(function (gush) {
       var details = [gush.city, "-", gush.label, "(" + gush.id + ")"].filter(Boolean);
       if (gush.representative_street) details.push("- " + gush.representative_street);
+      if (gush.matched_street && gush.matched_street !== gush.representative_street) details.push("- נמצא ברחוב " + gush.matched_street);
       if (gush.deals) details.push("· " + formatNumber(gush.deals) + " עסקאות");
       ensureSelectOption(select, {
         value: gush.id,
         label: details.join(" "),
-        searchText: [gush.id, gush.label, gush.city, gush.representative_street].filter(Boolean).join(" ")
+        searchText: [gush.id, gush.label, gush.city, gush.representative_street, gush.matched_street].filter(Boolean).join(" ")
       });
     });
   }
@@ -3137,7 +3264,7 @@
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "selection-chip";
-      chip.textContent = (option ? option.textContent : value) + " ×";
+      chip.innerHTML = chipMarkup(option ? option.textContent : value);
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
         renderLocationPickers();
@@ -3171,8 +3298,13 @@
       var button = document.createElement("button");
       button.type = "button";
       button.className = "picker-option";
+      if (key === "gushes") button.classList.add("gush-picker-option");
       button.classList.toggle("is-selected", selected.has(String(option.value)));
-      button.textContent = option.textContent;
+      if (key === "gushes") {
+        button.innerHTML = '<span class="gush-picker-result-label ' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</span>";
+      } else {
+        button.textContent = option.textContent;
+      }
       if (hasHebrew(option.textContent)) button.classList.add("rtl-text");
       button.addEventListener("click", function () {
         togglePickerValue(key, option.value);
@@ -3201,7 +3333,7 @@
       var chip = document.createElement("button");
       chip.type = "button";
       chip.className = "selection-chip";
-      chip.textContent = (option ? option.textContent : value) + " ×";
+      chip.innerHTML = chipMarkup(option ? option.textContent : value);
       if (option && hasHebrew(option.textContent)) chip.classList.add("rtl-text");
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
@@ -3229,7 +3361,7 @@
       button.type = "button";
       button.className = "picker-option compare-gush-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
-      button.innerHTML = '<strong class="' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</strong>";
+      button.innerHTML = '<span class="compare-gush-result-label ' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</span>";
       button.addEventListener("click", function () {
         setSelectedValues(byId("street-select"), []);
         setOptionSelected(select, option.value, !option.selected);
@@ -3262,6 +3394,11 @@
     scheduleFilterOptions();
     scheduleAnalysisAutoUpdate("location");
     scheduleCompareAutoUpdate("location");
+  }
+
+  function chipMarkup(label) {
+    return '<span class="chip-remove" aria-hidden="true">×</span><span class="chip-label">' +
+      escapeHtml(label) + "</span>";
   }
 
   function scheduleFilterOptions() {
@@ -3514,6 +3651,17 @@
     });
   }
 
+  function renderCityRoomChips() {
+    renderScopedRoomChips({
+      targetId: "city-rooms-chip-group",
+      selectId: "city-rooms-select",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleCityAutoUpdate("rooms");
+      }
+    });
+  }
+
   function renderGushRoomChips() {
     renderScopedRoomChips({
       targetId: "gush-rooms-chip-group",
@@ -3570,6 +3718,18 @@
       onChange: function () {
         updateSelectionSummary();
         scheduleCompareAutoUpdate("apartment-types");
+      }
+    });
+  }
+
+  function renderCityApartmentTypeChips() {
+    renderScopedApartmentTypeChips({
+      targetId: "city-apartment-type-chip-group",
+      selectId: "city-apartment-type-select",
+      searchId: "city-apartment-type-search",
+      onChange: function () {
+        updateSelectionSummary();
+        scheduleCityAutoUpdate("apartment-types");
       }
     });
   }
@@ -3655,6 +3815,34 @@
   function addOptionalFilter(filters, key, selectId, emptyValue) {
     var value = byId(selectId).value;
     if (value && value !== emptyValue) filters[key] = value;
+  }
+
+  function includeUnknownFilters(scope) {
+    return {
+      rooms: checkboxValue(filterControlId(scope, "include-unknown-rooms"), true),
+      floor: checkboxValue(filterControlId(scope, "include-unknown-floor"), true),
+      build_floors: checkboxValue(filterControlId(scope, "include-unknown-building-floors"), true),
+      build_year: checkboxValue(filterControlId(scope, "include-unknown-built-year"), true),
+      building_age: checkboxValue(filterControlId(scope, "include-unknown-building-age"), true)
+    };
+  }
+
+  function resetIncludeUnknownFilters(scope) {
+    [
+      "include-unknown-rooms",
+      "include-unknown-floor",
+      "include-unknown-building-floors",
+      "include-unknown-built-year",
+      "include-unknown-building-age"
+    ].forEach(function (baseId) {
+      var element = byId(filterControlId(scope, baseId));
+      if (element) element.checked = true;
+    });
+  }
+
+  function checkboxValue(id, fallback) {
+    var element = byId(id);
+    return element ? element.checked : fallback;
   }
 
   function filterControlId(scope, baseId) {
@@ -3819,13 +4007,13 @@
     return value
       .replace(/^Choose\.\.\.$/, "בחרו...")
       .replace(/^Select a city$/, "בחרו עיר")
-      .replace(/^ or use Random to load a runnable example\.$/, " או השתמשו באקראי כדי לטעון דוגמה שניתן להריץ.")
+      .replace(/^ or use Random to load a runnable example\.$/, ' או השתמשו בכפתור "אקראי"')
       .replace(/^Choose properties$/, "בחרו נכסים")
       .replace(/^ by searching streets, selecting Gush areas, or expanding selected Gush areas into streets\.$/, " בעזרת חיפוש רחובות, בחירת גושים או הרחבת גושים לרחובות.")
       .replace(/^Adjust filters$/, "כוונו מסננים")
       .replace(/^ for year, price, area, rooms, floor, project status, and outliers\.$/, " לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.")
-      .replace(/^Update analysis$/, "עדכנו ניתוח")
-      .replace(/^ to draw the transaction-level scatter plot and table\.$/, " כדי לצייר גרף פיזור וטבלה ברמת עסקה.")
+      .replace(/^Update analysis$/, 'לחצו על הכפתור "עדכון ניתוח"')
+      .replace(/^ to draw the transaction-level scatter plot and table\.$/, " כדי לצייר גרף פיזור והפקת טבלה של העסקאות.")
       .replace(/^Use street search when you do not know which Gush area contains a street\.$/, "השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.")
       .replace(/^Smart reset chooses common room counts for the current selection\.$/, "איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.")
       .replace(/^After the plot appears, click a point to inspect its transaction details\.$/, "אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.")
@@ -3905,6 +4093,12 @@
       .replace(/^Room filter cleared for City Performance\.$/, "מסנן החדרים נוקה לביצועי עיר.")
       .replace(/^City Performance filters reset to the selected city's available ranges\.$/, "מסנני ביצועי העיר אופסו לטווחים הזמינים בעיר שנבחרה.")
       .replace(/^Room filter cleared for Compare Areas\.$/, "מסנן החדרים נוקה להשוואת אזורים.")
+      .replace(/^Smart room filter applied for Compare Areas\.$/, "מסנן חדרים חכם הופעל להשוואת אזורים.")
+      .replace(/^Compare filters reset to the selected areas' available ranges\.$/, "מסנני ההשוואה אופסו לטווחים הזמינים באזורים שנבחרו.")
+      .replace(/^No smart room selection is available for the selected cities\.$/, "אין בחירת חדרים חכמה לערים שנבחרו.")
+      .replace(/^Smart room filter applied for City Comparison\.$/, "מסנן חדרים חכם הופעל להשוואת ערים.")
+      .replace(/^Room filter cleared for City Comparison\.$/, "מסנן החדרים נוקה להשוואת ערים.")
+      .replace(/^City Comparison filters reset to the selected cities' available ranges\.$/, "מסנני השוואת הערים אופסו לטווחים הזמינים בערים שנבחרו.")
       .replace(/^Filter ranges reset to the current selection\.$/, "טווחי הסינון אופסו לבחירה הנוכחית.")
       .replace(/^City preset applied\. Update cities to refresh the chart\.$/, "קבוצת ערים הוחלה. עדכנו ערים כדי לרענן את הגרף.")
       .replace(/^City selection cleared\.$/, "בחירת הערים נוקתה.")
@@ -3958,7 +4152,7 @@
       .replace(/^Outliers removed$/, "חריגים הוסרו")
       .replace(/^Unavailable$/, "לא זמין")
       .replace(/^All$/, "הכל")
-      .replace(/^Both$/, "שניהם");
+      .replace(/^Both$/, "גם");
   }
 
   function cssEscape(value) {
@@ -3968,9 +4162,9 @@
 
   function statusFilterText() {
     var labels = [];
-    if (byId("roof-select").value !== "both") labels.push("גג: " + (byId("roof-select").value === "yes" ? "כן" : "לא"));
-    if (byId("new-project-select").value !== "both") labels.push("פרויקט: " + (byId("new-project-select").value === "yes" ? "כן" : "לא"));
-    return labels.length ? labels.join(", ") : "שניהם";
+    if (byId("roof-select").value !== "both") labels.push("גג: " + (byId("roof-select").value === "yes" ? "רק" : "לא"));
+    if (byId("new-project-select").value !== "both") labels.push("פרויקט: " + (byId("new-project-select").value === "yes" ? "רק" : "לא"));
+    return labels.length ? labels.join(", ") : "גם";
   }
 
   function customRangeFilterCount(scope) {
