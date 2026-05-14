@@ -228,7 +228,7 @@
     "Auto update": "עדכון אוטומטי",
     "Auto-update": "עדכון אוטומטי",
     "Auto-update for small datasets (<500 records)": "עדכון אוטומטי לנתונים קטנים (פחות מ-500 רשומות)",
-    "Auto-update when small enough (<500 records)": "עדכון אוטומטי כשהנתונים קטנים מספיק (פחות מ-500 רשומות)",
+    "Auto-update city chart": "עדכון גרף אוטומטי",
     "City-wide": "כל העיר",
     "Getting Started": "איך מתחילים",
     "No Matching Transactions": "לא נמצאו עסקאות מתאימות",
@@ -3146,7 +3146,7 @@
       button.className = "picker-option city-picker-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
       button.innerHTML = '<span class="city-picker-check" aria-hidden="true"></span><span class="city-picker-label ' + textDirectionClass(option.textContent) + '">' +
-        escapeHtml(option.textContent) + '</span><small>' + escapeHtml(formatNumber(cityRowsForOption(option)) + " שורות") + "</small>";
+        escapeHtml(option.textContent) + "</span>";
       button.addEventListener("click", function () {
         setOptionSelected(select, option.value, !selected.has(String(option.value)));
         renderCityComparisonPicker();
@@ -3525,13 +3525,7 @@
       scheduleCityFilterOptions();
       return { status: "waiting" };
     }
-    var counts = state.cityFilterOptions.counts || {};
-    var estimate = Number(counts.after_outlier_removal || counts.before_outlier_removal || 0);
-    if (!Number.isFinite(estimate) || estimate <= 0 || estimate < 500) return { status: "run" };
-    return {
-      status: "skip-size",
-      message: "Auto update paused for " + formatNumber(estimate) + " city-level deals. Click Update cities to run it."
-    };
+    return { status: "run" };
   }
 
   function runCompareAutoUpdate(reason) {
@@ -4111,7 +4105,6 @@
       .replace(/^Compare Areas supports up to 15 Gush areas\. Keeping the first 15 selected\.$/, "השוואת אזורים תומכת בעד 15 גושים. נשמרים 15 הראשונים שנבחרו.")
       .replace(/^Auto update paused for ([\d,]+) estimated matching deals\. Click Update analysis to run it\.$/, "העדכון האוטומטי נעצר עבור כ-$1 עסקאות מתאימות. לחצו עדכון ניתוח כדי להריץ.")
       .replace(/^Auto update paused because this would render about ([\d,]+) points\. Lower the row limit or click Update analysis\.$/, "העדכון האוטומטי נעצר כי יוצגו בערך $1 נקודות. הורידו את מגבלת השורות או לחצו עדכון ניתוח.")
-      .replace(/^Auto update paused for ([\d,]+) city-level deals\. Click Update cities to run it\.$/, "העדכון האוטומטי נעצר עבור $1 עסקאות ברמת עיר. לחצו עדכון ערים כדי להריץ.")
       .replace(/^Auto update paused because Compare Areas supports up to 15 selected Gush areas\.$/, "העדכון האוטומטי נעצר כי השוואת אזורים תומכת בעד 15 גושים שנבחרו.")
       .replace(/^Choose a city or selected Gush area first\.$/, "בחרו עיר או גוש קודם.")
       .replace(/^Choose a city and search for streets or Gush areas\. Metadata loads automatically\.$/, "בחרו עיר וחפשו רחובות או גושים. המטא-דאטה נטען אוטומטית.")
