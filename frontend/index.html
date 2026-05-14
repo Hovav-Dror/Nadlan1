@@ -110,7 +110,7 @@
               <div class="room-filter-header">
                 <span>Rooms</span>
                 <span class="room-filter-actions">
-                  <label class="include-unknown-toggle"><input id="include-unknown-rooms" type="checkbox" checked> Include unknown</label>
+                  <label class="include-unknown-toggle"><input id="include-unknown-rooms" type="checkbox" checked> Unknown</label>
                   <button id="smart-reset-rooms" class="secondary compact-button" type="button">Smart reset</button>
                 </span>
               </div>
@@ -132,10 +132,11 @@
                 <h4>Building attributes</h4>
               </div>
               <div class="unknown-filter-grid">
-                <label><input id="include-unknown-floor" type="checkbox" checked> Floor unknown</label>
-                <label><input id="include-unknown-building-floors" type="checkbox" checked> Building floors unknown</label>
-                <label><input id="include-unknown-built-year" type="checkbox" checked> Built year unknown</label>
-                <label><input id="include-unknown-building-age" type="checkbox" checked> Age unknown</label>
+                <span class="unknown-filter-title">Include unknown</span>
+                <label><input id="include-unknown-floor" type="checkbox" checked> Floor</label>
+                <label><input id="include-unknown-building-floors" type="checkbox" checked> Floors</label>
+                <label><input id="include-unknown-built-year" type="checkbox" checked> Build year</label>
+                <label><input id="include-unknown-building-age" type="checkbox" checked> Age</label>
               </div>
               <div class="range-grid">
                 <label>Floor min<input id="filter-floor-min" inputmode="numeric"></label>
@@ -627,7 +628,7 @@
                     <div class="room-filter-header">
                       <span>Rooms</span>
                       <span class="room-filter-actions">
-                        <label class="include-unknown-toggle"><input id="compare-include-unknown-rooms" type="checkbox" checked> Include unknown</label>
+                        <label class="include-unknown-toggle"><input id="compare-include-unknown-rooms" type="checkbox" checked> Unknown</label>
                         <button id="compare-smart-reset-rooms" class="secondary compact-button" type="button">Smart reset</button>
                         <button id="compare-clear-rooms" class="secondary compact-button" type="button">All rooms</button>
                       </span>
@@ -646,10 +647,11 @@
                       <h4>Building attributes</h4>
                     </div>
                     <div class="unknown-filter-grid">
-                      <label><input id="compare-include-unknown-floor" type="checkbox" checked> Floor unknown</label>
-                      <label><input id="compare-include-unknown-building-floors" type="checkbox" checked> Building floors unknown</label>
-                      <label><input id="compare-include-unknown-built-year" type="checkbox" checked> Built year unknown</label>
-                      <label><input id="compare-include-unknown-building-age" type="checkbox" checked> Age unknown</label>
+                      <span class="unknown-filter-title">Include unknown</span>
+                      <label><input id="compare-include-unknown-floor" type="checkbox" checked> Floor</label>
+                      <label><input id="compare-include-unknown-building-floors" type="checkbox" checked> Floors</label>
+                      <label><input id="compare-include-unknown-built-year" type="checkbox" checked> Build year</label>
+                      <label><input id="compare-include-unknown-building-age" type="checkbox" checked> Age</label>
                     </div>
                     <div class="range-grid">
                       <label>Floor min<input id="compare-filter-floor-min" inputmode="numeric"></label>
@@ -812,7 +814,7 @@
                   <div class="room-filter-header">
                     <span>Rooms</span>
                     <span class="room-filter-actions">
-                      <label class="include-unknown-toggle"><input id="city-include-unknown-rooms" type="checkbox" checked> Include unknown</label>
+                      <label class="include-unknown-toggle"><input id="city-include-unknown-rooms" type="checkbox" checked> Unknown</label>
                       <button id="city-smart-reset-rooms" class="secondary compact-button" type="button">Smart reset</button>
                       <button id="city-clear-rooms" class="secondary compact-button" type="button">All rooms</button>
                     </span>
@@ -831,10 +833,11 @@
                     <h4>Building attributes</h4>
                   </div>
                   <div class="unknown-filter-grid">
-                    <label><input id="city-include-unknown-floor" type="checkbox" checked> Floor unknown</label>
-                    <label><input id="city-include-unknown-building-floors" type="checkbox" checked> Building floors unknown</label>
-                    <label><input id="city-include-unknown-built-year" type="checkbox" checked> Built year unknown</label>
-                    <label><input id="city-include-unknown-building-age" type="checkbox" checked> Age unknown</label>
+                    <span class="unknown-filter-title">Include unknown</span>
+                    <label><input id="city-include-unknown-floor" type="checkbox" checked> Floor</label>
+                    <label><input id="city-include-unknown-building-floors" type="checkbox" checked> Floors</label>
+                    <label><input id="city-include-unknown-built-year" type="checkbox" checked> Build year</label>
+                    <label><input id="city-include-unknown-building-age" type="checkbox" checked> Age</label>
                   </div>
                   <div class="range-grid city-filter-range-grid">
                     <label>Floor min<input id="city-filter-floor-min" inputmode="numeric"></label>
@@ -884,7 +887,7 @@
                   <h3>Update Analysis</h3>
                   <button id="run-city" type="button">Update Plot</button>
                   <button id="cancel-city" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
-                  <label><input id="auto-update-city" type="checkbox" checked> Auto-update for small datasets (&lt;500 records)</label>
+                  <label><input id="auto-update-city" type="checkbox" checked> Auto-update when small enough (&lt;500 records)</label>
                 </section>
                 <section class="plot-controls city-plot-controls" aria-label="City plot controls">
                   <div class="plot-controls-heading">
@@ -1026,7 +1029,7 @@
                 <div class="room-filter-header">
                   <span>Rooms</span>
                   <span class="room-filter-actions">
-                    <label class="include-unknown-toggle"><input id="gush-include-unknown-rooms" type="checkbox" checked> Include unknown</label>
+                    <label class="include-unknown-toggle"><input id="gush-include-unknown-rooms" type="checkbox" checked> Unknown</label>
                     <button id="clear-gush-rooms" class="secondary compact-button" type="button">All rooms</button>
                   </span>
                 </div>
@@ -1042,10 +1045,11 @@
                   <h4>Building attributes</h4>
                 </div>
                 <div class="unknown-filter-grid">
-                  <label><input id="gush-include-unknown-floor" type="checkbox" checked> Floor unknown</label>
-                  <label><input id="gush-include-unknown-building-floors" type="checkbox" checked> Building floors unknown</label>
-                  <label><input id="gush-include-unknown-built-year" type="checkbox" checked> Built year unknown</label>
-                  <label><input id="gush-include-unknown-building-age" type="checkbox" checked> Age unknown</label>
+                  <span class="unknown-filter-title">Include unknown</span>
+                  <label><input id="gush-include-unknown-floor" type="checkbox" checked> Floor</label>
+                  <label><input id="gush-include-unknown-building-floors" type="checkbox" checked> Floors</label>
+                  <label><input id="gush-include-unknown-built-year" type="checkbox" checked> Build year</label>
+                  <label><input id="gush-include-unknown-building-age" type="checkbox" checked> Age</label>
                 </div>
                 <div class="range-grid">
                   <label>Floor from<input id="gush-filter-floor-min" inputmode="numeric"></label>

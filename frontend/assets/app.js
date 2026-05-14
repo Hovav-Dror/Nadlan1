@@ -228,6 +228,7 @@
     "Auto update": "עדכון אוטומטי",
     "Auto-update": "עדכון אוטומטי",
     "Auto-update for small datasets (<500 records)": "עדכון אוטומטי לנתונים קטנים (פחות מ-500 רשומות)",
+    "Auto-update when small enough (<500 records)": "עדכון אוטומטי כשהנתונים קטנים מספיק (פחות מ-500 רשומות)",
     "City-wide": "כל העיר",
     "Getting Started": "איך מתחילים",
     "No Matching Transactions": "לא נמצאו עסקאות מתאימות",
@@ -308,11 +309,14 @@
     "Apartment mix": "תמהיל דירות",
     "Smart rooms": "חדרים חכמים",
     "Include unknown": "כולל לא ידוע",
-    "Rooms unknown": "חדרים לא ידועים",
-    "Floor unknown": "קומה לא ידועה",
-    "Building floors unknown": "קומות בבניין לא ידועות",
-    "Built year unknown": "שנת בנייה לא ידועה",
-    "Age unknown": "גיל לא ידוע",
+    "Unknown": "לא ידוע",
+    "Floors": "קומות",
+    "Age": "גיל",
+    "Rooms unknown": "חדרים",
+    "Floor unknown": "קומה",
+    "Building floors unknown": "קומות",
+    "Built year unknown": "שנת בנייה",
+    "Age unknown": "גיל",
     "Building attributes": "מאפייני בניין",
     "Floor from": "קומה מ-",
     "Floor to": "קומה עד",
@@ -408,7 +412,7 @@
         if (tab === "compare") scheduleCompareAutoUpdate("tab");
         if (tab === "city") {
           scheduleCityFilterOptions();
-          setNotice("city-state", state.cityHasRun ? "City filters are ready. Change filters or click Update Plot." : "Select cities and click Update Plot. City comparison no longer runs automatically on first open.", "ok");
+          setNotice("city-state", state.cityHasRun ? "City filters are ready. Change filters or click Update Plot." : "Select cities. City Comparison updates automatically when the filtered dataset is small enough.", "ok");
         }
     if (tab === "gush") {
       if (!state.gushFilterOptions || state.gushFilterOptionsSignature !== currentGushFilterOptionsSignature()) {
@@ -3098,11 +3102,15 @@
         var option = optionForValue(select, value);
         return option ? option.textContent : value;
       });
-      summary.innerHTML = '<strong>' + escapeHtml(formatNumber(selectedList.length) + " ערים נבחרו") + "</strong>" +
+      var previewLabels = selectedLabels.slice(0, 6).map(function (label) {
+        return '<span class="city-selection-pill ' + textDirectionClass(label) + '">' + escapeHtml(label) + "</span>";
+      }).join("");
+      summary.innerHTML = '<div><strong>' + escapeHtml(formatNumber(selectedList.length) + " ערים נבחרו") + "</strong>" +
+        '<span class="city-selection-hint">לחצו על עיר מסומנת כדי להסיר אותה</span></div>' +
         '<button class="secondary compact-button" type="button">ניקוי</button>' +
-        '<span class="' + textDirectionClass(selectedLabels.join(", ")) + '">' +
-        escapeHtml(selectedLabels.slice(0, 6).join(", ") + (selectedLabels.length > 6 ? " +" + (selectedLabels.length - 6) + " נוספות" : "")) +
-        "</span>";
+        '<div class="city-selection-preview">' + previewLabels +
+        (selectedLabels.length > 6 ? '<span class="city-selection-pill">+' + escapeHtml(formatNumber(selectedLabels.length - 6)) + " נוספות</span>" : "") +
+        "</div>";
       summary.querySelector("button").addEventListener("click", function () {
         setSelectedValues(select, []);
         renderCityComparisonPicker();
@@ -3137,8 +3145,8 @@
       button.type = "button";
       button.className = "picker-option city-picker-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
-      button.innerHTML = '<span class="' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + '</span><small>' +
-        escapeHtml(formatNumber(cityRowsForOption(option)) + " שורות") + "</small>";
+      button.innerHTML = '<span class="city-picker-check" aria-hidden="true"></span><span class="city-picker-label ' + textDirectionClass(option.textContent) + '">' +
+        escapeHtml(option.textContent) + '</span><small>' + escapeHtml(formatNumber(cityRowsForOption(option)) + " שורות") + "</small>";
       button.addEventListener("click", function () {
         setOptionSelected(select, option.value, !selected.has(String(option.value)));
         renderCityComparisonPicker();
@@ -3172,7 +3180,7 @@
     renderCityComparisonPicker();
     scheduleCityFilterOptions();
     scheduleCityAutoUpdate("city-preset");
-    setNotice("city-state", values.length ? "City preset applied. Update cities to refresh the chart." : "City selection cleared.", values.length ? "ok" : "warning");
+    setNotice("city-state", values.length ? "City preset applied. Auto-update will run when the filtered dataset is small enough." : "City selection cleared.", values.length ? "ok" : "warning");
   }
 
   function cityRowsForOption(option) {
@@ -3479,10 +3487,6 @@
     if (!byId("auto-update-city").checked) return;
     if (document.body.dataset.activeTab !== "city") return;
     if (!selectedValues(byId("city-comparison-select")).length) return;
-    if (!state.cityHasRun) {
-      setNotice("city-state", "Click Update Plot once to load City Comparison. Auto-update starts after the first manual run.", "ok");
-      return;
-    }
     state.autoCityTimer = window.setTimeout(function () {
       var decision = autoCityDecision();
       if (decision.status === "run") {
@@ -3518,6 +3522,7 @@
 
   function autoCityDecision() {
     if (!state.cityFilterOptions || state.cityFilterOptionsSignature !== currentCityFilterOptionsSignature()) {
+      scheduleCityFilterOptions();
       return { status: "waiting" };
     }
     var counts = state.cityFilterOptions.counts || {};
@@ -4060,7 +4065,7 @@
       .replace(/^Loading dynamic filter ranges\.\.\.$/, "טוען טווחי סינון דינמיים...")
       .replace(/^Filter options loaded\.$/, "אפשרויות הסינון נטענו.")
       .replace(/^City filters are ready\. Change filters or click Update Plot\.$/, "מסנני הערים מוכנים. שנו מסננים או לחצו עדכון גרף.")
-      .replace(/^Select cities and click Update Plot\. City comparison no longer runs automatically on first open\.$/, "בחרו ערים ולחצו עדכון גרף. השוואת ערים לא רצה אוטומטית בפתיחה הראשונה.")
+      .replace(/^Select cities\. City Comparison updates automatically when the filtered dataset is small enough\.$/, "בחרו ערים. השוואת ערים תתעדכן אוטומטית כשהנתונים המסוננים קטנים מספיק.")
       .replace(/^Random city selected\. Pick a smaller Gush if auto update pauses\.$/, "נבחרה עיר אקראית. בחרו גוש קטן יותר אם העדכון האוטומטי נעצר.")
       .replace(/^Tel Aviv is not available in the loaded city list\.$/, "תל אביב לא זמינה ברשימת הערים שנטענה.")
       .replace(/^Tel Aviv performance defaults loaded\.$/, "ברירות המחדל לביצועי תל אביב נטענו.")
@@ -4100,9 +4105,8 @@
       .replace(/^Room filter cleared for City Comparison\.$/, "מסנן החדרים נוקה להשוואת ערים.")
       .replace(/^City Comparison filters reset to the selected cities' available ranges\.$/, "מסנני השוואת הערים אופסו לטווחים הזמינים בערים שנבחרו.")
       .replace(/^Filter ranges reset to the current selection\.$/, "טווחי הסינון אופסו לבחירה הנוכחית.")
-      .replace(/^City preset applied\. Update cities to refresh the chart\.$/, "קבוצת ערים הוחלה. עדכנו ערים כדי לרענן את הגרף.")
+      .replace(/^City preset applied\. Auto-update will run when the filtered dataset is small enough\.$/, "קבוצת ערים הוחלה. העדכון האוטומטי ירוץ כשהנתונים המסוננים קטנים מספיק.")
       .replace(/^City selection cleared\.$/, "בחירת הערים נוקתה.")
-      .replace(/^Click Update Plot once to load City Comparison\. Auto-update starts after the first manual run\.$/, "לחצו פעם אחת על עדכון גרף כדי לטעון השוואת ערים. העדכון האוטומטי מתחיל אחרי ההרצה הידנית הראשונה.")
       .replace(/^Search by street name across all cities, or pick up to 15 Gush areas\.$/, "חפשו לפי שם רחוב בכל הערים, או בחרו עד 15 גושים.")
       .replace(/^Compare Areas supports up to 15 Gush areas\. Keeping the first 15 selected\.$/, "השוואת אזורים תומכת בעד 15 גושים. נשמרים 15 הראשונים שנבחרו.")
       .replace(/^Auto update paused for ([\d,]+) estimated matching deals\. Click Update analysis to run it\.$/, "העדכון האוטומטי נעצר עבור כ-$1 עסקאות מתאימות. לחצו עדכון ניתוח כדי להריץ.")

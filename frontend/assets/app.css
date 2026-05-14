@@ -438,28 +438,85 @@ option {
 
 .include-unknown-toggle,
 .unknown-filter-grid label {
+  position: relative;
   display: inline-flex;
   gap: 5px;
   align-items: center;
-  color: #5e6b6f;
+  min-height: 24px;
+  border: 1px solid #c9dddf;
+  border-radius: 999px;
+  background: #fff;
+  color: #476268;
   font-size: 11px;
-  font-weight: 550;
+  font-weight: 650;
   line-height: 1.2;
+  padding: 4px 8px;
   white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
 .include-unknown-toggle input,
 .unknown-filter-grid input {
-  width: auto;
-  min-height: auto;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.include-unknown-toggle::before,
+.unknown-filter-grid label::before {
+  content: "";
+  display: inline-grid;
+  place-items: center;
+  width: 11px;
+  height: 11px;
+  border: 1px solid #9db9bd;
+  border-radius: 999px;
+  background: #fff;
+  color: #fff;
+  font-size: 9px;
+  line-height: 1;
+}
+
+.include-unknown-toggle:has(input:checked),
+.unknown-filter-grid label:has(input:checked) {
+  border-color: #86c2cb;
+  background: #e8f6f8;
+  color: #0f6170;
+}
+
+.include-unknown-toggle:has(input:checked)::before,
+.unknown-filter-grid label:has(input:checked)::before {
+  content: "✓";
+  border-color: #187386;
+  background: #187386;
+}
+
+.include-unknown-toggle:focus-within,
+.unknown-filter-grid label:focus-within {
+  outline: 2px solid rgba(44, 130, 201, 0.25);
+  outline-offset: 2px;
+}
+
+.unknown-filter-title {
+  color: #6b797d;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
   margin: 0;
 }
 
 .unknown-filter-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 10px;
+  align-items: center;
+  gap: 5px;
   margin: -2px 0 8px;
+  padding: 6px;
+  border: 1px solid #d7e5e4;
+  border-radius: 8px;
+  background: #f8fbfb;
 }
 
 .compact-button {
@@ -836,19 +893,19 @@ option {
 }
 
 .city-filter-rail #city-comparison-selected {
-  max-height: 90px;
+  max-height: 132px;
   overflow: auto;
 }
 
 .city-selection-summary {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 6px 8px;
+  gap: 8px 10px;
   align-items: center;
   border: 1px solid #cde5e1;
   border-radius: 6px;
   background: #f5fbfa;
-  padding: 8px;
+  padding: 9px;
   color: var(--ink);
   font-size: 12px;
 }
@@ -858,18 +915,38 @@ option {
   font-size: 13px;
 }
 
-.city-selection-summary span {
+.city-selection-hint {
   display: block;
-  grid-column: 1 / -1;
-  min-width: 0;
-  overflow: hidden;
   color: var(--muted);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .city-selection-summary button {
   align-self: start;
+}
+
+.city-selection-preview {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 1 / -1;
+  gap: 5px;
+  min-width: 0;
+}
+
+.city-selection-pill {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 22px;
+  border: 1px solid #cfe4e1;
+  border-radius: 999px;
+  background: #fff;
+  color: #315f66;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.2;
+  padding: 3px 8px;
 }
 
 .city-main-stage {
@@ -976,17 +1053,44 @@ option {
 
 .city-picker-option {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 2px;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 6px;
   align-items: center;
   direction: rtl;
+  border: 1px solid #edf3f2;
+  border-radius: 6px;
+  min-height: 34px;
+  padding: 6px 8px;
 }
 
-.city-picker-option span {
+.city-picker-label {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.city-picker-check {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #b9d2d2;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.city-picker-option.is-selected .city-picker-check {
+  border-color: #177987;
+  background: #177987;
+}
+
+.city-picker-option.is-selected .city-picker-check::before {
+  content: "✓";
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .city-picker-option small {
