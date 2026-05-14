@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="./">
-    <title>Real Estate Analysis</title>
+    <title>ניתוח נדל"ן</title>
     <link rel="stylesheet" href="assets/app.css">
     <script src="assets/plotly.min.js" defer></script>
     <script src="assets/app.js" defer></script>
@@ -337,19 +337,19 @@
             <div id="analysis-state" class="state"></div>
             <div id="analysis-chart" class="chart chart-guide" data-empty-label="Select streets or Gush areas, then update analysis">
               <div class="chart-guide-content">
-                <h3>Getting Started</h3>
+                <h3>איך מתחילים</h3>
                 <ol>
-                  <li><strong>Select a city</strong> or use Random to load a runnable example.</li>
-                  <li><strong>Choose properties</strong> by searching streets, selecting Gush areas, or expanding selected Gush areas into streets.</li>
-                  <li><strong>Adjust filters</strong> for year, price, area, rooms, floor, project status, and outliers.</li>
-                  <li><strong>Update analysis</strong> to draw the transaction-level scatter plot and table.</li>
+                  <li><strong>בחרו עיר</strong> או השתמשו באקראי כדי לטעון דוגמה שניתן להריץ.</li>
+                  <li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים, או הרחבת גושים שנבחרו לרחובות.</li>
+                  <li><strong>כוונו מסננים</strong> לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.</li>
+                  <li><strong>עדכנו ניתוח</strong> כדי לצייר גרף פיזור וטבלה ברמת עסקה.</li>
                 </ol>
                 <div class="chart-guide-tips">
-                  <strong>Tips</strong>
+                  <strong>טיפים</strong>
                   <ul>
-                    <li>Use street search when you do not know which Gush area contains a street.</li>
-                    <li>Smart reset chooses common room counts for the current selection.</li>
-                    <li>After the plot appears, click a point to inspect its transaction details.</li>
+                    <li>השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.</li>
+                    <li>איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.</li>
+                    <li>אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.</li>
                   </ul>
                 </div>
               </div>
@@ -646,19 +646,19 @@
             <div id="compare-context" class="compare-context compare-requires-selection"></div>
             <div id="compare-chart" class="chart chart-guide">
               <div class="chart-guide-content">
-                <h3>Getting Started</h3>
+                <h3>איך מתחילים</h3>
                 <ol>
-                  <li><strong>Search a street across all cities</strong> or pick known Gush areas.</li>
-                  <li><strong>Add matching Gush areas</strong> directly from the search results.</li>
-                  <li><strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.</li>
-                  <li><strong>Update compare</strong> to draw yearly lines and fill the summary table.</li>
+                  <li><strong>חפשו רחוב בכל הערים</strong> או בחרו גושים מוכרים.</li>
+                  <li><strong>הוסיפו את הגושים המתאימים</strong> ישירות מתוצאות החיפוש.</li>
+                  <li><strong>בחרו ערך Y</strong> כמו מחיר, מחיר למ"ר, מחיר לחדר או מספר עסקאות.</li>
+                  <li><strong>עדכנו השוואה</strong> כדי לצייר קווים שנתיים ולמלא את טבלת הסיכום.</li>
                 </ol>
                 <div class="chart-guide-tips">
-                  <strong>Tips</strong>
+                  <strong>טיפים</strong>
                   <ul>
-                    <li>Use Gush areas for neighborhood-block comparisons and streets for focused checks.</li>
-                    <li>Turn on city-wide to see the selected city as a reference line.</li>
-                    <li>Use Summary CSV for grouped trends and Raw CSV for the underlying deals.</li>
+                    <li>השתמשו בגושים להשוואת אזורי שכונה וברחובות לבדיקות ממוקדות.</li>
+                    <li>הפעילו כל העיר כדי לראות את העיר שנבחרה כקו ייחוס.</li>
+                    <li>CSV סיכום מתאים למגמות מקובצות, ו-CSV גולמי לעסקאות שמאחורי הסיכום.</li>
                   </ul>
                 </div>
               </div>
@@ -794,19 +794,19 @@
                   <div id="city-data-info" class="performance-info"></div>
                   <div id="city-chart" class="chart chart-guide">
                     <div class="chart-guide-content">
-                      <h3>Getting Started</h3>
+                      <h3>איך מתחילים</h3>
                       <ol>
-                        <li><strong>Select cities</strong> from the city list.</li>
-                        <li><strong>Choose a Y value</strong> for the comparison.</li>
-                        <li><strong>Adjust filters</strong> only if you want a narrower city-level slice.</li>
-                        <li><strong>Update cities</strong> to draw city trend lines and generate the table.</li>
+                        <li><strong>בחרו ערים</strong> מרשימת הערים.</li>
+                        <li><strong>בחרו ערך Y</strong> להשוואה.</li>
+                        <li><strong>כוונו מסננים</strong> רק אם רוצים חתך עירוני צר יותר.</li>
+                        <li><strong>עדכנו ערים</strong> כדי לצייר קווי מגמה וליצור את הטבלה.</li>
                       </ol>
                       <div class="chart-guide-tips">
-                        <strong>Tips</strong>
+                        <strong>טיפים</strong>
                         <ul>
-                          <li>Deal count is useful for market activity, not just price movement.</li>
-                          <li>Keep filters broad when comparing cities with different housing mixes.</li>
-                          <li>Use Raw CSV when you need to audit which transactions entered the summary.</li>
+                          <li>מספר העסקאות שימושי לפעילות שוק, לא רק לתנועת מחיר.</li>
+                          <li>השאירו מסננים רחבים כשמשווים ערים עם תמהילי דיור שונים.</li>
+                          <li>השתמשו ב-CSV גולמי כשצריך לבדוק אילו עסקאות נכנסו לסיכום.</li>
                         </ul>
                       </div>
                     </div>
@@ -966,19 +966,19 @@
             </div>
             <div id="gush-chart" class="chart chart-guide">
               <div class="chart-guide-content">
-                <h3>Getting Started</h3>
+                <h3>איך מתחילים</h3>
                 <ol>
-                  <li><strong>Select one city</strong> in the City Performance rail.</li>
-                  <li><strong>Set group sizes</strong> for top, typical, and bottom performers.</li>
-                  <li><strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.</li>
-                  <li><strong>Update performance</strong> to draw qualified Gush trend lines and rankings.</li>
+                  <li><strong>בחרו עיר אחת</strong> בפאנל ביצועי העיר.</li>
+                  <li><strong>הגדירו גדלי קבוצות</strong> לביצועים גבוהים, טיפוסיים ונמוכים.</li>
+                  <li><strong>בחרו מינימום עסקאות</strong> כדי שגושים דלי עסקאות לא ישתלטו.</li>
+                  <li><strong>עדכנו ביצועים</strong> כדי לצייר קווי מגמה ודירוגים של גושים כשירים.</li>
                 </ol>
                 <div class="chart-guide-tips">
-                  <strong>Tips</strong>
+                  <strong>טיפים</strong>
                   <ul>
-                    <li>Raise minimum deals for steadier comparisons in large cities.</li>
-                    <li>Use city-wide as a reference line when judging standout Gush areas.</li>
-                    <li>The table shows which Gush areas qualified for each performance group.</li>
+                    <li>העלו מינימום עסקאות להשוואות יציבות יותר בערים גדולות.</li>
+                    <li>השתמשו בכל העיר כקו ייחוס כשבודקים גושים חריגים.</li>
+                    <li>הטבלה מראה אילו גושים נכנסו לכל קבוצת ביצועים.</li>
                   </ul>
                 </div>
               </div>

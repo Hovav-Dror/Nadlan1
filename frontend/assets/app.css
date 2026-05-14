@@ -13,7 +13,7 @@
   --error: #a93232;
   --ok: #207245;
   --shadow: 0 14px 38px rgba(32, 43, 46, 0.09);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Noto Sans Hebrew", "Segoe UI", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * {
@@ -25,6 +25,8 @@ body {
   min-width: 320px;
   background: var(--bg);
   color: var(--ink);
+  direction: rtl;
+  text-align: right;
 }
 
 button,
@@ -94,7 +96,7 @@ button:disabled {
 .summary-strip {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
   align-content: center;
 }
@@ -186,24 +188,26 @@ button:disabled {
 
 .tab-group-label {
   flex: 0 0 auto;
-  margin-left: 8px;
+  margin-right: 8px;
   color: var(--muted);
   font-size: 12px;
   font-weight: 750;
-  text-transform: uppercase;
 }
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  grid-template-areas: "content controls";
   gap: 16px;
   align-items: start;
+  direction: ltr;
 }
 
 body[data-active-tab="compare"] .workspace,
 body[data-active-tab="city"] .workspace,
 body[data-active-tab="gush"] .workspace {
   grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "content";
 }
 
 body[data-active-tab="compare"] .control-panel,
@@ -221,11 +225,20 @@ body[data-active-tab="gush"] .control-panel {
 }
 
 .control-panel {
+  grid-area: controls;
+  direction: rtl;
+  text-align: right;
   position: sticky;
   top: 12px;
   max-height: calc(100vh - 24px);
   overflow: auto;
   padding: 14px;
+}
+
+.content-panel {
+  grid-area: content;
+  direction: rtl;
+  text-align: right;
 }
 
 .control-section {
@@ -626,7 +639,7 @@ option {
 .workflow-filter-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 10px 16px;
 }
 
@@ -735,19 +748,24 @@ option {
 
 .city-workflow-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 386px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 386px);
+  grid-template-areas: "city-main city-rail";
   gap: 22px;
   align-items: start;
+  direction: ltr;
 }
 
 .city-filter-rail {
+  grid-area: city-rail;
+  direction: rtl;
+  text-align: right;
   display: grid;
   gap: 14px;
   position: sticky;
   top: 12px;
   max-height: calc(100vh - 24px);
   overflow: auto;
-  padding-right: 2px;
+  padding-left: 2px;
 }
 
 .city-filter-rail .city-selector-panel,
@@ -835,6 +853,9 @@ option {
 }
 
 .city-main-stage {
+  grid-area: city-main;
+  direction: rtl;
+  text-align: right;
   display: grid;
   gap: 16px;
   min-width: 0;
@@ -922,7 +943,7 @@ option {
 .city-selector-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 7px;
 }
 
@@ -938,7 +959,7 @@ option {
   grid-template-columns: 1fr;
   gap: 2px;
   align-items: center;
-  direction: ltr;
+  direction: rtl;
 }
 
 .city-picker-option span {
@@ -949,7 +970,7 @@ option {
 }
 
 .city-picker-option small {
-  justify-self: start;
+  justify-self: end;
   color: var(--muted);
   direction: ltr;
   font-size: 11px;
@@ -1024,12 +1045,17 @@ option {
 
 .performance-workflow-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  grid-template-areas: "performance-main performance-rail";
   gap: 16px;
   align-items: start;
+  direction: ltr;
 }
 
 .performance-filter-rail {
+  grid-area: performance-rail;
+  direction: rtl;
+  text-align: right;
   display: grid;
   gap: 14px;
 }
@@ -1049,6 +1075,9 @@ option {
 }
 
 .performance-main-stage {
+  grid-area: performance-main;
+  direction: rtl;
+  text-align: right;
   min-width: 0;
   display: grid;
   gap: 14px;
@@ -1181,7 +1210,7 @@ option {
 }
 
 .lookup-box {
-  border-left: 3px solid var(--cyan);
+  border-right: 3px solid var(--cyan);
   background: #f7fbfc;
   padding: 8px 10px;
   margin-top: 12px;
@@ -1336,7 +1365,7 @@ option {
 .workflow-tags {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 7px;
   min-width: 210px;
 }
@@ -1368,7 +1397,7 @@ option {
 .actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 8px;
 }
 
@@ -1488,7 +1517,8 @@ option {
 .chart-guide-content ol,
 .chart-guide-content ul {
   margin: 0;
-  padding-left: 22px;
+  padding-left: 0;
+  padding-right: 22px;
 }
 
 .chart-guide-content li {
@@ -1511,6 +1541,7 @@ option {
 
 .chart.js-plotly-plot {
   display: block;
+  direction: ltr;
 }
 
 .metrics,
@@ -1547,7 +1578,7 @@ option {
 .performance-summary,
 .performance-info {
   border: 1px solid #d9e6e3;
-  border-left: 3px solid var(--accent);
+  border-right: 3px solid var(--accent);
   border-radius: 8px;
   background: #fbfcfa;
   padding: 10px 12px;
@@ -1587,7 +1618,7 @@ option {
 .active-filter-box,
 .data-summary-box {
   border: 1px solid #d9e6e3;
-  border-left: 3px solid var(--ok);
+  border-right: 3px solid var(--ok);
   border-radius: 8px;
   background: #fbfcfa;
   padding: 10px 12px;
@@ -1815,11 +1846,15 @@ tbody tr.is-selected {
 .ltr-text {
   direction: ltr;
   unicode-bidi: plaintext;
+  text-align: left;
 }
 
 @media (max-width: 980px) {
   .workspace {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "controls"
+      "content";
   }
 
   .control-panel {
@@ -1854,11 +1889,23 @@ tbody tr.is-selected {
     grid-template-columns: 1fr;
   }
 
+  .city-workflow-grid {
+    grid-template-areas:
+      "city-rail"
+      "city-main";
+  }
+
+  .performance-workflow-grid {
+    grid-template-areas:
+      "performance-rail"
+      "performance-main";
+  }
+
   .city-filter-rail {
     position: static;
     max-height: none;
     overflow: visible;
-    padding-right: 0;
+    padding-left: 0;
   }
 
   .city-plot-controls .plot-control-grid {

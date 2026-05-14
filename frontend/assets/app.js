@@ -48,7 +48,7 @@
       searchId: "street-picker-search",
       resultsId: "street-picker-results",
       selectedId: "street-selected",
-      emptyText: "Start typing to find streets.",
+      emptyText: "התחילו להקליד כדי למצוא רחובות.",
       oppositeSelectId: "gush-select"
     },
     gushes: {
@@ -56,7 +56,7 @@
       searchId: "gush-picker-search",
       resultsId: "gush-picker-results",
       selectedId: "gush-selected",
-      emptyText: "Start typing to find Gush areas.",
+      emptyText: "התחילו להקליד כדי למצוא גושים.",
       oppositeSelectId: "street-select"
     }
   };
@@ -81,27 +81,275 @@
   };
 
   var labels = {
-    raw_deals: "Raw deals",
-    selected_deals: "Selected deals",
-    filtered_deals: "Filtered deals",
-    outlier_deals: "After outliers",
-    summary_points: "Summary points",
-    unique_gushes: "Gush areas",
-    unique_years: "Years",
-    unique_cities: "Cities",
-    plotted_cities: "Plotted cities",
-    city_rows: "City rows",
-    location_rows: "Location rows",
-    pre_outlier_rows: "Before outliers",
-    filtered_rows: "Filtered rows",
-    outlier_rows: "After outliers",
-    returned_rows: "Returned rows",
-    qualified_gushes: "Qualified Gushes",
-    selected_gushes: "Selected Gushes",
-    qualified_summary_points: "Qualified points"
+    raw_deals: "עסקאות מקור",
+    selected_deals: "עסקאות שנבחרו",
+    filtered_deals: "עסקאות אחרי סינון",
+    outlier_deals: "אחרי חריגים",
+    summary_points: "נקודות סיכום",
+    unique_gushes: "גושים",
+    unique_years: "שנים",
+    unique_cities: "ערים",
+    plotted_cities: "ערים בגרף",
+    city_rows: "שורות עיר",
+    location_rows: "שורות מיקום",
+    pre_outlier_rows: "לפני חריגים",
+    filtered_rows: "שורות מסוננות",
+    outlier_rows: "אחרי חריגים",
+    returned_rows: "שורות שהוחזרו",
+    qualified_gushes: "גושים כשירים",
+    selected_gushes: "גושים שנבחרו",
+    qualified_summary_points: "נקודות כשירות"
+  };
+
+  var uiTranslations = {
+    "Real Estate Analysis": "ניתוח נדל\"ן",
+    "Analysis workflows": "תהליכי ניתוח",
+    "Analysis Deals": "ניתוח עסקאות",
+    "Compare Areas": "השוואת אזורים",
+    "City Comparison": "השוואת ערים",
+    "City Performance": "ביצועי עיר",
+    "Gush Performance": "ביצועי גושים",
+    "Utilities": "כלים",
+    "Data Health": "בריאות נתונים",
+    "Exports": "ייצוא",
+    "About": "אודות",
+    "Controls": "פקדים",
+    "Step 1": "שלב 1",
+    "Step 2": "שלב 2",
+    "Step 3": "שלב 3",
+    "Step 4": "שלב 4",
+    "Select City": "בחירת עיר",
+    "Select Properties": "בחירת נכסים",
+    "Analysis Filters": "מסנני ניתוח",
+    "Selection Summary": "סיכום בחירה",
+    "City": "עיר",
+    "Cities": "ערים",
+    "Streets": "רחובות",
+    "Gush areas": "גושים",
+    "Pick a random city and Gush that can auto update": "בחירת עיר וגוש אקראיים שמתאימים לעדכון אוטומטי",
+    "Pick random runnable analysis": "בחירת ניתוח אקראי שניתן להריץ",
+    "Random": "אקראי",
+    "Search streets": "חיפוש רחובות",
+    "Search Gush number, label, or street": "חיפוש מספר גוש, תיאור או רחוב",
+    "Use streets from selected Gush": "השתמש ברחובות מהגוש שנבחר",
+    "Use whole Gush for selected streets": "השתמש בכל הגוש של הרחובות שנבחרו",
+    "Find Gush by street": "איתור גוש לפי רחוב",
+    "Find Gush by street name": "איתור גוש לפי שם רחוב",
+    "Type a street name": "הקלידו שם רחוב",
+    "Search": "חיפוש",
+    "Transaction filters for the Analysis Deals tab.": "מסנני עסקאות לטאב ניתוח העסקאות.",
+    "Market": "שוק",
+    "Property": "נכס",
+    "Status": "סטטוס",
+    "Deal year min": "שנת עסקה מ-",
+    "Deal year max": "שנת עסקה עד",
+    "Price min (₪m)": "מחיר מ- (מ' ₪)",
+    "Price max (₪m)": "מחיר עד (מ' ₪)",
+    "Price / m² min (₪k)": "מחיר למ\"ר מ- (אלף ₪)",
+    "Price / m² max (₪k)": "מחיר למ\"ר עד (אלף ₪)",
+    "Price / m² from (₪k)": "מחיר למ\"ר מ- (אלף ₪)",
+    "Price / m² to (₪k)": "מחיר למ\"ר עד (אלף ₪)",
+    "Rooms": "חדרים",
+    "Smart reset": "איפוס חכם",
+    "Area min (m²)": "שטח מ- (מ\"ר)",
+    "Area max (m²)": "שטח עד (מ\"ר)",
+    "Floor min": "קומה מ-",
+    "Floor max": "קומה עד",
+    "Building floors min": "קומות בבניין מ-",
+    "Building floors max": "קומות בבניין עד",
+    "Built year min": "שנת בנייה מ-",
+    "Built year max": "שנת בנייה עד",
+    "Building age min": "גיל בניין מ-",
+    "Building age max": "גיל בניין עד",
+    "All rooms": "כל החדרים",
+    "Reset ranges": "איפוס טווחים",
+    "Top floor / roof": "קומה עליונה / גג",
+    "New project": "פרויקט חדש",
+    "Both": "שניהם",
+    "Yes": "כן",
+    "No": "לא",
+    "Apartment types": "סוגי דירות",
+    "Apartment type": "סוג דירה",
+    "Search apartment types": "חיפוש סוגי דירות",
+    "Price outliers": "חריגי מחיר",
+    "Area outliers": "חריגי שטח",
+    "Analysis Deals - Granular View": "ניתוח עסקאות - מבט מפורט",
+    "What you see": "מה רואים",
+    "Best for": "מתאים ל",
+    "Use when": "מתי להשתמש",
+    "Each point is one individual deal.": "כל נקודה היא עסקה בודדת.",
+    "Detailed exploration, finding specific properties, and understanding price variation within an area.": "חקירה מפורטת, איתור נכסים ספציפיים והבנת שונות מחירים בתוך אזור.",
+    "You want to see all deals, inspect individual transactions, or analyze price distribution in detail.": "כשרוצים לראות את כל העסקאות, לבדוק עסקאות בודדות או לנתח התפלגות מחירים בפירוט.",
+    "Transaction-level": "רמת עסקה",
+    "Street or Gush": "רחוב או גוש",
+    "CSV export": "ייצוא CSV",
+    "Transaction-level scatter and table for the selected city, streets, and Gush areas.": "גרף וטבלה ברמת עסקה לעיר, לרחובות ולגושים שנבחרו.",
+    "Update analysis": "עדכון ניתוח",
+    "Cancel": "ביטול",
+    "Plot Controls": "פקדי גרף",
+    "Color By": "צבע לפי",
+    "Shape By": "צורה לפי",
+    "Size By": "גודל לפי",
+    "Facet By": "פיצול לפי",
+    "Color Palette": "ערכת צבעים",
+    "Shape Palette": "ערכת צורות",
+    "Shape palette": "ערכת צורות",
+    "Price Type": "סוג מחיר",
+    "Row Limit": "מגבלת שורות",
+    "None": "ללא",
+    "Default": "ברירת מחדל",
+    "Bold": "מודגש",
+    "Soft": "רך",
+    "High contrast": "ניגודיות גבוהה",
+    "Earth": "אדמה",
+    "Open": "פתוח",
+    "Solid": "מלא",
+    "Mixed": "מעורב",
+    "Grey": "אפור",
+    "Price": "מחיר",
+    "Price / m²": "מחיר למ\"ר",
+    "Price / Room": "מחיר לחדר",
+    "Year / date": "שנה / תאריך",
+    "Date": "תאריך",
+    "Value": "ערך",
+    "Deals": "עסקאות",
+    "Selected price": "מחיר נבחר",
+    "Apartment type": "סוג דירה",
+    "Street": "רחוב",
+    "Gush": "גוש",
+    "Deal year": "שנת עסקה",
+    "Area": "שטח",
+    "Floor": "קומה",
+    "Build year": "שנת בנייה",
+    "Building age": "גיל בניין",
+    "Building floors": "קומות בבניין",
+    "Roof": "גג",
+    "Auto update": "עדכון אוטומטי",
+    "Auto-update": "עדכון אוטומטי",
+    "Auto-update for small datasets (<500 records)": "עדכון אוטומטי לנתונים קטנים (פחות מ-500 רשומות)",
+    "City-wide": "כל העיר",
+    "Getting Started": "איך מתחילים",
+    "No Matching Transactions": "לא נמצאו עסקאות מתאימות",
+    "No Matching Summary Rows": "לא נמצאו שורות סיכום מתאימות",
+    "Tips": "טיפים",
+    "Loaded cities, streets, Gush labels, and the dynamic filter ranges behind the analysis workflow.": "ערים, רחובות, תיאורי גושים וטווחי הסינון הדינמיים שמאחורי הניתוח.",
+    "Refresh metadata": "רענון מטא-דאטה",
+    "Background, data notes, and a short guide carried over from the original Shiny app.": "רקע, הערות נתונים ומדריך קצר שהועברו מאפליקציית Shiny המקורית.",
+    "Area comparison": "השוואת אזורים",
+    "Yearly summary": "סיכום שנתי",
+    "Raw + summary CSV": "CSV גולמי + סיכום",
+    "Search streets or Gush descriptions across all cities, then compare up to 15 Gush areas.": "חפשו רחובות או תיאורי גושים בכל הערים והשוו עד 15 גושים.",
+    "Update compare": "עדכון השוואה",
+    "Summary CSV": "CSV סיכום",
+    "Raw CSV": "CSV גולמי",
+    "Compare area selection": "בחירת אזורים להשוואה",
+    "Step 1: Select Areas": "שלב 1: בחירת אזורים",
+    "Pick Gush blocks directly, or type a street name and add the matching Gush areas from the results.": "בחרו גושים ישירות, או הקלידו שם רחוב והוסיפו את הגושים המתאימים מהתוצאות.",
+    "Pick blocks (Gush numbers)": "בחירת גושים",
+    "Search Gush number, city, label, or street": "חיפוש מספר גוש, עיר, תיאור או רחוב",
+    "Compare controls": "פקדי השוואה",
+    "Y value": "ערך Y",
+    "Statistic": "מדד",
+    "Median": "חציון",
+    "Mean": "ממוצע",
+    "median": "חציון",
+    "mean": "ממוצע",
+    "Color palette": "ערכת צבעים",
+    "Y-axis Variable": "משתנה ציר Y",
+    "Reverse colors": "היפוך צבעים",
+    "Year min": "שנה מ-",
+    "Year max": "שנה עד",
+    "Advanced filters": "מסננים מתקדמים",
+    "City-level": "רמת עיר",
+    "Yearly trends": "מגמות שנתיות",
+    "Broad filters": "מסננים רחבים",
+    "City/year summaries. Run explicitly because broad city selections can be expensive.": "סיכומי עיר/שנה. ההרצה ידנית כי בחירות רחבות יכולות להיות כבדות.",
+    "Step 1: Select Cities": "שלב 1: בחירת ערים",
+    "Search, pin cities, or start from a preset group.": "חפשו, סמנו ערים או התחילו מקבוצת ברירת מחדל.",
+    "Largest": "הגדולות",
+    "Central": "מרכז",
+    "Clear": "ניקוי",
+    "Select Cities to Compare": "בחירת ערים להשוואה",
+    "Search city name": "חיפוש שם עיר",
+    "Step 2: Additional filters": "שלב 2: מסננים נוספים",
+    "Remove outliers": "הסרת חריגים",
+    "Update Analysis": "עדכון ניתוח",
+    "Update Plot": "עדכון גרף",
+    "Plot": "גרף",
+    "Chart mode": "מצב גרף",
+    "Absolute": "מוחלט",
+    "Index to first year": "אינדקס לשנה ראשונה",
+    "Change from first year": "שינוי מהשנה הראשונה",
+    "Palette": "פלטה",
+    "Reverse color order": "היפוך סדר צבעים",
+    "Show points": "הצגת נקודות",
+    "Point min": "נקודה מינ'",
+    "Point max": "נקודה מקס'",
+    "Smallest marker size for city/year points, scaled by deal count.": "גודל הסמן הקטן ביותר לנקודות עיר/שנה, מותאם לפי מספר עסקאות.",
+    "Largest marker size for city/year points, scaled by deal count.": "גודל הסמן הגדול ביותר לנקודות עיר/שנה, מותאם לפי מספר עסקאות.",
+    "Within-city": "בתוך העיר",
+    "Top / typical / bottom": "גבוהים / טיפוסיים / נמוכים",
+    "Qualified Gushes": "גושים כשירים",
+    "Step 1: Select City": "שלב 1: בחירת עיר",
+    "Step 2: Performance Parameters": "שלב 2: פרמטרי ביצועים",
+    "Step 3: Additional filters": "שלב 3: מסננים נוספים",
+    "Deal ranges": "טווחי עסקאות",
+    "Reset": "איפוס",
+    "Deal years from": "שנות עסקה מ-",
+    "Deal years to": "שנות עסקה עד",
+    "Price from (₪m)": "מחיר מ- (מ' ₪)",
+    "Price to (₪m)": "מחיר עד (מ' ₪)",
+    "Area from (m²)": "שטח מ- (מ\"ר)",
+    "Area to (m²)": "שטח עד (מ\"ר)",
+    "Apartment mix": "תמהיל דירות",
+    "Smart rooms": "חדרים חכמים",
+    "Building attributes": "מאפייני בניין",
+    "Floor from": "קומה מ-",
+    "Floor to": "קומה עד",
+    "Building floors from": "קומות בבניין מ-",
+    "Building floors to": "קומות בבניין עד",
+    "Built year from": "שנת בנייה מ-",
+    "Built year to": "שנת בנייה עד",
+    "Building age from": "גיל בניין מ-",
+    "Building age to": "גיל בניין עד",
+    "Top": "גבוהים",
+    "Typical": "טיפוסיים",
+    "Bottom": "נמוכים",
+    "Min deals": "מינימום עסקאות",
+    "Min deals / year": "מינימום עסקאות / שנה",
+    "Remove price and area outliers": "הסרת חריגי מחיר ושטח",
+    "Tel Aviv": "תל אביב",
+    "City Performance ranks Gush areas inside this city.": "ביצועי עיר מדרגים גושים בתוך העיר הזו.",
+    "Top, typical, and bottom Gush performers inside one city, matching the original Shiny ranking workflow.": "גושים בעלי ביצועים גבוהים, טיפוסיים ונמוכים בתוך עיר אחת, בדומה לתהליך הדירוג המקורי ב-Shiny.",
+    "City Performance is a directional screening workflow. Treat rankings as candidates to inspect, not as final investment conclusions.": "ביצועי עיר הם כלי סינון כיווני. התייחסו לדירוגים כמועמדים לבדיקה, לא כמסקנות השקעה סופיות.",
+    "Each line is a selected street or Gush area summarized by year.": "כל קו הוא רחוב או גוש שנבחר, מסוכם לפי שנה.",
+    "Comparing nearby areas, checking relative price levels, and spotting diverging trends.": "השוואת אזורים קרובים, בדיקת רמות מחיר יחסיות וזיהוי מגמות שמתפצלות.",
+    "You want to discover the relevant Gush areas from a street name, or compare known blocks side by side.": "כשרוצים למצוא את הגושים הרלוונטיים לפי שם רחוב, או להשוות גושים מוכרים זה לצד זה.",
+    "Each line is a selected city summarized by year.": "כל קו הוא עיר שנבחרה, מסוכמת לפי שנה.",
+    "Broad market comparison, city-level trend checks, and ranking demand or price movement.": "השוואת שוק רחבה, בדיקת מגמות ברמת עיר ודירוג ביקוש או תנועת מחירים.",
+    "You want a macro view before drilling into specific streets or Gush areas.": "כשרוצים מבט מאקרו לפני ירידה לרחובות או גושים ספציפיים.",
+    "Top, typical, and bottom Gush areas inside one city, summarized by year.": "גושים גבוהים, טיפוסיים ונמוכים בתוך עיר אחת, מסוכמים לפי שנה.",
+    "Finding standout neighborhoods, comparing internal city segments, and screening candidates.": "איתור שכונות בולטות, השוואת אזורים בתוך עיר וסינון מועמדים.",
+    "You want the app to identify which Gush areas perform differently within a selected city.": "כשרוצים שהאפליקציה תזהה אילו גושים מתנהגים אחרת בתוך העיר שנבחרה.",
+    "Load raw deals preview": "טעינת תצוגה מקדימה של עסקאות גולמיות",
+    "Median price (M₪)": "חציון מחיר (מ׳ ₪)",
+    "Median price / m² (k₪)": "חציון מחיר למ\"ר (אלף ₪)",
+    "Median price / room": "חציון מחיר לחדר",
+    "Number of deals": "מספר עסקאות",
+    "Use shown Gushes in Analysis": "השתמש בגושים המוצגים בניתוח",
+    "Use top performers": "השתמש בביצועים הגבוהים",
+    "Use bottom performers": "השתמש בביצועים הנמוכים",
+    "Analysis deals CSV": "CSV עסקאות לניתוח",
+    "Compare summary CSV": "CSV סיכום השוואה",
+    "Compare raw CSV": "CSV גולמי להשוואה",
+    "City comparison summary CSV": "CSV סיכום השוואת ערים",
+    "City comparison raw CSV": "CSV גולמי להשוואת ערים",
+    "City performance summary CSV": "CSV סיכום ביצועי עיר",
+    "City performance raw CSV": "CSV גולמי לביצועי עיר"
   };
 
   document.addEventListener("DOMContentLoaded", function () {
+    translateStaticDom();
     document.body.dataset.compareHasSelection = "false";
     bindTabs();
     bindControls();
@@ -478,7 +726,7 @@
       setOptions(byId("gush-select"), state.gushes.map(function (gush) {
         var details = [gush.label, "(" + gush.id + ")"];
         if (gush.representative_street) details.push("- " + gush.representative_street);
-        if (gush.deals) details.push("· " + formatNumber(gush.deals) + " deals");
+        if (gush.deals) details.push("· " + formatNumber(gush.deals) + " עסקאות");
         return {
           value: gush.id,
           label: details.join(" "),
@@ -781,7 +1029,7 @@
       target.innerHTML = "";
       return;
     }
-    target.innerHTML = '<div class="mini-notice">Searching...</div>';
+    target.innerHTML = '<div class="mini-notice">מחפש...</div>';
     try {
       var url = "api/street-search?q=" + encodeURIComponent(query) + "&limit=8";
       if (city && !isCompare) url += "&city=" + encodeURIComponent(city);
@@ -803,10 +1051,10 @@
     if (!input || !target) return;
     var query = input.value.trim();
     if (!query) {
-      target.innerHTML = '<div class="mini-notice">Type any street name to search across all cities.</div>';
+      target.innerHTML = '<div class="mini-notice">הקלידו שם רחוב כדי לחפש בכל הערים.</div>';
       return;
     }
-    target.innerHTML = '<div class="mini-notice">Searching streets across all cities...</div>';
+    target.innerHTML = '<div class="mini-notice">מחפש רחובות בכל הערים...</div>';
     try {
       var response = await getJson("api/street-search?q=" + encodeURIComponent(query) + "&limit=12");
       renderCompareStreetSearchResults(response.data.results || []);
@@ -819,7 +1067,7 @@
     var target = byId("compare-street-results");
     if (!target) return;
     if (!results.length) {
-      target.innerHTML = '<div class="mini-notice">No matching streets.</div>';
+      target.innerHTML = '<div class="mini-notice">לא נמצאו רחובות מתאימים.</div>';
       return;
     }
     target.innerHTML = results.map(function (result, index) {
@@ -847,7 +1095,7 @@
   function renderStreetSearchResults(results) {
     var target = byId("street-search-results");
     if (!results.length) {
-      target.innerHTML = '<div class="mini-notice">No matching streets.</div>';
+      target.innerHTML = '<div class="mini-notice">לא נמצאו רחובות מתאימים.</div>';
       return;
     }
     target.innerHTML = results.map(function (result, index) {
@@ -1238,23 +1486,23 @@
     }
     chart.className = "chart chart-guide";
     var hasAttemptedAnalysis = data && Object.prototype.hasOwnProperty.call(data, "table_rows");
-    var title = hasAttemptedAnalysis ? "No Matching Transactions" : "Getting Started";
+    var title = hasAttemptedAnalysis ? "לא נמצאו עסקאות מתאימות" : "איך מתחילים";
     var intro = hasAttemptedAnalysis ?
-      "Broaden the current selection or loosen filters, then update analysis again." :
-      "Use the plot space as your checklist until the scatter plot is ready.";
+      "הרחיבו את הבחירה או שחררו מסננים, ואז עדכנו את הניתוח שוב." :
+      "השתמשו באזור הגרף כרשימת בדיקה עד שהפיזור מוכן.";
     chart.innerHTML = '<div class="chart-guide-content">' +
       '<h3>' + escapeHtml(title) + "</h3>" +
       '<p>' + escapeHtml(intro) + "</p>" +
       "<ol>" +
-      "<li><strong>Select a city</strong> or use Random to load a runnable example.</li>" +
-      "<li><strong>Choose properties</strong> by searching streets, selecting Gush areas, or expanding selected Gush areas into streets.</li>" +
-      "<li><strong>Adjust filters</strong> for year, price, area, rooms, floor, project status, and outliers.</li>" +
-      "<li><strong>Update analysis</strong> to draw the transaction-level scatter plot and table.</li>" +
+      "<li><strong>בחרו עיר</strong> או השתמשו באקראי כדי לטעון דוגמה שניתן להריץ.</li>" +
+      "<li><strong>בחרו נכסים</strong> בעזרת חיפוש רחובות, בחירת גושים או הרחבת גושים לרחובות.</li>" +
+      "<li><strong>כוונו מסננים</strong> לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.</li>" +
+      "<li><strong>עדכנו ניתוח</strong> כדי לצייר גרף פיזור וטבלה ברמת עסקה.</li>" +
       "</ol>" +
-      '<div class="chart-guide-tips"><strong>Tips</strong><ul>' +
-      "<li>Use street search when you do not know which Gush area contains a street.</li>" +
-      "<li>Smart reset chooses common room counts for the current selection.</li>" +
-      "<li>After the plot appears, click a point to inspect its transaction details.</li>" +
+      '<div class="chart-guide-tips"><strong>טיפים</strong><ul>' +
+      "<li>השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.</li>" +
+      "<li>איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.</li>" +
+      "<li>אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.</li>" +
       "</ul></div>" +
       "</div>";
   }
@@ -1398,56 +1646,56 @@
   function seriesGuideCopy(targetId) {
     var guides = {
       "compare-chart": {
-        intro: "Use the plot space as your area-comparison checklist until the yearly lines are ready.",
-        emptyIntro: "Broaden the selected areas or loosen filters, then update compare again.",
+        intro: "השתמשו באזור הגרף כרשימת בדיקה להשוואת אזורים עד שהקווים השנתיים מוכנים.",
+        emptyIntro: "הרחיבו את האזורים שנבחרו או שחררו מסננים, ואז עדכנו את ההשוואה שוב.",
         steps: [
-          "<strong>Search a street across all cities</strong> or pick known Gush areas.",
-          "<strong>Add the matching Gush areas</strong> directly from the search results.",
-          "<strong>Pick a Y value</strong> such as price, price per m², price per room, or deal count.",
-          "<strong>Update compare</strong> to draw yearly lines and fill the summary table."
+          "<strong>חפשו רחוב בכל הערים</strong> או בחרו גושים מוכרים.",
+          "<strong>הוסיפו את הגושים המתאימים</strong> ישירות מתוצאות החיפוש.",
+          "<strong>בחרו ערך Y</strong> כמו מחיר, מחיר למ\"ר, מחיר לחדר או מספר עסקאות.",
+          "<strong>עדכנו השוואה</strong> כדי לצייר קווים שנתיים ולמלא את טבלת הסיכום."
         ],
         tips: [
-          "Use Gush areas for neighborhood-block comparisons and streets for focused checks.",
-          "Turn on city-wide to see the selected city as a reference line.",
-          "Use Summary CSV for grouped trends and Raw CSV for the underlying deals."
+          "השתמשו בגושים להשוואת אזורי שכונה וברחובות לבדיקות ממוקדות.",
+          "הפעילו כל העיר כדי לראות את העיר שנבחרה כקו ייחוס.",
+          "CSV סיכום מתאים למגמות מקובצות, ו-CSV גולמי לעסקאות שמאחורי הסיכום."
         ]
       },
       "city-chart": {
-        intro: "Use the plot space as your city-comparison checklist until the yearly lines are ready.",
-        emptyIntro: "Select more cities or loosen filters, then update cities again.",
+        intro: "השתמשו באזור הגרף כרשימת בדיקה להשוואת ערים עד שהקווים השנתיים מוכנים.",
+        emptyIntro: "בחרו יותר ערים או שחררו מסננים, ואז עדכנו ערים שוב.",
         steps: [
-          "<strong>Select cities</strong> from the city list.",
-          "<strong>Choose a Y value</strong> for the comparison.",
-          "<strong>Adjust filters</strong> only if you want a narrower city-level slice.",
-          "<strong>Update cities</strong> to draw city trend lines and generate the table."
+          "<strong>בחרו ערים</strong> מרשימת הערים.",
+          "<strong>בחרו ערך Y</strong> להשוואה.",
+          "<strong>כוונו מסננים</strong> רק אם רוצים חתך עירוני צר יותר.",
+          "<strong>עדכנו ערים</strong> כדי לצייר קווי מגמה וליצור את הטבלה."
         ],
         tips: [
-          "Deal count is useful for market activity, not just price movement.",
-          "Keep filters broad when comparing cities with different housing mixes.",
-          "Use Raw CSV when you need to audit which transactions entered the summary."
+          "מספר העסקאות שימושי לפעילות שוק, לא רק לתנועת מחיר.",
+          "השאירו מסננים רחבים כשמשווים ערים עם תמהילי דיור שונים.",
+          "השתמשו ב-CSV גולמי כשצריך לבדוק אילו עסקאות נכנסו לסיכום."
         ]
       },
       "gush-chart": {
-        intro: "Use the plot space as your city-performance checklist until qualified Gush lines are ready.",
-        emptyIntro: "Lower minimum deals, adjust group sizes, or loosen filters, then update performance again.",
+        intro: "השתמשו באזור הגרף כרשימת בדיקה לביצועי עיר עד שקווי הגושים הכשירים מוכנים.",
+        emptyIntro: "הורידו מינימום עסקאות, התאימו גדלי קבוצות או שחררו מסננים, ואז עדכנו שוב.",
         steps: [
-          "<strong>Select one city</strong> in the City Performance rail.",
-          "<strong>Set group sizes</strong> for top, typical, and bottom performers.",
-          "<strong>Choose minimum deals</strong> so thinly traded Gush areas do not dominate.",
-          "<strong>Update performance</strong> to draw qualified Gush trend lines and rankings."
+          "<strong>בחרו עיר אחת</strong> בפאנל ביצועי העיר.",
+          "<strong>הגדירו גדלי קבוצות</strong> לביצועים גבוהים, טיפוסיים ונמוכים.",
+          "<strong>בחרו מינימום עסקאות</strong> כדי שגושים דלי עסקאות לא ישתלטו.",
+          "<strong>עדכנו ביצועים</strong> כדי לצייר קווי מגמה ודירוגים של גושים כשירים."
         ],
         tips: [
-          "Raise minimum deals for steadier comparisons in large cities.",
-          "Use city-wide as a reference line when judging standout Gush areas.",
-          "The table shows which Gush areas qualified for each performance group."
+          "העלו מינימום עסקאות להשוואות יציבות יותר בערים גדולות.",
+          "השתמשו בכל העיר כקו ייחוס כשבודקים גושים חריגים.",
+          "הטבלה מראה אילו גושים נכנסו לכל קבוצת ביצועים."
         ]
       }
     };
     return guides[targetId] || {
-      intro: "Use the plot space as your checklist until the chart is ready.",
-      emptyIntro: "Loosen the current selections and filters, then update again.",
-      steps: ["<strong>Choose inputs</strong> for this workflow.", "<strong>Update</strong> to draw the chart."],
-      tips: ["Use the table below the chart to inspect summarized rows."]
+      intro: "השתמשו באזור הגרף כרשימת בדיקה עד שהגרף מוכן.",
+      emptyIntro: "שחררו את הבחירות והמסננים הנוכחיים, ואז עדכנו שוב.",
+      steps: ["<strong>בחרו קלטים</strong> לתהליך הזה.", "<strong>עדכנו</strong> כדי לצייר את הגרף."],
+      tips: ["השתמשו בטבלה שמתחת לגרף כדי לבדוק שורות מסוכמות."]
     };
   }
 
@@ -1512,10 +1760,10 @@
 
   function chartLayout(title, yAxisTitle) {
     return {
-      title: { text: title },
+      title: { text: translateUiText(title) },
       margin: { t: 46, r: 24, b: 48, l: 62 },
-      xaxis: { title: "Year / date", automargin: true },
-      yaxis: { title: yAxisTitle || "Value", automargin: true },
+      xaxis: { title: translateUiText("Year / date"), automargin: true },
+      yaxis: { title: yAxisTitle || translateUiText("Value"), automargin: true },
       legend: { orientation: "h" },
       hoverlabel: { align: "left" },
       hovermode: "closest"
@@ -1748,7 +1996,9 @@
         xref: "paper",
         yref: "paper",
         showarrow: false,
+        xanchor: "center",
         yanchor: "middle",
+        align: "center",
         font: { size: 14, color: "#fff" }
       };
     }).concat([
@@ -1816,7 +2066,7 @@
     var shouldResetState = options.resetState;
     options = Object.assign({}, options, { resetState: false });
     if (!rows || !rows.length) {
-      target.innerHTML = '<div class="notice">No rows to display.</div>';
+      target.innerHTML = '<div class="notice">' + escapeHtml(translateUiText("No rows to display.")) + "</div>";
       return;
     }
     if (shouldResetState || !state.tableStates[targetId]) {
@@ -1828,16 +2078,16 @@
     var html = "";
     if (options.filterable) {
       html += '<div class="table-controls">' +
-        '<label>Filter all columns<input class="table-global-filter" value="' + escapeHtml(tableState.globalFilter || "") + '" placeholder="Search rows"></label>' +
-        '<button class="secondary compact-button table-clear-filters" type="button">Clear filters</button>' +
+        '<label>' + escapeHtml(translateUiText("Filter all columns")) + '<input class="table-global-filter" value="' + escapeHtml(tableState.globalFilter || "") + '" placeholder="' + escapeHtml(translateUiText("Search rows")) + '"></label>' +
+        '<button class="secondary compact-button table-clear-filters" type="button">' + escapeHtml(translateUiText("Clear filters")) + "</button>" +
         "</div>";
     }
     html += "<table><thead><tr>" + columns.map(function (column) {
       var sorted = tableState.sortKey === column.key;
       var sortLabel = sorted ? (tableState.sortDirection === "asc" ? " ▲" : " ▼") : "";
-      if (!options.sortable) return "<th>" + escapeHtml(column.label) + "</th>";
+      if (!options.sortable) return "<th>" + escapeHtml(translateUiText(column.label)) + "</th>";
       return '<th><button class="table-sort" type="button" data-key="' + escapeHtml(column.key) + '">' +
-        escapeHtml(column.label + sortLabel) +
+        escapeHtml(translateUiText(column.label) + sortLabel) +
         "</button></th>";
     }).join("") + "</tr>";
     if (options.filterable) {
@@ -1846,13 +2096,13 @@
           var rangeFilter = rangeFilterValue(tableState.filters[column.key]);
           return '<th><span class="table-range-filter">' +
             '<input class="table-column-filter" data-filter-kind="min" data-key="' + escapeHtml(column.key) + '" value="' +
-            escapeHtml(rangeFilter.min) + '" placeholder="Min">' +
+            escapeHtml(rangeFilter.min) + '" placeholder="' + escapeHtml(translateUiText("Min")) + '">' +
             '<input class="table-column-filter" data-filter-kind="max" data-key="' + escapeHtml(column.key) + '" value="' +
-            escapeHtml(rangeFilter.max) + '" placeholder="Max">' +
+            escapeHtml(rangeFilter.max) + '" placeholder="' + escapeHtml(translateUiText("Max")) + '">' +
             "</span></th>";
         }
         return '<th><input class="table-column-filter" data-key="' + escapeHtml(column.key) + '" value="' +
-          escapeHtml(tableState.filters[column.key] || "") + '" placeholder="Filter"></th>';
+          escapeHtml(tableState.filters[column.key] || "") + '" placeholder="' + escapeHtml(translateUiText("Filter")) + '"></th>';
       }).join("") + "</tr>";
     }
     html += "</thead><tbody>" + visibleRows.map(function (row) {
@@ -1862,8 +2112,8 @@
       }).join("") + "</tr>";
     }).join("") + "</tbody></table>";
     if (processedRows.length > visibleRows.length || processedRows.length !== rows.length) {
-      html += '<div class="notice">Showing ' + visibleRows.length + " of " + processedRows.length +
-        " matching rows" + (processedRows.length !== rows.length ? " from " + rows.length + " total" : "") + ".</div>";
+      html += '<div class="notice">' + escapeHtml("מציג " + visibleRows.length + " מתוך " + processedRows.length +
+        " שורות תואמות" + (processedRows.length !== rows.length ? " מתוך " + rows.length + " בסך הכל" : "") + ".") + "</div>";
     }
     target.innerHTML = html;
     bindTableControls(target, targetId, rows, columns, options);
@@ -2052,16 +2302,16 @@
       return;
     }
     var fields = [
-      ["Date", row.date],
-      ["Street", row.street],
-      ["Gush", row.gush],
-      ["Price", row.price_millions],
-      ["Area", row.area],
-      ["Rooms", row.rooms],
-      ["Type", row.apartment_type],
-      ["Address", row.address]
+      ["תאריך", row.date],
+      ["רחוב", row.street],
+      ["גוש", row.gush],
+      ["מחיר", row.price_millions],
+      ["שטח", row.area],
+      ["חדרים", row.rooms],
+      ["סוג", row.apartment_type],
+      ["כתובת", row.address]
     ];
-    target.innerHTML = '<div class="deal-card"><h3>Selected deal</h3><dl>' + fields.map(function (field) {
+    target.innerHTML = '<div class="deal-card"><h3>עסקה שנבחרה</h3><dl>' + fields.map(function (field) {
       return "<div><dt>" + escapeHtml(field[0]) + "</dt><dd class='" + textDirectionClass(field[1]) + "'>" + escapeHtml(valueOrDash(field[1])) + "</dd></div>";
     }).join("") + "</dl></div>";
   }
@@ -2086,14 +2336,14 @@
     }
     var filters = buildCompareFilterSummary(data, payload || {});
     var counts = data.counts || {};
-    target.innerHTML = '<div class="active-filter-box"><strong>Active filters</strong><span>' +
+    target.innerHTML = '<div class="active-filter-box"><strong>מסננים פעילים</strong><span>' +
       escapeHtml(filters.join(" • ")) + "</span></div>" +
-      '<div class="data-summary-box"><strong>Data summary</strong><span>' +
-      escapeHtml(valueOrDash(counts.summary_points) + " aggregated points from " + formatNumber(counts.outlier_deals || counts.filtered_deals || 0) + " individual deals") +
+      '<div class="data-summary-box"><strong>סיכום נתונים</strong><span>' +
+      escapeHtml(valueOrDash(counts.summary_points) + " נקודות מסוכמות מתוך " + formatNumber(counts.outlier_deals || counts.filtered_deals || 0) + " עסקאות בודדות") +
       "</span><span>" +
-      escapeHtml("Each point = " + (data.statistic || byId("compare-statistic").value) + " of deals in same year and Gush") +
+      escapeHtml("כל נקודה = " + translateUiText(data.statistic || byId("compare-statistic").value) + " של עסקאות באותה שנה וגוש") +
       "</span><span>" +
-      escapeHtml("Covering " + valueOrDash(counts.unique_gushes) + " Gush areas across " + valueOrDash(counts.unique_years) + " years") +
+      escapeHtml("מכסה " + valueOrDash(counts.unique_gushes) + " גושים לאורך " + valueOrDash(counts.unique_years) + " שנים") +
       "</span></div>";
   }
 
@@ -2101,33 +2351,33 @@
     var selection = data.selection || {};
     var gushes = selection.gushes || [];
     var gushText = gushes.length > 3
-      ? gushes.slice(0, 3).map(function (gush) { return gush.label || gush.id; }).join(", ") + " (+" + (gushes.length - 3) + " more)"
-      : (gushes.map(function (gush) { return gush.label || gush.id; }).join(", ") || "None");
+      ? gushes.slice(0, 3).map(function (gush) { return gush.label || gush.id; }).join(", ") + " (+" + (gushes.length - 3) + " נוספים)"
+      : (gushes.map(function (gush) { return gush.label || gush.id; }).join(", ") || "ללא");
     var cities = (selection.cities || []).map(function (city) { return city.name || city.id; });
     var parts = [
-      "Gush: " + gushText,
-      "City: " + (cities.join(", ") || "All matched cities"),
+      "גוש: " + gushText,
+      "עיר: " + (cities.join(", ") || "כל הערים המתאימות"),
       "Y: " + selectedOptionText("compare-y-variable"),
-      "Statistic: " + selectedOptionText("compare-statistic")
+      "מדד: " + selectedOptionText("compare-statistic")
     ];
-    addRangeSummary(parts, "Years", "compare-filter-year-min", "compare-filter-year-max");
-    addRangeSummary(parts, "Price", "compare-filter-price-min", "compare-filter-price-max", " M₪");
-    addRangeSummary(parts, "Price / m²", "compare-filter-price-m2-min", "compare-filter-price-m2-max", " k₪");
-    addRangeSummary(parts, "Area", "compare-filter-area-min", "compare-filter-area-max", " m²");
-    addRangeSummary(parts, "Floor", "compare-filter-floor-min", "compare-filter-floor-max");
+    addRangeSummary(parts, "שנים", "compare-filter-year-min", "compare-filter-year-max");
+    addRangeSummary(parts, "מחיר", "compare-filter-price-min", "compare-filter-price-max", " מ׳ ₪");
+    addRangeSummary(parts, "מחיר למ\"ר", "compare-filter-price-m2-min", "compare-filter-price-m2-max", " אלף ₪");
+    addRangeSummary(parts, "שטח", "compare-filter-area-min", "compare-filter-area-max", " מ\"ר");
+    addRangeSummary(parts, "קומה", "compare-filter-floor-min", "compare-filter-floor-max");
     var rooms = selectedValues(byId("compare-rooms-select"));
-    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    if (rooms.length) parts.push("חדרים: " + rooms.join(", "));
     var roof = byId("compare-roof-select").value;
-    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
     var project = byId("compare-new-project-select").value;
-    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
-    if (payload.remove_price_outliers) parts.push("Outliers removed");
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (payload.remove_price_outliers) parts.push("חריגים הוסרו");
     return parts;
   }
 
   function compareYAxisLabel(data) {
     var stat = data && data.statistic ? data.statistic : byId("compare-statistic").value;
-    return (stat === "mean" ? "Mean " : "Median ") + yLabel(data && data.y_variable || byId("compare-y-variable").value);
+    return (stat === "mean" ? "ממוצע " : "חציון ") + yLabel(data && data.y_variable || byId("compare-y-variable").value);
   }
 
   function compareSeriesChartOptions() {
@@ -2172,36 +2422,36 @@
     var selection = data.selection || {};
     var thresholds = data.changes && data.changes.thresholds || {};
     var filters = buildGushFilterSummary();
-    filterTarget.innerHTML = '<strong>Active filters</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
+    filterTarget.innerHTML = '<strong>מסננים פעילים</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
     var qualified = data.counts && data.counts.qualified_gushes || 0;
     var selected = data.counts && data.counts.selected_gushes || 0;
-    var selectedCopy = selected + " selected Gush areas from " + qualified + " qualifying areas";
-    var groupsCopy = "Showing top " + valueOrDash(selection.top_count) + ", typical " + valueOrDash(selection.typical_count) + ", and bottom " + valueOrDash(selection.bottom_count) + " performers";
-    var basisCopy = "Each point = " + selectedOptionText("gush-statistic").toLowerCase() + "; ranked by annualized trimmed mean YoY change; median deals per year " + (thresholds.min_deals_comparison || ">=") + " " + valueOrDash(thresholds.min_deals_per_gush);
-    infoTarget.innerHTML = '<strong>Performance analysis</strong><span>' + escapeHtml(selectedCopy) + "</span><span>" + escapeHtml(groupsCopy) + "</span><span>" + escapeHtml(basisCopy) + "</span>";
+    var selectedCopy = selected + " גושים נבחרו מתוך " + qualified + " גושים כשירים";
+    var groupsCopy = "מציג " + valueOrDash(selection.top_count) + " גבוהים, " + valueOrDash(selection.typical_count) + " טיפוסיים ו-" + valueOrDash(selection.bottom_count) + " נמוכים";
+    var basisCopy = "כל נקודה = " + selectedOptionText("gush-statistic").toLowerCase() + "; הדירוג לפי שינוי YoY שנתי ממוצע; חציון עסקאות לשנה " + (thresholds.min_deals_comparison || ">=") + " " + valueOrDash(thresholds.min_deals_per_gush);
+    infoTarget.innerHTML = '<strong>ניתוח ביצועים</strong><span>' + escapeHtml(selectedCopy) + "</span><span>" + escapeHtml(groupsCopy) + "</span><span>" + escapeHtml(basisCopy) + "</span>";
   }
 
   function buildGushFilterSummary() {
     var citySelect = byId("gush-city-select");
     var city = citySelect && citySelect.selectedOptions[0] ? citySelect.selectedOptions[0].textContent : valueOrDash(byId("gush-city-select").value);
-    var parts = ["City: " + city.replace(/\s+\([0-9,]+\)$/, "")];
-    addRangeSummary(parts, "Years", "gush-filter-year-min", "gush-filter-year-max");
-    addRangeSummary(parts, "Price", "gush-filter-price-min", "gush-filter-price-max", " M₪");
-    addRangeSummary(parts, "Price / m²", "gush-filter-price-m2-min", "gush-filter-price-m2-max", " k₪");
-    addRangeSummary(parts, "Area", "gush-filter-area-min", "gush-filter-area-max", " m²");
-    addRangeSummary(parts, "Floor", "gush-filter-floor-min", "gush-filter-floor-max");
-    addRangeSummary(parts, "Building floors", "gush-filter-building-floors-min", "gush-filter-building-floors-max");
-    addRangeSummary(parts, "Built year", "gush-filter-built-year-min", "gush-filter-built-year-max");
-    addRangeSummary(parts, "Building age", "gush-filter-building-age-min", "gush-filter-building-age-max");
+    var parts = ["עיר: " + city.replace(/\s+\([0-9,]+\)$/, "")];
+    addRangeSummary(parts, "שנים", "gush-filter-year-min", "gush-filter-year-max");
+    addRangeSummary(parts, "מחיר", "gush-filter-price-min", "gush-filter-price-max", " מ׳ ₪");
+    addRangeSummary(parts, "מחיר למ\"ר", "gush-filter-price-m2-min", "gush-filter-price-m2-max", " אלף ₪");
+    addRangeSummary(parts, "שטח", "gush-filter-area-min", "gush-filter-area-max", " מ\"ר");
+    addRangeSummary(parts, "קומה", "gush-filter-floor-min", "gush-filter-floor-max");
+    addRangeSummary(parts, "קומות בבניין", "gush-filter-building-floors-min", "gush-filter-building-floors-max");
+    addRangeSummary(parts, "שנת בנייה", "gush-filter-built-year-min", "gush-filter-built-year-max");
+    addRangeSummary(parts, "גיל בניין", "gush-filter-building-age-min", "gush-filter-building-age-max");
     var rooms = selectedValues(byId("gush-rooms-select"));
-    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    if (rooms.length) parts.push("חדרים: " + rooms.join(", "));
     var apartmentTypes = selectedValues(byId("gush-apartment-type-select"));
-    if (apartmentTypes.length) parts.push("Apartment type: " + compactList(apartmentTypes, 4));
+    if (apartmentTypes.length) parts.push("סוג דירה: " + compactList(apartmentTypes, 4));
     var roof = byId("gush-roof-select").value;
-    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
     var project = byId("gush-new-project-select").value;
-    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
-    if (byId("gush-remove-price-outliers").checked) parts.push("Price and area outliers removed");
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (byId("gush-remove-price-outliers").checked) parts.push("חריגי מחיר ושטח הוסרו");
     return parts;
   }
 
@@ -2209,7 +2459,7 @@
     var list = (values || []).map(String);
     var max = limit || 3;
     if (list.length <= max) return list.join(", ");
-    return list.slice(0, max).join(", ") + " (+" + (list.length - max) + " more)";
+    return list.slice(0, max).join(", ") + " (+" + (list.length - max) + " נוספים)";
   }
 
   function addRangeSummary(parts, label, minId, maxId, suffix) {
@@ -2222,7 +2472,7 @@
     var target = byId("city-insights");
     if (!target) return;
     if (!cityStats) {
-      target.innerHTML = '<div class="mini-notice">Run city comparison to see rankings.</div>';
+      target.innerHTML = '<div class="mini-notice">הריצו השוואת ערים כדי לראות דירוגים.</div>';
       return;
     }
     var cards = (cityStats.cards || []).map(function (card) {
@@ -2236,9 +2486,9 @@
         '</td><td>' + escapeHtml(valueOrDash(row.pct_change)) + '%</td><td>' + escapeHtml(valueOrDash(row.last_value)) + '</td><td>' +
         escapeHtml(valueOrDash(row.avg_deals_per_year)) + "</td></tr>";
     }).join("");
-    target.innerHTML = '<div class="city-insight-cards">' + (cards || '<div class="mini-notice">No comparable city stats yet.</div>') + "</div>" +
-      '<div class="city-ranking"><h4>Change ranking</h4><table><thead><tr><th>#</th><th>City</th><th>Change</th><th>Latest</th><th>Deals / yr</th></tr></thead><tbody>' +
-      (ranking || '<tr><td colspan="5">No ranking rows.</td></tr>') + "</tbody></table></div>";
+    target.innerHTML = '<div class="city-insight-cards">' + (cards || '<div class="mini-notice">עדיין אין סטטיסטיקות עיר להשוואה.</div>') + "</div>" +
+      '<div class="city-ranking"><h4>דירוג שינוי</h4><table><thead><tr><th>#</th><th>עיר</th><th>שינוי</th><th>אחרון</th><th>עסקאות / שנה</th></tr></thead><tbody>' +
+      (ranking || '<tr><td colspan="5">אין שורות דירוג.</td></tr>') + "</tbody></table></div>";
   }
 
   function renderCityFilterSummary(data) {
@@ -2246,35 +2496,35 @@
     var infoTarget = byId("city-data-info");
     if (!filterTarget || !infoTarget) return;
     var filters = buildCityFilterSummary();
-    filterTarget.innerHTML = '<strong>Active filters</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
+    filterTarget.innerHTML = '<strong>מסננים פעילים</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
     if (!data || !data.counts) {
       infoTarget.innerHTML = "";
       return;
     }
     var stats = data.city_stats || {};
-    var yearRange = stats.year_range ? stats.year_range.min + "-" + stats.year_range.max : valueOrDash(data.counts.unique_years) + " years";
-    infoTarget.innerHTML = '<strong>City comparison data</strong><span>' +
-      escapeHtml(valueOrDash(data.counts.summary_points) + " aggregated points from " + formatNumber(data.counts.outlier_deals || data.counts.filtered_deals || 0) + " deals") +
-      "</span><span>" + escapeHtml("Covering " + valueOrDash(data.counts.plotted_cities || data.counts.unique_cities) + " cities across " + yearRange) +
-      "</span><span>" + escapeHtml("Each point = " + selectedOptionText("city-statistic").toLowerCase() + " of deals in same year and city") + "</span>";
+    var yearRange = stats.year_range ? stats.year_range.min + "-" + stats.year_range.max : valueOrDash(data.counts.unique_years) + " שנים";
+    infoTarget.innerHTML = '<strong>נתוני השוואת ערים</strong><span>' +
+      escapeHtml(valueOrDash(data.counts.summary_points) + " נקודות מסוכמות מתוך " + formatNumber(data.counts.outlier_deals || data.counts.filtered_deals || 0) + " עסקאות") +
+      "</span><span>" + escapeHtml("מכסה " + valueOrDash(data.counts.plotted_cities || data.counts.unique_cities) + " ערים לאורך " + yearRange) +
+      "</span><span>" + escapeHtml("כל נקודה = " + selectedOptionText("city-statistic").toLowerCase() + " של עסקאות באותה שנה ועיר") + "</span>";
   }
 
   function buildCityFilterSummary() {
     var cities = selectedCityLabels();
-    var cityText = cities.length > 3 ? cities.slice(0, 3).join(", ") + " (+" + (cities.length - 3) + " more)" : (cities.join(", ") || "None");
-    var parts = ["Cities: " + cityText, "Y: " + selectedOptionText("city-y-variable"), "Statistic: " + selectedOptionText("city-statistic")];
-    addRangeSummary(parts, "Years", "city-filter-year-min", "city-filter-year-max");
-    addRangeSummary(parts, "Price", "city-filter-price-min", "city-filter-price-max", " M₪");
-    addRangeSummary(parts, "Price / m²", "city-filter-price-m2-min", "city-filter-price-m2-max", " k₪");
-    addRangeSummary(parts, "Area", "city-filter-area-min", "city-filter-area-max", " m²");
-    addRangeSummary(parts, "Floor", "city-filter-floor-min", "city-filter-floor-max");
+    var cityText = cities.length > 3 ? cities.slice(0, 3).join(", ") + " (+" + (cities.length - 3) + " נוספות)" : (cities.join(", ") || "ללא");
+    var parts = ["ערים: " + cityText, "Y: " + selectedOptionText("city-y-variable"), "מדד: " + selectedOptionText("city-statistic")];
+    addRangeSummary(parts, "שנים", "city-filter-year-min", "city-filter-year-max");
+    addRangeSummary(parts, "מחיר", "city-filter-price-min", "city-filter-price-max", " מ׳ ₪");
+    addRangeSummary(parts, "מחיר למ\"ר", "city-filter-price-m2-min", "city-filter-price-m2-max", " אלף ₪");
+    addRangeSummary(parts, "שטח", "city-filter-area-min", "city-filter-area-max", " מ\"ר");
+    addRangeSummary(parts, "קומה", "city-filter-floor-min", "city-filter-floor-max");
     var rooms = selectedValues(byId("city-rooms-select"));
-    if (rooms.length) parts.push("Rooms: " + rooms.join(", "));
+    if (rooms.length) parts.push("חדרים: " + rooms.join(", "));
     var roof = byId("city-roof-select").value;
-    if (roof !== "both") parts.push("Roof: " + (roof === "yes" ? "Yes" : "No"));
+    if (roof !== "both") parts.push("גג: " + (roof === "yes" ? "כן" : "לא"));
     var project = byId("city-new-project-select").value;
-    if (project !== "both") parts.push("New project: " + (project === "yes" ? "Yes" : "No"));
-    if (byId("city-remove-price-outliers").checked) parts.push("Outliers removed");
+    if (project !== "both") parts.push("פרויקט חדש: " + (project === "yes" ? "כן" : "לא"));
+    if (byId("city-remove-price-outliers").checked) parts.push("חריגים הוסרו");
     return parts;
   }
 
@@ -2360,12 +2610,12 @@
       return;
     }
     var cards = [
-      ["Cities", meta.data_summary && meta.data_summary.city_count],
-      ["Rows", meta.data_summary && meta.data_summary.total_city_rows],
-      ["Apartment types", (meta.apartment_types || []).length],
-      ["Loaded streets", state.streets.length],
-      ["Loaded Gush areas", state.gushes.length],
-      ["Generated", meta.data_summary && meta.data_summary.generated_at]
+      ["ערים", meta.data_summary && meta.data_summary.city_count],
+      ["שורות", meta.data_summary && meta.data_summary.total_city_rows],
+      ["סוגי דירות", (meta.apartment_types || []).length],
+      ["רחובות שנטענו", state.streets.length],
+      ["גושים שנטענו", state.gushes.length],
+      ["נוצר", meta.data_summary && meta.data_summary.generated_at]
     ];
     target.innerHTML = cards.map(infoCard).join("");
     byId("global-summary").innerHTML = cards.slice(0, 2).map(function (card) {
@@ -2381,15 +2631,15 @@
     }
     var ranges = data.ranges || {};
     var cards = [
-      ["Before outlier removal", data.counts && data.counts.before_outlier_removal],
-      ["After outlier removal", data.counts && data.counts.after_outlier_removal],
-      ["Year range", rangeText(ranges.deal_year)],
-      ["Price range", rangeText(ranges.price_millions)],
-      ["Price / m² range", rangeText(ranges.price_per_m2)],
-      ["Area range", rangeText(ranges.area)],
-      ["Floor range", rangeText(ranges.floor)],
-      ["Building floors", rangeText(ranges.build_floors)],
-      ["Available apartment types", data.apartment_types && data.apartment_types.available && data.apartment_types.available.length]
+      ["לפני הסרת חריגים", data.counts && data.counts.before_outlier_removal],
+      ["אחרי הסרת חריגים", data.counts && data.counts.after_outlier_removal],
+      ["טווח שנים", rangeText(ranges.deal_year)],
+      ["טווח מחירים", rangeText(ranges.price_millions)],
+      ["טווח מחיר למ\"ר", rangeText(ranges.price_per_m2)],
+      ["טווח שטח", rangeText(ranges.area)],
+      ["טווח קומות", rangeText(ranges.floor)],
+      ["קומות בבניין", rangeText(ranges.build_floors)],
+      ["סוגי דירות זמינים", data.apartment_types && data.apartment_types.available && data.apartment_types.available.length]
     ];
     target.innerHTML = cards.map(infoCard).join("");
   }
@@ -2580,65 +2830,65 @@
 
   function analysisColumns() {
     return [
-      ["date", "Date", "date"], ["city", "City"], ["street", "Street"], ["gush", "Gush", "number"],
-      ["price_millions", "Price", "number"], ["price_per_m2", "Price / m²", "number"], ["price_per_room", "Price / Room", "number"],
-      ["area", "Area", "number"], ["rooms", "Rooms", "number"], ["floor", "Floor", "number"], ["apartment_type", "Type"],
-      ["address", "Address"]
+      ["date", "תאריך", "date"], ["city", "עיר"], ["street", "רחוב"], ["gush", "גוש", "number"],
+      ["price_millions", "מחיר", "number"], ["price_per_m2", "מחיר למ\"ר", "number"], ["price_per_room", "מחיר לחדר", "number"],
+      ["area", "שטח", "number"], ["rooms", "חדרים", "number"], ["floor", "קומה", "number"], ["apartment_type", "סוג"],
+      ["address", "כתובת"]
     ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
   }
 
   function summaryColumns(extra) {
     var keys = (extra || []).concat(["series_label", "deal_year", "n_deals", "price_millions", "price_per_m2", "price_per_room", "y"]);
     var labelByKey = {
-      city_label: "City",
-      gush_label: "Gush",
-      series_label: "Series",
-      deal_year: "Year",
-      n_deals: "Deals",
-      price_millions: "Price",
-      price_per_m2: "Price / m²",
-      price_per_room: "Price / Room",
-      y: "Selected value"
+      city_label: "עיר",
+      gush_label: "גוש",
+      series_label: "סדרה",
+      deal_year: "שנה",
+      n_deals: "עסקאות",
+      price_millions: "מחיר",
+      price_per_m2: "מחיר למ\"ר",
+      price_per_room: "מחיר לחדר",
+      y: "ערך נבחר"
     };
     return keys.map(function (key) { return { key: key, label: labelByKey[key] || key }; });
   }
 
   function compareRawColumns() {
     return [
-      ["date", "Date", "date"], ["city", "City"], ["street", "Street"], ["Gush", "Gush", "number"],
-      ["price_millions", "Price", "number"], ["price_per_m2", "Price / m²", "number"], ["price_per_room", "Price / Room", "number"],
-      ["area", "Area", "number"], ["rooms", "Rooms", "number"], ["floor", "Floor", "number"], ["apt type", "Type"],
-      ["FULLADRESS", "Address"], ["New_Project", "Project"], ["build_year", "Built year", "number"], ["building age", "Building age", "number"]
+      ["date", "תאריך", "date"], ["city", "עיר"], ["street", "רחוב"], ["Gush", "גוש", "number"],
+      ["price_millions", "מחיר", "number"], ["price_per_m2", "מחיר למ\"ר", "number"], ["price_per_room", "מחיר לחדר", "number"],
+      ["area", "שטח", "number"], ["rooms", "חדרים", "number"], ["floor", "קומה", "number"], ["apt type", "סוג"],
+      ["FULLADRESS", "כתובת"], ["New_Project", "פרויקט"], ["build_year", "שנת בנייה", "number"], ["building age", "גיל בניין", "number"]
     ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
   }
 
   function performanceColumns(yVariable) {
     var selectedLabel = yLabel(yVariable);
     return [
-      { key: "performance_group", label: "Group" },
-      { key: "rank", label: "Rank", type: "number", filter: "range" },
-      { key: "position_in_group", label: "Group #", type: "number", filter: "range" },
-      { key: "gush_label", label: "Gush" },
-      { key: "price_change", label: "Change %", type: "number", filter: "range" },
-      { key: "yearly_slope", label: "Annual YoY %", type: "number", filter: "range" },
-      { key: "first_y", label: "First " + selectedLabel, type: "number", filter: "range" },
-      { key: "last_y", label: "Last " + selectedLabel, type: "number", filter: "range" },
-      { key: "first_year", label: "First year", type: "number", filter: "range" },
-      { key: "last_year", label: "Last year", type: "number", filter: "range" },
-      { key: "years_span", label: "Years", type: "number", filter: "range" },
-      { key: "median_deals_per_year", label: "Median deals/year", type: "number", filter: "range" }
+      { key: "performance_group", label: "קבוצה" },
+      { key: "rank", label: "דירוג", type: "number", filter: "range" },
+      { key: "position_in_group", label: "מס' בקבוצה", type: "number", filter: "range" },
+      { key: "gush_label", label: "גוש" },
+      { key: "price_change", label: "שינוי %", type: "number", filter: "range" },
+      { key: "yearly_slope", label: "שינוי שנתי %", type: "number", filter: "range" },
+      { key: "first_y", label: "ערך ראשון - " + selectedLabel, type: "number", filter: "range" },
+      { key: "last_y", label: "ערך אחרון - " + selectedLabel, type: "number", filter: "range" },
+      { key: "first_year", label: "שנה ראשונה", type: "number", filter: "range" },
+      { key: "last_year", label: "שנה אחרונה", type: "number", filter: "range" },
+      { key: "years_span", label: "שנים", type: "number", filter: "range" },
+      { key: "median_deals_per_year", label: "חציון עסקאות/שנה", type: "number", filter: "range" }
     ];
   }
 
   function citySummaryColumns() {
     return [
-      { key: "city_label", label: "City" },
-      { key: "deal_year", label: "Year", type: "number", filter: "range" },
-      { key: "n_deals", label: "Deals", type: "number", filter: "range" },
-      { key: "price_millions", label: "Price", type: "number", filter: "range" },
-      { key: "price_per_m2", label: "Price / m²", type: "number", filter: "range" },
-      { key: "price_per_room", label: "Price / Room", type: "number", filter: "range" },
-      { key: "y", label: "Selected value", type: "number", filter: "range" }
+      { key: "city_label", label: "עיר" },
+      { key: "deal_year", label: "שנה", type: "number", filter: "range" },
+      { key: "n_deals", label: "עסקאות", type: "number", filter: "range" },
+      { key: "price_millions", label: "מחיר", type: "number", filter: "range" },
+      { key: "price_per_m2", label: "מחיר למ\"ר", type: "number", filter: "range" },
+      { key: "price_per_room", label: "מחיר לחדר", type: "number", filter: "range" },
+      { key: "y", label: "ערך נבחר", type: "number", filter: "range" }
     ];
   }
 
@@ -2677,7 +2927,7 @@
     if (!multiple) {
       var blank = document.createElement("option");
       blank.value = "";
-      blank.textContent = "Choose...";
+      blank.textContent = translateUiText("Choose...");
       select.appendChild(blank);
     }
     options.forEach(function (option) {
@@ -2731,10 +2981,10 @@
         var option = optionForValue(select, value);
         return option ? option.textContent : value;
       });
-      summary.innerHTML = '<strong>' + escapeHtml(formatNumber(selectedList.length) + " cities selected") + "</strong>" +
-        '<button class="secondary compact-button" type="button">Clear</button>' +
+      summary.innerHTML = '<strong>' + escapeHtml(formatNumber(selectedList.length) + " ערים נבחרו") + "</strong>" +
+        '<button class="secondary compact-button" type="button">ניקוי</button>' +
         '<span class="' + textDirectionClass(selectedLabels.join(", ")) + '">' +
-        escapeHtml(selectedLabels.slice(0, 6).join(", ") + (selectedLabels.length > 6 ? " +" + (selectedLabels.length - 6) + " more" : "")) +
+        escapeHtml(selectedLabels.slice(0, 6).join(", ") + (selectedLabels.length > 6 ? " +" + (selectedLabels.length - 6) + " נוספות" : "")) +
         "</span>";
       summary.querySelector("button").addEventListener("click", function () {
         setSelectedValues(select, []);
@@ -2762,7 +3012,7 @@
 
     results.innerHTML = "";
     if (!visible.length) {
-      results.innerHTML = '<div class="mini-notice">No matching cities.</div>';
+      results.innerHTML = '<div class="mini-notice">לא נמצאו ערים מתאימות.</div>';
       return;
     }
     visible.forEach(function (option) {
@@ -2771,7 +3021,7 @@
       button.className = "picker-option city-picker-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
       button.innerHTML = '<span class="' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + '</span><small>' +
-        escapeHtml(formatNumber(cityRowsForOption(option)) + " rows") + "</small>";
+        escapeHtml(formatNumber(cityRowsForOption(option)) + " שורות") + "</small>";
       button.addEventListener("click", function () {
         setOptionSelected(select, option.value, !selected.has(String(option.value)));
         renderCityComparisonPicker();
@@ -2841,7 +3091,7 @@
       return;
     }
     var requestId = ++state.compareGushSearchRequestId;
-    results.innerHTML = '<div class="mini-notice">Searching Gush areas across all cities...</div>';
+    results.innerHTML = '<div class="mini-notice">מחפש גושים בכל הערים...</div>';
     try {
       var response = await getJson("api/gush-search?q=" + encodeURIComponent(query) + "&limit=30");
       if (requestId !== state.compareGushSearchRequestId) return;
@@ -2857,7 +3107,7 @@
     (gushes || []).forEach(function (gush) {
       var details = [gush.city, "-", gush.label, "(" + gush.id + ")"].filter(Boolean);
       if (gush.representative_street) details.push("- " + gush.representative_street);
-      if (gush.deals) details.push("· " + formatNumber(gush.deals) + " deals");
+      if (gush.deals) details.push("· " + formatNumber(gush.deals) + " עסקאות");
       ensureSelectOption(select, {
         value: gush.id,
         label: details.join(" "),
@@ -2908,13 +3158,13 @@
     if (!query) {
       results.innerHTML = '<div class="mini-notice">' +
         (key === "gushes" && document.body.dataset.activeTab === "compare"
-          ? "Search Gush number, city, label, or street across all cities. Selected items stay pinned above."
-          : "Search to narrow the list. Selected items stay pinned above.") +
+          ? "חפשו מספר גוש, עיר, תיאור או רחוב בכל הערים. פריטים שנבחרו נשארים מוצמדים למעלה."
+          : "חפשו כדי לצמצם את הרשימה. פריטים שנבחרו נשארים מוצמדים למעלה.") +
         "</div>";
       return;
     }
     if (!visible.length) {
-      results.innerHTML = '<div class="mini-notice">No matches.</div>';
+      results.innerHTML = '<div class="mini-notice">לא נמצאו התאמות.</div>';
       return;
     }
     visible.forEach(function (option) {
@@ -2965,11 +3215,11 @@
     });
 
     if (!query) {
-      results.innerHTML = '<div class="mini-notice">Search by Gush number, city, description, or street. Selected areas stay pinned above.</div>';
+      results.innerHTML = '<div class="mini-notice">חפשו לפי מספר גוש, עיר, תיאור או רחוב. אזורים שנבחרו נשארים מוצמדים למעלה.</div>';
       return;
     }
     if (!visible.length) {
-      results.innerHTML = '<div class="mini-notice">No matches yet. Keep typing to search all cities.</div>';
+      results.innerHTML = '<div class="mini-notice">אין התאמות עדיין. המשיכו להקליד כדי לחפש בכל הערים.</div>';
       return;
     }
 
@@ -3281,7 +3531,7 @@
     var selected = new Set(selectedValues(select).map(String));
     var options = Array.from(select.options || []).filter(function (option) { return option.value; });
     if (!options.length) {
-      target.innerHTML = '<div class="mini-notice">Room options load with the selected area.</div>';
+      target.innerHTML = '<div class="mini-notice">אפשרויות חדרים נטענות לפי האזור שנבחר.</div>';
       return;
     }
     target.innerHTML = "";
@@ -3350,7 +3600,7 @@
 
     target.innerHTML = "";
     if (!visible.length) {
-      target.innerHTML = '<div class="mini-notice">No matching apartment types.</div>';
+      target.innerHTML = '<div class="mini-notice">לא נמצאו סוגי דירות מתאימים.</div>';
       return;
     }
     visible.forEach(function (option) {
@@ -3438,7 +3688,7 @@
     if (!target) return;
     target.setAttribute("aria-live", kind === "error" || kind === "warning" ? "assertive" : "polite");
     target.setAttribute("role", kind === "error" || kind === "warning" ? "alert" : "status");
-    target.innerHTML = message ? '<div class="notice ' + (kind || "") + '">' + escapeHtml(message) + "</div>" : "";
+    target.innerHTML = message ? '<div class="notice ' + (kind || "") + '">' + escapeHtml(translateUiText(message)) + "</div>" : "";
   }
 
   function setBusy(id, busy) {
@@ -3499,31 +3749,31 @@
     var target = byId("selection-summary");
     if (!target) return;
     var citySelect = byId("city-select");
-    var city = citySelect && citySelect.selectedOptions[0] ? citySelect.selectedOptions[0].textContent : "No city";
+    var city = citySelect && citySelect.selectedOptions[0] ? citySelect.selectedOptions[0].textContent : "אין עיר";
     var pieces = [
-      ["City", city.replace(/\s+\([0-9,]+\)$/, "")],
-      ["Streets", selectedValues(byId("street-select")).length],
-      ["Gush areas", selectedValues(byId("gush-select")).length]
+      ["עיר", city.replace(/\s+\([0-9,]+\)$/, "")],
+      ["רחובות", selectedValues(byId("street-select")).length],
+      ["גושים", selectedValues(byId("gush-select")).length]
     ];
     if (document.body.dataset.activeTab === "analysis") {
       pieces = pieces.concat([
-        ["Rooms", selectedValues(byId("rooms-select")).length || "All"],
-        ["Status", statusFilterText()],
-        ["Custom ranges", customRangeFilterCount()]
+        ["חדרים", selectedValues(byId("rooms-select")).length || "הכל"],
+        ["סטטוס", statusFilterText()],
+        ["טווחים מותאמים", customRangeFilterCount()]
       ]);
     } else if (document.body.dataset.activeTab === "compare") {
       pieces = pieces.concat([
-        ["Y value", selectedOptionText("compare-y-variable")],
-        ["Rooms", selectedValues(byId("compare-rooms-select")).length || "All"],
-        ["Custom ranges", customRangeFilterCount("compare")]
+        ["ערך Y", selectedOptionText("compare-y-variable")],
+        ["חדרים", selectedValues(byId("compare-rooms-select")).length || "הכל"],
+        ["טווחים מותאמים", customRangeFilterCount("compare")]
       ]);
     } else if (document.body.dataset.activeTab === "city") {
       pieces = [
-        ["Cities", selectedValues(byId("city-comparison-select")).length],
-        ["Y value", selectedOptionText("city-y-variable")],
-        ["Statistic", selectedOptionText("city-statistic")],
-        ["Rooms", selectedValues(byId("city-rooms-select")).length || "All"],
-        ["Custom ranges", customRangeFilterCount("city")]
+        ["ערים", selectedValues(byId("city-comparison-select")).length],
+        ["ערך Y", selectedOptionText("city-y-variable")],
+        ["מדד", selectedOptionText("city-statistic")],
+        ["חדרים", selectedValues(byId("city-rooms-select")).length || "הכל"],
+        ["טווחים מותאמים", customRangeFilterCount("city")]
       ];
     }
     target.innerHTML = pieces.map(function (piece) {
@@ -3535,6 +3785,182 @@
     return document.getElementById(id);
   }
 
+  function translateStaticDom() {
+    document.querySelectorAll("input[placeholder], [title], [aria-label], [data-empty-label]").forEach(function (element) {
+      ["placeholder", "title", "aria-label", "data-empty-label"].forEach(function (attribute) {
+        if (!element.hasAttribute(attribute)) return;
+        element.setAttribute(attribute, translateUiText(element.getAttribute(attribute)));
+      });
+    });
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        var parent = node.parentElement;
+        if (!parent || ["SCRIPT", "STYLE"].indexOf(parent.tagName) !== -1) return NodeFilter.FILTER_REJECT;
+        return node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (node) {
+      var text = node.nodeValue;
+      var leading = text.match(/^\s*/)[0];
+      var trailing = text.match(/\s*$/)[0];
+      node.nodeValue = leading + translateUiText(text.trim()) + trailing;
+    });
+  }
+
+  function translateUiText(text) {
+    var value = String(text === null || text === undefined ? "" : text);
+    if (Object.prototype.hasOwnProperty.call(uiTranslations, value)) return uiTranslations[value];
+    return translateUiFragments(value);
+  }
+
+  function translateUiFragments(value) {
+    return value
+      .replace(/^Choose\.\.\.$/, "בחרו...")
+      .replace(/^Select a city$/, "בחרו עיר")
+      .replace(/^ or use Random to load a runnable example\.$/, " או השתמשו באקראי כדי לטעון דוגמה שניתן להריץ.")
+      .replace(/^Choose properties$/, "בחרו נכסים")
+      .replace(/^ by searching streets, selecting Gush areas, or expanding selected Gush areas into streets\.$/, " בעזרת חיפוש רחובות, בחירת גושים או הרחבת גושים לרחובות.")
+      .replace(/^Adjust filters$/, "כוונו מסננים")
+      .replace(/^ for year, price, area, rooms, floor, project status, and outliers\.$/, " לפי שנה, מחיר, שטח, חדרים, קומה, סטטוס פרויקט וחריגים.")
+      .replace(/^Update analysis$/, "עדכנו ניתוח")
+      .replace(/^ to draw the transaction-level scatter plot and table\.$/, " כדי לצייר גרף פיזור וטבלה ברמת עסקה.")
+      .replace(/^Use street search when you do not know which Gush area contains a street\.$/, "השתמשו בחיפוש רחוב כשלא ידוע איזה גוש מכיל אותו.")
+      .replace(/^Smart reset chooses common room counts for the current selection\.$/, "איפוס חכם בוחר מספרי חדרים נפוצים לבחירה הנוכחית.")
+      .replace(/^After the plot appears, click a point to inspect its transaction details\.$/, "אחרי שהגרף מופיע, לחצו על נקודה כדי לבדוק את פרטי העסקה.")
+      .replace(/^Search a street across all cities$/, "חפשו רחוב בכל הערים")
+      .replace(/^ or pick known Gush areas\.$/, " או בחרו גושים מוכרים.")
+      .replace(/^Add matching Gush areas$/, "הוסיפו גושים מתאימים")
+      .replace(/^ directly from the search results\.$/, " ישירות מתוצאות החיפוש.")
+      .replace(/^Pick a Y value$/, "בחרו ערך Y")
+      .replace(/^ such as price, price per m², price per room, or deal count\.$/, " כמו מחיר, מחיר למ\"ר, מחיר לחדר או מספר עסקאות.")
+      .replace(/^Update compare$/, "עדכנו השוואה")
+      .replace(/^ to draw yearly lines and fill the summary table\.$/, " כדי לצייר קווים שנתיים ולמלא את טבלת הסיכום.")
+      .replace(/^Use Gush areas for neighborhood-block comparisons and streets for focused checks\.$/, "השתמשו בגושים להשוואת אזורי שכונה וברחובות לבדיקות ממוקדות.")
+      .replace(/^Turn on city-wide to see the selected city as a reference line\.$/, "הפעילו כל העיר כדי לראות את העיר שנבחרה כקו ייחוס.")
+      .replace(/^Use Summary CSV for grouped trends and Raw CSV for the underlying deals\.$/, "CSV סיכום מתאים למגמות מקובצות, ו-CSV גולמי לעסקאות שמאחורי הסיכום.")
+      .replace(/^Select cities$/, "בחרו ערים")
+      .replace(/^ from the city list\.$/, " מרשימת הערים.")
+      .replace(/^Choose a Y value$/, "בחרו ערך Y")
+      .replace(/^ for the comparison\.$/, " להשוואה.")
+      .replace(/^ only if you want a narrower city-level slice\.$/, " רק אם רוצים חתך עירוני צר יותר.")
+      .replace(/^Update cities$/, "עדכנו ערים")
+      .replace(/^ to draw city trend lines and generate the table\.$/, " כדי לצייר קווי מגמה וליצור את הטבלה.")
+      .replace(/^Deal count is useful for market activity, not just price movement\.$/, "מספר העסקאות שימושי לפעילות שוק, לא רק לתנועת מחיר.")
+      .replace(/^Keep filters broad when comparing cities with different housing mixes\.$/, "השאירו מסננים רחבים כשמשווים ערים עם תמהילי דיור שונים.")
+      .replace(/^Use Raw CSV when you need to audit which transactions entered the summary\.$/, "השתמשו ב-CSV גולמי כשצריך לבדוק אילו עסקאות נכנסו לסיכום.")
+      .replace(/^Select one city$/, "בחרו עיר אחת")
+      .replace(/^ in the City Performance rail\.$/, " בפאנל ביצועי העיר.")
+      .replace(/^Set group sizes$/, "הגדירו גדלי קבוצות")
+      .replace(/^ for top, typical, and bottom performers\.$/, " לביצועים גבוהים, טיפוסיים ונמוכים.")
+      .replace(/^Choose minimum deals$/, "בחרו מינימום עסקאות")
+      .replace(/^ so thinly traded Gush areas do not dominate\.$/, " כדי שגושים דלי עסקאות לא ישתלטו.")
+      .replace(/^Update performance$/, "עדכנו ביצועים")
+      .replace(/^ to draw qualified Gush trend lines and rankings\.$/, " כדי לצייר קווי מגמה ודירוגים של גושים כשירים.")
+      .replace(/^Raise minimum deals for steadier comparisons in large cities\.$/, "העלו מינימום עסקאות להשוואות יציבות יותר בערים גדולות.")
+      .replace(/^Use city-wide as a reference line when judging standout Gush areas\.$/, "השתמשו בכל העיר כקו ייחוס כשבודקים גושים חריגים.")
+      .replace(/^The table shows which Gush areas qualified for each performance group\.$/, "הטבלה מראה אילו גושים נכנסו לכל קבוצת ביצועים.")
+      .replace(/^Status: /, "סטטוס: ")
+      .replace(/^Status unavailable: /, "הסטטוס לא זמין: ")
+      .replace(/^Loading application metadata\.\.\.$/, "טוען מטא-דאטה של האפליקציה...")
+      .replace(/^Metadata loaded\.$/, "המטא-דאטה נטען.")
+      .replace(/^Choose a city first\.$/, "בחרו עיר קודם.")
+      .replace(/^Loading streets and Gush areas\.\.\.$/, "טוען רחובות וגושים...")
+      .replace(/^Loaded ([\d,]+) streets and ([\d,]+) Gush areas\.$/, "נטענו $1 רחובות ו-$2 גושים.")
+      .replace(/^City metadata loaded\. Search streets or Gush areas, then update analysis\.$/, "מטא-דאטה של העיר נטען. חפשו רחובות או גושים ואז עדכנו את הניתוח.")
+      .replace(/^Loading dynamic filter ranges\.\.\.$/, "טוען טווחי סינון דינמיים...")
+      .replace(/^Filter options loaded\.$/, "אפשרויות הסינון נטענו.")
+      .replace(/^City filters are ready\. Change filters or click Update Plot\.$/, "מסנני הערים מוכנים. שנו מסננים או לחצו עדכון גרף.")
+      .replace(/^Select cities and click Update Plot\. City comparison no longer runs automatically on first open\.$/, "בחרו ערים ולחצו עדכון גרף. השוואת ערים לא רצה אוטומטית בפתיחה הראשונה.")
+      .replace(/^Random city selected\. Pick a smaller Gush if auto update pauses\.$/, "נבחרה עיר אקראית. בחרו גוש קטן יותר אם העדכון האוטומטי נעצר.")
+      .replace(/^Tel Aviv is not available in the loaded city list\.$/, "תל אביב לא זמינה ברשימת הערים שנטענה.")
+      .replace(/^Tel Aviv performance defaults loaded\.$/, "ברירות המחדל לביצועי תל אביב נטענו.")
+      .replace(/^Run City Performance first, then choose which ranked Gushes to use\.$/, "הריצו קודם ביצועי עיר, ואז בחרו אילו גושים מדורגים להשתמש בהם.")
+      .replace(/^Selected ([\d,]+) ranked Gush areas and switched them into the Analysis\/Compare shared picker\.$/, "נבחרו $1 גושים מדורגים והועברו לבורר המשותף של ניתוח/השוואה.")
+      .replace(/^Using ([\d,]+) streets from the selected Gush areas\.$/, "משתמש ב-$1 רחובות מהגושים שנבחרו.")
+      .replace(/^Using ([\d,]+) whole Gush areas from the selected streets\.$/, "משתמש ב-$1 גושים מלאים מהרחובות שנבחרו.")
+      .replace(/^Added matching Gush areas from street search\.$/, "נוספו גושים מתאימים מחיפוש הרחוב.")
+      .replace(/^Added the street's Gush areas\. Compare controls are ready\.$/, "נוספו הגושים של הרחוב. פקדי ההשוואה מוכנים.")
+      .replace(/^Using selected street\. Choose "Use whole Gush" to broaden it\.$/, "משתמש ברחוב שנבחר. בחרו \"השתמש בכל הגוש\" כדי להרחיב.")
+      .replace(/^Choose a city or Gush area first\.$/, "בחרו עיר או גוש קודם.")
+      .replace(/^Auto-updating analysis\.\.\.$/, "מעדכן ניתוח אוטומטית...")
+      .replace(/^Loading analysis deals\.\.\.$/, "טוען עסקאות לניתוח...")
+      .replace(/^Select Gush areas or streets before updating compare\.$/, "בחרו גושים או רחובות לפני עדכון ההשוואה.")
+      .replace(/^Auto-updating Gush comparison\.\.\.$/, "מעדכן השוואת גושים אוטומטית...")
+      .replace(/^Loading Gush comparison\.\.\.$/, "טוען השוואת גושים...")
+      .replace(/^Select Gush areas or streets before loading raw deals\.$/, "בחרו גושים או רחובות לפני טעינת עסקאות גולמיות.")
+      .replace(/^Loading raw deals preview\.\.\.$/, "טוען תצוגה מקדימה של עסקאות גולמיות...")
+      .replace(/^Select at least one city\.$/, "בחרו לפחות עיר אחת.")
+      .replace(/^Auto-updating city comparison\.\.\.$/, "מעדכן השוואת ערים אוטומטית...")
+      .replace(/^Loading city comparison\.\.\.$/, "טוען השוואת ערים...")
+      .replace(/^Choose one city first\.$/, "בחרו עיר אחת קודם.")
+      .replace(/^Auto-updating Gush performance\.\.\.$/, "מעדכן ביצועי גושים אוטומטית...")
+      .replace(/^Loading Gush performance\.\.\.$/, "טוען ביצועי גושים...")
+      .replace(/^Preparing (.+) CSV\.\.\.$/, "מכין CSV מסוג $1...")
+      .replace(/^(.+) downloaded\. Rows: (.+)$/, "$1 ירד. שורות: $2")
+      .replace(/^No smart room selection is available for the current filters\.$/, "אין בחירת חדרים חכמה למסננים הנוכחיים.")
+      .replace(/^Applied smart room selection: (.+)\.$/, "הוחלה בחירת חדרים חכמה: $1.")
+      .replace(/^No smart room selection is available for the current city\.$/, "אין בחירת חדרים חכמה לעיר הנוכחית.")
+      .replace(/^Room filter cleared for City Performance\.$/, "מסנן החדרים נוקה לביצועי עיר.")
+      .replace(/^City Performance filters reset to the selected city's available ranges\.$/, "מסנני ביצועי העיר אופסו לטווחים הזמינים בעיר שנבחרה.")
+      .replace(/^Room filter cleared for Compare Areas\.$/, "מסנן החדרים נוקה להשוואת אזורים.")
+      .replace(/^Filter ranges reset to the current selection\.$/, "טווחי הסינון אופסו לבחירה הנוכחית.")
+      .replace(/^City preset applied\. Update cities to refresh the chart\.$/, "קבוצת ערים הוחלה. עדכנו ערים כדי לרענן את הגרף.")
+      .replace(/^City selection cleared\.$/, "בחירת הערים נוקתה.")
+      .replace(/^Click Update Plot once to load City Comparison\. Auto-update starts after the first manual run\.$/, "לחצו פעם אחת על עדכון גרף כדי לטעון השוואת ערים. העדכון האוטומטי מתחיל אחרי ההרצה הידנית הראשונה.")
+      .replace(/^Search by street name across all cities, or pick up to 15 Gush areas\.$/, "חפשו לפי שם רחוב בכל הערים, או בחרו עד 15 גושים.")
+      .replace(/^Compare Areas supports up to 15 Gush areas\. Keeping the first 15 selected\.$/, "השוואת אזורים תומכת בעד 15 גושים. נשמרים 15 הראשונים שנבחרו.")
+      .replace(/^Auto update paused for ([\d,]+) estimated matching deals\. Click Update analysis to run it\.$/, "העדכון האוטומטי נעצר עבור כ-$1 עסקאות מתאימות. לחצו עדכון ניתוח כדי להריץ.")
+      .replace(/^Auto update paused because this would render about ([\d,]+) points\. Lower the row limit or click Update analysis\.$/, "העדכון האוטומטי נעצר כי יוצגו בערך $1 נקודות. הורידו את מגבלת השורות או לחצו עדכון ניתוח.")
+      .replace(/^Auto update paused for ([\d,]+) city-level deals\. Click Update cities to run it\.$/, "העדכון האוטומטי נעצר עבור $1 עסקאות ברמת עיר. לחצו עדכון ערים כדי להריץ.")
+      .replace(/^Auto update paused because Compare Areas supports up to 15 selected Gush areas\.$/, "העדכון האוטומטי נעצר כי השוואת אזורים תומכת בעד 15 גושים שנבחרו.")
+      .replace(/^Choose a city or selected Gush area first\.$/, "בחרו עיר או גוש קודם.")
+      .replace(/^Choose a city and search for streets or Gush areas\. Metadata loads automatically\.$/, "בחרו עיר וחפשו רחובות או גושים. המטא-דאטה נטען אוטומטית.")
+      .replace(/^Select streets or Gush areas\. Compare updates automatically when the selection is small enough\.$/, "בחרו רחובות או גושים. ההשוואה מתעדכנת אוטומטית כשהבחירה קטנה מספיק.")
+      .replace(/^Select cities and click update\. No city summary is loaded automatically\.$/, "בחרו ערים ולחצו עדכון. סיכום ערים לא נטען אוטומטית.")
+      .replace(/^Choose one city and update performance\.$/, "בחרו עיר אחת ועדכנו ביצועים.")
+      .replace(/^Downloads use the filter panel for the workflow you export\.$/, "ההורדות משתמשות במסננים של התהליך שמייצאים.")
+      .replace(/^Select one or more Gush areas first\.$/, "בחרו גוש אחד או יותר קודם.")
+      .replace(/^Select one or more streets first\.$/, "בחרו רחוב אחד או יותר קודם.")
+      .replace(/^Searching\.\.\.$/, "מחפש...")
+      .replace(/^Searching streets across all cities\.\.\.$/, "מחפש רחובות בכל הערים...")
+      .replace(/^Searching Gush areas across all cities\.\.\.$/, "מחפש גושים בכל הערים...")
+      .replace(/^No matching streets\.$/, "לא נמצאו רחובות מתאימים.")
+      .replace(/^No matching cities\.$/, "לא נמצאו ערים מתאימות.")
+      .replace(/^No matching apartment types\.$/, "לא נמצאו סוגי דירות מתאימים.")
+      .replace(/^No matches\.$/, "לא נמצאו התאמות.")
+      .replace(/^No matches yet\. Keep typing to search all cities\.$/, "אין התאמות עדיין. המשיכו להקליד כדי לחפש בכל הערים.")
+      .replace(/^No rows to display\.$/, "אין שורות להצגה.")
+      .replace(/^Filter all columns$/, "סינון כל העמודות")
+      .replace(/^Search rows$/, "חיפוש שורות")
+      .replace(/^Clear filters$/, "ניקוי מסננים")
+      .replace(/^Min$/, "מינ'")
+      .replace(/^Max$/, "מקס'")
+      .replace(/^Filter$/, "סינון")
+      .replace(/^Analysis updated\.$/, "הניתוח עודכן.")
+      .replace(/^No matching transactions\.$/, "לא נמצאו עסקאות מתאימות.")
+      .replace(/^Compare summary updated\.$/, "סיכום ההשוואה עודכן.")
+      .replace(/^No matching summary rows\.$/, "לא נמצאו שורות סיכום מתאימות.")
+      .replace(/^Raw deals preview loaded\.$/, "תצוגה מקדימה של עסקאות גולמיות נטענה.")
+      .replace(/^No matching raw deals\.$/, "לא נמצאו עסקאות גולמיות מתאימות.")
+      .replace(/^City comparison updated\.$/, "השוואת הערים עודכנה.")
+      .replace(/^No matching city rows\.$/, "לא נמצאו שורות עיר מתאימות.")
+      .replace(/^Gush performance updated\.$/, "ביצועי הגושים עודכנו.")
+      .replace(/^No qualified Gush performance rows\.$/, "לא נמצאו שורות ביצועי גושים כשירות.")
+      .replace(/^Canceling current request\.\.\.$/, "מבטל את הבקשה הנוכחית...")
+      .replace(/^Analysis request canceled\.$/, "בקשת הניתוח בוטלה.")
+      .replace(/^Compare request canceled\.$/, "בקשת ההשוואה בוטלה.")
+      .replace(/^City comparison request canceled\.$/, "בקשת השוואת הערים בוטלה.")
+      .replace(/^City Performance request canceled\.$/, "בקשת ביצועי העיר בוטלה.")
+      .replace(/^Room options load with the selected area\.$/, "אפשרויות חדרים נטענות לפי האזור שנבחר.")
+      .replace(/^Room filter cleared\.$/, "מסנן החדרים נוקה.")
+      .replace(/^Outliers removed$/, "חריגים הוסרו")
+      .replace(/^Unavailable$/, "לא זמין")
+      .replace(/^All$/, "הכל")
+      .replace(/^Both$/, "שניהם");
+  }
+
   function cssEscape(value) {
     if (window.CSS && window.CSS.escape) return window.CSS.escape(value);
     return String(value).replace(/["\\]/g, "\\$&");
@@ -3542,9 +3968,9 @@
 
   function statusFilterText() {
     var labels = [];
-    if (byId("roof-select").value !== "both") labels.push("roof " + byId("roof-select").value);
-    if (byId("new-project-select").value !== "both") labels.push("project " + byId("new-project-select").value);
-    return labels.length ? labels.join(", ") : "Both";
+    if (byId("roof-select").value !== "both") labels.push("גג: " + (byId("roof-select").value === "yes" ? "כן" : "לא"));
+    if (byId("new-project-select").value !== "both") labels.push("פרויקט: " + (byId("new-project-select").value === "yes" ? "כן" : "לא"));
+    return labels.length ? labels.join(", ") : "שניהם";
   }
 
   function customRangeFilterCount(scope) {
@@ -3619,15 +4045,15 @@
 
   function yLabel(value) {
     var map = {
-      "Price": "Price (Million Shekels)",
-      "Price / m²": "Price / m²",
-      "Price / Room": "Price / Room",
-      price_millions: "Price (Million Shekels)",
-      price_per_m2: "Price / m²",
-      price_per_room: "Price / Room",
-      n_deals: "Deals"
+      "Price": "מחיר (מיליוני שקלים)",
+      "Price / m²": "מחיר למ\"ר",
+      "Price / Room": "מחיר לחדר",
+      price_millions: "מחיר (מיליוני שקלים)",
+      price_per_m2: "מחיר למ\"ר",
+      price_per_room: "מחיר לחדר",
+      n_deals: "עסקאות"
     };
-    return map[value] || "Value";
+    return map[value] || translateUiText("Value");
   }
 
   function filenameFromDisposition(header) {
