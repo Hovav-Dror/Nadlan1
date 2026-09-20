@@ -9,6 +9,7 @@ from .calculations import (
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
     apply_common_filters,
+    apply_transaction_filters,
     price_used,
     remove_price_outliers_global_iqr,
     sp500_normalized,
@@ -150,7 +151,7 @@ def _filtered_compare_deals(
     warnings: List[str] = []
     selected_frame = apply_common_filters(city_frame, {"gushes": gush_ids})
     selected_rows = int(len(selected_frame))
-    filtered = apply_common_filters(selected_frame, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(selected_frame, _non_location_filters(request_payload.get("filters")))
     filtered_rows = int(len(filtered))
 
     if _remove_price_outliers(request_payload):
@@ -373,6 +374,11 @@ def _raw_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
     working["price_per_m2"] = price_used(working, PRICE_TYPE_M2)
     working["price_per_room"] = price_used(working, PRICE_TYPE_ROOM)
     columns = [
+        "location_basis",
+        "location_reference_id",
+        "sale_portion",
+        "quality_flags",
+        "legacy_match",
         "city",
         "street",
         "Gush",
@@ -411,7 +417,7 @@ def _overlays(
     warnings: List[str] = []
 
     if payload.get("show_city_comparison") is True:
-        city_filtered = apply_common_filters(city_frame, _non_location_filters(payload.get("filters")))
+        city_filtered = apply_transaction_filters(city_frame, _non_location_filters(payload.get("filters")))
         if _remove_price_outliers(payload):
             city_filtered = remove_price_outliers_global_iqr(city_filtered)
         overlays["city_comparison"] = _city_overlay_rows(_summary_by_city_year(city_filtered, statistic), y_variable)

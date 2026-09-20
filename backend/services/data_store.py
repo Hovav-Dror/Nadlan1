@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence
 
@@ -43,6 +44,7 @@ TAB_AVAILABILITY = {
 
 DEFAULT_APARTMENT_TYPES = [
     "דירה בבית קומות",
+    "ד. מגורים",
     "Not specified",
     "דירה",
     "קוטג' דו משפחתי",
@@ -80,10 +82,14 @@ class DataStore:
         self.data_dir = Path(data_dir)
         self.metadata_cache = TTLCache(ttl_seconds=metadata_cache_ttl_seconds, max_items=32)
         self.city_cache = TTLCache(ttl_seconds=city_cache_ttl_seconds, max_items=city_cache_max_items)
+        manifest_path = self.data_dir / "manifest.json"
+        cache_identity = str(self.data_dir.resolve())
+        if manifest_path.exists():
+            cache_identity += manifest_path.read_text()
         self.response_cache = JsonFileCache(
             response_cache_dir or (self.data_dir.parent / ".cache"),
             ttl_seconds=response_cache_ttl_seconds,
-            namespace="nadlan2",
+            namespace="nadlan2-" + hashlib.sha256(cache_identity.encode()).hexdigest()[:16],
         )
 
     def manifest_state(self) -> Dict[str, Any]:
@@ -121,7 +127,8 @@ class DataStore:
                 "numeric": _filter_known(NUMERIC_VARIABLES, required_columns),
                 "categorical": _filter_known(CATEGORICAL_VARIABLES, required_columns),
             },
-            "default_filters": self._default_filters(apartment_types),
+            "default_filters": {**self._default_filters(apartment_types), **manifest.get("default_filters", {})},
+            "source": manifest.get("source"),
             "tab_availability": tab_availability,
             "map": map_state,
             "data_summary": {
@@ -227,7 +234,7 @@ class DataStore:
         if not requested:
             return []
 
-        lookup = self.load_metadata()["unique_gush_streets"]
+        lookup = self.load_metadata()["gush_descriptions"]
         matches = lookup[lookup["Gush"].map(_normalize_gush_id).isin(requested)]
         city_names = sorted(matches["city"].dropna().unique().tolist())
         by_name = {city["name"]: city for city in self.list_cities()}
@@ -320,7 +327,8 @@ class DataStore:
 
         working = lookup.dropna(subset=["city", "street", "Gush"]).copy()
         working["_street_norm"] = working["street"].astype(str).map(_normalize_text)
-        matches = working[working["_street_norm"].str.contains(normalized_query, regex=False)]
+        from .address_search import address_mask
+        matches = working[address_mask(working["street"], query)]
         if matches.empty:
             return []
 
@@ -383,6 +391,9 @@ class DataStore:
         if "city" in frame.columns:
             frame = frame.copy()
             frame["city"] = frame["city"].fillna(expected_city)
+        frame = frame.copy()
+        frame["_record_id"] = (frame["source_id"].astype(str) if "source_id" in frame.columns
+                               else [f"legacy:{expected_city}:{i}" for i in range(len(frame))])
         return frame
 
     def _read_parquet(self, path: Path, public_message: str) -> pd.DataFrame:
@@ -420,6 +431,7 @@ class DataStore:
                 "id": record["id"],
                 "name": record["name"],
                 "rows": record["rows"],
+                "coverage": record.get("coverage"),
             }
             for record in self._city_records(manifest)
         ]
@@ -437,6 +449,7 @@ class DataStore:
                     "id": city_id,
                     "name": name,
                     "rows": city_payload.get("rows"),
+                    "coverage": city_payload.get("coverage"),
                     "file": file_name,
                 }
             )

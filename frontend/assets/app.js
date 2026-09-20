@@ -2,6 +2,8 @@
   "use strict";
 
   var state = {
+    analysisMode: "chart",
+    restoringView: new URLSearchParams(window.location.search).has("view") || new URLSearchParams(window.location.search).has("deal_record"),
     meta: null,
     streets: [],
     gushes: [],
@@ -109,6 +111,7 @@
     selected_gushes: "גושים שנבחרו",
     qualified_summary_points: "נקודות כשירות",
     features: "מצולעים",
+    gushes: "גושים",
     missing_gushes: "גושים חסרים"
   };
 
@@ -118,11 +121,11 @@
     "Analysis Deals": "ניתוח עסקאות",
     "Compare Areas": "השוואת אזורים",
     "City Comparison": "השוואת ערים",
-    "City Performance": "ביצועי עיר",
+    "City Performance": "מגמות לפי גוש",
     "Gush Map": "מפת גושים",
-    "Gush Performance": "ביצועי גושים",
+    "Gush Performance": "מגמות מחירים לפי גוש",
     "Utilities": "כלים",
-    "Data Health": "בריאות נתונים",
+    "Data Health": "כיסוי ואיכות הנתונים",
     "Exports": "ייצוא",
     "About": "אודות",
     "Map controls": "פקדי מפה",
@@ -234,8 +237,8 @@
     "Mixed": "מעורב",
     "Grey": "אפור",
     "Price": "מחיר",
-    "Price / m²": "מחיר למ\"ר",
-    "Price / Room": "מחיר לחדר",
+    "Price / m²": "מחיר למ\"ר (אלפי ₪)",
+    "Price / Room": "מחיר לחדר (מיליוני ₪)",
     "Year / date": "שנה / תאריך",
     "Date": "תאריך",
     "Value": "ערך",
@@ -296,7 +299,7 @@
     "Yearly trends": "מגמות שנתיות",
     "Drill-down map": "מפת המשך",
     "Broad filters": "מסננים רחבים",
-    "City/year summaries. Run explicitly because broad city selections can be expensive.": "סיכומי עיר/שנה. ההרצה ידנית כי בחירות רחבות יכולות להיות כבדות.",
+    "City/year summaries. Run explicitly because broad city selections can be expensive.": "סיכומי עיר/שנה. עדכון אוטומטי זמין לבחירות קטנות; לבחירות רחבות לחצו על עדכון גרף.",
     "Step 1: Select Cities": "שלב 1: בחירת ערים",
     "Search, pin cities, or start from a preset group.": "חפשו, סמנו ערים או התחילו מקבוצת ברירת מחדל.",
     "Largest": "הגדולות",
@@ -311,8 +314,8 @@
     "Plot": "גרף",
     "Chart mode": "מצב גרף",
     "Absolute": "מוחלט",
-    "Index to first year": "אינדקס לשנה ראשונה",
-    "Change from first year": "שינוי מהשנה הראשונה",
+    "Index to first year": "אינדקס לשנת בסיס משותפת",
+    "Change from first year": "שינוי משנת בסיס משותפת",
     "Palette": "פלטה",
     "Reverse color order": "היפוך סדר צבעים",
     "Show points": "הצגת נקודות",
@@ -325,7 +328,7 @@
     "Map review": "בדיקה במפה",
     "Qualified Gushes": "גושים כשירים",
     "Step 1: Select City": "שלב 1: בחירת עיר",
-    "Step 2: Performance Parameters": "שלב 2: פרמטרי ביצועים",
+    "Step 2: Performance Parameters": "הגדרות ההשוואה",
     "Step 3: Additional filters": "שלב 3: מסננים נוספים",
     "Deal ranges": "טווחי עסקאות",
     "Reset": "איפוס",
@@ -363,14 +366,14 @@
     "City comparison only": "ייחודי להשוואת ערים",
     "Remove price and area outliers": "הסרת חריגי מחיר ושטח",
     "Tel Aviv": "תל אביב",
-    "City Performance ranks Gush areas inside this city.": "ביצועי עיר מדרגים גושים בתוך העיר הזו.",
-    "Top, typical, and bottom Gush performers inside one city, matching the original Shiny ranking workflow.": "גושים בעלי ביצועים גבוהים, טיפוסיים ונמוכים בתוך עיר אחת, בדומה לתהליך הדירוג המקורי ב-Shiny.",
-    "City Performance is a directional screening workflow. Treat rankings as candidates to inspect, not as final investment conclusions.": "ביצועי עיר הם כלי סינון כיווני. התייחסו לדירוגים כמועמדים לבדיקה, לא כמסקנות השקעה סופיות.",
+    "City Performance ranks Gush areas inside this city.": "השוואת השינוי השנתי המחושב בגושים בתוך העיר הזו.",
+    "Top, typical, and bottom Gush performers inside one city, matching the original Shiny ranking workflow.": "השוואת מגמות מחירים בגושים באותה עיר ובתקופה משותפת.",
+    "City Performance is a directional screening workflow. Treat rankings as candidates to inspect, not as final investment conclusions.": "הדירוג מתאר שינוי במחירי עסקאות בגוש. הוא מושפע גם מתמהיל הדירות שנמכרו ומכמות הדיווחים.",
     "Each line is a selected street or Gush area summarized by year.": "כל קו הוא רחוב או גוש שנבחר, מסוכם לפי שנה.",
     "Comparing nearby areas, checking relative price levels, and spotting diverging trends.": "השוואת אזורים קרובים, בדיקת רמות מחיר יחסיות וזיהוי מגמות שמתפצלות.",
     "You want to discover the relevant Gush areas from a street name, or compare known blocks side by side.": "כשרוצים למצוא את הגושים הרלוונטיים לפי שם רחוב, או להשוות גושים מוכרים זה לצד זה.",
     "Each line is a selected city summarized by year.": "כל קו הוא עיר שנבחרה, מסוכמת לפי שנה.",
-    "Broad market comparison, city-level trend checks, and ranking demand or price movement.": "השוואת שוק רחבה, בדיקת מגמות ברמת עיר ודירוג ביקוש או תנועת מחירים.",
+    "Broad market comparison, city-level trend checks, and ranking demand or price movement.": "השוואת שוק רחבה, בדיקת מגמות ברמת עיר והשוואת תנועת מחירים.",
     "You want a macro view before drilling into specific streets or Gush areas.": "כשרוצים מבט מאקרו לפני ירידה לרחובות או גושים ספציפיים.",
     "After choosing a city, open Gush Map to inspect its internal Gush layout before drilling into areas.": "אחרי בחירת עיר, פתחו את מפת הגושים כדי לבדוק את פריסת הגושים הפנימית לפני ירידה לאזורים.",
     "Top, typical, and bottom Gush areas inside one city, summarized by year.": "גושים גבוהים, טיפוסיים ונמוכים בתוך עיר אחת, מסוכמים לפי שנה.",
@@ -399,6 +402,7 @@
     document.body.dataset.compareHasSelection = "false";
     bindTabs();
     bindControls();
+    bindWorkspaceActions();
     activateTab(initialTabFromHash(), false);
     window.addEventListener("hashchange", function () {
       activateTab(initialTabFromHash(), false);
@@ -424,7 +428,12 @@
 
   function activateTab(tab, updateHash) {
     if (!validTab(tab)) tab = "analysis";
+    if(updateHash && document.body.dataset.activeTab && document.body.dataset.activeTab!==tab) rememberNavigation();
     document.body.dataset.activeTab = tab;
+    renderPilotCoverage();
+    if (byId("pilot-address-lookup")) byId("pilot-address-lookup").open = tab === "analysis" && state.analysisMode === "lookup";
+    updateNavigationControls();
+    renderActiveFilterChips();
     document.querySelectorAll(".tab").forEach(function (item) {
       var isActive = item.dataset.tab === tab;
       item.classList.toggle("is-active", isActive);
@@ -437,7 +446,7 @@
       panel.hidden = !isActive;
     });
     if (updateHash && window.location.hash !== "#" + tab) {
-      window.history.pushState(null, "", "#" + tab);
+      pushNavigation(window.location.pathname + window.location.search + "#" + tab, true);
     }
         updateSelectionSummary();
         updateCompareSelectionState();
@@ -454,6 +463,7 @@
     }
     if (tab === "analysis") schedulePlotResize("analysis-chart");
     if (tab === "map") scheduleMapAutoUpdate("tab");
+    if(updateHash)rememberNavigation();
   }
 
   function bindTabs() {
@@ -465,13 +475,16 @@
   }
 
   function bindControls() {
-    byId("refresh-meta").addEventListener("click", loadMeta);
+    byId("refresh-meta").addEventListener("click", refreshCoverageOnly);
     byId("random-city").addEventListener("click", chooseRandomCity);
     byId("city-select").addEventListener("change", function () {
       clearSelect(byId("street-select"));
       clearSelect(byId("gush-select"));
       state.streets = [];
       state.gushes = [];
+      byId("analysis-address").value = "";
+      byId("street-picker-search").value = "";
+      byId("gush-picker-search").value = "";
       state.filterOptions = null;
       state.filterOptionsSignature = "";
       state.roomsSelectionInitialized = false;
@@ -482,6 +495,10 @@
       updateCompareSelectionState();
       loadLocationMetadata();
       scheduleMapAutoUpdate("city");
+    });
+    byId("analysis-address").addEventListener("input", function () { updateSelectionSummary(); scheduleAnalysisAutoUpdate("address"); });
+    byId("analysis-address").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") { event.preventDefault(); runAnalysis(); }
     });
     byId("run-analysis").addEventListener("click", runAnalysis);
     byId("cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
@@ -679,7 +696,7 @@
     });
     document.querySelectorAll("[data-download]").forEach(function (button) {
       button.addEventListener("click", function () {
-        downloadCsv(button.dataset.download);
+        previewExport(button.dataset.download);
       });
     });
     bindNumericGuardrails();
@@ -722,11 +739,20 @@
       var response = await getJson(endpoints.meta);
       state.meta = response.data;
       populateMetaControls(response.data);
+      var linkedCity = new URLSearchParams(window.location.search).get("deal_city");
+      if (linkedCity) {
+        var cityRecord = (state.meta.cities || []).find(function (city) { return city.id === linkedCity || city.name === linkedCity; });
+        if (cityRecord) byId("city-select").value = cityRecord.id;
+      }
       renderMetaSummary(response.data);
+      setupPilotControls();
+      renderPilotCoverage();
       setNotice("metadata-state", warningText(response) || "Metadata loaded.", warningText(response) ? "warning" : "ok");
       if (byId("city-select").value && !state.streets.length) {
         await loadLocationMetadata();
       }
+      await restoreSharedView();
+      await openLinkedDeal();
     } catch (error) {
       setNotice("metadata-state", error.message, "error");
     }
@@ -788,6 +814,7 @@
 
   async function loadLocationMetadata() {
     var city = byId("city-select").value;
+    var requestId = state.locationRequestId = (state.locationRequestId || 0) + 1;
     if (!city) {
       setNotice("metadata-state", "Choose a city first.", "warning");
       return;
@@ -798,6 +825,7 @@
         getJson("api/cities/" + encodeURIComponent(city) + "/streets"),
         getJson("api/cities/" + encodeURIComponent(city) + "/gushes")
       ]);
+      if (requestId !== state.locationRequestId || city !== byId("city-select").value) return;
       state.streets = results[0].data.streets || [];
       state.gushes = results[1].data.gushes || [];
       setOptions(byId("street-select"), state.streets.map(function (street) {
@@ -816,6 +844,7 @@
       setNotice("metadata-state", "Loaded " + state.streets.length + " streets and " + state.gushes.length + " Gush areas.", "ok");
       setNotice("analysis-state", "City metadata loaded. Search streets or Gush areas, then update analysis.", "ok");
       renderMetaSummary(state.meta);
+      renderPilotCoverage();
       renderLocationPickers();
       updateSelectionSummary();
       updateCompareSelectionState();
@@ -824,6 +853,7 @@
       scheduleGushAutoUpdate("metadata");
       scheduleMapAutoUpdate("metadata");
     } catch (error) {
+      if (requestId !== state.locationRequestId || city !== byId("city-select").value) return;
       setNotice("metadata-state", error.message, "error");
     }
   }
@@ -1232,7 +1262,12 @@
 
   async function runAnalysis(options) {
     options = options || {};
+    if (state.restoringView) return;
     var payload = buildAnalysisPayload();
+    if(state.analysisMode!=="chart" && !state.restoringNavigation)pushNavigation(cleanAnalysisUrl());
+    state.analysisMode = "chart";
+    document.body.dataset.analysisMode="chart";
+    byId("pilot-address-lookup").open=false;
     if (!payload.city && !payload.gushes.length) {
       setNotice("analysis-state", "Choose a city or Gush area first.", "warning");
       return;
@@ -1240,6 +1275,10 @@
     var requestId = ++state.analysisRequestId;
     var controller = startRequest("analysis");
     state.latestPayloads.analysis = payload;
+    var analysisUrl = new URL(window.location.href);
+    analysisUrl.searchParams.delete("deal_city");
+    analysisUrl.searchParams.delete("deal_record");
+    window.history.replaceState(window.history.state, "", analysisUrl.pathname + analysisUrl.search + analysisUrl.hash);
     setNotice("analysis-state", options.auto ? "Auto-updating analysis..." : "Loading analysis deals...", "loading");
     setAnalysisBusy(true);
     try {
@@ -1257,6 +1296,8 @@
         filterable: true,
         resetState: true
       });
+      persistSharedView();
+      rememberNavigation();
       setNotice("analysis-state", warningText(response) || emptyText(data.table_rows, "Analysis updated.", "No matching transactions."), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.analysisRequestId) return;
@@ -1309,7 +1350,7 @@
   }
 
   async function runCompareRawPreview() {
-    var payload = state.latestPayloads["compare-raw"] || buildComparePayload();
+    var payload = buildComparePayload();
     if (!payload.gushes.length && !payload.streets.length) {
       setNotice("compare-state", "Select Gush areas or streets before loading raw deals.", "warning");
       return;
@@ -1356,12 +1397,14 @@
       renderMetrics("city-counts", data.counts);
       renderCityInsights(data.city_stats);
       renderCityFilterSummary(data);
+
       renderTable("city-table", data.table || [], citySummaryColumns(), {
         sortable: true,
         filterable: true,
         resetState: true
       });
       setNotice("city-state", warningText(response) || emptyText(data.table, "City comparison updated.", "No matching city rows."), warningText(response) ? "warning" : "ok");
+      if (chartMode !== "absolute" && !seriesHasPoints(transformed.series)) setNotice("city-state", "אין שנת בסיס משותפת עם ערך חיובי לכל הערים. צמצמו ערים או עברו לתצוגה מוחלטת.", "warning");
     } catch (error) {
       if (requestId !== state.cityRequestId) return;
       if (error.name === "AbortError") {
@@ -1430,6 +1473,7 @@
       });
       renderMetrics("map-counts", data.counts);
       renderMapSourceNote(data.source);
+      renderMissingGushes(data);
       setNotice("map-state", warningText(response) || "Map updated. Click a polygon to add or remove a Gush.", warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.mapRequestId) return;
@@ -1441,10 +1485,10 @@
     }
   }
 
-  async function downloadCsv(kind) {
+  async function downloadCsv(kind, reviewedPayload) {
     var endpoint = endpoints.downloads[kind];
     if (!endpoint) return;
-    var payload = state.latestPayloads[kind] || payloadForDownload(kind);
+    var payload = reviewedPayload || payloadForDownload(kind);
     setNotice("download-state", "Preparing " + kind + " CSV...", "loading");
     try {
       var response = await fetch(endpoint, {
@@ -1465,6 +1509,8 @@
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
+      state.lastExport = {kind:kind, filters:payload, rows:Number(response.headers.get("X-Row-Count")), source:state.meta && state.meta.source, exported_at:new Date().toISOString()};
+      if (byId("export-metadata")) byId("export-metadata").hidden = false;
       setNotice("download-state", filename + " downloaded. Rows: " + (response.headers.get("X-Row-Count") || "unknown"), "ok");
     } catch (error) {
       setNotice("download-state", error.message, "error");
@@ -1514,7 +1560,7 @@
   function buildCityPayload() {
     return {
       cities: selectedValues(byId("city-comparison-select")),
-      filters: buildFilters("city"),
+      filters: comparisonPeriodFilters(buildFilters("city"), "city"),
       y_variable: byId("city-y-variable").value,
       statistic: byId("city-statistic").value,
       show_sp500: byId("city-show-sp500").checked,
@@ -1528,6 +1574,7 @@
     return {
       city: byId("gush-city-select").value,
       filters: buildFilters("gush"),
+      include_partial_year: checkboxValue("gush-include-partial-year", false),
       yvar: byId("gush-y-variable").value,
       statistic: byId("gush-statistic").value,
       top_count: intValue("gush-top-count", 5, 0, 25),
@@ -1547,9 +1594,592 @@
     };
   }
 
+  function pilotActive() {
+    return Boolean(state.meta && state.meta.source && state.meta.source.pilot);
+  }
+
+  function cleanAnalysisUrl() {
+    var url=new URL(window.location.href);
+    url.searchParams.delete("deal_city");url.searchParams.delete("deal_record");url.hash="analysis";
+    return url.pathname+url.search+url.hash;
+  }
+
+  function rememberNavigation() {
+    var previous=window.history.state || {};
+    var entry=previous.nadlan || {};
+    window.history.replaceState(Object.assign({},previous,{nadlan:{index:entry.index || 0,
+      parentTab:entry.parentTab,parentMode:entry.parentMode,parentDeal:entry.parentDeal,
+      view:captureView(),deal:document.body.dataset.activeTab==="analysis" && new URLSearchParams(location.search).has("deal_record"),scrollY:window.scrollY}}),"",location.href);
+  }
+
+  function pushNavigation(url, remembered) {
+    if(state.restoringNavigation)return;
+    if(!remembered)rememberNavigation();
+    var entry=(window.history.state || {}).nadlan || {};
+    window.history.pushState({nadlan:{index:(entry.index || 0)+1, parentTab:entry.view && entry.view.tab, parentMode:entry.view && entry.view.mode, parentDeal:entry.deal}},"",url);
+    updateNavigationControls();
+  }
+
+  function updateNavigationControls() {
+    var back=byId("navigation-back");
+    if(back)back.disabled=!((window.history.state || {}).nadlan || {}).index;
+  }
+
+  function showMainView(push) {
+    if(push!==false)pushNavigation(cleanAnalysisUrl());
+    state.analysisMode="chart";document.body.dataset.analysisMode="chart";
+    renderSelectedDeal(null);activateTab("analysis",false);
+    byId("pilot-address-lookup").open=false;
+    persistSharedView();rememberNavigation();updateNavigationControls();
+    if(push!==false)byId("analysis-search-entry").scrollIntoView({block:"start"});
+  }
+
+  function closeSelectedDeal() {
+    var entry=(window.history.state || {}).nadlan || {};
+    if(entry.index && entry.parentTab==="analysis" && entry.parentMode===state.analysisMode && !entry.parentDeal){
+      window.history.back();return;
+    }
+    var chartOrigin=state.analysisMode==="chart" && state.latestAnalysisRows.length;
+    renderSelectedDeal(null);state.selectedPointId=null;markSelectedDealOnChart(null);
+    document.querySelectorAll('#analysis-table tr.is-selected').forEach(function(row){row.classList.remove("is-selected");});
+    window.history.replaceState(window.history.state,"",cleanAnalysisUrl());
+    if(chartOrigin){
+      document.body.dataset.analysisMode="chart";
+      byId("analysis-chart").scrollIntoView({block:"start"});
+    } else if(state.analysisMode==="lookup" && state.lookupData){
+      document.body.dataset.analysisMode="lookup";
+      byId("pilot-address-lookup").open=true;
+      byId("lookup-results-stage").scrollIntoView({block:"start"});
+    } else showMainView(false);
+    persistSharedView();rememberNavigation();updateNavigationControls();
+  }
+
+  function bindWorkspaceActions() {
+    document.body.dataset.analysisMode=state.analysisMode;
+    byId("navigation-back").addEventListener("click",function(){window.history.back();});
+    byId("navigation-home").addEventListener("click",function(){showMainView(true);});
+    var area=document.createElement("section");area.id="analysis-area-selection";area.setAttribute("aria-label","בחירת אזור לניתוח");
+    area.innerHTML='<div id="analysis-search-entry" class="address-search-alternative"><button id="open-address-search" type="button" hidden><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 6 6"></path></svg>חיפוש לפי כתובת</button><span>מצאו עסקאות לפי רחוב ומספר בית</span></div>';
+    area.querySelector("#open-address-search").addEventListener("click",function(){
+      var city=byId("city-select").value;
+      if(city && city!==byId("address-lookup-city").value){
+        byId("address-lookup-city").value=city;byId("address-lookup-query").value="";byId("address-lookup-floor").value="";
+      }
+      byId("pilot-address-lookup").open=true;
+      byId("pilot-address-lookup").scrollIntoView({block:"start"});
+      byId("address-lookup-query").focus({preventScroll:true});
+    });
+    var rail=document.querySelector(".control-panel");
+    var sections=Array.from(rail.children).slice(0,2);rail.prepend(area);
+    var alternative=area.querySelector(".address-search-alternative");
+    rail.insertBefore(alternative,area);
+    sections.forEach(function(section){area.appendChild(section);});
+    byId("street-picker-search").placeholder="הקלידו שם רחוב";
+    byId("gush-picker-search").placeholder="הקלידו מספר גוש או שם רחוב";
+
+    window.addEventListener("resize",function(){
+      window.clearTimeout(state.chartTicksTimer);
+      state.chartTicksTimer=window.setTimeout(function(){Object.keys(state.seriesAxisPoints || {}).forEach(function(id){
+        var chart=byId(id);if(!chart || !chart.classList.contains("js-plotly-plot") || !chart.getBoundingClientRect().width)return;
+        var axis=analysisDateAxis(state.seriesAxisPoints[id],Math.max(3,Math.min(8,Math.floor(chart.getBoundingClientRect().width/85))));
+        Plotly.relayout(chart,{"xaxis.tickmode":axis.tickmode,"xaxis.tickvals":axis.tickvals,"xaxis.ticktext":axis.ticktext});
+      });},150);
+    });
+    var lookupStage=document.createElement("section");lookupStage.id="lookup-results-stage";lookupStage.hidden=true;
+    ["address-lookup-state","lookup-actions","address-lookup-results"].forEach(function(id){lookupStage.appendChild(byId(id));});
+    byId("panel-analysis").prepend(lookupStage);
+    byId("share-view").addEventListener("click", shareCurrentView);
+    byId("lookup-analyze-address").addEventListener("click", function () { openLookupContext("building"); });
+    byId("lookup-analyze-street").addEventListener("click", function () { openLookupContext("street"); });
+    byId("lookup-map").addEventListener("click", function () { openLookupContext("map"); });
+    byId("selected-deal").addEventListener("click", function (event) {
+      var button = event.target.closest("[data-deal-action]");
+      if (!button || !state.selectedDeal) return;
+      if (button.dataset.dealAction === "back") {
+        closeSelectedDeal();
+      } else if (button.dataset.dealAction === "building") {
+        byId("address-lookup-city").value = cityIdForName(state.selectedDeal.city);
+        byId("address-lookup-query").value = state.selectedDeal.address || state.selectedDeal.street || "";
+        byId("address-lookup-floor").value = "";
+        byId("address-lookup-from").value = 1900;
+        byId("address-lookup-to").value = snapshotYear();
+        runAddressLookup();
+      } else openDealMap(state.selectedDeal);
+    });
+    document.addEventListener("click", function (event) {
+      var hashLink=event.target.closest('a[href^="#"]');
+      if(hashLink && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey && validTab(hashLink.hash.slice(1))){
+        event.preventDefault();activateTab(hashLink.hash.slice(1),true);return;
+      }
+      var link = event.target.closest('a[href*="deal_record="]');
+      if (!link || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      var url = new URL(link.href, window.location.href);
+      if (url.origin !== window.location.origin) return;
+      event.preventDefault();
+      pushNavigation(url.pathname + url.search + url.hash);
+      openLinkedDeal();
+    });
+    window.addEventListener("popstate", async function (event) {
+      var entry=event.state && event.state.nadlan;
+      if(entry && entry.view) {
+        await restoreSharedView(entry.view);
+        if(entry.deal)await openLinkedDeal();
+        window.scrollTo(0,entry.scrollY || 0);
+      } else if(initialTabFromHash()==="analysis" && new URLSearchParams(location.search).has("deal_record"))await openLinkedDeal();
+      else if(new URLSearchParams(location.search).has("view"))await restoreSharedView();
+      else activateTab(initialTabFromHash(),false);
+      updateNavigationControls();
+    });
+    ["city", "gush"].forEach(function (scope) {
+      byId(scope + "-include-partial-year").addEventListener("change", function () {
+        if (scope === "city") runCityComparison(); else runGushPerformance();
+      });
+    });
+    byId("map-open-analysis").addEventListener("click", function () { activateTab("analysis", true); runAnalysis(); });
+    byId("map-open-compare").addEventListener("click", function () { activateTab("compare", true); runCompare(); });
+    document.addEventListener("change", function () { renderActiveFilterChips(); persistSharedView(); });
+    document.addEventListener("click", function (event) { if (event.target.closest(".filter-chip")) renderActiveFilterChips(); });
+    document.querySelectorAll('.tab').forEach(function (button) {
+      button.addEventListener("keydown", function (event) {
+        if (["ArrowLeft", "ArrowRight", "Home", "End"].indexOf(event.key) < 0) return;
+        event.preventDefault();
+        var tabs = Array.from(document.querySelectorAll('.tab'));
+        var index = tabs.indexOf(button);
+        index = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowLeft" ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[index].focus(); activateTab(tabs[index].dataset.tab, true);
+      });
+    });
+  }
+
+  async function refreshCoverageOnly() {
+    setNotice("metadata-state", "קורא את פרטי המאגר המקומי…", "loading");
+    try {
+      var response = await getJson(endpoints.meta);
+      state.meta = response.data; renderMetaSummary(state.meta); renderPilotCoverage();
+      setNotice("metadata-state", "פרטי המאגר המקומי רועננו. לא הורדו עסקאות חדשות.", "ok");
+    } catch (error) { setNotice("metadata-state", error.message, "error"); }
+  }
+
+  function lookupPayload() {
+    return {city:byId("address-lookup-city").value, address:byId("address-lookup-query").value.trim(),
+      floor:byId("address-lookup-floor").value, year_from:byId("address-lookup-from").value, year_to:byId("address-lookup-to").value};
+  }
+
+  function validateAddressLookup() {
+    return Array.from(byId("address-lookup-form").querySelectorAll("input,select")).every(function(input){
+      if(input.checkValidity())return true;
+      var details=input.closest("details");
+      if(details)details.open=true;
+      input.reportValidity();return false;
+    });
+  }
+
+  async function runAddressLookup() {
+    if (!validateAddressLookup()) return;
+    var request = lookupPayload();
+    if(!state.restoringNavigation)pushNavigation(cleanAnalysisUrl());
+    state.analysisMode="lookup";
+    var requestId = state.lookupRequestId = (state.lookupRequestId || 0) + 1;
+    activateTab("analysis", false);
+    byId("pilot-address-lookup").open = true;
+    byId("lookup-actions").hidden = true;
+    byId("lookup-results-stage").hidden=false;
+    document.body.dataset.analysisMode="lookup";
+    byId("address-lookup-results").innerHTML = "";
+    setBusy("run-address-lookup", true);
+    setNotice("address-lookup-state", "מחפש עסקאות בשני המקורות…", "loading");
+    try {
+      var response = await postJson("api/address-lookup", request);
+      if (requestId !== state.lookupRequestId) return;
+      state.lookupData = response.data; state.lookupRequest = request; state.analysisMode = "lookup";
+      renderSelectedDeal(null);
+      document.body.dataset.analysisMode="lookup";
+      renderLookupResults(response.data);
+      persistSharedView();
+      rememberNavigation();
+      renderPilotCoverage();
+      byId("lookup-results-stage").scrollIntoView({block:"start"});
+    } catch (error) {
+      if (requestId === state.lookupRequestId) setNotice("address-lookup-state", error.message, "error");
+    } finally { if (requestId === state.lookupRequestId) setBusy("run-address-lookup", false); }
+  }
+
+  function renderLookupResults(data) {
+    var rows = (data.rows || []).slice().reverse();
+    byId("lookup-actions").hidden = !rows.length;
+    setNotice("address-lookup-state", rows.length ? "נמצאו " + formatNumber(data.counts.records) + " רשומות ב־" + data.counts.distinct_dates + " תאריכים. דיווחים מקבילים שתואמו מוצגים יחד." :
+      "לא נמצאה התאמה. נסו להסיר את הקומה או להרחיב את השנים. כתובת חסרה במקור יכולה למנוע איתור; אין בכך הוכחה שלא היו עסקאות.", rows.length ? "ok" : "warning");
+    byId("address-lookup-results").innerHTML = rows.map(function (row) {
+      var price = row.price_ils == null ? "מחיר לא ידוע" : formatNumber(row.price_ils) + " ₪";
+      var share = row.sale_portion == null ? "חלק לא ידוע" : formatNumber(row.sale_portion * 100) + "% מהנכס";
+      var details = [["מקור", row.source], ["גוש / חלקה / תת־חלקה", row.gush_code], ["בסיס קישור", row.link],
+        ["שנת בנייה", row.build_year], ["סתירות ומגבלות", row.conflicts]];
+      if (row.legacy_area !== null) details.push(["דיווח מקביל — שטח / חדרים / שנת בנייה", [row.legacy_area,row.legacy_rooms,row.legacy_build_year].map(valueOrDash).join(" / ")]);
+      return '<article class="address-result"><header><time dir="ltr">' + escapeHtml(formatDealDate(row.date)) + '</time><strong dir="ltr">' + escapeHtml(price) + '</strong></header>' +
+        '<h3>' + escapeHtml(row.reference_address || "כתובת ייחוס חסרה") + '</h3><p class="history-facts">' +
+        escapeHtml([valueOrDash(row.area) + " מ״ר",valueOrDash(row.rooms) + " חדרים","קומת ייחוס: " + valueOrDash(row.reference_floor),share].join(" · ")) + '</p>' +
+        '<a href="' + escapeHtml(dealUrl(row.city,row.source_id)) + '">פרטי העסקה והיסטוריית הנכס</a>' +
+        '<details><summary>מקור, התאמה והבדלים בין דיווחים</summary><dl>' + details.map(function (field) {
+          return '<dt>' + escapeHtml(field[0]) + '</dt><dd>' + escapeHtml(valueOrDash(field[1])) + '</dd>';
+        }).join("") + '</dl></details></article>';
+    }).join("");
+  }
+
+  function cityIdForName(value) {
+    var city = (state.meta && state.meta.cities || []).find(function (item) { return item.id === value || item.name === value; });
+    return city ? city.id : value;
+  }
+
+  function cityNameForId(value) {
+    var city = (state.meta && state.meta.cities || []).find(function (item) { return item.id === value || item.name === value; });
+    return city ? city.name : value;
+  }
+
+  function roomSelectionText(id) {
+    var input=byId(id), values=selectedValues(input);
+    return !values.length || values.length===input.options.length ? "כל מספרי החדרים" : values.length<=6 ? values.join(", ") : values.length+" ערכים נבחרו";
+  }
+
+  async function setAnalysisLocation(city) {
+    state.restoringView = true;
+    try {
+      byId("city-select").value = cityIdForName(city);
+      setSelectedValues(byId("street-select"), []); setSelectedValues(byId("gush-select"), []);
+      state.filterOptions = null; state.roomsSelectionInitialized = false;
+      await loadLocationMetadata(); await loadFilterOptions();
+    } finally { state.restoringView = false; }
+  }
+
+  async function openLookupContext(mode) {
+    if (!state.lookupRequest || !state.lookupData) return;
+    pushNavigation(mode === "map" ? "#map" : cleanAnalysisUrl());
+    state.analysisMode="chart";
+    await setAnalysisLocation(state.lookupRequest.city);
+    var rows = state.lookupData.rows || [];
+    var gushes = Array.from(new Set(rows.map(function (row) { return String(row.gush_code || "").split("-")[0]; }).filter(Boolean)));
+    byId("analysis-address").value = mode === "building" ? state.lookupRequest.address : "";
+    if (mode === "street") {
+      var query = state.lookupRequest.address.replace(/\d+[\u05d0-\u05ea]?/g, " ").trim();
+      var matching = state.streets.filter(function (street) { return matchesSearch(street, query); });
+      if (!matching.length) { setNotice("address-lookup-state", "לא זוהה רחוב יחיד לניתוח. אפשר לבחור רחוב ברשימת האזורים.", "warning"); return; }
+      setSelectedValues(byId("street-select"), matching);
+    } else if (mode === "map") setSelectedValues(byId("gush-select"), gushes);
+    renderLocationPickers(); updateSelectionSummary();
+    activateTab(mode === "map" ? "map" : "analysis", false);
+    if (mode === "map") {await runGushMap();rememberNavigation();}
+    else {
+      await runAnalysis();
+      setNotice("analysis-state", "הניתוח משתמש במסננים המוצגים ובכתובות הזמינות במאגר. החיפוש בראש העמוד שומר גם רשומות ייחוס ומכירות חלקיות.", "ok");
+      byId("analysis-chart").scrollIntoView({block:"start"});
+    }
+  }
+
+  async function openDealMap(row) {
+    var gush = String(row.gush_code || "").split("-")[0];
+    if (!gush) { setNotice("analysis-state", "אין מספר גוש ברשומה זו.", "warning"); return; }
+    pushNavigation("#map");
+    await setAnalysisLocation(row.city);
+    ensureSelectOption(byId("gush-select"), {value:gush, label:"גוש " + gush});
+    setSelectedValues(byId("gush-select"), [gush]); renderLocationPickers();
+    activateTab("map", false); await runGushMap();rememberNavigation();
+  }
+
+  function renderMissingGushes(data) {
+    var target = byId("map-missing-list");
+    var missing = data.missing_gushes || [];
+    if (!missing.length) { target.innerHTML = ""; return; }
+    var selected = new Set(activeGushSelection().map(String));
+    target.innerHTML = '<details><summary>' + missing.length + ' גושים ללא מצולע — בחירה מרשימה</summary><p>ניתן לנתח את העסקאות בגושים האלה גם כשהגבול אינו זמין במפה.</p><div class="selected-chips">' + missing.map(function (gush) {
+      return '<button type="button" class="filter-chip" data-missing-gush="' + escapeHtml(gush) + '" aria-pressed="' + selected.has(gush) + '">' + escapeHtml(gush) + (selected.has(gush) ? " ✓" : "") + '</button>';
+    }).join("") + '</div></details>';
+    target.querySelectorAll('[data-missing-gush]').forEach(function (button) {
+      button.addEventListener("click", function () { toggleMapGushSelection({gush:button.dataset.missingGush,city:byId("city-select").value}); });
+    });
+  }
+
+  function snapshotYear(scope) {
+    var cities = state.meta && state.meta.cities || [];
+    var ids = (scope || document.body.dataset.activeTab) === "city" ? selectedValues(byId("city-comparison-select")) : [byId("city-select").value];
+    var years = cities.filter(function (city) { return ids.indexOf(city.id) >= 0 || ids.indexOf(city.name) >= 0; }).map(function (city) {
+      return Number(String(city.coverage && city.coverage.scraped_to || "").slice(0,4));
+    }).filter(function (year) { return year > 1900; });
+    var date = state.meta && (state.meta.source && state.meta.source.detected_at || state.meta.data_summary && state.meta.data_summary.generated_at);
+    return years.length ? Math.min.apply(null, years) : date ? Number(String(date).slice(0,4)) : new Date().getFullYear();
+  }
+
+  function comparisonPeriodFilters(filters, scope) {
+    if (!checkboxValue(scope + "-include-partial-year", false)) {
+      var range = filters.deal_year_range || [null, null];
+      filters.deal_year_range = [range[0], range[1] == null ? snapshotYear(scope) - 1 : Math.min(range[1], snapshotYear(scope) - 1)];
+    }
+    return filters;
+  }
+
+  function formatTimestamp(value) {
+    if (!value) return "—";
+    var date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString("he-IL", {year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+  }
+
+  function tableDisplayValue(row, column) {
+    var value = pilotTableValue(row, column.key);
+    if (value == null || value === "") return "—";
+    if (column.type === "date") return formatDealDate(value);
+    if (column.key === "performance_group") return {top:"עלייה גבוהה",typical:"אמצע הדירוג",bottom:"עלייה נמוכה"}[value] || value;
+    if (column.type === "number" && !/year|gush|^Gush$|^GUSH$|rank|position/.test(column.key)) return formatNumber(value);
+    return value;
+  }
+
+  function renderActiveFilterChips() {
+    if (!state.meta) return;
+    var scope = document.body.dataset.activeTab;
+    if (["analysis","compare","city","gush"].indexOf(scope) < 0) return;
+    var panel = byId("panel-" + scope);
+    var target = byId(scope + "-removable-filters");
+    if (!target) { target = document.createElement("div"); target.id=scope+"-removable-filters";target.className="active-filter-chips";panel.prepend(target); }
+    var chips = [];
+    function add(label, action) { chips.push({label:label,action:action}); }
+    var ranges = [["year","שנים"],["price","מחיר"],["price-m2","מחיר למ״ר"],["area","שטח"],["floor","קומה"],["building-floors","קומות בבניין"],["built-year","שנת בנייה"],["building-age","גיל בניין"]];
+    ranges.forEach(function (item) {
+      var min=byId(filterControlId(scope,"filter-"+item[0]+"-min")), max=byId(filterControlId(scope,"filter-"+item[0]+"-max"));
+      if (!min || !max || (!min.value && !max.value)) return;
+      add(item[1]+": "+(min.value || "ללא מינימום")+"–"+(max.value || "ללא מקסימום"),function () {min.value="";max.value="";});
+    });
+    ["sale-portion-select","data-completeness-select","location-basis-select","rooms-select","apartment-type-select"].forEach(function (name) {
+      var input=byId(filterControlId(scope,name)); if(!input)return;
+      var selected=Array.from(input.selectedOptions); if(input.multiple && (!selected.length || selected.length===input.options.length))return;
+      if (!input.multiple && ["all","both",""].indexOf(input.value)>=0)return;
+      add(selected.length>4 ? selected.length+" ערכים נבחרו ב"+(name==="rooms-select"?"חדרים":"סוג נכס") : selected.map(function(o){return o.textContent;}).join(", "),function(){
+        if(input.multiple)Array.from(input.options).forEach(function(o){o.selected=true;});else input.value="all";
+      });
+    });
+    ["rooms","floor","building-floors","built-year","building-age"].forEach(function(name){
+      var input=byId(filterControlId(scope,"include-unknown-"+name));
+      if(input && !input.checked)add("ללא ערך חסר ב"+{rooms:"חדרים",floor:"קומה","building-floors":"קומות","built-year":"שנת בנייה","building-age":"גיל"}[name],function(){input.checked=true;});
+    });
+    if((scope==="city" || scope==="gush") && !checkboxValue(scope+"-include-partial-year",false))add("ללא שנת האיסוף החלקית",function(){byId(scope+"-include-partial-year").checked=true;});
+    if(scope==="analysis" && byId("analysis-address").value)add("כתובת: "+byId("analysis-address").value,function(){byId("analysis-address").value="";});
+    target.innerHTML='<span>מסננים פעילים</span>'+chips.map(function(chip,i){return '<button class="filter-chip-remove secondary" type="button" data-filter-remove="'+i+'" aria-label="'+escapeHtml("הסרת מסנן "+chip.label)+'">'+escapeHtml(chip.label)+' ×</button>';}).join("");
+    target.querySelectorAll('[data-filter-remove]').forEach(function(button){button.addEventListener("click",function(){
+      chips[Number(button.dataset.filterRemove)].action();
+      renderRoomChips();renderCompareRoomChips();renderCityRoomChips();renderGushRoomChips();renderActiveFilterChips();
+      if(scope==="analysis")runAnalysis();else if(scope==="compare")runCompare();else if(scope==="city")runCityComparison();else runGushPerformance();
+    });});
+  }
+
+  function exportName(kind) {
+    return {analysis:"עסקאות בניתוח","compare-raw":"עסקאות בהשוואת אזורים","compare-summary":"סיכום השוואת אזורים","city-comparison-raw":"עסקאות בהשוואת ערים","city-comparison-summary":"סיכום השוואת ערים","gush-performance-raw":"עסקאות בגושים המדורגים","gush-performance-summary":"דירוג מגמות לפי גוש"}[kind] || kind;
+  }
+
+  function previewExport(kind) {
+    var payload=payloadForDownload(kind);
+    activateTab("downloads",true);
+    var target=byId("export-preview");target.hidden=false;
+    var scope=kind.indexOf("city-")===0?"city":kind.indexOf("gush-")===0?"gush":kind.indexOf("compare-")===0?"compare":"analysis";
+    var filters=payload.filters || {};
+    var labelsByKey={deal_year_range:"שנים",price_range:"מחיר במיליוני ₪",price_per_m2_range:"מחיר למ״ר באלפי ₪",area_range:"שטח במ״ר",floor_range:"קומה",building_floors_range:"קומות בבניין",built_year_range:"שנת בנייה",building_age_range:"גיל בניין",rooms:"חדרים",apartment_types:"סוג נכס",address:"כתובת",sale_portion:"חלק נמכר",data_completeness:"זמינות מידע",location_basis:"בסיס שיוך"};
+    var values={full:"מכירה מלאה",partial:"מכירה חלקית",unknown:"חלק לא ידוע",all:"הכול",verified:"התאמה מחמירה",with_address:"יש כתובת",with_floor:"יש קומה",with_address_and_floor:"יש כתובת וקומה"};
+    var details=Object.keys(filters).filter(function(k){return k!=="include_unknown";}).map(function(k){var v=filters[k];if(k==="rooms")return "חדרים: "+roomSelectionText(filterControlId(scope,"rooms-select"));return (labelsByKey[k]||k)+": "+(Array.isArray(v)?v.map(function(x){return x==null?"ללא הגבלה":x;}).join(" / "):(values[v]||v));});
+    var unknownLabels={rooms:"חדרים",floor:"קומה",build_floors:"קומות בבניין",build_year:"שנת בנייה",building_age:"גיל בניין"};
+    details.push("שדות חסרים שנכללים: "+Object.keys(filters.include_unknown || {}).filter(function(k){return filters.include_unknown[k];}).map(function(k){return unknownLabels[k]||k;}).join(", "));
+    if(payload.min_deals_per_year)details.push("לפחות "+payload.min_deals_per_year+" עסקאות לכל עיר ושנה");
+    if(payload.min_deals_per_gush)details.push("לפחות "+payload.min_deals_per_gush+" עסקאות בכל שנת קצה; שנת איסוף חלקית: "+(payload.include_partial_year?"כלולה":"לא כלולה"));
+    if(payload.statistic)details.push("מדד: "+translateUiText(payload.statistic));
+    details.push("משתנה: "+translateUiText(yLabel(payload.y_variable || payload.yvar || "price_millions")));
+    var area=[cityNameForId(payload.city),(payload.cities||[]).map(cityNameForId).join(", "),(payload.streets||[]).join(", "),(payload.gushes||[]).join(", ")].filter(Boolean).join(" · ");
+    target.innerHTML='<h3>'+escapeHtml(exportName(kind))+'</h3><p>'+escapeHtml(area)+'</p><p>'+escapeHtml(details.join(" · "))+'</p>'+
+      '<p>הסרת חריגים: '+(payload.remove_price_outliers?"מחיר ":"")+(payload.remove_area_outliers?"שטח":"")+(!payload.remove_price_outliers&&!payload.remove_area_outliers?"ללא":"")+'</p>'+
+      '<p>המסננים האלה נלקחו ממסך '+escapeHtml(translateUiText({analysis:"Analysis Deals",compare:"Compare Areas",city:"City Comparison",gush:"City Performance"}[scope]))+'. הקובץ כולל את כל השורות המתאימות; מספר השורות המדויק יוצג אחרי ההורדה.</p>'+
+      '<button id="export-confirm" type="button">הורדת CSV</button> <button id="export-metadata" class="secondary" type="button" hidden>הורדת פרטי המקור והמסננים (JSON)</button>';
+    byId("export-confirm").addEventListener("click",function(){downloadCsv(kind,payload);});
+    byId("export-metadata").addEventListener("click",function(){downloadJson(state.lastExport,"nadlan_export_context.json");});
+    target.scrollIntoView({block:"start"});
+  }
+
+  function downloadJson(value,filename) {
+    var url=URL.createObjectURL(new Blob([JSON.stringify(value,null,2)],{type:"application/json;charset=utf-8"}));
+    var link=document.createElement("a");link.href=url;link.download=filename;link.click();URL.revokeObjectURL(url);
+  }
+
+  function captureView() {
+    var controls={};
+    document.querySelectorAll('input[id],select[id]').forEach(function(input){
+      if(!input.closest('.control-panel,.tab-panel,#pilot-address-lookup') || input.closest('table') || /search|picker/.test(input.id) || input.id==='coverage-city-search')return;
+      controls[input.id]=input.type==='checkbox'?input.checked:input.multiple?selectedValues(input):input.value;
+    });
+    return {version:1,tab:document.body.dataset.activeTab,mode:state.analysisMode || "chart",controls:controls,lookup:state.lookupRequest || null};
+  }
+
+  function persistSharedView() {
+    if (state.restoringView) return;
+    if(new URLSearchParams(window.location.search).has("view")){
+      var url=new URL(window.location.href);url.searchParams.set("view",JSON.stringify(captureView()));
+      window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
+    }
+    rememberNavigation();
+  }
+
+  async function shareCurrentView() {
+    var url=new URL(window.location.href);
+    url.searchParams.set("view",JSON.stringify(captureView()));
+    window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
+    try { await navigator.clipboard.writeText(url.href); byId("share-view-state").textContent="הקישור הועתק, כולל המסננים והבחירות."; }
+    catch(error) { byId("share-view-state").innerHTML='<a href="'+escapeHtml(url.href)+'">הקישור מוכן — ניתן להעתיק משורת הכתובת</a>'; }
+  }
+
+  function readSharedView() {
+    var raw=new URLSearchParams(window.location.search).get("view");
+    if(!raw)return null;
+    if(raw.length>60000)throw new Error("הקישור ארוך מדי לשחזור.");
+    var saved=JSON.parse(raw);
+    if(saved.version!==1 || !saved.controls || typeof saved.controls!=="object")throw new Error("גרסת קישור זו אינה נתמכת.");
+    return saved;
+  }
+
+  async function restoreSharedView(providedView) {
+    var saved;
+    try { saved=providedView || readSharedView(); } catch(error){state.restoringView=false;setNotice("analysis-state","לא ניתן לשחזר את הקישור: "+error.message,"warning");return;}
+    if(!saved){state.restoringView=false;return;}
+    saved.tab=initialTabFromHash();
+    state.restoringNavigation=true;
+    renderSelectedDeal(null);
+    state.analysisMode=saved.mode || "chart";
+    document.body.dataset.analysisMode=state.analysisMode;
+    state.restoringView=true;
+    ["autoAnalysisTimer","autoCompareTimer","autoCityTimer","autoGushTimer","autoMapTimer","filterOptionsTimer","cityFilterOptionsTimer","gushFilterOptionsTimer"].forEach(function(k){window.clearTimeout(state[k]);});
+    function apply(ids){Object.keys(saved.controls).forEach(function(id){
+      if(ids && ids.indexOf(id)<0)return;
+      var input=byId(id);if(!input || !input.matches('input,select') || !input.closest('.control-panel,.tab-panel,#pilot-address-lookup'))return;
+      var value=saved.controls[id];
+      if(input.type==='checkbox')input.checked=value===true;
+      else if(input.multiple && Array.isArray(value)){
+        if(id==='gush-select')value.filter(function(v){return /^\d+$/.test(String(v));}).forEach(function(v){ensureSelectOption(input,{value:String(v),label:"גוש "+v});});
+        setSelectedValues(input,value.map(String));
+      }else if(typeof value==='string')input.value=value;
+    });}
+    try {
+      apply(["city-select","gush-city-select","city-comparison-select"]);
+      await loadLocationMetadata();
+      apply(["street-select","gush-select"]);
+      await Promise.all([loadFilterOptions(),loadCityFilterOptions(),loadGushFilterOptions()]);
+      apply();renderLocationPickers();renderCityComparisonPicker();renderRoomChips();renderCompareRoomChips();renderCityRoomChips();renderGushRoomChips();
+      renderApartmentTypeChips();renderCompareApartmentTypeChips();renderCityApartmentTypeChips();renderGushApartmentTypeChips();
+    } catch(error) {state.restoringNavigation=false;throw error;} finally {state.restoringView=false;}
+    activateTab(validTab(saved.tab)?saved.tab:"analysis",false);renderActiveFilterChips();
+    if(saved.mode==="home" && saved.tab==="analysis")showMainView(false);
+    else if(saved.mode==="lookup" && saved.lookup && saved.lookup.address && saved.tab==="analysis")await runAddressLookup();
+    else if(saved.tab==="analysis" && saved.mode==="chart") {
+      var selectedUrl=location.href;
+      await runAnalysis();
+      window.history.replaceState(window.history.state,"",selectedUrl);
+    }
+    else if(saved.tab==="city")await runCityComparison();
+    else if(saved.tab==="gush")await runGushPerformance();
+    else if(saved.tab==="compare")await runCompare();
+    else if(saved.tab==="map")await runGushMap();
+    state.restoringNavigation=false;
+    rememberNavigation();updateNavigationControls();
+  }
+
+  function setupAddressLookup() {
+    var panel = byId("pilot-address-lookup");
+    if (state.lookupBound) return;
+    state.lookupBound = true;
+    panel.hidden = false;
+    byId("open-address-search").hidden=false;
+    setOptions(byId("address-lookup-city"), state.meta.cities.map(function (city) { return {value:city.id, label:city.name}; }), false);
+    byId("address-lookup-city").value = byId("city-select").value;
+    // This is a search region, not an address submission form. Keep Enter support
+    // without triggering a native form submission that can prompt address saving.
+    byId("run-address-lookup").addEventListener("click", runAddressLookup);
+    byId("address-lookup-form").addEventListener("keydown", function(event){
+      if(event.key!=="Enter" || event.isComposing || !event.target.matches("input"))return;
+      event.preventDefault();runAddressLookup();
+    });
+  }
+
+  function setupPilotControls() {
+    if (!pilotActive()) return;
+    setupAddressLookup();
+    if (!state.pilotDiscoveryDefaultsSet) {
+      byId("remove-price-outliers").checked = false;
+      byId("remove-area-outliers").checked = false;
+      state.pilotDiscoveryDefaultsSet = true;
+    }
+    ["analysis", "compare", "city", "gush"].forEach(function (scope) {
+      var id = filterControlId(scope, "sale-portion-select");
+      if (byId(id)) return;
+      var anchor = byId(filterControlId(scope, "new-project-select"));
+      var box = document.createElement("div");
+      box.className = "filter-cluster pilot-filters";
+      box.innerHTML = '<label>חלק הנכס שנמכר<select id="' + id + '">' +
+        '<option value="full">מכירה מלאה (100%)</option><option value="partial">מכירה חלקית</option>' +
+        '<option value="unknown">חלק לא ידוע</option><option value="all">כל חלקי המכירה</option></select></label>' +
+        '<label>זמינות מידע<select id="' + filterControlId(scope, "data-completeness-select") + '">' +
+        '<option value="all">כל הרשומות</option><option value="with_address">יש כתובת</option>' +
+        '<option value="with_floor">יש קומה</option><option value="with_address_and_floor">יש כתובת וקומה</option></select></label>' +
+        '<label>בסיס שיוך כתובת וקומה<select id="' + filterControlId(scope, "location-basis-select") + '"><option value="all">כולל ייחוס לפי מזהה נכס</option><option value="verified">התאמת עסקה מחמירה בלבד</option></select></label>' +
+        '<p class="helper-text">החיפוש והגרפים כוללים כתובות וקומות בייחוס לפי מזהה נכס. השיוך מסומן בטבלה ובנקודות ואינו אימות של אותה דירה. סינון רחוב מוציא רשומות שנותרו ללא רחוב.</p>' +
+        '<p class="pilot-share-warning" hidden>המחירים הם סכומי המקור לחלק שנמכר; לא בוצע נרמול למחיר נכס שלם. נתוני חלק לא ידוע אינם מתאימים להשוואת מחירים.</p>';
+      anchor.parentElement.insertAdjacentElement("beforebegin", box);
+      var schedule = {analysis: scheduleAnalysisAutoUpdate, compare: scheduleCompareAutoUpdate,
+                      city: scheduleCityAutoUpdate, gush: scheduleGushAutoUpdate}[scope];
+      box.querySelectorAll("select").forEach(function (select) {
+        select.addEventListener("change", function () {
+          box.querySelector(".pilot-share-warning").hidden = byId(id).value === "full";
+          schedule("pilot-filter");
+        });
+      });
+      ["roof-select", "new-project-select"].forEach(function (name) {
+        var select = byId(filterControlId(scope, name));
+        select.disabled = true;
+        select.title = "המידע אינו ידוע במקור הפיילוט";
+        var control = document.querySelector('[data-select="' + select.id + '"]');
+        if (control) control.querySelectorAll("button").forEach(function (button) { button.disabled = true; });
+      });
+    });
+    ["city-select", "gush-city-select", "city-comparison-select"].forEach(function (id) {
+      byId(id).addEventListener("change", renderPilotCoverage);
+    });
+    if (window.NadlanLayout) window.NadlanLayout.refreshAvailability();
+    byId("dataset-about").textContent = "כרגע האתר כולל פיילוט של 20 ערים, המבוסס על גרסה " + state.meta.source.version +
+      " של נתוני רשות המסים. בניתוח מוצגות כברירת מחדל עסקאות מגורים של נכס שלם. הנתונים הם עותק מקומי ואינם מתעדכנים אוטומטית.";
+  }
+
+  function renderPilotCoverage() {
+    if (!pilotActive() || !byId("pilot-banner")) return;
+    var cities = state.meta.cities || [];
+    var tab = document.body.dataset.activeTab;
+    var ids = tab === "city" ? selectedValues(byId("city-comparison-select")) :
+      (tab === "gush" || tab === "analysis" ? [byId(tab === "gush" ? "gush-city-select" : "city-select").value] : []);
+    if(tab==="analysis" && document.body.dataset.analysisMode==="lookup" && state.lookupRequest)ids=[cityIdForName(state.lookupRequest.city)];
+    if(tab==="analysis" && document.body.dataset.analysisMode==="detail" && state.selectedDeal)ids=[cityIdForName(state.selectedDeal.city)];
+    var selected = cities.filter(function (city) { return ids.indexOf(city.id) !== -1; });
+    var source = state.meta.source;
+    var brief = selected.length === 1 ? (function () {
+      var city = selected[0], c = city.coverage || {};
+      return city.name + ' · עסקאות עד ' + formatDealDate(c.max_date) + ' · ללא כתובת: ' + formatNumber(c.missing_address) +
+        ' · ללא קומה: ' + formatNumber(c.missing_floor) + ' (מתוך ' + formatNumber(c.rows) + ' רשומות מגורים לפני סינון)';
+    })() : (selected.length ? selected.length + ' ערים נבחרו; ' : '') + 'הכיסוי שונה בין הערים — הפירוט בלשונית כיסוי ואיכות הנתונים.';
+    var banner = byId("pilot-banner");
+    banner.hidden = false;
+    banner.innerHTML = '<strong>' + escapeHtml("גרסאות לעם · גרסה " + source.version) + '</strong> · ' +
+      escapeHtml(brief) + ' · <a href="#metadata">כיסוי ואיכות הנתונים</a> · <a href="#about">על המקורות וההתאמות</a>';
+    if (window.NadlanCoverage) window.NadlanCoverage.render(state.meta);
+  }
+
   function buildFilters(scope) {
     scope = scope || "analysis";
     var filters = {};
+    if (scope === "analysis" && byId("analysis-address").value.trim()) filters.address = byId("analysis-address").value.trim();
+    if (pilotActive()) {
+      var shareControl = byId(filterControlId(scope, "sale-portion-select"));
+      var completenessControl = byId(filterControlId(scope, "data-completeness-select"));
+      filters.sale_portion = shareControl ? shareControl.value : "full";
+      filters.data_completeness = completenessControl ? completenessControl.value : "all";
+      var locationControl = byId(filterControlId(scope, "location-basis-select"));
+      filters.location_basis = locationControl ? locationControl.value : "all";
+    }
     addRange(filters, "deal_year_range", filterControlId(scope, "filter-year-min"), filterControlId(scope, "filter-year-max"));
     addRange(filters, "price_range", filterControlId(scope, "filter-price-min"), filterControlId(scope, "filter-price-max"));
     addRange(filters, "price_per_m2_range", filterControlId(scope, "filter-price-m2-min"), filterControlId(scope, "filter-price-m2-max"));
@@ -1589,6 +2219,7 @@
     var points = data.points || [];
     var chart = byId("analysis-chart");
     if (!points.length) {
+      if (byId("analysis-chart-summary")) byId("analysis-chart-summary").hidden = true;
       if (data && Object.prototype.hasOwnProperty.call(data, "table_rows")) {
         if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
           Plotly.purge(chart);
@@ -1602,10 +2233,19 @@
       return;
     }
     chart.hidden = false;
-    chart.className = "chart";
-    chart.innerHTML = "";
+    // Plotly.react reuses its DOM and class markers; clearing them breaks sizing on later renders.
+    chart.classList.remove("chart-guide");
+    chart.classList.add("chart");
+    if (!chart.classList.contains("js-plotly-plot")) chart.innerHTML = "";
     var chartSpec = analysisChartSpec(points, data);
-    Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout).then(function () {
+    var summary = byId("analysis-chart-summary");
+    if (summary) {
+      summary.hidden = false;
+      summary.textContent = "גרף הניתוח · " + points.length + " עסקאות מוצגות · " +
+        formatDealDate(data.summary && data.summary.date_min) + " – " + formatDealDate(data.summary && data.summary.date_max) +
+        " · לפי המסננים הפעילים";
+    }
+    Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout, {responsive: true, displaylogo: false}).then(function () {
       if (chart.removeAllListeners) chart.removeAllListeners("plotly_click");
       chart.on("plotly_click", function (event) {
         var point = event.points && event.points[0];
@@ -1619,7 +2259,7 @@
   function schedulePlotResize(targetId) {
     window.setTimeout(function () {
       var chart = byId(targetId);
-      if (window.Plotly && chart && chart.classList.contains("js-plotly-plot")) {
+      if (window.Plotly && chart && chart.classList.contains("js-plotly-plot") && chart.getBoundingClientRect().width && chart.getBoundingClientRect().height) {
         Plotly.Plots.resize(chart);
       }
     }, 80);
@@ -1703,11 +2343,11 @@
             }
           },
           unselected: {
-            marker: { opacity: 0.28 }
+            marker: { opacity: 0.58 }
           },
           xaxis: axisName("x", axisIndex),
           yaxis: axisName("y", axisIndex),
-          showlegend: facetIndex === 0
+          showlegend: facetIndex === 0 && (colorValues.length > 0 || shapeValues.length > 0)
         });
       });
     });
@@ -1724,46 +2364,105 @@
     } else {
       addOverlayTraces(traces, data.overlays || {});
     }
+    var axis = analysisDateAxis(points, facets.length > 1 ? 4 : 10);
+    facets.forEach(function (_, index) {
+      var key = layoutAxisName("xaxis", index + 1);
+      layout[key] = Object.assign({}, layout[key] || {}, axis);
+    });
+    layout.font = {family: '"Noto Sans Hebrew", "Segoe UI", Arial, sans-serif', size: 13, color: "#34494e"};
+    layout.paper_bgcolor = "#fff";
+    layout.plot_bgcolor = "#fff";
     return { traces: traces, layout: layout };
+  }
+
+  function analysisDateAxis(points, maxTicks) {
+    var dates = Array.from(new Set(points.map(function (point) { return String(point.date || "").slice(0, 10); })
+      .filter(function (date) { return /^\d{4}-\d{2}-\d{2}$/.test(date) && Number.isFinite(Date.parse(date)); }))).sort();
+    if (!dates.length) return {type: "date", tickformat: "%Y"};
+    var years = Array.from(new Set(dates.map(function (date) { return date.slice(0, 4); })));
+    var candidates = years.length === 1 ? dates : years.map(function (year) {
+      return dates.find(function (date) { return date.slice(0, 4) === year; });
+    });
+    var step = Math.max(1, Math.ceil((candidates.length - 1) / (Math.max(2, maxTicks || 10) - 1)));
+    var ticks = candidates.filter(function (_, index) { return index % step === 0 || index === candidates.length - 1; });
+    var start = Date.parse(dates[0]);
+    var end = Date.parse(dates[dates.length - 1]);
+    var padding = Math.max(45 * 86400000, (end - start) * .055);
+    return {type: "date", tickmode: "array", tickvals: ticks,
+      ticktext: ticks.map(function (date) { return years.length === 1 ? formatDealDate(date) : date.slice(0,4); }),
+      range: [new Date(start - padding).toISOString(), new Date(end + padding).toISOString()],
+      tickangle: years.length === 1 && ticks.length > 3 ? -30 : 0,
+      automargin: true, gridcolor: "#e8efee", zeroline: false};
+  }
+
+  function formatDealDate(value) {
+    var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value || ""));
+    return match ? match[3] + "." + match[2] + "." + match[1] : "לא ידוע";
   }
 
   function renderSeriesChart(targetId, series, overlays, title, yAxisTitle, options) {
     options = options || {};
     if (!seriesHasPoints(series)) {
+      if (byId(targetId+"-coverage-note")) byId(targetId+"-coverage-note").textContent="";
       renderSeriesChartGuide(targetId, title, true);
       return;
     }
     var chart = byId(targetId);
-    chart.className = "chart";
+    chart.classList.remove("chart-guide");
+    chart.classList.add("chart");
     if (!chart.classList.contains("js-plotly-plot")) chart.innerHTML = "";
     var colors = options.colors || colorPalette("default", "series");
     if (options.reverseColors) colors = colors.slice().reverse();
     var symbols = options.symbols || [];
+    var lowCount = 0, partialCount = 0;
     var traces = (series || []).map(function (item, index) {
       var group = item.performance_group || "";
       var color = options.groupColors && options.groupColors[group] || item.color || colors[index % colors.length];
-      var symbol = options.groupSymbols && options.groupSymbols[group] || (symbols.length ? symbols[index % symbols.length] : undefined);
-      var dash = options.groupDashes && options.groupDashes[group] || "solid";
+      var symbol = options.groupSymbols && options.groupSymbols[group] || (symbols.length ? symbols[index % symbols.length] : "circle");
+      var city = (state.meta && state.meta.cities || []).find(function(c){return c.id === item.city || c.name === item.city || c.name === item.label;});
+      var cutoff = city && city.coverage && city.coverage.scraped_to || state.meta && state.meta.source && state.meta.source.detected_at;
+      var partialYear = cutoff ? Number(String(cutoff).slice(0,4)) : snapshotYear();
+      var ordered = (item.points || []).slice().sort(function(a,b){return Number(a.year)-Number(b.year);});
+      var points = [];
+      ordered.forEach(function(point,i){
+        if (i && Number(point.year)-Number(ordered[i-1].year)>1) points.push({year:Number(ordered[i-1].year)+1,date:(Number(ordered[i-1].year)+1)+"-01-01",y:null,gap:true});
+        points.push(point);
+      });
+      var flags=points.map(function(point){
+        var low=point.low_sample || (point.n_deals != null && Number(point.n_deals)<10);
+        var partial=Number(point.year)>=partialYear;
+        if(!point.gap && low)lowCount++;
+        if(!point.gap && partial)partialCount++;
+        return {low:low,partial:partial};
+      });
       return {
-        name: item.label,
-        type: "scatter",
+        name: item.label, type: "scatter", connectgaps:false,
         mode: options.showMarkers === false ? "lines" : "lines+markers",
-        x: (item.points || []).map(function (point) { return point.date || point.year; }),
-        y: (item.points || []).map(function (point) { return point.y; }),
-        text: (item.points || []).map(function (point) {
-          return point.tooltip || item.label + "<br>Year: " + valueOrDash(point.year) + "<br>Deals: " + valueOrDash(point.n_deals) + "<br>Value: " + valueOrDash(point.y);
-        }),
+        x: points.map(function(point){return point.date || point.year;}),
+        y: points.map(function(point){return point.y;}),
+        text: points.map(function(point,i){return escapeHtml(item.label)+"<br>שנה: "+valueOrDash(point.year)+
+          "<br>עסקאות: "+formatNumber(point.n_deals)+"<br>ערך: "+formatNumber(point.y)+
+          (point.base_year ? "<br>שנת בסיס משותפת: "+point.base_year : "")+
+          (flags[i].low?"<br>מעט עסקאות — בדקו את התמהיל":"")+(flags[i].partial?"<br>שנת איסוף חלקית":"");}),
         hovertemplate: "%{text}<extra></extra>",
-        line: { color: color, dash: dash },
-        marker: {
-          size: cityPointSizes(item.points || [], options.pointSizeRange),
-          color: color,
-          symbol: symbol
-        }
+        line: {color:color,dash:options.groupDashes && options.groupDashes[group] || "solid"},
+        marker: {size:cityPointSizes(points,options.pointSizeRange),color:color,
+          opacity:flags.map(function(flag){return flag.low?.55:1;}),
+          symbol:flags.map(function(flag){return flag.partial?"diamond-open":flag.low?"circle-open":symbol;})}
       };
     });
+    var note=byId(targetId+"-coverage-note");
+    if(!note){note=document.createElement("p");note.id=targetId+"-coverage-note";note.className="coverage-note";chart.before(note);}
+    note.textContent="כל נקודה מסכמת עסקאות שונות באותה שנה; שינוי בתמהיל עשוי להשפיע על המחיר. גודל הנקודה יחסי למספר העסקאות בתוך כל סדרה."+
+      (lowCount?" עיגול חלול מסמן מעט עסקאות; המספר המדויק מוצג בריחוף.":"")+
+      (partialCount?" מעוין חלול מסמן שנת איסוף חלקית.":"")+" שנים ללא נתונים נשארות כרווח בקו.";
     addOverlayTraces(traces, overlays || {});
-    Plotly.react(targetId, traces, chartLayout(title, yAxisTitle));
+    var layout=chartLayout(title,yAxisTitle);
+    var axisPoints=[].concat.apply([],series.map(function(item){return item.points || [];}));
+    (state.seriesAxisPoints || (state.seriesAxisPoints={}))[targetId]=axisPoints;
+    layout.xaxis=Object.assign(layout.xaxis,analysisDateAxis(axisPoints,Math.max(3,Math.min(8,Math.floor(chart.getBoundingClientRect().width/85)))));
+    layout.margin.b=90;layout.legend={orientation:"h",y:-.25};
+    Plotly.react(targetId, traces, layout, {responsive:true,displaylogo:false});
   }
 
   function renderGushMap(data, options) {
@@ -1963,8 +2662,8 @@
     }
     var parts = [];
     if (source.name) parts.push(source.name);
-    if (source.fetched_at) parts.push("Fetched: " + source.fetched_at);
-    if (source.disclaimer) parts.push(source.disclaimer);
+    if (source.fetched_at) parts.push("איסוף שכבת המפה: " + formatDealDate(source.fetched_at.slice(0, 10)));
+    if (source.disclaimer) parts.push("גבולות הגושים הם מידע עזר; הכיסוי והתאריך של שכבת המפה נפרדים מנתוני העסקאות.");
     target.textContent = parts.join(" · ");
   }
 
@@ -2411,6 +3110,20 @@
     });
   }
 
+  function pilotTableValue(row, key) {
+    var value = row[key];
+    if (!pilotActive()) return value;
+    if (key === "location_basis") return ({strict_transaction: "התאמת עסקה מחמירה", property_reference: "ייחוס לפי מזהה — לא אומת לעסקה", unmatched: "ללא שיוך", legacy_record: "כתובת וקומה בדיווח מידע לעם — התמנון"})[value] || "ללא שיוך";
+    if (key === "legacy_match") return value === "strict_transaction" ? "התאמת עסקה מאומתת" : "ללא התאמה מאומתת";
+    if (key === "quality_flags") {
+      if (row.location_basis === "legacy_record") return "לפי הרשומה הישנה; חלק המכירה אינו ידוע";
+      var labels = { missing_address: "כתובת", missing_floor: "קומה", missing_area: "שטח", missing_rooms: "חדרים", location_reference: "כתובת/קומה בייחוס לפי מזהה" };
+      return value ? String(value).split(";").map(function (flag) { return labels[flag] || flag; }).join(", ") : "ללא חוסרים בשדות שנבדקו";
+    }
+    if ((value === null || value === undefined || value === "") && ["floor", "address", "FULLADRESS", "street", "roof", "New_Project", "sale_portion"].indexOf(key) >= 0) return "לא ידוע";
+    return value;
+  }
+
   function renderTable(targetId, rows, columns, options) {
     var target = byId(targetId);
     options = options || {};
@@ -2429,7 +3142,7 @@
     var html = "";
     if (options.filterable) {
       html += '<div class="table-controls">' +
-        '<label>' + escapeHtml(translateUiText("Filter all columns")) + '<input class="table-global-filter" value="' + escapeHtml(tableState.globalFilter || "") + '" placeholder="' + escapeHtml(translateUiText("Search rows")) + '"></label>' +
+        '<label>' + escapeHtml("סינון השורות שנטענו בלבד") + '<input type="search" autocomplete="off" class="table-global-filter" value="' + escapeHtml(tableState.globalFilter || "") + '" placeholder="' + escapeHtml(translateUiText("Search rows")) + '"></label>' +
         '<button class="secondary compact-button table-clear-filters" type="button">' + escapeHtml(translateUiText("Clear filters")) + "</button>" +
         "</div>";
     }
@@ -2446,19 +3159,19 @@
         if (column.filter === "range") {
           var rangeFilter = rangeFilterValue(tableState.filters[column.key]);
           return '<th><span class="table-range-filter">' +
-            '<input class="table-column-filter" data-filter-kind="min" data-key="' + escapeHtml(column.key) + '" value="' +
+            '<input autocomplete="off" class="table-column-filter" data-filter-kind="min" data-key="' + escapeHtml(column.key) + '" value="' +
             escapeHtml(rangeFilter.min) + '" placeholder="' + escapeHtml(translateUiText("Min")) + '">' +
-            '<input class="table-column-filter" data-filter-kind="max" data-key="' + escapeHtml(column.key) + '" value="' +
+            '<input autocomplete="off" class="table-column-filter" data-filter-kind="max" data-key="' + escapeHtml(column.key) + '" value="' +
             escapeHtml(rangeFilter.max) + '" placeholder="' + escapeHtml(translateUiText("Max")) + '">' +
             "</span></th>";
         }
-        return '<th><input class="table-column-filter" data-key="' + escapeHtml(column.key) + '" value="' +
+        return '<th><input autocomplete="off" class="table-column-filter" data-key="' + escapeHtml(column.key) + '" value="' +
           escapeHtml(tableState.filters[column.key] || "") + '" placeholder="' + escapeHtml(translateUiText("Filter")) + '"></th>';
       }).join("") + "</tr>";
     }
     html += "</thead><tbody>" + visibleRows.map(function (row) {
       return '<tr data-row-id="' + escapeHtml(row.id || "") + '">' + columns.map(function (column) {
-        var value = row[column.key];
+        var value = tableDisplayValue(row, column);
         return '<td dir="auto" class="' + textDirectionClass(value) + '">' + escapeHtml(valueOrDash(value)) + "</td>";
       }).join("") + "</tr>";
     }).join("") + "</tbody></table>";
@@ -2470,6 +3183,8 @@
     bindTableControls(target, targetId, rows, columns, options);
     if (options && options.selectable) {
       target.querySelectorAll("tbody tr").forEach(function (rowEl) {
+        rowEl.tabIndex=0;rowEl.setAttribute("role","button");rowEl.setAttribute("aria-label","פתיחת פרטי העסקה");
+        rowEl.addEventListener("keydown",function(event){if(event.key==="Enter" || event.key===" "){event.preventDefault();rowEl.click();}});
         rowEl.addEventListener("click", function () {
           target.querySelectorAll("tr").forEach(function (item) { item.classList.remove("is-selected"); });
           rowEl.classList.add("is-selected");
@@ -2485,8 +3200,12 @@
       rowEl.classList.toggle("is-selected", rowEl.dataset.rowId === rowId);
     });
     var row = state.latestAnalysisRows.find(function (item) { return item.id === rowId; });
+    if(row && row.record_id)pushNavigation(dealUrl(row.city,row.record_id));
+    state.analysisMode="chart";
     renderSelectedDeal(row || null);
+    if(row)byId("selected-deal").scrollIntoView({block:"nearest"});
     markSelectedDealOnChart(rowId, markerTarget);
+    rememberNavigation();
   }
 
   function tableRowsForDisplay(rows, columns, tableState, options) {
@@ -2495,11 +3214,11 @@
       result = result.filter(function (row) {
         var globalFilter = normalizeSearch(tableState.globalFilter || "");
         var matchesGlobal = !globalFilter || columns.some(function (column) {
-          return normalizeSearch(valueOrDash(row[column.key])).indexOf(globalFilter) !== -1;
+          return matchesSearch(valueOrDash(pilotTableValue(row, column.key)), globalFilter);
         });
         if (!matchesGlobal) return false;
         return columns.every(function (column) {
-          return matchesColumnFilter(row[column.key], tableState.filters && tableState.filters[column.key], column);
+          return matchesColumnFilter(pilotTableValue(row, column.key), tableState.filters && tableState.filters[column.key], column);
         });
       });
     }
@@ -2590,7 +3309,7 @@
   function matchesColumnFilter(value, filterValue, column) {
     if (column.filter !== "range") {
       var textFilter = normalizeSearch(filterValue || "");
-      return !textFilter || normalizeSearch(valueOrDash(value)).indexOf(textFilter) !== -1;
+      return !textFilter || matchesSearch(valueOrDash(value), textFilter);
     }
     var range = rangeFilterValue(filterValue);
     var min = parseFilterBoundary(range.min, column);
@@ -2645,26 +3364,180 @@
     if (traceIndexes.length) Plotly.restyle(chart, { selectedpoints: updates }, traceIndexes);
   }
 
-  function renderSelectedDeal(row) {
+  function renderSelectedDeal(row, skipHistory) {
     var target = byId("selected-deal");
+    state.selectedDeal = row;
+    if(row)document.body.dataset.analysisMode=state.analysisMode === "chart" && state.latestAnalysisRows.length ? "chart" : "detail";
+    updateNavigationControls();
+    if (byId("property-history-chart") && window.Plotly) Plotly.purge(byId("property-history-chart"));
+    state.dealRequestId = (state.dealRequestId || 0) + 1;
     if (!target) return;
     if (!row) {
       target.innerHTML = "";
       return;
     }
-    var fields = [
-      ["תאריך", row.date],
-      ["רחוב", row.street],
-      ["גוש", row.gush],
-      ["מחיר", row.price_millions],
-      ["שטח", row.area],
-      ["חדרים", row.rooms],
-      ["סוג", row.apartment_type],
-      ["כתובת", row.address]
-    ];
-    target.innerHTML = '<div class="deal-card"><h3>עסקה שנבחרה</h3><dl>' + fields.map(function (field) {
-      return '<div class="deal-field"><dt>' + escapeHtml(field[0]) + "</dt><dd class='" + textDirectionClass(field[1]) + "'>" + escapeHtml(valueOrDash(field[1])) + "</dd></div>";
-    }).join("") + "</dl></div>";
+    var suspect = [];
+    if(row.rooms != null && (row.rooms < 1 || row.rooms > 20 || !Number.isInteger(Number(row.rooms)*2)))suspect.push("מספר חדרים לא שגרתי");
+    if(row.area != null && (row.area <= 0 || row.area > 1000))suspect.push("שטח לא שגרתי לנכס מגורים");
+    if(row.build_year != null && (row.build_year < 1800 || row.build_year > snapshotYear()+10))suspect.push("שנת בנייה לא שגרתית");
+    var amount = row.price_ils === null || row.price_ils === undefined ? row.price_millions * 1000000 : row.price_ils;
+    var fields = [["שטח (מ״ר)", row.area], ["חדרים", row.rooms], ["קומה", row.floor],
+      ["סוג נכס", row.apartment_type], ["חלק נמכר", row.sale_portion === null || row.sale_portion === undefined ? "לא ידוע" : (row.sale_portion * 100) + "%"],
+      ["מקור", row.source_label || (row.source_id ? "גרסאות לעם" : "מידע לעם — התמנון")]];
+    var metadata = [["גוש / חלקה / תת־חלקה", row.gush_code],
+      ["בסיס שיוך כתובת וקומה", pilotTableValue(row, "location_basis")],
+      ["חוסרים והערות", pilotTableValue(row, "quality_flags")], ["מזהה רשומת מקור", row.source_id || row.record_id]];
+    function fieldMarkup(field) {
+      return '<div class="deal-field"><dt>' + escapeHtml(field[0]) + '</dt><dd dir="auto">' + escapeHtml(valueOrDash(field[1])) + '</dd></div>';
+    }
+    target.innerHTML = '<div class="deal-card"><header class="deal-card-heading"><div><span class="deal-eyebrow">עסקה שנבחרה</span>' +
+      '<h3>' + escapeHtml(row.address || row.street || "כתובת לא ידועה") + '</h3><time dir="ltr">' + escapeHtml(formatDealDate(row.date)) + '</time></div>' +
+      '<strong class="deal-price" dir="ltr">' + escapeHtml(formatNumber(amount)) + ' ₪</strong></header>' +
+      '<div class="deal-navigation"><button data-deal-action="back" class="secondary" type="button">' + (state.analysisMode === "chart" && state.latestAnalysisRows.length ? 'סגירת פרטי העסקה וחזרה לגרף' : (state.analysisMode === 'lookup' && state.lookupData ? 'חזרה לתוצאות החיפוש' : 'לתצוגה הראשית')) + '</button><button data-deal-action="building" class="secondary" type="button">כל העסקאות בבניין</button><button data-deal-action="map" class="secondary" type="button">הגוש במפה</button></div>' +
+      '<dl class="deal-stats">' + fields.map(fieldMarkup).join("") + '</dl>' +
+      (suspect.length ? '<p class="deal-location-note">' + escapeHtml(suspect.join(" · ") + ". הערכים נשמרו כפי שדווחו במקור.") + '</p>' : '') +
+      (row.location_basis === "property_reference" ? '<p class="deal-location-note">הכתובת והקומה משויכות לפי מזהה נכס; לא אומתו לעסקה זו.</p>' : '') +
+      '<details class="deal-metadata"><summary>זיהוי הנכס, מקור ואיכות הנתונים</summary><dl>' + metadata.map(fieldMarkup).join("") +
+      '</dl></details><section id="deal-history" aria-live="polite"></section></div>';
+    if (row.record_id && !skipHistory) loadDealHistory(row.city, row.record_id, state.dealRequestId);
+  }
+
+  function dealUrl(city, record) {
+    var url = new URL(window.location.href);
+    url.searchParams.set("deal_city", city);
+    url.searchParams.set("deal_record", record);
+    url.hash = "analysis";
+    return url.pathname + url.search + url.hash;
+  }
+
+  function groupHistoryDates(rows) {
+    var groups = {};
+    rows.forEach(function (row) { var date = row.date || ""; (groups[date] || (groups[date] = [])).push(row); });
+    return Object.keys(groups).sort().reverse().map(function (date) { return {date: date, rows: groups[date]}; });
+  }
+
+  function historyPresentationRows(rows) {
+    var current = rows.filter(function (row) { return !String(row.record_id || "").startsWith("legacy:"); });
+    var reference = rows.filter(function (row) { return String(row.record_id || "").startsWith("legacy:"); });
+    var attached = new Map();
+    var collapsed = new Set();
+    function matches(a, b) {
+      return a.date && a.date === b.date &&
+        a.price_ils !== null && b.price_ils !== null && Math.abs(a.price_ils - b.price_ils) <= 1000;
+    }
+    // Presentation only: keep both source records accessible, and never combine partial or ambiguous sales.
+    current.forEach(function (row) {
+      if (row.sale_portion !== 1) return;
+      var alternatives = reference.filter(function (other) { return matches(row, other); });
+      if (alternatives.length !== 1) return;
+      var other = alternatives[0];
+      if (current.filter(function (candidate) { return matches(candidate, other); }).length !== 1) return;
+      attached.set(row.record_id, [other]);
+      collapsed.add(other.record_id);
+    });
+    return rows.filter(function (row) { return !collapsed.has(row.record_id); }).map(function (row) {
+      return Object.assign({}, row, {alternate_records: attached.get(row.record_id) || []});
+    });
+  }
+
+  function renderDealHistory(data) {
+    var target = byId("deal-history");
+    if (!target) return;
+    var rows = [data.deal].concat(data.related || []);
+    var visibleRows = historyPresentationRows(rows);
+    var groups = groupHistoryDates(visibleRows);
+    var plotted = new Set(state.latestAnalysisRows.map(function (row) { return row.record_id; }));
+    var outside = state.latestAnalysisRows.length && rows.some(function (row) {
+      return row.source_label !== "מידע לעם — התמנון" && !plotted.has(row.record_id);
+    });
+    target.innerHTML = '<div class="history-heading"><h4>היסטוריית הנכס לפי תאריך</h4><span>' +
+      escapeHtml(data.distinct_dates + " תאריכי עסקה") + '</span></div>' +
+      '<p class="history-scope">לפי אותו גוש/חלקה/תת־חלקה, ללא מסנני הניתוח. זהות הדירה לאורך השנים אינה מאומתת.</p>' +
+      (outside ? '<p class="history-outside">בהיסטוריה יש רשומות שאינן בגרף הניתוח הנוכחי. גרף הנכס שלהלן מציג את כולן.</p>' : '') +
+      '<div class="history-dates">' + groups.map(function (group) {
+        return '<article class="history-date"><header><time dir="ltr">' + escapeHtml(formatDealDate(group.date)) + '</time>' +
+          (group.rows.length > 1 ? '<span class="history-badge">' + group.rows.length + ' רשומות באותו יום</span>' : '') + '</header>' +
+          group.rows.map(function (row) {
+            var selected = row.record_id === data.deal.record_id || row.alternate_records.some(function (other) { return other.record_id === data.deal.record_id; });
+            var price = row.price_ils === null ? "מחיר לא ידוע" : formatNumber(row.price_ils) + " ₪";
+            return '<div class="history-record' + (selected ? ' is-current' : '') + '">' +
+              '<a href="' + escapeHtml(dealUrl(row.city, row.record_id)) + '" aria-label="' + escapeHtml(formatDealDate(row.date) + ' · ' + price + ' · ' + row.source_label) + '"><bdi>' + escapeHtml(price) + '</bdi></a>' +
+              '<span class="history-source">' + escapeHtml(row.source_label + (selected ? " · נבחרה" : "")) + '</span>' +
+              '<span class="history-facts">' + escapeHtml([valueOrDash(row.area) + " מ״ר", valueOrDash(row.rooms) + " חדרים",
+                row.sale_portion === null ? "חלק לא ידוע" : (row.sale_portion * 100) + "% מהנכס"].join(" · ")) + '</span>' +
+              (row.alternate_records.length ? '<details class="history-comparison"><summary>השוואת דיווחים</summary><p>תאריך ומחיר תואמים בשני המקורות. מוצג דיווח גרסאות לעם; נתוני הנכס לא מוזגו.</p>' +
+                [row].concat(row.alternate_records).map(function (sourceRow) {
+                  return '<div class="source-comparison-row"><strong>' + escapeHtml(sourceRow.source_label) + '</strong><span>' +
+                    escapeHtml([valueOrDash(sourceRow.area) + " מ״ר", valueOrDash(sourceRow.rooms) + " חדרים", "שנת בנייה: " + valueOrDash(sourceRow.build_year)].join(" · ")) +
+                    '</span><a href="' + escapeHtml(dealUrl(sourceRow.city, sourceRow.record_id)) + '">פתיחת דיווח המקור</a></div>';
+                }).join("") + '</details>' : '') + '</div>';
+          }).join("") + '</article>';
+      }).join("") + '</div>' +
+      '<details id="history-chart-disclosure" class="history-chart-disclosure"' + (!state.latestAnalysisRows.length || outside ? ' open' : '') +
+      '><summary>גרף הנכס — כל התאריכים, ללא מסנני הניתוח</summary><div id="property-history-chart" class="property-history-chart"></div></details>' +
+      '<div class="history-footer"><a href="' + escapeHtml(dealUrl(data.deal.city, data.deal.record_id)) + '">קישור קבוע לעסקה</a>' +
+      '<details><summary>כיצד לקרוא את ההיסטוריה</summary><p>' + escapeHtml((data.warnings || []).join(" ")) + '</p></details></div>';
+    var disclosure = byId("history-chart-disclosure");
+    var rendered = false;
+    function draw() {
+      if (!disclosure.open || rendered) return;
+      rendered = true;
+      var plottedRows = visibleRows.filter(function (row) { return row.date && row.price_ils !== null; });
+      if (!plottedRows.length) { byId("property-history-chart").textContent = "אין תאריכים ומחירים תקינים להצגה."; return; }
+      var traces = ["גרסאות לעם", "מידע לעם — התמנון"].map(function (source, index) {
+        var selected = plottedRows.filter(function (row) { return row.source_label === source; });
+        return {type: "scatter", mode: "markers", name: source,
+          x: selected.map(function (row) { return row.date; }), y: selected.map(function (row) { return row.price_ils / 1000000; }),
+          customdata: selected.map(function (row) { return dealUrl(row.city, row.record_id); }),
+          text: selected.map(function (row) { return escapeHtml(formatDealDate(row.date) + " · " + formatNumber(row.price_ils) + " ₪ · " +
+            (row.sale_portion === null ? "חלק לא ידוע" : (row.sale_portion * 100) + "% מהנכס")); }),
+          hovertemplate: "%{text}<extra>%{fullData.name}</extra>",
+          marker: {size: index ? 18 : 11, symbol: index ? "diamond-open" : "circle", color: index ? "#ad793b" : "#186c72"}};
+      }).filter(function (trace) { return trace.x.length; });
+      var layout = {height: 300, margin: {t:20,r:30,b:60,l:70},
+        xaxis: Object.assign({title: "תאריך העסקה"}, analysisDateAxis(plottedRows, 8)),
+        yaxis: {title:"מחיר מדווח (מ׳ ₪)", automargin:true, gridcolor:"#e8efee"},
+        legend:{orientation:"h",y:-.3}, font:{family:'"Segoe UI", Arial, sans-serif',size:13}, hovermode:"closest"};
+      var chart = byId("property-history-chart");
+      Plotly.newPlot(chart, traces, layout, {responsive:true,displaylogo:false}).then(function () {
+        if (chart !== byId("property-history-chart")) return;
+        chart.on("plotly_click", function (event) { var point = event.points && event.points[0]; if (point && point.customdata) window.location.href = point.customdata; });
+      });
+    }
+    disclosure.addEventListener("toggle", draw);
+    draw();
+  }
+
+  async function loadDealHistory(city, record, requestId) {
+    var target = byId("deal-history");
+    if (target) target.textContent = "טוען את היסטוריית המקורות...";
+    try {
+      var response = await getJson("api/deals/detail?city=" + encodeURIComponent(city) + "&record=" + encodeURIComponent(record));
+      if (requestId !== state.dealRequestId) return;
+      renderDealHistory(response.data);
+    } catch (error) {
+      if (requestId === state.dealRequestId && byId("deal-history")) byId("deal-history").textContent = error.message;
+    }
+  }
+
+  async function openLinkedDeal() {
+    var params = new URLSearchParams(window.location.search);
+    if (!params.get("deal_record") || initialTabFromHash() !== "analysis") return;
+    var requestId = state.dealRequestId = (state.dealRequestId || 0) + 1;
+    try {
+      var response = await getJson("api/deals/detail?city=" + encodeURIComponent(params.get("deal_city") || "") + "&record=" + encodeURIComponent(params.get("deal_record")));
+      if (requestId !== state.dealRequestId) return;
+      activateTab("analysis", false);
+      if (!state.latestAnalysisRows.length) byId("analysis-chart").hidden = true;
+      // Render the linked record independently of the chart's active filters or sample.
+      renderSelectedDeal(response.data.deal, true);
+      renderDealHistory(response.data);
+      byId("pilot-address-lookup").open=false;
+      byId("selected-deal").scrollIntoView({block: "start"});
+      rememberNavigation();
+    } catch (error) {
+      setNotice("analysis-state", error.message, "error");
+    }
   }
 
   function renderMetrics(targetId, counts) {
@@ -2773,13 +3646,17 @@
     var selection = data.selection || {};
     var thresholds = data.changes && data.changes.thresholds || {};
     var filters = buildGushFilterSummary();
+    renderActiveFilterChips();
     filterTarget.innerHTML = '<strong>מסננים פעילים</strong><span>' + filters.map(escapeHtml).join(" • ") + "</span>";
     var qualified = data.counts && data.counts.qualified_gushes || 0;
     var selected = data.counts && data.counts.selected_gushes || 0;
     var selectedCopy = selected + " גושים נבחרו מתוך " + qualified + " גושים כשירים";
     var groupsCopy = "מציג " + valueOrDash(selection.top_count) + " גבוהים, " + valueOrDash(selection.typical_count) + " טיפוסיים ו-" + valueOrDash(selection.bottom_count) + " נמוכים";
-    var basisCopy = "כל נקודה = " + selectedOptionText("gush-statistic").toLowerCase() + "; הדירוג לפי שינוי YoY שנתי ממוצע; חציון עסקאות לשנה " + (thresholds.min_deals_comparison || ">=") + " " + valueOrDash(thresholds.min_deals_per_gush);
-    infoTarget.innerHTML = '<strong>ניתוח ביצועים</strong><span>' + escapeHtml(selectedCopy) + "</span><span>" + escapeHtml(groupsCopy) + "</span><span>" + escapeHtml(basisCopy) + "</span>";
+    var period = data.comparison_period || {};
+    var basisCopy = "תקופה משותפת: " + valueOrDash(period.first_year) + "–" + valueOrDash(period.last_year) +
+      ". כל נקודה = " + selectedOptionText("gush-statistic") + "; לפחות " + valueOrDash(thresholds.min_deals_per_gush) + " עסקאות בכל אחת משתי שנות הקצה.";
+    basisCopy += " הדירוג לפי שינוי שנתי מחושב (CAGR): היחס בין הערך האחרון לראשון בחזקת 1/מספר השנים, פחות 1. שינוי בתמהיל העסקאות עשוי להשפיע; זה אינו מדד תשואה לדירה.";
+    infoTarget.innerHTML = '<strong>מגמות מחירים בתקופה משותפת</strong><span>' + escapeHtml(selectedCopy) + "</span><span>" + escapeHtml(groupsCopy) + "</span><span>" + escapeHtml(basisCopy) + "</span>";
   }
 
   function buildGushFilterSummary() {
@@ -2827,18 +3704,18 @@
       return;
     }
     var cards = (cityStats.cards || []).map(function (card) {
-      return '<div class="metric"><span>' + escapeHtml(card.label) + '</span><strong class="' + textDirectionClass(card.value) + '">' +
+      return '<div class="metric"><span>' + escapeHtml(card.label === "Selected cities" ? "ערים שנבחרו" : card.label === "Plotted cities" ? "ערים בגרף" : card.label === "Strongest change" ? "השינוי הגבוה בתקופה" : String(card.label).startsWith("Highest latest ") ? "הערך הגבוה בסוף התקופה — " + yLabel(byId("city-y-variable").value) : translateUiText(card.label)) + '</span><strong class="' + textDirectionClass(card.value) + '">' +
         escapeHtml(valueOrDash(card.value)) + '</strong>' +
         (card.detail !== undefined && card.detail !== null ? '<small>' + escapeHtml(valueOrDash(card.detail)) + '</small>' : "") +
         "</div>";
     }).join("");
     var ranking = (cityStats.ranking || []).slice(0, 8).map(function (row, index) {
       return '<tr><td>' + (index + 1) + '</td><td class="' + textDirectionClass(row.city) + '">' + escapeHtml(valueOrDash(row.city)) +
-        '</td><td>' + escapeHtml(valueOrDash(row.pct_change)) + '%</td><td>' + escapeHtml(valueOrDash(row.last_value)) + '</td><td>' +
-        escapeHtml(valueOrDash(row.avg_deals_per_year)) + "</td></tr>";
+        '</td><td>' + escapeHtml(formatNumber(row.pct_change)) + '%</td><td>' + escapeHtml(formatNumber(row.last_value)) + '</td><td>' +
+        escapeHtml(formatNumber(row.avg_deals_per_year)) + "</td></tr>";
     }).join("");
-    target.innerHTML = '<div class="city-insight-cards">' + (cards || '<div class="mini-notice">עדיין אין סטטיסטיקות עיר להשוואה.</div>') + "</div>" +
-      '<div class="city-ranking"><h4>דירוג שינוי</h4><table><thead><tr><th>#</th><th>עיר</th><th>שינוי</th><th>אחרון</th><th>עסקאות / שנה</th></tr></thead><tbody>' +
+    target.innerHTML = '<p class="coverage-note">' + escapeHtml(cityStats.note || "") + '</p><p>תקופה משותפת לדירוג: ' + escapeHtml(valueOrDash(cityStats.first_year)) + '–' + escapeHtml(valueOrDash(cityStats.last_year)) + '</p><div class="city-insight-cards">' + (cards || '<div class="mini-notice">עדיין אין סטטיסטיקות עיר להשוואה.</div>') + "</div>" +
+      '<div class="city-ranking"><h4>דירוג שינוי</h4><table><thead><tr><th>#</th><th>עיר</th><th>שינוי</th><th>ערך בסוף התקופה</th><th>עסקאות / שנה</th></tr></thead><tbody>' +
       (ranking || '<tr><td colspan="5">אין שורות דירוג.</td></tr>') + "</tbody></table></div>";
   }
 
@@ -2919,14 +3796,19 @@
 
   function transformSeriesForMode(series, overlays, mode) {
     if (mode === "absolute") return { series: series, overlays: overlays };
+    var commonYears = (series[0] && series[0].points || []).filter(function (p) { return p.y != null && Number(p.y) > 0; }).map(function (p) { return Number(p.year || p.deal_year); });
+    (series || []).slice(1).forEach(function (item) { commonYears = commonYears.filter(function (year) { return (item.points || []).some(function (p) { return Number(p.year || p.deal_year) === year && p.y != null && Number(p.y) > 0; }); }); });
+    var baseYear = Math.min.apply(null, commonYears);
+    if (!Number.isFinite(baseYear)) return {series:[], overlays:{}};
     var transformedSeries = (series || []).map(function (item) {
       return Object.assign({}, item, {
-        points: transformPointsForMode(item.points || [], mode)
+        points: transformPointsForMode((item.points || []).filter(function (p) { return Number(p.year || p.deal_year) >= baseYear; }), mode)
       });
     });
     var transformedOverlays = {};
     Object.keys(overlays || {}).forEach(function (key) {
-      transformedOverlays[key] = transformPointsForMode(overlays[key] || [], mode);
+      var points = (overlays[key] || []).filter(function (p) { return Number(p.year || p.deal_year) >= baseYear; });
+      transformedOverlays[key] = points.some(function(p){return Number(p.year || p.deal_year) === baseYear && p.y != null && Number(p.y)>0;}) ? transformPointsForMode(points, mode) : [];
     });
     return { series: transformedSeries, overlays: transformedOverlays };
   }
@@ -2935,22 +3817,23 @@
     var ordered = (points || []).slice().sort(function (left, right) {
       return Number(left.year || left.deal_year || 0) - Number(right.year || right.deal_year || 0);
     });
-    var basePoint = ordered.find(function (point) { return Number.isFinite(Number(point.y)) && Number(point.y) !== 0; });
+    var basePoint = ordered.find(function (point) { return point.y != null && Number.isFinite(Number(point.y)) && Number(point.y) !== 0; });
     if (!basePoint) return ordered;
     var base = Number(basePoint.y);
     return ordered.map(function (point) {
       var y = Number(point.y);
-      var transformedY = Number.isFinite(y) ? (mode === "indexed" ? (y / base) * 100 : ((y / base) - 1) * 100) : null;
+      var transformedY = point.y != null && Number.isFinite(y) ? (mode === "indexed" ? (y / base) * 100 : ((y / base) - 1) * 100) : null;
       return Object.assign({}, point, {
         raw_y: point.y,
+        base_year: Number(basePoint.year || basePoint.deal_year),
         y: transformedY === null ? null : Math.round(transformedY * 1000) / 1000
       });
     });
   }
 
   function cityChartYAxisLabel(yVariable, mode) {
-    if (mode === "indexed") return "Index (first year = 100)";
-    if (mode === "change") return "Change from first year (%)";
+    if (mode === "indexed") return "אינדקס (שנת בסיס משותפת = 100)";
+    if (mode === "change") return "שינוי משנת בסיס משותפת (%)";
     return yLabel(yVariable);
   }
 
@@ -2966,7 +3849,7 @@
       ["סוגי דירות", (meta.apartment_types || []).length],
       ["רחובות שנטענו", state.streets.length],
       ["גושים שנטענו", state.gushes.length],
-      ["נוצר", meta.data_summary && meta.data_summary.generated_at]
+      ["הכנת נתוני האתר", formatTimestamp(meta.data_summary && meta.data_summary.generated_at)]
     ];
     target.innerHTML = cards.map(infoCard).join("");
     byId("global-summary").innerHTML = cards.slice(0, 2).map(function (card) {
@@ -2984,7 +3867,7 @@
     var cards = [
       ["לפני הסרת חריגים", data.counts && data.counts.before_outlier_removal],
       ["אחרי הסרת חריגים", data.counts && data.counts.after_outlier_removal],
-      ["טווח שנים", rangeText(ranges.deal_year)],
+      ["טווח שנים", ranges.deal_year ? ranges.deal_year.min + "–" + ranges.deal_year.max : "—"],
       ["טווח מחירים", rangeText(ranges.price_millions)],
       ["טווח מחיר למ\"ר", rangeText(ranges.price_per_m2)],
       ["טווח שטח", rangeText(ranges.area)],
@@ -3009,8 +3892,8 @@
       setRangeInputs(scope + "-filter-building-age", ranges.building_age);
     });
     var selectedRooms = selectedValues(byId("rooms-select"));
-    var smartRooms = data.rooms && data.rooms.smart_selected || [];
     var roomChoices = data.rooms && data.rooms.choices || [];
+    var smartRooms = pilotActive() ? roomChoices : (data.rooms && data.rooms.smart_selected || []);
     var nextSelectedRooms = smartRoomSelectionForOptions(selectedRooms, roomChoices, smartRooms);
     var roomOptions = (data.rooms && data.rooms.choices || []).map(function (value) {
       return { value: value, label: value };
@@ -3267,8 +4150,8 @@
       ["date", "תאריך", "date"], ["city", "עיר"], ["street", "רחוב"], ["gush", "גוש", "number"],
       ["price_millions", "מחיר", "number"], ["price_per_m2", "מחיר למ\"ר", "number"], ["price_per_room", "מחיר לחדר", "number"],
       ["area", "שטח", "number"], ["rooms", "חדרים", "number"], ["floor", "קומה", "number"], ["apartment_type", "סוג"],
-      ["address", "כתובת"]
-    ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
+      ["address", "כתובת"], ["sale_portion", "חלק נמכר (1 = 100%)", "number"], ["quality_flags", "חוסרים והערות"], ["location_basis", "בסיס שיוך כתובת/קומה"]
+    ].filter(function (item) { return pilotActive() || ["sale_portion", "quality_flags", "legacy_match", "location_basis"].indexOf(item[0]) === -1; }).map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
   }
 
   function summaryColumns(extra) {
@@ -3280,8 +4163,8 @@
       deal_year: "שנה",
       n_deals: "עסקאות",
       price_millions: "מחיר",
-      price_per_m2: "מחיר למ\"ר",
-      price_per_room: "מחיר לחדר",
+      price_per_m2: "מחיר למ\"ר (אלפי ₪)",
+      price_per_room: "מחיר לחדר (מיליוני ₪)",
       y: "ערך נבחר"
     };
     return keys.map(function (key) { return { key: key, label: labelByKey[key] || key }; });
@@ -3292,8 +4175,8 @@
       ["date", "תאריך", "date"], ["city", "עיר"], ["street", "רחוב"], ["Gush", "גוש", "number"],
       ["price_millions", "מחיר", "number"], ["price_per_m2", "מחיר למ\"ר", "number"], ["price_per_room", "מחיר לחדר", "number"],
       ["area", "שטח", "number"], ["rooms", "חדרים", "number"], ["floor", "קומה", "number"], ["apt type", "סוג"],
-      ["FULLADRESS", "כתובת"], ["New_Project", "פרויקט"], ["build_year", "שנת בנייה", "number"], ["building age", "גיל בניין", "number"]
-    ].map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
+      ["FULLADRESS", "כתובת"], ["location_basis", "בסיס שיוך כתובת/קומה"], ["sale_portion", "חלק נמכר (1 = 100%)", "number"], ["quality_flags", "חוסרים והערות"], ["New_Project", "פרויקט"], ["build_year", "שנת בנייה", "number"], ["building age", "גיל בניין", "number"]
+    ].filter(function (item) { return pilotActive() || ["sale_portion", "quality_flags", "legacy_match", "location_basis"].indexOf(item[0]) === -1; }).map(function (item) { return { key: item[0], label: item[1], type: item[2] || "text", filter: item[2] ? "range" : "text" }; });
   }
 
   function performanceColumns(yVariable) {
@@ -3304,12 +4187,14 @@
       { key: "position_in_group", label: "מס' בקבוצה", type: "number", filter: "range" },
       { key: "gush_label", label: "גוש" },
       { key: "price_change", label: "שינוי %", type: "number", filter: "range" },
-      { key: "yearly_slope", label: "שינוי שנתי %", type: "number", filter: "range" },
+      { key: "yearly_slope", label: "שינוי שנתי מחושב (CAGR) %", type: "number", filter: "range" },
       { key: "first_y", label: "ערך ראשון - " + selectedLabel, type: "number", filter: "range" },
       { key: "last_y", label: "ערך אחרון - " + selectedLabel, type: "number", filter: "range" },
       { key: "first_year", label: "שנה ראשונה", type: "number", filter: "range" },
       { key: "last_year", label: "שנה אחרונה", type: "number", filter: "range" },
       { key: "years_span", label: "שנים", type: "number", filter: "range" },
+      { key: "first_year_deals", label: "עסקאות בשנה הראשונה", type: "number", filter: "range" },
+      { key: "last_year_deals", label: "עסקאות בשנה האחרונה", type: "number", filter: "range" },
       { key: "median_deals_per_year", label: "חציון עסקאות/שנה", type: "number", filter: "range" }
     ];
   }
@@ -3402,7 +4287,7 @@
     var query = normalizeSearch(search.value);
     var visible = query
       ? options.filter(function (option) {
-          return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
+          return selected.has(String(option.value)) || matchesSearch(optionSearchText(option), query);
         }).slice(0, 30)
       : options.slice(0, 12);
 
@@ -3576,7 +4461,7 @@
     var selected = new Set(selectedValues(select).map(String));
     var query = normalizeSearch(search.value);
     var visible = query ? options.filter(function (option) {
-      return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
+      return selected.has(String(option.value)) || matchesSearch(optionSearchText(option), query);
     }).slice(0, 24) : [];
 
     selectedTarget.innerHTML = "";
@@ -3599,6 +4484,7 @@
     });
 
     results.innerHTML = "";
+    results.classList.toggle("picker-idle", !query);
     if (!options.length) {
       results.innerHTML = '<div class="mini-notice">' + escapeHtml(config.emptyText) + "</div>";
       return;
@@ -3607,7 +4493,7 @@
       results.innerHTML = '<div class="mini-notice">' +
         (key === "gushes" && document.body.dataset.activeTab === "compare"
           ? "חפשו מספר גוש, עיר, תיאור או רחוב בכל הערים. פריטים שנבחרו נשארים מוצמדים למעלה."
-          : "חפשו כדי לצמצם את הרשימה. פריטים שנבחרו נשארים מוצמדים למעלה.") +
+          : (selected.size ? "אפשר להוסיף לבחירה בחיפוש נוסף." : "אפשר לבחור כמה " + (key === "gushes" ? "גושים" : "רחובות") + ".")) +
         "</div>";
       return;
     }
@@ -3645,7 +4531,7 @@
     var selected = new Set(selectedValues(select).map(String));
     var query = normalizeSearch(search.value);
     var visible = query ? options.filter(function (option) {
-      return selected.has(String(option.value)) || normalizeSearch(optionSearchText(option)).indexOf(query) !== -1;
+      return selected.has(String(option.value)) || matchesSearch(optionSearchText(option), query);
     }).slice(0, 30) : [];
 
     selectedTarget.innerHTML = "";
@@ -3723,24 +4609,28 @@
   }
 
   function scheduleFilterOptions() {
+    if (state.restoringView) return;
     if (state.filterOptionsTimer) window.clearTimeout(state.filterOptionsTimer);
     if (!byId("city-select").value && !activeGushSelection().length) return;
     state.filterOptionsTimer = window.setTimeout(loadFilterOptions, 450);
   }
 
   function scheduleCityFilterOptions() {
+    if (state.restoringView) return;
     if (state.cityFilterOptionsTimer) window.clearTimeout(state.cityFilterOptionsTimer);
     if (!selectedValues(byId("city-comparison-select")).length) return;
     state.cityFilterOptionsTimer = window.setTimeout(loadCityFilterOptions, 450);
   }
 
   function scheduleGushFilterOptions() {
+    if (state.restoringView) return;
     if (state.gushFilterOptionsTimer) window.clearTimeout(state.gushFilterOptionsTimer);
     if (!byId("gush-city-select").value) return;
     state.gushFilterOptionsTimer = window.setTimeout(loadGushFilterOptions, 450);
   }
 
   function scheduleAnalysisAutoUpdate(reason) {
+    if (state.restoringView) return;
     if (state.autoAnalysisTimer) window.clearTimeout(state.autoAnalysisTimer);
     if (!byId("auto-update-analysis").checked) return;
     state.autoAnalysisTimer = window.setTimeout(function () {
@@ -3749,6 +4639,7 @@
   }
 
   function runAnalysisAutoUpdate(reason) {
+    if (state.restoringView || state.analysisMode!=="chart") return;
     var decision = autoAnalysisDecision();
     if (decision.status === "run") {
       runAnalysis({ auto: true });
@@ -3765,6 +4656,7 @@
     if (!state.filterOptions || state.filterOptionsSignature !== currentFilterOptionsSignature()) {
       return { status: "waiting" };
     }
+    if (byId("analysis-address").value.trim().length >= 2) return { status: "run" };
     var counts = state.filterOptions.counts || {};
     var estimate = Number(counts.after_outlier_removal || counts.before_outlier_removal || 0);
     if (!Number.isFinite(estimate) || estimate <= 0) return { status: "run" };
@@ -3787,6 +4679,7 @@
   }
 
   function scheduleCompareAutoUpdate(reason) {
+    if (state.restoringView) return;
     if (state.autoCompareTimer) window.clearTimeout(state.autoCompareTimer);
     if (!byId("auto-update-compare").checked) return;
     if (document.body.dataset.activeTab !== "compare") return;
@@ -3796,6 +4689,7 @@
   }
 
   function scheduleCityAutoUpdate(reason) {
+    if (state.restoringView) return;
     if (state.autoCityTimer) window.clearTimeout(state.autoCityTimer);
     if (!byId("auto-update-city").checked) return;
     if (document.body.dataset.activeTab !== "city") return;
@@ -3811,6 +4705,7 @@
   }
 
   function scheduleGushAutoUpdate(reason) {
+    if (state.restoringView) return;
     if (state.autoGushTimer) window.clearTimeout(state.autoGushTimer);
     if (!byId("auto-update-gush").checked) return;
     if (document.body.dataset.activeTab !== "gush") return;
@@ -3826,6 +4721,7 @@
   }
 
   function scheduleMapAutoUpdate(reason) {
+    if (state.restoringView) return;
     if (state.autoMapTimer) window.clearTimeout(state.autoMapTimer);
     if (document.body.dataset.activeTab !== "map") return;
     if (!byId("city-select").value && !activeGushSelection().length) return;
@@ -4019,6 +4915,7 @@
       });
       target.appendChild(button);
     });
+    if (window.NadlanLayout) window.NadlanLayout.decorateRoomChips(target, select);
   }
 
   function renderApartmentTypeChips() {
@@ -4077,7 +4974,7 @@
     var selected = new Set(selectedValues(select).map(String));
     var query = normalizeSearch(search.value);
     var options = Array.from(select.options || []).filter(function (option) {
-      return option.value && (selected.has(String(option.value)) || !query || normalizeSearch(option.textContent).indexOf(query) !== -1);
+      return option.value && (selected.has(String(option.value)) || !query || matchesSearch(option.textContent, query));
     });
     var visible = options.slice(0, query ? 24 : 12);
 
@@ -4132,6 +5029,11 @@
   function addRange(filters, key, minId, maxId) {
     var min = numberValue(minId);
     var max = numberValue(maxId);
+    // A displayed full range is not an explicit request to exclude missing area/price.
+    if (["area_range", "price_range", "price_per_m2_range"].indexOf(key) !== -1) {
+      if (byId(minId).value === byId(minId).dataset.defaultValue) min = null;
+      if (byId(maxId).value === byId(maxId).dataset.defaultValue) max = null;
+    }
     if (min !== null || max !== null) filters[key] = [min, max];
   }
 
@@ -4151,6 +5053,16 @@
   }
 
   function resetIncludeUnknownFilters(scope) {
+    if (pilotActive()) {
+      var share = byId(filterControlId(scope, "sale-portion-select"));
+      var completeness = byId(filterControlId(scope, "data-completeness-select"));
+      if (share) share.value = "full";
+      if (completeness) completeness.value = "all";
+      var location = byId(filterControlId(scope, "location-basis-select"));
+      if (location) location.value = "all";
+      var warning = share && share.closest(".pilot-filters").querySelector(".pilot-share-warning");
+      if (warning) warning.hidden = true;
+    }
     [
       "include-unknown-rooms",
       "include-unknown-floor",
@@ -4174,8 +5086,14 @@
 
   function setRangeInputs(prefix, range) {
     if (!range) return;
-    byId(prefix + "-min").value = valueOrEmpty(range.min);
-    byId(prefix + "-max").value = valueOrEmpty(range.max);
+    var year = /filter-year$/.test(prefix);
+    ["min","max"].forEach(function (side) {
+      var input = byId(prefix + "-" + side);
+      input.value = year ? valueOrEmpty(range[side]) : "";
+      input.dataset.defaultValue = input.value;
+      input.placeholder = year ? "ללא הגבלה" : (side === "min" ? "ללא מינימום" : "ללא מקסימום");
+      input.title = "טווח המקור: " + valueOrDash(range.min) + "–" + valueOrDash(range.max) + ". השאירו ריק כדי לא להגביל.";
+    });
   }
 
   function numberValue(id) {
@@ -4268,14 +5186,15 @@
     ];
     if (document.body.dataset.activeTab === "analysis") {
       pieces = pieces.concat([
-        ["חדרים", selectedValues(byId("rooms-select")).length || "הכל"],
+        ["כתובת", byId("analysis-address").value.trim() || "הכל"],
+        ["חדרים", roomSelectionText("rooms-select")],
         ["סטטוס", statusFilterText()],
         ["טווחים מותאמים", customRangeFilterCount()]
       ]);
     } else if (document.body.dataset.activeTab === "compare") {
       pieces = pieces.concat([
         ["ערך Y", selectedOptionText("compare-y-variable")],
-        ["חדרים", selectedValues(byId("compare-rooms-select")).length || "הכל"],
+        ["חדרים", roomSelectionText("compare-rooms-select")],
         ["טווחים מותאמים", customRangeFilterCount("compare")]
       ]);
     } else if (document.body.dataset.activeTab === "city") {
@@ -4283,7 +5202,7 @@
         ["ערים", selectedValues(byId("city-comparison-select")).length],
         ["ערך Y", selectedOptionText("city-y-variable")],
         ["מדד", selectedOptionText("city-statistic")],
-        ["חדרים", selectedValues(byId("city-rooms-select")).length || "הכל"],
+        ["חדרים", roomSelectionText("city-rooms-select")],
         ["טווחים מותאמים", customRangeFilterCount("city")]
       ];
     }
@@ -4373,12 +5292,20 @@
       .replace(/^Use city-wide as a reference line when judging standout Gush areas\.$/, "השתמשו בכל העיר כקו ייחוס כשבודקים גושים חריגים.")
       .replace(/^The table shows which Gush areas qualified for each performance group\.$/, "הטבלה מראה אילו גושים נכנסו לכל קבוצת ביצועים.")
       .replace(/^Status: /, "סטטוס: ")
+      .replace(/^Removed (\d+) price outlier deals\.$/, "הוסרו $1 עסקאות לפי מסנן חריגי המחיר.")
+      .replace(/^(\d+) selected Gush polygons were not found in the local cache\.$/, "$1 גושים שנבחרו חסרים בשכבת המפה המקומית.")
+      .replace(/^Choose a city, then update the local Gush polygon map\.$/, "בחרו עיר כדי להציג את מפת הגושים.")
+      .replace(/^Removed (\d+) outlier deals\.$/, "הוסרו $1 עסקאות חריגות לפי המסננים.")
+      .replace(/^Incomplete collection years were excluded: (.+)\.$/, "שנות איסוף חלקיות שלא נכללו: $1.")
+      .replace(/^The comparison includes an incomplete collection year; its annual value may change as more transactions arrive\.$/, "ההשוואה כוללת שנת איסוף חלקית; ערכה עשוי להשתנות עם הגעת עסקאות נוספות.")
+      .replace(/^No comparable Gushes passed the deal-count threshold in both common endpoint years\. Choose a shorter period or lower the minimum deal count\.$/, "אין גושים עם מספיק עסקאות בשתי שנות הקצה המשותפות. נסו תקופה קצרה יותר או סף עסקאות נמוך יותר.")
       .replace(/^Status unavailable: /, "הסטטוס לא זמין: ")
       .replace(/^Loading application metadata\.\.\.$/, "טוען מטא-דאטה של האפליקציה...")
       .replace(/^Metadata loaded\.$/, "המטא-דאטה נטען.")
       .replace(/^Choose a city first\.$/, "בחרו עיר קודם.")
       .replace(/^Loading streets and Gush areas\.\.\.$/, "טוען רחובות וגושים...")
       .replace(/^Loaded ([\d,]+) streets and ([\d,]+) Gush areas\.$/, "נטענו $1 רחובות ו-$2 גושים.")
+      .replace(/^Returned a deterministic sample of ([\d,]+) deals from ([\d,]+) matching deals\.$/, "מוצג מדגם של $1 עסקאות מתוך $2 התאמות. ייצוא CSV כולל את כל ההתאמות; סינון הטבלה חל על המדגם בלבד.")
       .replace(/^City metadata loaded\. Search streets or Gush areas, then update analysis\.$/, "מטא-דאטה של העיר נטען. חפשו רחובות או גושים ואז עדכנו את הניתוח.")
       .replace(/^Loading dynamic filter ranges\.\.\.$/, "טוען טווחי סינון דינמיים...")
       .replace(/^Filter options loaded\.$/, "אפשרויות הסינון נטענו.")
@@ -4523,7 +5450,7 @@
     if (response && response.warnings) warnings = warnings.concat(response.warnings);
     if (response && response.data && response.data.warnings) warnings = warnings.concat(response.data.warnings);
     warnings = Array.from(new Set(warnings.filter(Boolean)));
-    return warnings.length ? warnings.join(" ") : "";
+    return warnings.length ? warnings.map(translateUiText).join(" ") : "";
   }
 
   function emptyText(rows, okText, emptyMessage) {
@@ -4562,11 +5489,11 @@
   function yLabel(value) {
     var map = {
       "Price": "מחיר (מיליוני שקלים)",
-      "Price / m²": "מחיר למ\"ר",
-      "Price / Room": "מחיר לחדר",
+      "Price / m²": "מחיר למ\"ר (אלפי ₪)",
+      "Price / Room": "מחיר לחדר (מיליוני ₪)",
       price_millions: "מחיר (מיליוני שקלים)",
-      price_per_m2: "מחיר למ\"ר",
-      price_per_room: "מחיר לחדר",
+      price_per_m2: "מחיר למ\"ר (אלפי ₪)",
+      price_per_room: "מחיר לחדר (מיליוני ₪)",
       n_deals: "עסקאות"
     };
     return map[value] || translateUiText("Value");
@@ -4587,7 +5514,18 @@
   }
 
   function normalizeSearch(value) {
-    return String(value || "").trim().toLocaleLowerCase();
+    return String(value || "").normalize("NFKC").toLocaleLowerCase()
+      .replace(/[\u0591-\u05bd\u05bf-\u05c7]/g, "").replace(/['"׳״‘’“”]/g, "")
+      .replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  }
+
+  function matchesSearch(value, query) {
+    var normalized = normalizeSearch(value);
+    var tokens = normalizeSearch(query).split(" ").filter(function (token) { return token && ["רחוב", "רח", "מספר"].indexOf(token) === -1; });
+    return tokens.length > 0 && tokens.every(function (token) {
+      if (/^\d+$/.test(token)) return new RegExp("(^|[^0-9])" + token + "($|[^0-9])").test(normalized);
+      return normalized.indexOf(token) !== -1;
+    });
   }
 
   function escapeHtml(value) {

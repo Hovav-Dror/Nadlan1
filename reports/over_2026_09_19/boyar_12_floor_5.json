@@ -1,0 +1,84 @@
+{
+  "data": {
+    "counts": {
+      "distinct_dates": 3,
+      "records": 3,
+      "reference_properties": 1
+    },
+    "rows": [
+      {
+        "area": 120.0,
+        "build_year": 1990.0,
+        "conflicts": "לא נבדקו מול אותה עסקה",
+        "date": "2004-12-12",
+        "gush_code": "6631-193-38",
+        "legacy_area": null,
+        "legacy_build_year": null,
+        "legacy_reference_ids": [
+          "תל אביב -יפו:18419"
+        ],
+        "legacy_rooms": null,
+        "link": "מועמד לפי מזהה בלבד; הכתובת והקומה אינן מאומתות לעסקה זו",
+        "price_ils": 1384339.0,
+        "reference_address": "בויאר אברהם 12, תל אביב -יפו",
+        "reference_floor": "5",
+        "rooms": 5.0,
+        "sale_portion": 1.0,
+        "source": "המקור החדש",
+        "source_id": "524396a2_5000.csv:80567"
+      },
+      {
+        "area": 98.0,
+        "build_year": 1987.0,
+        "conflicts": "לא נבדקו מול אותה עסקה",
+        "date": "2020-06-25",
+        "gush_code": "6631-193-38",
+        "legacy_area": null,
+        "legacy_build_year": null,
+        "legacy_reference_ids": [
+          "תל אביב -יפו:18419"
+        ],
+        "legacy_rooms": null,
+        "link": "מועמד לפי מזהה בלבד; הכתובת והקומה אינן מאומתות לעסקה זו",
+        "price_ils": 3850000.0,
+        "reference_address": "בויאר אברהם 12, תל אביב -יפו",
+        "reference_floor": "5",
+        "rooms": 5.0,
+        "sale_portion": 1.0,
+        "source": "המקור החדש",
+        "source_id": "524396a2_5000.csv:80613"
+      },
+      {
+        "area": 98.0,
+        "build_year": 1994.0,
+        "conflicts": "שטח, חדרים, שנת בנייה",
+        "date": "2023-08-06",
+        "gush_code": "6631-193-38",
+        "legacy_area": 105.8,
+        "legacy_build_year": 1990.0,
+        "legacy_reference_ids": [
+          "תל אביב -יפו:18419"
+        ],
+        "legacy_rooms": 5.0,
+        "link": "מזהה, תאריך ומחיר תואמים",
+        "price_ils": 5400000.0,
+        "reference_address": "בויאר אברהם 12, תל אביב -יפו",
+        "reference_floor": "5",
+        "rooms": 4.0,
+        "sale_portion": 1.0,
+        "source": "המקור החדש + רשומה מקבילה במאגר הישן",
+        "source_id": "524396a2_5000.csv:80623"
+      }
+    ],
+    "warnings": [
+      "זהו חיפוש משלים שאינו משתמש במסנני הגרף או בדגימה. כתובת וקומה של מועמדים מגיעות מרשומת ייחוס במאגר הישן; קישור לפי מזהה בלבד אינו מאמת שזו אותה דירה. מקור הפיילוט מוגבל לעסקאות המגורים שיובאו ולתאריכי הכיסוי שלו."
+    ]
+  },
+  "meta": {
+    "status": "ok"
+  },
+  "timing_ms": 5655,
+  "warnings": [
+    "זהו חיפוש משלים שאינו משתמש במסנני הגרף או בדגימה. כתובת וקומה של מועמדים מגיעות מרשומת ייחוס במאגר הישן; קישור לפי מזהה בלבד אינו מאמת שזו אותה דירה. מקור הפיילוט מוגבל לעסקאות המגורים שיובאו ולתאריכי הכיסוי שלו."
+  ]
+}

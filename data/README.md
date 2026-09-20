@@ -49,3 +49,62 @@ their `resource_id + row_num` row identity; when merging legacy rows, transactio
 fields such as date, price, Gush, address details, area, rooms, and floor are
 used only to avoid keeping a duplicate legacy row. Repeat sales of the same
 property on different dates are retained.
+
+OVER / Versions for the People assessment (2026-09-19):
+
+- `raw/over_fd06f5ae/`: all 108 distinct download URLs referenced by five
+  versions of the Tax Authority dataset, plus its complete append-table export.
+- `raw/over_fd06f5ae/download_manifest.json`: file membership, row counts,
+  byte sizes, and SHA-256 checksums; `append_download_manifest.json` records
+  the separate append export.
+- `../reports/over_2026_09_19/assessment_he.md`: findings and a proposed
+  integration plan. Raw files remain excluded from Git by `data/raw/`.
+- `../scripts/download_over_nadlan.py`: rerun snapshot downloads against the
+  saved version inventory. It does not refresh that inventory or the append export.
+- `../scripts/profile_over_nadlan.py` and
+  `../scripts/check_over_price_reconciliation.py`: reproduce the local checks.
+
+The running application's city files, manifest, and configuration have not been
+switched to this source. Snapshot versions must not be concatenated as if they
+were disjoint transactions. Read the assessment before using sale shares,
+unknown attributes, or historical property matches.
+
+## Isolated OVER pilot
+
+The approved 20-city pilot is available separately in `../data_over/`.
+The default application still uses the legacy dataset. To build a new pilot
+snapshot from the downloaded inventory and launch it locally:
+
+```sh
+.venv/bin/python scripts/import_over_pilot.py
+.venv/bin/python -m backend.pilot --port 5051
+```
+
+The importer refuses to overwrite an existing output directory. To reproduce
+the build, pass `--output-root` with a new directory. The final manifest is
+written only after the complete build succeeds.
+
+The pilot defaults to full residential sales in analyses and exports. Partial
+and unknown shares require explicit selection; prices are never scaled to a
+whole property. Each city has transaction-date and collection-date coverage.
+Address and floor enrichment requires a unique transaction key in both inputs,
+a full sale, matching positive area and rooms, compatible construction years,
+and price agreement within ILS 1,000. Missing attributes remain unknown.
+
+Verification:
+
+```sh
+.venv/bin/python backend/verify_backend.py
+.venv/bin/python backend/verify_over_pilot.py
+```
+
+See `../reports/over_2026_09_19/pilot_implementation_he.md` for the snapshot
+counts, matching rules, limitations, and deferred work. `data_over/` and
+`.cache_over/` are local generated artifacts excluded from Git.
+
+The current pilot launcher uses `../data_over_linked/`, built after the strict
+snapshot with `.venv/bin/python scripts/link_over_pilot_locations.py`. It adds
+explicitly labelled property-location references to normal analysis, filters,
+and exports, preserving `verified_*` fields and source transaction attributes.
+Use the location-basis filter for strict transaction matches only. Verify the
+normal analysis path with `.venv/bin/python backend/verify_linked_pilot.py`.

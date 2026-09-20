@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Optional, Sequence
+from datetime import datetime, timezone
+from math import isfinite
 
 import pandas as pd
 
@@ -9,12 +11,14 @@ from .calculations import (
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
     apply_common_filters,
+    apply_transaction_filters,
     price_used,
     remove_outliers_from_var,
     remove_price_outliers_global_iqr,
     sp500_normalized,
     summary_by_city_year,
     summary_by_gush_year,
+    _range_value,
 )
 from .data_store import DataStore
 
@@ -34,7 +38,6 @@ DEFAULT_TYPICAL_COUNT = 0
 DEFAULT_BOTTOM_COUNT = 5
 DEFAULT_MIN_DEALS_PER_GUSH = 5
 MIN_YEARS_PER_GUSH = 2
-TRIM_FRACTION = 0.05
 
 
 class GushPerformanceError(Exception):
@@ -51,7 +54,7 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
     city_frame = data_store.load_city(city["id"])
     raw_rows = int(len(city_frame))
 
-    filtered = apply_common_filters(city_frame, _non_city_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(city_frame, _non_city_filters(request_payload.get("filters")))
     filtered_rows = int(len(filtered))
 
     if _remove_price_outliers(request_payload):
@@ -72,19 +75,30 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
     summary = _summary_by_gush_year_for_stat(filtered, statistic)
     label_by_key = _label_by_key(data_store, city["id"])
     table = _summary_rows(summary, label_by_key, y_variable)
-    qualified_table, changes = _qualified_performance(table, min_deals)
+    period = _comparison_period(data_store, city_frame, request_payload, table)
+    comparison_table = [row for row in table if row["deal_year"] not in period["excluded_years"]]
+    qualified_table, changes = _qualified_performance(
+        comparison_table, min_deals, period["first_year"], period["last_year"]
+    )
 
     selected_changes = _selected_performers(changes, top_count, typical_count, bottom_count)
     selected_keys = {row["gush_key"] for row in selected_changes}
     selected_yearly_table = [row for row in qualified_table if row["gush_key"] in selected_keys]
     series = _series_rows(selected_yearly_table, selected_changes)
 
-    overlays, overlay_warnings = _overlays(filtered, request_payload, y_variable, statistic)
+    overlay_frame = filtered
+    if period["first_year"] is not None and period["last_year"] is not None:
+        overlay_frame = filtered.loc[pd.to_numeric(filtered["deal year"], errors="coerce").between(period["first_year"], period["last_year"])]
+    overlays, overlay_warnings = _overlays(overlay_frame, request_payload, y_variable, statistic)
     warnings.extend(overlay_warnings)
     if not table:
         warnings.append("No matching transactions were found.")
     elif not qualified_table:
-        warnings.append("No Gushes passed the yearly data and median deal-volume thresholds.")
+        warnings.append("No comparable Gushes passed the deal-count threshold in both common endpoint years. Choose a shorter period or lower the minimum deal count.")
+    if period["excluded_years"]:
+        warnings.append("Incomplete collection years were excluded: " + ", ".join(map(str, period["excluded_years"])) + ".")
+    elif period["partial_years"]:
+        warnings.append("The comparison includes an incomplete collection year; its annual value may change as more transactions arrive.")
 
     return _json_ready(
         {
@@ -96,13 +110,11 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
                 "selected": selected_changes,
                 "thresholds": {
                     "min_years_per_gush": MIN_YEARS_PER_GUSH,
-                    # The migration plan says "above threshold"; inclusive matching keeps exact
-                    # Shiny-style numeric slider values from unexpectedly excluding boundary Gushes.
                     "min_deals_per_gush": min_deals,
                     "min_deals_comparison": ">=",
-                    "yearly_slope_metric": "trimmed_mean_yoy_pct_change",
-                    "yearly_slope_note": "YoY percent changes are annualized by gap between deal years.",
-                    "trim_fraction": TRIM_FRACTION,
+                    "min_deals_basis": "each_common_endpoint_year",
+                    "yearly_slope_metric": "compound_annual_growth_rate",
+                    "yearly_slope_note": "100 × ((last value / first value) ** (1 / year span) - 1). Annual statistics describe different transactions, not returns on the same property.",
                 },
             },
             "counts": {
@@ -121,6 +133,7 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
                 "typical_count": typical_count,
                 "bottom_count": bottom_count,
             },
+            "comparison_period": period,
             "overlays": overlays,
             "warnings": warnings,
             "y_variable": y_variable,
@@ -248,56 +261,110 @@ def _summary_rows(summary: pd.DataFrame, label_by_key: Mapping[str, str], y_vari
     return rows
 
 
-def _qualified_performance(table: Sequence[Mapping[str, Any]], min_deals: int) -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+def _comparison_period(
+    data_store: DataStore,
+    city_frame: pd.DataFrame,
+    payload: Mapping[str, Any],
+    table: Sequence[Mapping[str, Any]],
+) -> Dict[str, Any]:
+    # Use the collection snapshot, so reopening an older dataset next year does
+    # not silently promote its unfinished collection year to a complete year.
+    manifest = data_store.load_manifest() if hasattr(data_store, "load_manifest") else {}
+    city_name = str(city_frame["city"].iloc[0]) if not city_frame.empty and "city" in city_frame else None
+    city_coverage = manifest.get("cities", {}).get(city_name, {}).get("coverage", {})
+    collected_at = city_coverage.get("scraped_to") or manifest.get("source", {}).get("detected_at") or manifest.get("generated_at")
+    snapshot = pd.to_datetime(collected_at, errors="coerce", utc=True)
+    if snapshot is None or pd.isna(snapshot):
+        snapshot = pd.Timestamp(datetime.now(timezone.utc))
+    years = sorted({int(row["deal_year"]) for row in table if row.get("deal_year") is not None})
+    partial_years = [year for year in years if year >= snapshot.year]
+    include_partial = payload.get("include_partial_year") is True
+    excluded = [] if include_partial else partial_years
+    available = [year for year in years if year not in excluded]
+    filters = payload.get("filters") if isinstance(payload.get("filters"), Mapping) else {}
+    bounds = _range_value(filters, "deal year", "deal_year_range", "year")
+    first_year = _safe_int(bounds[0]) if bounds and bounds[0] is not None else (min(available) if available else None)
+    last_year = _safe_int(bounds[1]) if bounds and bounds[1] is not None else (max(available) if available else None)
+    if not include_partial and last_year is not None and last_year >= snapshot.year:
+        last_year = snapshot.year - 1
+    dates = pd.to_datetime(city_frame["date"], errors="coerce") if "date" in city_frame else pd.Series(dtype="datetime64[ns]")
+    return {
+        "first_year": first_year,
+        "last_year": last_year,
+        "years_span": last_year - first_year if first_year is not None and last_year is not None else None,
+        "basis": "common_endpoint_years",
+        "snapshot_date": snapshot.date().isoformat(),
+        "latest_transaction_date": _date_value(dates.max()) if not dates.empty else None,
+        "include_partial_year": include_partial,
+        "partial_years": partial_years,
+        "excluded_years": excluded,
+        "coverage_note": "A past calendar year is not a guarantee that all transactions have been collected.",
+    }
+
+
+def _qualified_performance(
+    table: Sequence[Mapping[str, Any]],
+    min_deals: int,
+    first_year: Optional[int] = None,
+    last_year: Optional[int] = None,
+) -> tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    years = [int(row["deal_year"]) for row in table if row.get("deal_year") is not None]
+    if not years:
+        return [], []
+    first_year = min(years) if first_year is None else first_year
+    last_year = max(years) if last_year is None else last_year
+    if last_year <= first_year:
+        return [], []
     by_gush: Dict[str, List[Mapping[str, Any]]] = {}
     for row in table:
-        if row.get("gush_key") and row.get("deal_year") is not None:
+        if row.get("gush_key") and row.get("deal_year") is not None and first_year <= row["deal_year"] <= last_year:
             by_gush.setdefault(str(row["gush_key"]), []).append(row)
 
     qualified_rows: List[Dict[str, Any]] = []
     changes: List[Dict[str, Any]] = []
     for gush_key, rows in by_gush.items():
         sorted_rows = sorted(rows, key=lambda item: item["deal_year"])
-        yearly_deals = [_safe_number(row.get("n_deals")) for row in sorted_rows]
-        deal_median = _median([value for value in yearly_deals if value is not None])
-        year_count = len({row["deal_year"] for row in sorted_rows})
-        if year_count < MIN_YEARS_PER_GUSH or deal_median is None or deal_median < min_deals:
+        by_year = {row["deal_year"]: row for row in sorted_rows}
+        first = by_year.get(first_year)
+        last = by_year.get(last_year)
+        if first is None or last is None:
             continue
-
-        yoy_values = _yoy_changes(sorted_rows)
-        yearly_slope = _trimmed_mean([row["yoy_pct_change"] for row in yoy_values if row["yoy_pct_change"] is not None])
-        if yearly_slope is None:
+        if any((_safe_number(row.get("n_deals")) or 0) < min_deals for row in (first, last)):
             continue
-        first_y = _safe_number(sorted_rows[0].get("y"))
-        last_y = _safe_number(sorted_rows[-1].get("y"))
-        price_change = ((last_y - first_y) / first_y * 100) if first_y not in {None, 0} and last_y is not None else 0
-        first_year = sorted_rows[0].get("deal_year")
-        last_year = sorted_rows[-1].get("deal_year")
-        years_span = (last_year - first_year) if first_year is not None and last_year is not None else 0
-
-        qualified_rows.extend([dict(row) for row in sorted_rows])
-        first = sorted_rows[0]
+        first_y = _safe_number(first.get("y"))
+        last_y = _safe_number(last.get("y"))
+        if first_y is None or last_y is None or first_y <= 0 or last_y <= 0:
+            continue
+        years_span = last_year - first_year
+        annualized_change = ((last_y / first_y) ** (1 / years_span) - 1) * 100
+        price_change = (last_y / first_y - 1) * 100
+        yearly_deals = [_safe_number(row.get("n_deals")) or 0 for row in sorted_rows]
+        qualified_rows.extend([{**dict(row), "low_sample": (_safe_number(row.get("n_deals")) or 0) < min_deals} for row in sorted_rows])
         changes.append(
             {
                 "gush": first.get("gush"),
                 "gush_key": gush_key,
                 "gush_label": first.get("gush_label"),
                 "city": first.get("city"),
-                "year_count": year_count,
-                "total_deals": _compact_number(sum(value for value in yearly_deals if value is not None)),
-                "median_deals_per_year": _compact_number(deal_median),
-                "yearly_slope": _compact_number(yearly_slope),
+                "year_count": len(by_year),
+                "total_deals": _compact_number(sum(yearly_deals)),
+                "median_deals_per_year": _compact_number(_median(yearly_deals)),
+                # Kept as an alias for existing chart, CSV and API consumers.
+                "yearly_slope": _compact_number(annualized_change),
+                "annualized_change": _compact_number(annualized_change),
                 "price_change": _compact_number(price_change),
-                "yoy_changes": yoy_values,
+                "yoy_changes": _yoy_changes(sorted_rows),
                 "first_year": first_year,
                 "last_year": last_year,
                 "years_span": years_span,
-                "first_y": sorted_rows[0].get("y"),
-                "last_y": sorted_rows[-1].get("y"),
+                "first_y": first["y"],
+                "last_y": last["y"],
+                "first_year_deals": first["n_deals"],
+                "last_year_deals": last["n_deals"],
             }
         )
 
-    changes.sort(key=lambda row: (-float(row["yearly_slope"]), str(row["gush_label"])))
+    changes.sort(key=lambda row: (-float(row["annualized_change"]), str(row["gush_label"])))
     for index, row in enumerate(changes, start=1):
         row["rank"] = index
     return qualified_rows, changes
@@ -349,8 +416,8 @@ def _yoy_changes(rows: Sequence[Mapping[str, Any]]) -> List[Dict[str, Any]]:
         current_year = _safe_number(row.get("deal_year"))
         yoy = None
         year_diff = (current_year - previous_year) if current_year is not None and previous_year is not None else None
-        if current_y is not None and previous_y is not None and previous_y > 0 and year_diff and year_diff > 0:
-            yoy = ((current_y / previous_y) - 1) / year_diff * 100
+        if current_y is not None and current_y > 0 and previous_y is not None and previous_y > 0 and year_diff and year_diff > 0:
+            yoy = ((current_y / previous_y) ** (1 / year_diff) - 1) * 100
         changes.append(
             {
                 "from_year": previous.get("deal_year") if previous is not None else None,
@@ -379,6 +446,9 @@ def _performance_rows(selected_changes: Sequence[Mapping[str, Any]], y_variable:
                 "gush_label": row.get("gush_label"),
                 "price_change": row.get("price_change"),
                 "yearly_slope": row.get("yearly_slope"),
+                "annualized_change": row.get("annualized_change"),
+                "first_year_deals": row.get("first_year_deals"),
+                "last_year_deals": row.get("last_year_deals"),
                 "first_year": row.get("first_year"),
                 "last_year": row.get("last_year"),
                 "years_span": row.get("years_span"),
@@ -425,6 +495,7 @@ def _series_rows(table: Sequence[Mapping[str, Any]], selected_changes: Sequence[
                 "price_millions": row["price_millions"],
                 "price_per_m2": row["price_per_m2"],
                 "price_per_room": row["price_per_room"],
+                "low_sample": row.get("low_sample", False),
                 "tooltip": _series_tooltip(row, performance),
             }
         )
@@ -444,17 +515,18 @@ def _series_color(performance: Mapping[str, Any]) -> str:
 
 def _series_tooltip(row: Mapping[str, Any], performance: Mapping[str, Any]) -> str:
     group_label = {
-        "top": "Top Performers",
-        "typical": "Typical Performers",
-        "bottom": "Bottom Performers",
-    }.get(str(performance.get("performance_group")), "Qualified Gush")
+        "top": "שינוי גבוה",
+        "typical": "שינוי מרכזי",
+        "bottom": "שינוי נמוך",
+    }.get(str(performance.get("performance_group")), "גוש להשוואה")
     pieces = [
         str(row.get("series_label") or row.get("gush") or ""),
-        f"Year: {row.get('deal_year')}",
-        f"Deals: {row.get('n_deals')}",
-        f"Value: {row.get('y')}",
+        f"שנה: {row.get('deal_year')}",
+        f"עסקאות: {row.get('n_deals')}",
+        f"ערך: {row.get('y')}",
         f"{group_label} #{performance.get('rank')}",
-        f"Yearly change: {performance.get('yearly_slope')}%",
+        f"שינוי שנתי מחושב (CAGR): {performance.get('yearly_slope')}%",
+        "מעט עסקאות בשנה זו" if row.get("low_sample") else "",
     ]
     return "<br>".join(piece for piece in pieces if piece and "None" not in piece)
 
@@ -596,7 +668,7 @@ def _safe_number(value: Any) -> Optional[float]:
         numeric = float(value)
     except (TypeError, ValueError):
         return None
-    if pd.isna(numeric):
+    if not isfinite(numeric):
         return None
     return numeric
 
@@ -615,15 +687,6 @@ def _median(values: Sequence[float]) -> Optional[float]:
         return None
     return float(pd.Series(values).median())
 
-
-def _trimmed_mean(values: Sequence[Any], trim: float = TRIM_FRACTION) -> Optional[float]:
-    numeric = sorted(value for value in (_safe_number(value) for value in values) if value is not None)
-    if not numeric:
-        return None
-    trim_count = int(len(numeric) * trim)
-    if trim_count and len(numeric) > trim_count * 2:
-        numeric = numeric[trim_count:-trim_count]
-    return sum(numeric) / len(numeric)
 
 
 def _nunique(values: Any) -> int:

@@ -1,0 +1,24 @@
+{
+  "city": "תל אביב -יפו",
+  "old_rows": 100245,
+  "old_with_address": 99176,
+  "raw_rows": 250853,
+  "pilot_rows": 182976,
+  "pilot_with_address": 6068,
+  "old_streets": 1639,
+  "pilot_streets": 978,
+  "reason_counts": {
+    "strict_attributes_disagree_or_missing": 38203,
+    "no_key_date_in_new_source": 36888,
+    "share_not_full": 12231,
+    "new_key_ambiguous": 6246,
+    "enriched": 6093,
+    "invalid_legacy_cadastral_key": 584
+  },
+  "attribute_failures_overlapping": {
+    "price": 2235,
+    "area": 21806,
+    "rooms": 8668,
+    "year": 27207
+  }
+}

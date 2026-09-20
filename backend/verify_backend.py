@@ -218,7 +218,7 @@ def verify_calculation_services() -> dict[str, object]:
     assert filtered_without_unknowns["id"].tolist() == [1]
 
     assert apply_common_filters(df, {"roof_select": "yes"})["id"].tolist() == [1, 2]
-    assert apply_common_filters(df, {"roof_select": "no"})["id"].tolist() == [3, 4, 5]
+    assert apply_common_filters(df, {"roof_select": "no"})["id"].tolist() == [3, 4]
     assert apply_common_filters(df, {"gushes": ["6107"]})["id"].tolist() == [1, 2]
     assert apply_common_filters(df, {"apartment_types": ["דירה"]})["id"].tolist() == [1, 2, 3, 5]
     assert apply_common_filters(df, {"new_project_select": "no"})["id"].tolist() == [2, 3, 5]
@@ -972,7 +972,7 @@ def verify_download_helpers() -> dict[str, object]:
         store,
         {"cities": ["test_city"], "filters": {"deal_year_range": [2020, 2027]}, "remove_price_outliers": False},
     )
-    assert 2027 in _read_download_csv(city_raw)["Deal Year"].tolist()
+    assert 2027 not in _read_download_csv(city_raw)["Deal Year"].tolist()
 
     city_summary = build_city_comparison_summary_download(
         store,
@@ -982,7 +982,7 @@ def verify_download_helpers() -> dict[str, object]:
 
     gush_raw = build_gush_performance_raw_download(
         store,
-        {"city": "test_city", "filters": {"deal_year_range": [2020, 2021]}, "remove_price_outliers": False},
+        {"city": "test_city", "filters": {"deal_year_range": [2020, 2021]}, "remove_price_outliers": False, "min_deals_per_gush": 1},
     )
     assert _read_download_csv(gush_raw)["Full Address"].iloc[0] == "אלף 1"
 

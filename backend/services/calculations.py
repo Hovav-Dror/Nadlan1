@@ -124,11 +124,51 @@ def remove_outliers_from_var(df: pd.DataFrame, var_name: str) -> pd.DataFrame:
     return df.loc[(values >= lower_bound) & (values <= upper_bound)].copy()
 
 
+def apply_transaction_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]]) -> pd.DataFrame:
+    """Apply transaction defaults after location selection, including exports/overlays."""
+    selected = dict(filters or {})
+    if "sale_portion" in df.columns:
+        selected.setdefault("sale_portion", "full")
+    return apply_common_filters(df, selected)
+
+
 def apply_common_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]]) -> pd.DataFrame:
     if filters is None or df.empty:
         return df.copy()
 
     result = df.copy()
+    if filters.get("address"):
+        from .address_search import address_mask
+        query = filters["address"]
+        if not isinstance(query, str) or len(query) > 160:
+            raise CalculationServiceError("כתובת לחיפוש ארוכה מדי או לא תקינה.")
+        addresses = result.get("FULLADRESS", pd.Series("", index=result.index))
+        result = result.loc[address_mask(addresses, query)]
+    location_choice = filters.get("location_basis", "all")
+    if location_choice not in {"all", "verified"}:
+        raise CalculationServiceError("Unknown location basis filter.")
+    if location_choice == "verified" and "location_basis" in result.columns:
+        result = result.loc[result["location_basis"].eq("strict_transaction")]
+    share_choice = filters.get("sale_portion", "all")
+    if share_choice not in {"all", "full", "partial", "unknown"}:
+        raise CalculationServiceError("Unknown sale portion filter.")
+    if "sale_portion" in result.columns and share_choice != "all":
+        shares = pd.to_numeric(result["sale_portion"], errors="coerce")
+        if share_choice == "full":
+            result = result.loc[shares.eq(1)]
+        elif share_choice == "partial":
+            result = result.loc[shares.gt(0) & shares.lt(1)]
+        else:
+            result = result.loc[shares.isna() | shares.le(0) | shares.gt(1)]
+    quality_choice = filters.get("data_completeness", "all")
+    if quality_choice not in {"all", "with_address", "with_floor", "with_address_and_floor"}:
+        raise CalculationServiceError("Unknown data completeness filter.")
+    if quality_choice in {"with_address", "with_address_and_floor"}:
+        address = result.get("FULLADRESS", pd.Series(None, index=result.index, dtype=object))
+        result = result.loc[address.notna() & address.astype(str).str.strip().ne("")]
+    if quality_choice in {"with_floor", "with_address_and_floor"}:
+        floor = pd.to_numeric(result.get("floor", pd.Series(None, index=result.index, dtype=float)), errors="coerce")
+        result = result.loc[floor.notna() & floor.ne(SPECIAL_UNKNOWN_VALUE)]
 
     result = _apply_exact_filter(result, "city", _filter_value(filters, "cities", "city"))
     result = _apply_exact_filter(result, "street", _filter_value(filters, "streets", "street"))
@@ -277,7 +317,7 @@ def _apply_range_filter(
     values = pd.to_numeric(df[column], errors="coerce")
     mask = _between_mask(values, value_range)
     if retain_special_values:
-        mask = mask | values.isin(retain_special_values)
+        mask = mask | values.isin(retain_special_values) | values.isna()
     return df.loc[mask]
 
 
@@ -359,7 +399,7 @@ def _apply_roof_filter(df: pd.DataFrame, selected: Any) -> pd.DataFrame:
     if selected_key in {"yes", "true", "1", "y"}:
         return df.loc[roof.eq(True)]
     if selected_key in {"no", "false", "0", "n"}:
-        return df.loc[roof.eq(False) | roof.isna()]
+        return df.loc[roof.eq(False)]
     return df
 
 

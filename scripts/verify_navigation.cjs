@@ -1,0 +1,56 @@
+// Regression checks for context-preserving deal navigation and browser history.
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
+const source=fs.readFileSync('frontend/assets/app.js','utf8');
+function definition(name){
+  const start=source.indexOf('  function '+name+'(');
+  assert(start>=0,name);
+  const next=source.slice(start+5).search(/\n  (?:async )?function /);
+  return source.slice(start,start+5+next);
+}
+const elements={};
+const element=id=>elements[id] ||= {disabled:false,open:false,scrollIntoView(){this.scrolled=true;}};
+let location=new URL('http://localhost:5051/?view=retained#analysis');
+const entries=[{state:null,url:location.href}];let cursor=0,backCalls=0;
+const history={get state(){return entries[cursor].state;},replaceState(state,unused,url){location=new URL(url,location);entries[cursor]={state,url:location.href};},pushState(state,unused,url){location=new URL(url,location);entries.splice(++cursor);entries.push({state,url:location.href});},back(){backCalls++;cursor--;location=new URL(entries[cursor].url);}};
+const state={analysisMode:'chart',latestAnalysisRows:[{id:'deal1',record_id:'r1',city:'city'}],lookupData:{rows:[{id:'old-search'}]}};
+const document={body:{dataset:{activeTab:'analysis',analysisMode:'chart'}},querySelectorAll:()=>[]};
+const context={URL,URLSearchParams,document,state,byId:element,get location(){return location;},window:{history,get location(){return location;},scrollY:123},captureView:()=>({mode:state.analysisMode,tab:document.body.dataset.activeTab,controls:{address:'בויאר 12'}}),persistSharedView(){},activateTab(){},markSelectedDealOnChart(){},renderSelectedDeal(row){state.selectedDeal=row;},dealUrl:()=>'?deal_city=city&deal_record=r1#analysis'};
+vm.createContext(context);
+vm.runInContext(['cleanAnalysisUrl','rememberNavigation','pushNavigation','updateNavigationControls','showMainView','closeSelectedDeal','selectDeal'].map(definition).join('\n'),context);
+context.selectDeal('deal1');
+assert.equal(document.body.dataset.analysisMode,'chart','Selecting a point keeps the chart context');
+assert.equal(state.selectedDeal.record_id,'r1');
+assert.equal(history.state.nadlan.deal,true);
+assert.equal(history.state.nadlan.parentMode,'chart');
+assert.equal(entries[0].state.nadlan.view.controls.address,'בויאר 12','Return entry retains address and filters');
+assert.equal(elements['navigation-back'].disabled,false);
+context.closeSelectedDeal();
+assert.equal(backCalls,1,'Closing the first drilldown returns to its original history entry');
+assert.equal(new URL(location).searchParams.has('deal_record'),false);
+assert.equal(new URL(location).searchParams.get('view'),'retained','Cleaning a deal route preserves its shared view');
+// Directly opened records can have stale search results in memory; their origin still controls Back.
+state.analysisMode='chart';context.closeSelectedDeal();
+assert.equal(document.body.dataset.analysisMode,'chart');
+assert.equal(elements['analysis-chart'].scrolled,true);
+state.analysisMode='lookup';context.closeSelectedDeal();
+assert.equal(document.body.dataset.analysisMode,'lookup');
+assert.equal(elements['lookup-results-stage'].scrolled,true);
+state.analysisMode='home';context.closeSelectedDeal();
+assert.equal(document.body.dataset.analysisMode,'chart');
+assert.equal(elements['pilot-address-lookup'].open,false,'Main view keeps the address shortcut secondary');
+state.restoringNavigation=true;const length=entries.length;
+context.pushNavigation('#about');assert.equal(entries.length,length,'Restoring a route must not create another history entry');
+console.log('PASS: chart drilldown, contextual close, retained filters, browser return entry and restoration guard');
+let resizes=0;
+context.window.setTimeout=fn=>fn();
+context.window.Plotly=context.Plotly={Plots:{resize(){resizes++;}}};
+const plot=element('analysis-chart');plot.classList={contains:()=>true};
+plot.getBoundingClientRect=()=>({width:0,height:0});
+vm.runInContext(definition('schedulePlotResize'),context);
+context.schedulePlotResize('analysis-chart');
+assert.equal(resizes,0,'A chart hidden by route navigation must not be resized');
+plot.getBoundingClientRect=()=>({width:600,height:390});
+context.schedulePlotResize('analysis-chart');assert.equal(resizes,1);
+console.log('PASS: route changes skip hidden plots and resize visible charts');

@@ -8,15 +8,20 @@ import pandas as pd
 from .analysis_deals import DISPLAY_COLUMNS
 from .calculations import (
     apply_common_filters,
+    apply_transaction_filters,
     price_used,
     remove_outliers_from_var,
     remove_price_outliers_global_iqr,
     remove_price_outliers_by_year,
 )
-from .city_comparison import build_city_comparison_summary_response, resolve_city_comparison_selection
+from .city_comparison import (
+    build_city_comparison_summary_response,
+    resolve_city_comparison_selection,
+    _non_location_filters as _city_filters,
+)
 from .compare_areas import build_compare_summary_response, resolve_compare_selection
 from .data_store import DataStore
-from .gush_performance import build_gush_performance_summary_response, resolve_gush_performance_city
+from .gush_performance import build_gush_performance_summary_response, resolve_gush_performance_city, _gush_key
 
 
 LOCATION_FILTER_KEYS = {"cities", "city", "city_ids", "streets", "street", "gushes", "gush", "gush_select", "Gush"}
@@ -63,7 +68,10 @@ SUMMARY_COLUMN_NAMES = {
     "rank": "Rank",
     "position_in_group": "Position In Group",
     "price_change": "Price Change %",
-    "yearly_slope": "Annualized YoY Change %",
+    "yearly_slope": "Compound Annual Change % (CAGR)",
+    "annualized_change": "Annualized Change % (CAGR)",
+    "first_year_deals": "First Year Deals",
+    "last_year_deals": "Last Year Deals",
     "first_year": "First Year",
     "last_year": "Last Year",
     "years_span": "Years Span",
@@ -92,7 +100,7 @@ def build_compare_raw_download(data_store: DataStore, payload: Optional[Mapping[
     selection = resolve_compare_selection(data_store, request_payload)
     city_frame = data_store.load_cities(selection["city_ids"])
     selected = apply_common_filters(city_frame, {"gushes": selection["gush_ids"]})
-    filtered = apply_common_filters(selected, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(selected, _non_location_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
@@ -110,19 +118,22 @@ def build_compare_summary_download(data_store: DataStore, payload: Optional[Mapp
 
 def build_city_comparison_raw_download(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     request_payload = _request_payload(payload)
+    summary = build_city_comparison_summary_response(data_store, request_payload)
     selection = resolve_city_comparison_selection(data_store, request_payload)
     city_frame = data_store.load_cities([city["id"] for city in selection["cities"]])
-    filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(city_frame, _city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
+    filtered = _rows_in_year_groups(filtered, _plotted_city_years(summary), "city")
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_city_comparison_raw.csv", column_names=RAW_COLUMN_NAMES)
 
 
 def build_city_comparison_summary_download(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     response = build_city_comparison_summary_response(data_store, _request_payload(payload))
+    plotted = _plotted_city_years(response)
     return _download_payload(
-        response["table"],
+        [row for row in response["table"] if (str(row["city"]), row["deal_year"]) in plotted],
         filename="nadlan_city_comparison_summary.csv",
         column_names=SUMMARY_COLUMN_NAMES,
     )
@@ -130,14 +141,36 @@ def build_city_comparison_summary_download(data_store: DataStore, payload: Optio
 
 def build_gush_performance_raw_download(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
     request_payload = _request_payload(payload)
+    summary = build_gush_performance_summary_response(data_store, request_payload)
     city = resolve_gush_performance_city(data_store, request_payload)
     city_frame = data_store.load_city(city["id"])
-    filtered = apply_common_filters(city_frame, _non_city_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(city_frame, _non_city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
         filtered = remove_outliers_from_var(filtered, "area")
+    # The summary owns ranking, endpoint eligibility and the effective period.
+    # Filter source records after applying the identical outlier population.
+    selected_years = {(_gush_key(row["gush"]), row["deal_year"]) for row in summary["yearly_table"]}
+    filtered = _rows_in_year_groups(filtered, selected_years, "Gush")
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_gush_performance_raw.csv", column_names=RAW_COLUMN_NAMES)
+
+
+def _plotted_city_years(summary: Mapping[str, Any]) -> set:
+    return {
+        (str(series["city"]), point["year"])
+        for series in summary.get("series", [])
+        for point in series.get("points", [])
+    }
+
+
+def _rows_in_year_groups(frame: pd.DataFrame, groups: set, location_column: str) -> pd.DataFrame:
+    if frame.empty or not groups:
+        return frame.iloc[0:0].copy()
+    locations = frame[location_column].map(_gush_key if location_column == "Gush" else str)
+    years = pd.to_numeric(frame["deal year"], errors="coerce")
+    included = [(location, year) in groups for location, year in zip(locations, years)]
+    return frame.loc[included].copy()
 
 
 def build_gush_performance_summary_download(data_store: DataStore, payload: Optional[Mapping[str, Any]]) -> Dict[str, Any]:
@@ -155,7 +188,7 @@ def _analysis_raw_rows(data_store: DataStore, payload: Mapping[str, Any]) -> Lis
         raise DownloadError("At least one city or Gush is required.")
     city_frame = data_store.load_cities(cities)
     filtered = apply_common_filters(city_frame, _location_filters(payload))
-    filtered = apply_common_filters(filtered, _non_location_filters(payload.get("filters")))
+    filtered = apply_transaction_filters(filtered, _non_location_filters(payload.get("filters")))
     filtered = _apply_analysis_outlier_filters(filtered, payload)
     return _raw_rows(_with_price_calculations(filtered), include_story=True)
 
@@ -217,9 +250,12 @@ def _with_price_calculations(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _raw_rows(df: pd.DataFrame, *, include_story: bool) -> List[Dict[str, Any]]:
-    columns = [column for column in DISPLAY_COLUMNS + ["price_per_m2", "price_per_room"] if column in df.columns]
+    columns = [column for column in DISPLAY_COLUMNS + ["location_basis", "location_reference_id", "verified_street", "verified_FULLADRESS", "verified_floor", "GUSH", "price_per_m2", "price_per_room", "sale_portion", "declared_amount", "deal_amount", "source", "source_id", "source_version", "scraped_at", "legacy_match", "legacy_record_id", "quality_flags"] if column in df.columns]
     if include_story and "story" in df.columns:
         columns.append("story")
+    # Retain additional source fields without exporting temporary calculation
+    # columns. Normalized display names must not discard original precision.
+    columns.extend(column for column in df.columns if column not in columns and not str(column).startswith("_") and (column != "story" or include_story))
     if "date" in df.columns:
         working = df.copy()
         working["_download_date_sort"] = pd.to_datetime(working["date"], errors="coerce")
@@ -283,7 +319,7 @@ def _normalize_value(key: Any, value: Any) -> Any:
             return None
         if value.is_integer():
             return int(value)
-        return round(value, 3)
+        return value
     return value
 
 

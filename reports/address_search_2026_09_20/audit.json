@@ -1,0 +1,797 @@
+{
+  "dataset": "over-pilot-v5-location-references-v1",
+  "cities": [
+    {
+      "city": "ashdod",
+      "rows": 85315,
+      "missing_address": 34287,
+      "addresses": [
+        {
+          "address": "הרימון 2, אשדוד",
+          "exact_source_rows": 103,
+          "returned_rows": 103,
+          "latest": "2026-09-01"
+        },
+        {
+          "address": "רשב\"י 36, אשדוד",
+          "exact_source_rows": 36,
+          "returned_rows": 36,
+          "latest": "2025-05-21"
+        },
+        {
+          "address": "ענבים 4, אשדוד",
+          "exact_source_rows": 76,
+          "returned_rows": 76,
+          "latest": "2026-04-28"
+        },
+        {
+          "address": "רוטשילד 30, אשדוד",
+          "exact_source_rows": 23,
+          "returned_rows": 23,
+          "latest": "2022-02-11"
+        },
+        {
+          "address": "ציזלינג 8, אשדוד",
+          "exact_source_rows": 35,
+          "returned_rows": 35,
+          "latest": "2025-11-24"
+        }
+      ],
+      "legacy_address": "אדמו\"ר מפיטסבורג 45, אשדוד",
+      "legacy_rows_preserved": 13
+    },
+    {
+      "city": "ashkelon",
+      "rows": 77141,
+      "missing_address": 43133,
+      "addresses": [
+        {
+          "address": "תנובת השדה 4, אשקלון",
+          "exact_source_rows": 19,
+          "returned_rows": 19,
+          "latest": "2026-09-16"
+        },
+        {
+          "address": "הפלמ\"ח 14, אשקלון",
+          "exact_source_rows": 16,
+          "returned_rows": 16,
+          "latest": "2025-08-24"
+        },
+        {
+          "address": "רחבעם זאבי 31, אשקלון",
+          "exact_source_rows": 43,
+          "returned_rows": 43,
+          "latest": "2026-02-18"
+        },
+        {
+          "address": "משה יוליש 12, אשקלון",
+          "exact_source_rows": 33,
+          "returned_rows": 33,
+          "latest": "2026-03-24"
+        },
+        {
+          "address": "בלפור 39, אשקלון",
+          "exact_source_rows": 71,
+          "returned_rows": 71,
+          "latest": "2024-03-11"
+        }
+      ],
+      "legacy_address": "ניסנית 1, אשקלון",
+      "legacy_rows_preserved": 7
+    },
+    {
+      "city": "beer_sheva",
+      "rows": 104998,
+      "missing_address": 33873,
+      "addresses": [
+        {
+          "address": "שיטרית 9, באר שבע",
+          "exact_source_rows": 21,
+          "returned_rows": 21,
+          "latest": "2026-07-27"
+        },
+        {
+          "address": "זאב ז'בוטינסקי 13, באר שבע",
+          "exact_source_rows": 15,
+          "returned_rows": 15,
+          "latest": "2024-08-22"
+        },
+        {
+          "address": "יצחק שיפר 21, באר שבע",
+          "exact_source_rows": 17,
+          "returned_rows": 17,
+          "latest": "2023-06-13"
+        },
+        {
+          "address": "הרב יוסף סוסו הכהן 3, באר שבע",
+          "exact_source_rows": 43,
+          "returned_rows": 43,
+          "latest": "2025-11-10"
+        },
+        {
+          "address": "נחום גוטמן 1, באר שבע",
+          "exact_source_rows": 32,
+          "returned_rows": 32,
+          "latest": "2024-11-12"
+        }
+      ],
+      "legacy_address": "בן-נון 4, באר שבע",
+      "legacy_rows_preserved": 4
+    },
+    {
+      "city": "beit_shemesh",
+      "rows": 43951,
+      "missing_address": 29367,
+      "addresses": [
+        {
+          "address": "אבדימי רב 10,",
+          "exact_source_rows": 5,
+          "returned_rows": 5,
+          "latest": "2026-09-03"
+        },
+        {
+          "address": "חיד\"א 2, בית שמש",
+          "exact_source_rows": 25,
+          "returned_rows": 25,
+          "latest": "2025-07-10"
+        },
+        {
+          "address": "נחל דולב 56, בית שמש",
+          "exact_source_rows": 14,
+          "returned_rows": 14,
+          "latest": "2023-01-17"
+        },
+        {
+          "address": "מרים הנביאה 1, בית שמש",
+          "exact_source_rows": 9,
+          "returned_rows": 9,
+          "latest": "2023-11-30"
+        },
+        {
+          "address": "אביטל 6, בית שמש",
+          "exact_source_rows": 8,
+          "returned_rows": 8,
+          "latest": "2025-05-13"
+        }
+      ],
+      "legacy_address": "בן-צבי 8, בית שמש",
+      "legacy_rows_preserved": 2
+    },
+    {
+      "city": "bnei_brak",
+      "rows": 43601,
+      "missing_address": 13265,
+      "addresses": [
+        {
+          "address": "ירמיהו 5, בני ברק",
+          "exact_source_rows": 11,
+          "returned_rows": 11,
+          "latest": "2026-07-14"
+        },
+        {
+          "address": "חת\"ם סופר 6, בני ברק",
+          "exact_source_rows": 15,
+          "returned_rows": 15,
+          "latest": "2024-04-18"
+        },
+        {
+          "address": "אחיה השילוני 8, בני ברק",
+          "exact_source_rows": 8,
+          "returned_rows": 8,
+          "latest": "2016-11-19"
+        },
+        {
+          "address": "יונה הנביא 11, בני ברק",
+          "exact_source_rows": 3,
+          "returned_rows": 3,
+          "latest": "2024-02-07"
+        },
+        {
+          "address": "משה בנגו 17, בני ברק",
+          "exact_source_rows": 9,
+          "returned_rows": 9,
+          "latest": "2013-06-27"
+        }
+      ],
+      "legacy_address": "עזרא 30, בני ברק",
+      "legacy_rows_preserved": 7
+    },
+    {
+      "city": "bat_yam",
+      "rows": 56652,
+      "missing_address": 13443,
+      "addresses": [
+        {
+          "address": "רוטשילד 58, בת ים",
+          "exact_source_rows": 30,
+          "returned_rows": 30,
+          "latest": "2026-07-21"
+        },
+        {
+          "address": "הפלמ\"ח 21, בת ים",
+          "exact_source_rows": 3,
+          "returned_rows": 3,
+          "latest": "2022-11-22"
+        },
+        {
+          "address": "ליבורנו 14, בת ים",
+          "exact_source_rows": 37,
+          "returned_rows": 37,
+          "latest": "2024-12-12"
+        },
+        {
+          "address": "בלפור 126, בת ים",
+          "exact_source_rows": 7,
+          "returned_rows": 7,
+          "latest": "2020-12-06"
+        },
+        {
+          "address": "בלפור 135, בת ים",
+          "exact_source_rows": 3,
+          "returned_rows": 3,
+          "latest": "2016-03-10"
+        }
+      ],
+      "legacy_address": "ניסים בכר 5, בת ים",
+      "legacy_rows_preserved": 15
+    },
+    {
+      "city": "herzliya",
+      "rows": 38281,
+      "missing_address": 16613,
+      "addresses": [
+        {
+          "address": "שירת גאולים 24, הרצלייה",
+          "exact_source_rows": 7,
+          "returned_rows": 7,
+          "latest": "2026-08-12"
+        },
+        {
+          "address": "בית\"ר 1, הרצלייה",
+          "exact_source_rows": 26,
+          "returned_rows": 26,
+          "latest": "2024-06-26"
+        },
+        {
+          "address": "חת\"ם סופר 12, הרצלייה",
+          "exact_source_rows": 14,
+          "returned_rows": 14,
+          "latest": "2020-12-10"
+        },
+        {
+          "address": "קהילת ציון 24, הרצלייה",
+          "exact_source_rows": 10,
+          "returned_rows": 10,
+          "latest": "2022-09-22"
+        },
+        {
+          "address": "כבוש העבודה 27, הרצלייה",
+          "exact_source_rows": 22,
+          "returned_rows": 22,
+          "latest": "2026-06-28"
+        }
+      ],
+      "legacy_address": "הרב קוק 56, הרצלייה",
+      "legacy_rows_preserved": 11
+    },
+    {
+      "city": "hadera",
+      "rows": 40178,
+      "missing_address": 19188,
+      "addresses": [
+        {
+          "address": "אחד העם 20, חדרה",
+          "exact_source_rows": 12,
+          "returned_rows": 12,
+          "latest": "2026-08-18"
+        },
+        {
+          "address": "כ\"ט בנובמבר 56, חדרה",
+          "exact_source_rows": 4,
+          "returned_rows": 4,
+          "latest": "2024-06-09"
+        },
+        {
+          "address": "יצחק רבין 14, חדרה",
+          "exact_source_rows": 49,
+          "returned_rows": 49,
+          "latest": "2026-06-11"
+        },
+        {
+          "address": "ניצנים 1, חדרה",
+          "exact_source_rows": 222,
+          "returned_rows": 222,
+          "latest": "2026-05-06"
+        },
+        {
+          "address": "רמב\"ם 24, חדרה",
+          "exact_source_rows": 19,
+          "returned_rows": 19,
+          "latest": "2025-08-19"
+        }
+      ],
+      "legacy_address": "אחד העם 6, חדרה",
+      "legacy_rows_preserved": 22
+    },
+    {
+      "city": "holon",
+      "rows": 64973,
+      "missing_address": 16117,
+      "addresses": [
+        {
+          "address": "יהושע רבינוביץ 6, חולון",
+          "exact_source_rows": 32,
+          "returned_rows": 32,
+          "latest": "2026-07-21"
+        },
+        {
+          "address": "אלופי צה\"ל 69, חולון",
+          "exact_source_rows": 2,
+          "returned_rows": 2,
+          "latest": "2024-01-30"
+        },
+        {
+          "address": "הרב ניסים יצחק 3, חולון",
+          "exact_source_rows": 35,
+          "returned_rows": 35,
+          "latest": "2025-04-01"
+        },
+        {
+          "address": "ויצמן 84, חולון",
+          "exact_source_rows": 6,
+          "returned_rows": 6,
+          "latest": "2021-09-29"
+        },
+        {
+          "address": "השומר 17, חולון",
+          "exact_source_rows": 17,
+          "returned_rows": 17,
+          "latest": "2024-08-26"
+        }
+      ],
+      "legacy_address": "סוקולוב 127, חולון",
+      "legacy_rows_preserved": 6
+    },
+    {
+      "city": "haifa",
+      "rows": 109996,
+      "missing_address": 32585,
+      "addresses": [
+        {
+          "address": "אמציהו המלך 4, חיפה",
+          "exact_source_rows": 17,
+          "returned_rows": 17,
+          "latest": "2026-07-28"
+        },
+        {
+          "address": "בעל התניא 3, חיפה",
+          "exact_source_rows": 4,
+          "returned_rows": 4,
+          "latest": "2024-06-04"
+        },
+        {
+          "address": "אלכסנדר זייד 29, חיפה",
+          "exact_source_rows": 32,
+          "returned_rows": 32,
+          "latest": "2025-04-14"
+        },
+        {
+          "address": "אבא הלל סילבר 73, חיפה",
+          "exact_source_rows": 267,
+          "returned_rows": 267,
+          "latest": "2026-06-08"
+        },
+        {
+          "address": "ויתקין 31, חיפה",
+          "exact_source_rows": 10,
+          "returned_rows": 10,
+          "latest": "2025-08-04"
+        }
+      ],
+      "legacy_address": "הזמיר 6, חיפה",
+      "legacy_rows_preserved": 5
+    },
+    {
+      "city": "jerusalem",
+      "rows": 163456,
+      "missing_address": 71076,
+      "addresses": [
+        {
+          "address": "מרדכי אלקחי 11, ירושלים",
+          "exact_source_rows": 80,
+          "returned_rows": 80,
+          "latest": "2026-07-28"
+        },
+        {
+          "address": "סול ליפצין 6, ירושלים",
+          "exact_source_rows": 14,
+          "returned_rows": 14,
+          "latest": "2025-03-06"
+        },
+        {
+          "address": "עמרם גאון 18, ירושלים",
+          "exact_source_rows": 6,
+          "returned_rows": 6,
+          "latest": "2024-07-15"
+        },
+        {
+          "address": "הרב אברהם רביץ 11, ירושלים",
+          "exact_source_rows": 48,
+          "returned_rows": 48,
+          "latest": "2022-08-09"
+        },
+        {
+          "address": "גבעת קנדה 19, ירושלים",
+          "exact_source_rows": 3,
+          "returned_rows": 3,
+          "latest": "2023-02-05"
+        }
+      ],
+      "legacy_address": "בן-מימון 31, ירושלים",
+      "legacy_rows_preserved": 10
+    },
+    {
+      "city": "kfar_saba",
+      "rows": 32984,
+      "missing_address": 9574,
+      "addresses": [
+        {
+          "address": "ויינברג 9, כפר סבא",
+          "exact_source_rows": 21,
+          "returned_rows": 21,
+          "latest": "2026-07-13"
+        },
+        {
+          "address": "הגר\"א 11, כפר סבא",
+          "exact_source_rows": 13,
+          "returned_rows": 13,
+          "latest": "2022-10-23"
+        },
+        {
+          "address": "זמיר 10, כפר סבא",
+          "exact_source_rows": 13,
+          "returned_rows": 13,
+          "latest": "2022-05-24"
+        },
+        {
+          "address": "היסמין 7, כפר סבא",
+          "exact_source_rows": 14,
+          "returned_rows": 14,
+          "latest": "2021-12-01"
+        },
+        {
+          "address": "מענית 3, כפר סבא",
+          "exact_source_rows": 12,
+          "returned_rows": 12,
+          "latest": "2023-03-06"
+        }
+      ],
+      "legacy_address": "התחייה 20, כפר סבא",
+      "legacy_rows_preserved": 10
+    },
+    {
+      "city": "modiin_maccabim_reut",
+      "rows": 40628,
+      "missing_address": 16859,
+      "addresses": [
+        {
+          "address": "עמק בית שאן 15, מודיעין-מכבים-רעות",
+          "exact_source_rows": 18,
+          "returned_rows": 18,
+          "latest": "2026-08-12"
+        },
+        {
+          "address": "רא\"ל יגאל ידין 49, מודיעין-מכבים-רעות",
+          "exact_source_rows": 150,
+          "returned_rows": 150,
+          "latest": "2025-03-30"
+        },
+        {
+          "address": "עמק דותן 64, מודיעין-מכבים-רעות",
+          "exact_source_rows": 17,
+          "returned_rows": 17,
+          "latest": "2025-05-23"
+        },
+        {
+          "address": "כרכום 11, מודיעין-מכבים-רעות",
+          "exact_source_rows": 5,
+          "returned_rows": 5,
+          "latest": "2021-02-04"
+        },
+        {
+          "address": "חטיבת אלכסנדרוני 2, מודיעין-מכבים-רעות",
+          "exact_source_rows": 12,
+          "returned_rows": 12,
+          "latest": "2021-09-05"
+        }
+      ],
+      "legacy_address": "עמק האלה 32, מודיעין-מכבים-רעות",
+      "legacy_rows_preserved": 6
+    },
+    {
+      "city": "netanya",
+      "rows": 92167,
+      "missing_address": 31917,
+      "addresses": [
+        {
+          "address": "ויצמן 101, נתניה",
+          "exact_source_rows": 20,
+          "returned_rows": 20,
+          "latest": "2026-07-29"
+        },
+        {
+          "address": "ז'בוטינסקי 41, נתניה",
+          "exact_source_rows": 13,
+          "returned_rows": 13,
+          "latest": "2023-09-04"
+        },
+        {
+          "address": "הבריגדה היהודית 60, נתניה",
+          "exact_source_rows": 40,
+          "returned_rows": 40,
+          "latest": "2022-01-27"
+        },
+        {
+          "address": "דיזנגוף 15, נתניה",
+          "exact_source_rows": 8,
+          "returned_rows": 8,
+          "latest": "2017-09-14"
+        },
+        {
+          "address": "יעקב דורי 5, נתניה",
+          "exact_source_rows": 31,
+          "returned_rows": 31,
+          "latest": "2025-12-16"
+        }
+      ],
+      "legacy_address": "דנקנר 1, נתניה",
+      "legacy_rows_preserved": 7
+    },
+    {
+      "city": "petah_tikva",
+      "rows": 105561,
+      "missing_address": 36400,
+      "addresses": [
+        {
+          "address": "ביאליק 34, פתח תקווה",
+          "exact_source_rows": 10,
+          "returned_rows": 10,
+          "latest": "2026-07-16"
+        },
+        {
+          "address": "הרב פינצ'י 4, פתח תקווה",
+          "exact_source_rows": 24,
+          "returned_rows": 24,
+          "latest": "2024-07-25"
+        },
+        {
+          "address": "יהודה הלוי 16, פתח תקווה",
+          "exact_source_rows": 18,
+          "returned_rows": 18,
+          "latest": "2023-12-10"
+        },
+        {
+          "address": "אהרון כצנלסון 12, פתח תקווה",
+          "exact_source_rows": 39,
+          "returned_rows": 39,
+          "latest": "2025-07-30"
+        },
+        {
+          "address": "יהלום בנימין 9, פתח תקווה",
+          "exact_source_rows": 7,
+          "returned_rows": 7,
+          "latest": "2024-08-04"
+        }
+      ],
+      "legacy_address": "ז'בוטינסקי 29, פתח תקווה",
+      "legacy_rows_preserved": 15
+    },
+    {
+      "city": "rishon_lezion",
+      "rows": 92739,
+      "missing_address": 33677,
+      "addresses": [
+        {
+          "address": "הנגיד 5, ראשון לציון",
+          "exact_source_rows": 51,
+          "returned_rows": 51,
+          "latest": "2026-07-15"
+        },
+        {
+          "address": "איתמר בן-אב\"י 6, ראשון לציון",
+          "exact_source_rows": 3,
+          "returned_rows": 3,
+          "latest": "2023-07-06"
+        },
+        {
+          "address": "שרירא שמואל 40, ראשון לציון",
+          "exact_source_rows": 9,
+          "returned_rows": 9,
+          "latest": "2018-03-04"
+        },
+        {
+          "address": "אברבנאל 37, ראשון לציון",
+          "exact_source_rows": 61,
+          "returned_rows": 61,
+          "latest": "2025-09-10"
+        },
+        {
+          "address": "שלום חבקוק 8, ראשון לציון",
+          "exact_source_rows": 5,
+          "returned_rows": 5,
+          "latest": "2009-09-10"
+        }
+      ],
+      "legacy_address": "רוטשילד 68, ראשון לציון",
+      "legacy_rows_preserved": 6
+    },
+    {
+      "city": "rehovot",
+      "rows": 54469,
+      "missing_address": 21855,
+      "addresses": [
+        {
+          "address": "מקס ואמפרו שיין 13, רחובות",
+          "exact_source_rows": 77,
+          "returned_rows": 77,
+          "latest": "2026-07-12"
+        },
+        {
+          "address": "אצ\"ל 10, רחובות",
+          "exact_source_rows": 24,
+          "returned_rows": 24,
+          "latest": "2026-03-22"
+        },
+        {
+          "address": "הרא\"ז 1, רחובות",
+          "exact_source_rows": 10,
+          "returned_rows": 10,
+          "latest": "2021-05-08"
+        },
+        {
+          "address": "חס\"ם 11, רחובות",
+          "exact_source_rows": 99,
+          "returned_rows": 99,
+          "latest": "2025-09-03"
+        },
+        {
+          "address": "הבנים 11, רחובות",
+          "exact_source_rows": 13,
+          "returned_rows": 13,
+          "latest": "2026-04-13"
+        }
+      ],
+      "legacy_address": "הגפן 3, רחובות",
+      "legacy_rows_preserved": 2
+    },
+    {
+      "city": "ramat_gan",
+      "rows": 67908,
+      "missing_address": 28237,
+      "addresses": [
+        {
+          "address": "לאן 29, רמת גן",
+          "exact_source_rows": 10,
+          "returned_rows": 10,
+          "latest": "2026-07-13"
+        },
+        {
+          "address": "ז'בוטינסקי 43, רמת גן",
+          "exact_source_rows": 13,
+          "returned_rows": 13,
+          "latest": "2021-07-21"
+        },
+        {
+          "address": "תל חי 27, רמת גן",
+          "exact_source_rows": 17,
+          "returned_rows": 17,
+          "latest": "2025-09-08"
+        },
+        {
+          "address": "אבן עזרא 4, רמת גן",
+          "exact_source_rows": 12,
+          "returned_rows": 12,
+          "latest": "2025-08-04"
+        },
+        {
+          "address": "אמיר 15, רמת גן",
+          "exact_source_rows": 4,
+          "returned_rows": 4,
+          "latest": "2014-11-02"
+        }
+      ],
+      "legacy_address": "הרימון 2, רמת גן",
+      "legacy_rows_preserved": 2
+    },
+    {
+      "city": "raanana",
+      "rows": 28684,
+      "missing_address": 10132,
+      "addresses": [
+        {
+          "address": "אליעזר יפה 22, רעננה",
+          "exact_source_rows": 9,
+          "returned_rows": 9,
+          "latest": "2026-07-14"
+        },
+        {
+          "address": "אח\"י דקר 26, רעננה",
+          "exact_source_rows": 1,
+          "returned_rows": 1,
+          "latest": "2015-12-14"
+        },
+        {
+          "address": "ביל\"ו 36, רעננה",
+          "exact_source_rows": 5,
+          "returned_rows": 5,
+          "latest": "2024-05-12"
+        },
+        {
+          "address": "רימלט אלימלך 20, רעננה",
+          "exact_source_rows": 6,
+          "returned_rows": 6,
+          "latest": "2021-08-16"
+        },
+        {
+          "address": "הכלנית 28, רעננה",
+          "exact_source_rows": 32,
+          "returned_rows": 32,
+          "latest": "2025-03-31"
+        }
+      ],
+      "legacy_address": "רמב\"ם 80, רעננה",
+      "legacy_rows_preserved": 1
+    },
+    {
+      "city": "tel_aviv_yafo",
+      "rows": 182976,
+      "missing_address": 78592,
+      "addresses": [
+        {
+          "address": "שבע השקמים 6, תל אביב -יפו",
+          "exact_source_rows": 9,
+          "returned_rows": 9,
+          "latest": "2026-07-20"
+        },
+        {
+          "address": "מח\"ל 24, תל אביב -יפו",
+          "exact_source_rows": 7,
+          "returned_rows": 7,
+          "latest": "2023-07-06"
+        },
+        {
+          "address": "גרוזנברג 19, תל אביב -יפו",
+          "exact_source_rows": 6,
+          "returned_rows": 6,
+          "latest": "2024-04-04"
+        },
+        {
+          "address": "אב\"א אחימאיר 1, תל אביב -יפו",
+          "exact_source_rows": 39,
+          "returned_rows": 39,
+          "latest": "2022-09-15"
+        },
+        {
+          "address": "בן-עמי 6, תל אביב -יפו",
+          "exact_source_rows": 6,
+          "returned_rows": 6,
+          "latest": "2012-08-20"
+        }
+      ],
+      "legacy_address": "ארלוזורוב 180, תל אביב -יפו",
+      "legacy_rows_preserved": 11
+    }
+  ],
+  "checks": 283,
+  "boyar": {
+    "dates": [
+      "2004-12-12",
+      "2020-06-25",
+      "2023-08-06"
+    ],
+    "history_records": 4,
+    "history_dates": 3
+  },
+  "status": "PASS",
+  "address_count": 100
+}

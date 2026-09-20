@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "download-coverage",
+      "title": "מה הורד לפרויקט?",
+      "queries": [
+        {
+          "id": "verified-downloads",
+          "source": {
+            "label": "מניפסט הורדות וקובצי OVER",
+            "files": [
+              {
+                "label": "download_verification.json"
+              },
+              {
+                "label": "append_download_manifest.json"
+              }
+            ],
+            "links": [
+              {
+                "label": "דף המאגר בגרסאות לעם",
+                "url": "https://www.over.org.il/versions/fd06f5ae-8a4f-4120-b275-8a514ad23499"
+              }
+            ],
+            "caveats": [
+              "ההורדה מקיפה את חמש הגרסאות ואת הטבלה המצטברת שהיו זמינות בעת הבדיקה ב־19 בספטמבר 2026."
+            ]
+          },
+          "columns": [
+            "item",
+            "count"
+          ],
+          "rows": [
+            {
+              "item": "קובצי CSV בקישורים שונים",
+              "count": 108
+            },
+            {
+              "item": "גרסאות",
+              "count": 5
+            },
+            {
+              "item": "שורות ביצוא הטבלה המצטברת",
+              "count": 3844200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "new-coverage",
+      "title": "מה מוסיף המקור החדש?",
+      "queries": [
+        {
+          "id": "latest-profile",
+          "source": {
+            "label": "בדיקת כל השורות בגרסה 5",
+            "files": [
+              {
+                "label": "latest_profile.json"
+              },
+              {
+                "label": "latest_years.csv"
+              },
+              {
+                "label": "legacy_comparison.csv"
+              }
+            ],
+            "caveats": [
+              "הספירות כוללות סוגי נכסים שונים ומכירות חלקיות, ואינן מספר דירות ייחודיות.",
+              "2026 היא שנה חלקית והעדכניות משתנה לפי יישוב."
+            ]
+          },
+          "reportingPeriod": "תאריכי עסקאות: 1 בינואר 1998 עד 17 בספטמבר 2026",
+          "columns": [
+            "metric",
+            "value"
+          ],
+          "rows": [
+            {
+              "metric": "כל הרשומות בגרסה 5",
+              "value": 3217592
+            },
+            {
+              "metric": "קודי יישוב מזוהים",
+              "value": 1117
+            },
+            {
+              "metric": "רשומות מ־2025",
+              "value": 127591
+            },
+            {
+              "metric": "רשומות מ־2026",
+              "value": 50459
+            },
+            {
+              "metric": "רשומות ב־20 ערי האתר במקור החדש",
+              "value": 1826214
+            },
+            {
+              "metric": "רשומות ב־20 ערי האתר כיום",
+              "value": 711876
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "quality-and-mapping",
+      "title": "אילו התאמות נדרשות?",
+      "queries": [
+        {
+          "id": "quality",
+          "source": {
+            "label": "בדיקות שדות, חלקי נכס והבדלי מקור",
+            "files": [
+              {
+                "label": "latest_profile.json"
+              },
+              {
+                "label": "price_reconciliation.csv"
+              },
+              {
+                "label": "append_vs_latest.json"
+              },
+              {
+                "label": "append_extras_check.json"
+              }
+            ],
+            "caveats": [
+              "כתובת וקומה אינן קיימות בסכמת המקור החדש.",
+              "כל 626,608 הרשומות הנוספות בטבלה המצטברת תואמות לגרסה 5 לאחר נרמול יתר השדות והתעלמות מקוד היישוב החסר.",
+              "הגדרות סכומי העסקה דורשות בירור; השוואת מחירים היא ראיה אמפירית ואינה מילון שדות רשמי."
+            ]
+          },
+          "columns": [
+            "check",
+            "rows"
+          ],
+          "rows": [
+            {
+              "check": "חלק נכס בין 0 ל־1",
+              "rows": 919232
+            },
+            {
+              "check": "מספר חדרים אפס",
+              "rows": 951560
+            },
+            {
+              "check": "שטח אפס",
+              "rows": 587181
+            },
+            {
+              "check": "עותקים נוספים עקב קוד יישוב חסר",
+              "rows": 626608
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

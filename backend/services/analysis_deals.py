@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from html import escape
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import pandas as pd
@@ -10,6 +11,7 @@ from .calculations import (
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
     apply_common_filters,
+    apply_transaction_filters,
     price_used,
     remove_outliers_from_var,
     remove_price_outliers_by_year,
@@ -77,7 +79,7 @@ def build_analysis_deals_response(data_store: DataStore, payload: Optional[Mappi
     location_frame = apply_common_filters(city_frame, _location_filters(request_payload))
     location_rows = int(len(location_frame))
 
-    filtered = apply_common_filters(location_frame, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(location_frame, _non_location_filters(request_payload.get("filters")))
     pre_outlier_rows = int(len(filtered))
     filtered = _apply_requested_outlier_filters(filtered, request_payload, warnings)
     outlier_rows = int(len(filtered))
@@ -493,6 +495,15 @@ def _table_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
                 "roof": _display_value(row.get("roof")),
                 "apartment_type": _display_value(row.get("apt type")),
                 "new_project": _display_value(row.get("New_Project")),
+                "sale_portion": _display_value(row.get("sale_portion")),
+                "legacy_match": _display_value(row.get("legacy_match")),
+                "location_basis": _display_value(row.get("location_basis")),
+                "location_reference_id": _display_value(row.get("location_reference_id")),
+                "quality_flags": _display_value(row.get("quality_flags")),
+                "source_id": _display_value(row.get("source_id")),
+                "record_id": _display_value(row.get("_record_id", row.get("source_id"))),
+                "gush_code": _display_value(row.get("GUSH")),
+                "price_ils": _compact_number(row.get("deal_amount") if pd.notna(row.get("deal_amount")) else row.get("price_millions", 0) * 1e6),
                 "build_year": _compact_number(row.get("build_year")),
                 "building_age": _compact_number(row.get("building age")),
                 "building_floors": _compact_number(row.get("build_floors")),
@@ -553,7 +564,7 @@ def _overlays(
     overlays: Dict[str, Any] = {"sp500": [], "city_comparison": []}
 
     if payload.get("show_city_comparison") is True:
-        city_filtered = apply_common_filters(city_frame, _non_location_filters(payload.get("filters")))
+        city_filtered = apply_transaction_filters(city_frame, _non_location_filters(payload.get("filters")))
         if payload.get("remove_price_outliers") is not False:
             city_filtered = remove_price_outliers_by_year(city_filtered)
         city_prepared = _with_display_calculations(city_filtered, price_type)
@@ -693,6 +704,12 @@ def _nunique(values: Any) -> int:
 
 
 def _tooltip(row: Mapping[str, Any]) -> Optional[str]:
+    if "location_basis" in row:
+        basis = {"strict_transaction": "כתובת וקומה בהתאמת עסקה מחמירה", "property_reference": "כתובת/קומה בייחוס לפי מזהה; לא אומתו לעסקה זו", "unmatched": "כתובת או קומה לא ידועות"}
+        parts = [_date_value(row.get("date")), _display_address(row),
+                 "קומה: " + str(_display_value(row.get("floor"))),
+                 basis.get(row.get("location_basis"), ""), row.get("GUSH")]
+        return "<br>".join(escape(str(part)) for part in parts if part)
     story = row.get("story")
     if story is None or pd.isna(story):
         return None
@@ -703,10 +720,12 @@ def _display_address(row: Mapping[str, Any]) -> Any:
     full_address = _display_value(row.get("FULLADRESS"))
     if full_address:
         return full_address
+    if "source_id" in row:
+        return None
 
     street = _display_value(row.get("street"))
     city = _display_value(row.get("city"))
-    parts = [str(value).strip() for value in (street, city) if str(value).strip()]
+    parts = [str(value).strip() for value in (street, city) if value is not None and str(value).strip()]
     return ", ".join(parts) if parts else None
 
 

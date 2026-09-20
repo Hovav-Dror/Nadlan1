@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 import pandas as pd
@@ -285,8 +287,8 @@ def _range_payload(
     if usable.empty:
         return {"min": None, "max": None, "count": 0, "special_count": int(special_mask.sum())}
     return {
-        "min": _compact_number(usable.min()),
-        "max": _compact_number(usable.max()),
+        "min": math.floor(float(usable.min()) * 1000) / 1000,
+        "max": math.ceil(float(usable.max()) * 1000) / 1000,
         "count": int(len(usable)),
         "special_count": int(special_mask.sum()),
     }

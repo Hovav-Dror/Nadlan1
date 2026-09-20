@@ -1,0 +1,84 @@
+{
+  "label": "append",
+  "counts": {
+    "rows": 3844200,
+    "invalid_date": 0,
+    "future_deal_date": 0,
+    "before_1998": 0,
+    "partial_portion_0_to_1": 1157707,
+    "whole_portion_1": 2594874,
+    "portion_above_1": 0,
+    "amounts_differ": 353000,
+    "subparcel_zero_or_missing": 1174638,
+    "year_built_after_deal": 193815,
+    "year_built_after_cutoff_year": 53343,
+    "area_above_1000": 81318,
+    "rooms_above_20": 702,
+    "residential_types_rows": 2822178,
+    "residential_rooms_positive": 2531420,
+    "whole_residential_positive_area_price_valid_date": 2035101,
+    "whole_residential_usable_with_rooms": 1984369,
+    "unique_business_hashes": 3844200,
+    "business_duplicate_excess": 0,
+    "business_duplicate_affected_rows": 0,
+    "exact_duplicate_excess": 0,
+    "settlement_code_count": 1117,
+    "rows_without_settlement_code": 674340
+  },
+  "numeric": {
+    "deal_amount_missing_or_unparseable": 0,
+    "deal_amount_zero": 0,
+    "deal_amount_negative": 0,
+    "declared_amount_missing_or_unparseable": 0,
+    "declared_amount_zero": 7546,
+    "declared_amount_negative": 0,
+    "portion_missing_or_unparseable": 0,
+    "portion_zero": 91619,
+    "portion_negative": 0,
+    "year_built_missing_or_unparseable": 13,
+    "year_built_zero": 1086405,
+    "year_built_negative": 0,
+    "asset_area_missing_or_unparseable": 52,
+    "asset_area_zero": 814560,
+    "asset_area_negative": 0,
+    "room_num_missing_or_unparseable": 63,
+    "room_num_zero": 1287574,
+    "room_num_negative": 0
+  },
+  "date_ranges": {
+    "deal_date": {
+      "min": "1998-01-01 00:00:00",
+      "max": "2026-09-17 00:00:00"
+    },
+    "scraped_at": {
+      "min": "2026-07-04 16:20:45.510688+00:00",
+      "max": "2026-09-19 11:07:39.013275+00:00"
+    }
+  },
+  "columns": [
+    "asset_area",
+    "chelka",
+    "deal_amount",
+    "deal_date",
+    "deal_nature",
+    "declared_amount",
+    "first_seen",
+    "gush",
+    "portion",
+    "room_num",
+    "scraped_at",
+    "settlement",
+    "settlement_code",
+    "sub_chelka",
+    "year_built"
+  ],
+  "residential_types_used": [
+    "דירה בבית קומות",
+    "ד. מגורים",
+    "בית בודד",
+    "קוטג' חד משפחתי",
+    "קוטג' דו משפחתי",
+    "דירת גן",
+    "דירת גג"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "repeat-property-counts",
+      "title": "לכמה נכסים יש מכירות בתאריכים שונים?",
+      "queries": [
+        {
+          "id": "distinct-dates",
+          "source": {
+            "label": "כל קובצי גרסה 5 — בדיקה מקומית",
+            "files": [
+              {
+                "label": "repeat_sales_counts.json"
+              },
+              {
+                "label": "count_over_repeat_sales.py"
+              }
+            ],
+            "filters": [
+              "גוש, חלקה ותת־חלקה שלמים וחיוביים",
+              "אותו נכס ואותו תאריך נספרים כאירוע אחד",
+              "סיווגי מגורים מפורשים ומחיר חיובי"
+            ],
+            "caveats": [
+              "מזהי המקרקעין הם מועמדים לזיהוי נכס, ולא אימות של אותה דירה פיזית לאורך השנים.",
+              "תת־חלקה אפס הוצאה מהספירה.",
+              "מכירה מלאה דורשת שורה עם חלק נכס 1; חלקים אינם מסוכמים.",
+              "בספירה המחמירה נכללו רק סיווגי דירות, עם שטח וחדרים זהים וחיוביים בכל מכירות הדירה המלאות, וללא סתירה בין קודי יישוב ידועים."
+            ]
+          },
+          "reportingPeriod": "1998–17 בספטמבר 2026",
+          "columns": [
+            "scope",
+            "two_or_more",
+            "three_or_more"
+          ],
+          "rows": [
+            {
+              "scope": "נכסי מגורים, כל חלקי המכירה",
+              "two_or_more": 454448,
+              "three_or_more": 159682
+            },
+            {
+              "scope": "נכסי מגורים, מכירות מלאות בלבד",
+              "two_or_more": 369904,
+              "three_or_more": 126605
+            },
+            {
+              "scope": "דירות: כל המכירות המלאות עם שטח וחדרים עקביים",
+              "two_or_more": 54576,
+              "three_or_more": 8225
+            }
+          ],
+          "methods": [
+            {
+              "language": "python",
+              "code": "events = frame[['gush', 'chelka', 'sub_chelka', 'date']].drop_duplicates()\ncounts = events.groupby(['gush', 'chelka', 'sub_chelka']).size()\ntwo_or_more = counts.ge(2).sum()\nthree_or_more = counts.ge(3).sum()"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

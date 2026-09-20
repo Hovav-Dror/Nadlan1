@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="assets/app.css">
     <script src="assets/plotly.min.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="assets/data-quality.js" defer></script>
     <script src="assets/app.js" defer></script>
+    <script src="assets/ui-layout.js" defer></script>
   </head>
   <body>
     <header class="topbar">
@@ -20,6 +22,28 @@
       <div class="summary-strip" id="global-summary"></div>
     </header>
 
+    <section id="pilot-banner" class="pilot-banner" hidden aria-label="מקור וכיסוי נתונים"></section>
+    <details id="pilot-address-lookup" class="pilot-banner address-search" hidden>
+      <summary>חיפוש כתובת — עסקאות בבניין</summary>
+      <div id="address-lookup-form" class="address-lookup-form" role="search" aria-label="חיפוש עסקאות לפי כתובת">
+        <label>עיר<select id="address-lookup-city" autocomplete="off"></select></label>
+        <label>רחוב ומספר בית<input type="search" id="address-lookup-query" placeholder="לדוגמה: בויאר 12" required minlength="2" maxlength="160" autocomplete="off"></label>
+        <button id="run-address-lookup" type="button">חיפוש עסקאות</button>
+        <details id="address-lookup-options"><summary>קומה ותקופה</summary>
+          <label>קומה לפי רשומת הייחוס<input id="address-lookup-floor" type="number" min="-10" max="200" placeholder="כל הקומות" autocomplete="off"></label>
+          <label>משנת<input id="address-lookup-from" type="number" min="1900" max="2100" value="1998" required autocomplete="off"></label>
+          <label>עד שנת<input id="address-lookup-to" type="number" min="1900" max="2100" value="2026" required autocomplete="off"></label>
+        </details>
+      </div>
+      <p class="helper-text">החיפוש בשני המקורות, כולל מכירות חלקיות, ללא מסנני הניתוח. כתובת וקומה שהושלמו לפי מזהה נכס מסומנות כפרטי ייחוס.</p>
+      <div id="address-lookup-state" aria-live="polite"></div>
+      <div id="lookup-actions" class="lookup-actions" hidden>
+        <button id="lookup-analyze-address" type="button">ניתוח הבניין</button>
+        <button id="lookup-analyze-street" class="secondary" type="button">ניתוח הרחוב</button>
+        <button id="lookup-map" class="secondary" type="button">הגושים במפה</button>
+      </div>
+      <div id="address-lookup-results" class="address-lookup-results"></div>
+    </details>
     <main class="app-shell">
       <nav class="tabs" aria-label="Workflows" role="tablist">
         <span class="tab-group-label">Analysis workflows</span>
@@ -34,6 +58,7 @@
         <button class="tab tab-secondary" id="tab-about" data-tab="about" role="tab" aria-controls="panel-about" aria-selected="false">About</button>
       </nav>
 
+      <div class="view-toolbar"><div class="navigation-actions"><button id="navigation-back" class="secondary" type="button" disabled>חזרה לתצוגה הקודמת</button><button id="navigation-home" class="secondary" type="button">לתצוגה הראשית</button></div><button id="share-view" class="secondary" type="button">קישור לחיפוש ולמסננים</button><span id="share-view-state" role="status"></span></div>
       <section class="workspace">
         <aside class="control-panel" aria-label="Controls">
           <div class="control-section step-section">
@@ -44,7 +69,7 @@
             <label>
               <span>City</span>
               <span class="select-row">
-                <select id="city-select"></select>
+                <select id="city-select" autocomplete="off"></select>
                 <button id="random-city" class="random-button" type="button" title="Pick a random city and Gush that can auto update" aria-label="Pick random runnable analysis">Random</button>
               </span>
             </label>
@@ -55,29 +80,34 @@
               <span class="step-kicker">Step 2</span>
               <h2>Select Properties</h2>
             </div>
+            <div class="picker-block" data-analysis-only hidden>
+              <label for="analysis-address">כתובת בניתוח — רחוב ומספר בית</label>
+              <input type="search" id="analysis-address" maxlength="160" placeholder="לדוגמה: בויאר 12" autocomplete="off">
+              <small>החיפוש חל על כל רשומות העיר לפני הדגימה, יחד עם מסנני הניתוח. לחיפוש ללא המסננים ובשני המקורות, השתמשו בחיפוש הכתובת בראש העמוד.</small>
+            </div>
             <div class="picker-block">
               <label for="street-picker-search">Streets</label>
-              <input id="street-picker-search" autocomplete="off" placeholder="Search streets">
+              <input type="search" id="street-picker-search" autocomplete="off" placeholder="Search streets">
               <div id="street-selected" class="selected-chips"></div>
               <div id="street-picker-results" class="picker-results" aria-live="polite"></div>
-              <select id="street-select" class="native-picker-select" multiple></select>
+              <select id="street-select" class="native-picker-select" multiple autocomplete="off"></select>
             </div>
             <div class="picker-block">
               <label for="gush-picker-search">Gush areas</label>
-              <input id="gush-picker-search" autocomplete="off" placeholder="Search Gush number, label, or street">
+              <input type="search" id="gush-picker-search" autocomplete="off" placeholder="Search Gush number, label, or street">
               <div id="gush-selected" class="selected-chips"></div>
               <div id="gush-picker-results" class="picker-results" aria-live="polite"></div>
-              <select id="gush-select" class="native-picker-select" multiple></select>
+              <select id="gush-select" class="native-picker-select" multiple autocomplete="off"></select>
             </div>
             <div class="selection-actions">
               <button id="add-gush-streets" class="secondary" type="button">Use streets from selected Gush</button>
               <button id="select-street-gushes" class="secondary" type="button">Use whole Gush for selected streets</button>
             </div>
-            <div class="lookup-box">
+            <div class="lookup-box" hidden>
               <label>
                 Find Gush by street
                 <span class="search-row">
-                  <input id="street-search" autocomplete="off" placeholder="Type a street name">
+                  <input type="search" id="street-search" autocomplete="off" placeholder="Type a street name">
                   <button id="run-street-search" class="secondary" type="button">Search</button>
                 </span>
               </label>
@@ -96,14 +126,14 @@
                 <h4>Deal ranges</h4>
               </div>
               <div class="range-grid">
-                <label>Deal years from<input id="filter-year-min" inputmode="numeric"></label>
-                <label>Deal years to<input id="filter-year-max" inputmode="numeric"></label>
-                <label>Price from (₪m)<input id="filter-price-min" inputmode="decimal"></label>
-                <label>Price to (₪m)<input id="filter-price-max" inputmode="decimal"></label>
-                <label>Price / m² from (₪k)<input id="filter-price-m2-min" inputmode="decimal"></label>
-                <label>Price / m² to (₪k)<input id="filter-price-m2-max" inputmode="decimal"></label>
-                <label>Area from (m²)<input id="filter-area-min" inputmode="decimal"></label>
-                <label>Area to (m²)<input id="filter-area-max" inputmode="decimal"></label>
+                <label>Deal years from<input id="filter-year-min" inputmode="numeric" autocomplete="off"></label>
+                <label>Deal years to<input id="filter-year-max" inputmode="numeric" autocomplete="off"></label>
+                <label>Price from (₪m)<input id="filter-price-min" inputmode="decimal" autocomplete="off"></label>
+                <label>Price to (₪m)<input id="filter-price-max" inputmode="decimal" autocomplete="off"></label>
+                <label>Price / m² from (₪k)<input id="filter-price-m2-min" inputmode="decimal" autocomplete="off"></label>
+                <label>Price / m² to (₪k)<input id="filter-price-m2-max" inputmode="decimal" autocomplete="off"></label>
+                <label>Area from (m²)<input id="filter-area-min" inputmode="decimal" autocomplete="off"></label>
+                <label>Area to (m²)<input id="filter-area-max" inputmode="decimal" autocomplete="off"></label>
               </div>
             </div>
             <div class="filter-cluster">
@@ -118,16 +148,16 @@
                 </span>
               </div>
               <div id="rooms-chip-group" class="filter-chip-group" aria-label="Rooms"></div>
-              <select id="rooms-select" class="native-filter-select" multiple size="4"></select>
+              <select id="rooms-select" class="native-filter-select" multiple size="4" autocomplete="off"></select>
               <div class="room-actions">
                 <button id="clear-rooms" class="secondary" type="button">All rooms</button>
                 <button id="reset-filters" class="secondary" type="button">Reset ranges</button>
               </div>
               <label>
                 Apartment type
-                <input id="apartment-type-search" autocomplete="off" placeholder="Search apartment types">
+                <input type="search" id="apartment-type-search" autocomplete="off" placeholder="Search apartment types">
                 <div id="apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Apartment types"></div>
-                <select id="apartment-type-select" class="native-filter-select" multiple size="5"></select>
+                <select id="apartment-type-select" class="native-filter-select" multiple size="5" autocomplete="off"></select>
               </label>
             </div>
             <div class="filter-cluster">
@@ -142,14 +172,14 @@
                 <label><input id="include-unknown-building-age" type="checkbox" checked> Age</label>
               </div>
               <div class="range-grid">
-                <label>Floor min<input id="filter-floor-min" inputmode="numeric"></label>
-                <label>Floor max<input id="filter-floor-max" inputmode="numeric"></label>
-                <label>Building floors min<input id="filter-building-floors-min" inputmode="numeric"></label>
-                <label>Building floors max<input id="filter-building-floors-max" inputmode="numeric"></label>
-                <label>Built year min<input id="filter-built-year-min" inputmode="numeric"></label>
-                <label>Built year max<input id="filter-built-year-max" inputmode="numeric"></label>
-                <label>Building age min<input id="filter-building-age-min" inputmode="numeric"></label>
-                <label>Building age max<input id="filter-building-age-max" inputmode="numeric"></label>
+                <label>Floor min<input id="filter-floor-min" inputmode="numeric" autocomplete="off"></label>
+                <label>Floor max<input id="filter-floor-max" inputmode="numeric" autocomplete="off"></label>
+                <label>Building floors min<input id="filter-building-floors-min" inputmode="numeric" autocomplete="off"></label>
+                <label>Building floors max<input id="filter-building-floors-max" inputmode="numeric" autocomplete="off"></label>
+                <label>Built year min<input id="filter-built-year-min" inputmode="numeric" autocomplete="off"></label>
+                <label>Built year max<input id="filter-built-year-max" inputmode="numeric" autocomplete="off"></label>
+                <label>Building age min<input id="filter-building-age-min" inputmode="numeric" autocomplete="off"></label>
+                <label>Building age max<input id="filter-building-age-max" inputmode="numeric" autocomplete="off"></label>
               </div>
             </div>
             <div class="filter-cluster">
@@ -158,7 +188,7 @@
               </div>
               <div class="segmented-field">
                 <span>Top floor / roof</span>
-                <select id="roof-select" class="native-filter-select">
+                <select id="roof-select" class="native-filter-select" autocomplete="off">
                   <option value="both">Both</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
@@ -171,7 +201,7 @@
               </div>
               <div class="segmented-field">
                 <span>New project</span>
-                <select id="new-project-select" class="native-filter-select">
+                <select id="new-project-select" class="native-filter-select" autocomplete="off">
                   <option value="both">Both</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
@@ -247,7 +277,7 @@
               <div class="plot-control-grid">
                 <label>
                   Color By
-                  <select id="analysis-color-var">
+                  <select id="analysis-color-var" autocomplete="off">
                     <option value="">None</option>
                     <option value="apt type">Apartment type</option>
                     <option value="street">Street</option>
@@ -269,7 +299,7 @@
                 </label>
                 <label>
                   Shape By
-                  <select id="analysis-shape-var">
+                  <select id="analysis-shape-var" autocomplete="off">
                     <option value="">None</option>
                     <option value="apt type">Apartment type</option>
                     <option value="street">Street</option>
@@ -291,7 +321,7 @@
                 </label>
                 <label>
                   Size By
-                  <select id="analysis-size-var">
+                  <select id="analysis-size-var" autocomplete="off">
                     <option value="">None</option>
                     <option value="area">Area</option>
                     <option value="rooms">Rooms</option>
@@ -306,7 +336,7 @@
                 </label>
                 <label>
                   Facet By
-                  <select id="analysis-facet-var">
+                  <select id="analysis-facet-var" autocomplete="off">
                     <option value="">None</option>
                     <option value="Gush">Gush</option>
                     <option value="street">Street</option>
@@ -328,7 +358,7 @@
                 </label>
                 <label>
                   Color Palette
-                  <select id="analysis-color-palette">
+                  <select id="analysis-color-palette" autocomplete="off">
                     <option value="default">Default</option>
                     <option value="bold">Bold</option>
                     <option value="soft">Soft</option>
@@ -338,7 +368,7 @@
                 </label>
                 <label>
                   Shape Palette
-                  <select id="analysis-shape-palette">
+                  <select id="analysis-shape-palette" autocomplete="off">
                     <option value="default">Default</option>
                     <option value="open">Open</option>
                     <option value="solid">Solid</option>
@@ -346,7 +376,7 @@
                 </label>
                 <label>
                   Price Type
-                  <select id="analysis-price-type">
+                  <select id="analysis-price-type" autocomplete="off">
                     <option value="Price">Price</option>
                     <option value="Price / m²">Price / m²</option>
                     <option value="Price / Room">Price / Room</option>
@@ -354,7 +384,7 @@
                 </label>
                 <label>
                   Row Limit
-                  <input id="row-limit" inputmode="numeric" type="number" min="1" max="5000" step="1" value="3000">
+                  <input id="row-limit" inputmode="numeric" type="number" min="1" max="5000" step="1" value="3000" autocomplete="off">
                 </label>
               </div>
               <div class="plot-toggle-row">
@@ -384,6 +414,7 @@
                 </div>
               </div>
             </div>
+            <div id="analysis-chart-summary" class="analysis-chart-summary" hidden></div>
             <div id="selected-deal" class="selected-deal"></div>
             <div id="analysis-counts" class="metrics"></div>
             <div id="analysis-table" class="table-wrap"></div>
@@ -425,154 +456,169 @@
               </div>
             </div>
             <section class="map-toolbar" aria-label="Map controls">
-              <label>Color by<select id="map-color-mode"><option value="selection">Selection</option><option value="deals">Deal count</option></select></label>
+              <label>Color by<select id="map-color-mode" autocomplete="off"><option value="selection">Selection</option><option value="deals">Deal count</option></select></label>
               <label class="checkbox-field"><input id="map-show-labels" type="checkbox"> Labels</label>
             </section>
             <div id="map-state" class="state"></div>
             <div id="map-counts" class="metrics"></div>
             <div id="gush-map-chart" class="chart map-chart" data-empty-label="Choose a city, then update map"></div>
-            <div id="map-source-note" class="source-note"></div>
+            <div id="map-missing-list" class="map-missing-list"></div><div class="lookup-actions"><button id="map-open-analysis" type="button">ניתוח הגושים שנבחרו</button><button id="map-open-compare" class="secondary" type="button">השוואת הגושים שנבחרו</button></div><div id="map-source-note" class="source-note"></div>
           </section>
 
           <section class="tab-panel" id="panel-metadata" role="tabpanel" aria-labelledby="tab-metadata">
             <div class="panel-heading">
               <div>
-                <h2>Data Health</h2>
-                <p>Loaded cities, streets, Gush labels, and the dynamic filter ranges behind the analysis workflow.</p>
+                <h2>כיסוי ואיכות הנתונים</h2>
+                <p>בדקו אילו תקופות מכוסות בכל עיר, כמה מידע חסר, ועל מה מבוסס שיוך הכתובות והקומות.</p>
               </div>
               <div class="actions">
-                <button id="refresh-meta" type="button">Refresh metadata</button>
+                <button id="refresh-meta" type="button">טען מחדש את פרטי המאגר</button>
               </div>
             </div>
+            <p class="helper-text">הטעינה מחדש קוראת את הנתונים שכבר נמצאים באתר. היא אינה מורידה עסקאות חדשות ממקורות הנתונים.</p>
             <div id="metadata-state" class="state"></div>
-            <div id="metadata-summary" class="info-grid"></div>
-            <div id="filter-summary" class="info-grid"></div>
+            <div id="pilot-coverage" hidden></div>
+            <details class="metadata-details">
+              <summary>סיכום המאגר והבחירה הנוכחית</summary>
+              <h3>המאגר ונתוני העיר שנטענו</h3>
+              <div id="metadata-summary" class="info-grid"></div>
+              <h3>טווחי הסינון בבחירה הנוכחית</h3>
+              <p class="helper-text">הטווחים מתארים את הרשומות שנטענו. ערכי מקור חריגים אינם בהכרח נתונים תקינים.</p>
+              <div id="filter-summary" class="info-grid"></div>
+            </details>
           </section>
 
           <section class="tab-panel" id="panel-about" role="tabpanel" aria-labelledby="tab-about">
             <div class="panel-heading">
               <div>
-                <h2>About</h2>
-                <p>Background, data notes, and a short guide carried over from the original Shiny app.</p>
+                <h2>אודות האתר</h2>
+                <p>איך האתר נולד, מאיפה מגיעים הנתונים ומה התחדש בהם.</p>
               </div>
             </div>
             <article class="about-panel rtl-text" lang="he" dir="rtl">
               <section class="about-section about-intro">
-                <h3>ויזואליזציה של נתוני נדל"ן בישראל</h3>
-                <p>
-                  אם ניסתם פעם להשתמש בנתונים שאמורים להיות משותפים עם הציבור על עסקאות נדל"ן בישראל אולי גם אתם הרגשתם כאילו עושים הכל כדי שלא תצליחו.
-                  לכן מעניין ומרגש שכמה אלופים דאגו להוציא את הנתונים האלה לאור.
-                  תמצאו אותם ב<a href="https://www.odata.org.il/dataset/nadlan" target="_blank" rel="noopener">מידע לעם</a> תחת ארגון - "התמנון מידע ציבורי לכל".
-                  אז אם אתם מוצאים את הנתונים האלה שימושיים, עם או בלי האתר הזה, תזכרו להודות להם.
-                </p>
-                <p>
-                  מה שיש כאן הוא משהוא שהכנתי לעצמי כדי לשחק עם הנתונים האלה. אני לא יכול להבטיח שהכל עובד כפי שהתכוונתי, אבל כן יכול להבטיח לכם שאתר זה אינו למטרות מסחריות כלשהן. אתם מוזמנים להשתמש בו ללא כל חשש. לא אאסוף כל מידע אישי, ולא אבקש כסף.
-                </p>
-                <p>
-                  כמובן שהוא מסופק "כפי שהוא", ללא אחריות מכל סוג, מפורשת או משתמעת. כל שימוש הוא באחריות המשתמשים בלבד, ולא אקח אחריות על החלטות המבוססות על הנתונים או הניתוחים המוצגים כאן, על שגיאה בניתוח או על כל דבר אחר.
-                </p>
-                <p>
-                  לא כל הפונקציונליות פועלת באופן מושלם, וישנן תכונות מתוכננות שטרם יושמו. האתר מאוחסן על שרת חלש (=זול) עם זיכרון מוגבל, לכן ייתכנו בעיות ביצועים במקרים מסוימים.
-                </p>
-                <p>
-                  נתוני המקור כוללים רק דיווח אחד על נכס. כלומר דירה שנמכרה מספר פעמים לאורך השנים תופיע רק פעם אחת, בדרך כלל העסקה האחרונה. הנתונים גם לא מחוברים ל-API ולא מתעדכנים בשוטף.
-                </p>
+                <h3>ויזואליזציה של נתוני נדל״ן בישראל</h3>
+                <p>אם ניסיתם פעם להשתמש בנתונים הציבוריים על עסקאות נדל״ן בישראל, אולי גם אתם הרגשתם שלמצוא את המידע זה רק חלק מהאתגר. גם כשהנתונים נמצאים מולכם, לא פשוט להבין מה קרה ברחוב מסוים, להשוות בין אזורים או לראות איך המחירים השתנו לאורך השנים.</p>
+                <p>לכן שמחתי לגלות שיש מי שדואגים להוציא את הנתונים האלה לאור ולהעמיד אותם לרשות כולם ב<a href="https://www.odata.org.il/dataset/nadlan" target="_blank" rel="noopener">מידע לעם</a>. האתר הזה התחיל ממשהו שהכנתי לעצמי כדי לשחק עם הנתונים: לסנן, לצייר גרפים, להשוות ולנסות להבין מה הם מספרים. אם הוא עוזר גם לכם, מה טוב.</p>
+                <p>זהו פרויקט אישי, ללא מטרות מסחריות. אפשר להשתמש בו ללא הרשמה וללא תשלום. לא הכול עובד בהכרח כפי שהתכוונתי, והערות והצעות לשיפור יתקבלו בשמחה.</p>
+                <p><a href="#analysis">לחיפוש וניתוח עסקאות</a> · <a href="#metadata">לכיסוי הנתונים בעיר שלכם</a></p>
+              </section>
+
+              <section class="about-section">
+                <h3>מאיפה הנתונים מגיעים, ומה השתנה?</h3>
+                <p>האתר משתמש בשני מאגרי עסקאות מרכזיים, ושניהם מונגשים לציבור במידע לעם. מידע לעם הוא המקום שמאפשר לנו להגיע לנתונים ולהוריד אותם; רשות המסים היא המקור הממשלתי של מאגר העסקאות שנוסף כעת. ״גרסאות לעם״ מאפשר לעקוב אחר גרסאות המאגר הזה.</p>
+                <div class="about-feature-grid">
+                  <div>
+                    <h4>מאגר עסקאות הנדל״ן</h4>
+                    <p><a href="https://www.odata.org.il/dataset/nadlan" target="_blank" rel="noopener">מאגר עסקאות הנדל״ן במידע לעם</a>, שהונגש בידי עמותת התמנון — מידע ציבורי לכל, שימש לבניית האתר. בגרסה שעליה התבסס האתר בתחילת הדרך הופיעה רק עסקה אחת לכל נכס, בדרך כלל האחרונה. לכן דירה שנמכרה כמה פעמים לא הוצגה עם היסטוריית המכירות שלה.</p>
+                    <p>הנתונים האלה עדיין שימושיים: הם כוללים כתובות וקומות, ומשמשים להשלמת פרטים ולחיפוש עסקאות לצד המאגר הנוסף.</p>
+                  </div>
+                  <div>
+                    <h4>נתוני רשות המסים</h4>
+                    <p>בזכות עבודתו של <strong>גיא זומר</strong>, מונגשים עכשיו גם נתוני רשות המסים שמאפשרים לראות ריבוי עסקאות לאותו נכס לאורך השנים. אפשר להגיע אליהם דרך <a href="https://www.odata.org.il/dataset/gov-versions-taxes_nadlan_full-taxes-nadlan-full-f41fb496" target="_blank" rel="noopener">מידע לעם</a> ולעיין ב<a href="https://www.over.org.il/versions/fd06f5ae-8a4f-4120-b275-8a514ad23499" target="_blank" rel="noopener">היסטוריית הגרסאות בגרסאות לעם</a>.</p>
+                    <p>זה הבסיס לניתוח העסקאות בגרסה הנוכחית של האתר. התוספת מאפשרת לחזור לעסקאות קודמות ולבחון איך מחירו של נכס השתנה, מעבר להשוואה בין דירות שונות שנמכרו באותה תקופה.</p>
+                  </div>
+                </div>
+                <p>תודה לגיא זומר ולעמותת התמנון על העבודה בהנגשת המידע. אם הנתונים האלה שימושיים לכם, עם האתר הזה או בלעדיו, הקרדיט על הוצאתם לאור מגיע להם.</p>
+                <p>הקישור בין עסקאות נעשה לפי מזהי הנכס שבנתונים. הוא עוזר למצוא מכירות קודמות, אבל אינו מבטיח בכל מקרה שמדובר באותה דירה; לכן האתר מציג גם את בסיס ההתאמה ואת ההבדלים בין הדיווחים.</p>
+                <p id="dataset-about">פרטי הגרסה והערים הכלולות באתר מופיעים בעמוד כיסוי ואיכות הנתונים.</p>
+                <p><a href="#metadata">לפרטי הכיסוי, מועדי האיסוף והמידע החסר בכל עיר</a></p>
               </section>
 
               <section class="about-section">
                 <h3>שיפורי איכות נתונים</h3>
-                <p>הנתונים עברו עיבוד מקיף והתאמה כדי לשפר את השימושיות שלהם. הנה העבודות העיקריות שבוצעו:</p>
+                <p>כדי שאפשר יהיה לחפש, לסנן ולהשוות, הנתונים עוברים עיבוד לפני הצגתם באתר. גם עם המקור הנוסף יש לעבודה הזאת חשיבות — חלק מהעיבוד נשאר, וחלק הותאם לנתוני רשות המסים.</p>
                 <div class="about-feature-grid">
                   <div>
                     <h4>עיבוד נתוני עסקאות</h4>
                     <ul>
-                      <li>ניקוי כתובות והסרת רשומות כפולות</li>
-                      <li>נרמול סכומי עסקאות למיליוני שקלים</li>
-                      <li>נרמול מספרי חדרים לערכים מספריים</li>
-                      <li>חישוב שטח דירה במטר רבוע</li>
-                      <li>סיווג סוגי דירות לקטגוריות עקביות</li>
+                      <li>המרת תאריכים, מחירים, שטחים ומספרי חדרים לערכים שאפשר לחשב ולסנן</li>
+                      <li>הצגת מחירים בשקלים או במיליוני שקלים, לפי הגרף והטבלה</li>
+                      <li>בחירת סוגי נכסי מגורים לניתוח</li>
+                      <li>הצגת דיווחים מקבילים שתואמו יחד, תוך שמירת ההבדלים ומקורותיהם</li>
                     </ul>
                   </div>
                   <div>
-                    <h4>עיבוד מורכב של קומות</h4>
+                    <h4>כתובות וקומות</h4>
                     <ul>
-                      <li>המרת שדה FLOORNO לערכים מספריים</li>
-                      <li>טיפול במגוון רחב של ביטויים בעברית</li>
-                      <li>טיפול במקרים מיוחדים: מרתפים, קרקע, וקומות מרובות</li>
-                      <li>ניקוי תווים בלתי נראים ורווחים מיותרים</li>
+                      <li>ניקוי רווחים בכתובות והתאמת החיפוש להבדלי כתיב וסדר מילים</li>
+                      <li>המרת תיאורי קומה בעברית לערכים מספריים בנתוני ההשלמה, לרבות קרקע ומרתף</li>
+                      <li>השלמת כתובת וקומה מדיווח מקביל כשנמצאה התאמת עסקה</li>
+                      <li>סימון נפרד של פרטים שיוחסו לפי מזהה נכס ולא אומתו לעסקה עצמה</li>
                     </ul>
                   </div>
                   <div>
-                    <h4>עיבוד מידע על בניינים</h4>
+                    <h4>מדדים להשוואה</h4>
                     <ul>
-                      <li>חישוב גיל בניין לפי שנת עסקה ושנת בנייה</li>
-                      <li>זיהוי אוטומטי של דירות גג</li>
-                      <li>נרמול מספרי קומות בניין</li>
+                      <li>חישוב מחיר למ״ר ולחדר לפי המחיר, השטח ומספר החדרים המדווחים</li>
+                      <li>חישוב גיל הבניין בשנת העסקה לפי שנת הבנייה</li>
+                      <li>סיכום מחירים ומספר עסקאות לפי שנה, עיר ואזור</li>
+                      <li>השוואת מגמות בשנים משותפות, עם אפשרות להחריג שנת איסוף חלקית</li>
                     </ul>
                   </div>
                   <div>
-                    <h4>יצירת משתנים חדשים</h4>
+                    <h4>חוסרים ובקרת התאמות</h4>
                     <ul>
-                      <li>מחיר למ"ר לפי יחס מחיר-שטח</li>
-                      <li>סיווג פרויקטים חדשים מול יד שנייה</li>
-                      <li>תיאורים מפורטים לכל עסקה</li>
-                      <li>זיהוי וטיפול בגושים שמופיעים בכמה ערים</li>
+                      <li>סימון פרטים חסרים ובסיס ההתאמה בין המקורות</li>
+                      <li>שמירת ההבחנה בין מכירת נכס שלם, מכירה חלקית וחלק לא ידוע</li>
+                      <li>הפרדה בין עסקאות בתאריכים שונים לבין דיווחים מקבילים באותו תאריך</li>
+                      <li>הצגת כיסוי וחוסרים לכל עיר, כדי שאפשר יהיה להבין מה נכלל בחיפוש</li>
                     </ul>
                   </div>
                 </div>
-                <p>חשוב לציין שחלק מהנתונים עלולים להיות שגויים, אך השגיאות מתחבאות במקרים רבים כבר בנתונים הממשלתיים המקוריים.</p>
+                <p>שני סעיפים שהופיעו בגרסה הקודמת אינם זמינים בפיילוט הנוכחי: זיהוי אוטומטי של דירות גג וסיווג פרויקטים חדשים מול יד שנייה. אין במקור החדש מידע מספיק לקביעתם, ולכן הם נשארים לא ידועים.</p>
+                <p>העיבוד משפר את השימושיות, אבל אינו מבטיח שהנתונים נכונים. חלק מהשגיאות נמצאות כבר בדיווחים המקוריים. למשל, מחיר למ״ר תלוי בשטח שדווח; האתר אינו מודד מחדש את שטח הדירה.</p>
               </section>
 
+              <details class="about-section metadata-details">
+                <summary>איך משלימים כתובות וקומות ומקשרים בין העסקאות?</summary>
+                <p>בקבצי רשות המסים ששולבו באתר אין כתובת וקומה. כדי לאפשר חיפוש לפי כתובת, האתר נעזר בפרטים מהמאגר ששימש בתחילת הדרך.</p>
+                <p>כשנמצאת התאמה יחידה של עיר, מזהה נכס, תאריך ופרטי עסקה, אפשר להשלים את הכתובת והקומה מהדיווח המקביל. כשאין התאמה כזאת, אפשר לעיתים לייחס כתובת לפי מזהה הנכס, אם הכתובת עקבית ואין סתירה בקומות הידועות. ייחוס כזה מסומן בנפרד.</p>
+                <p>מחיר, שטח, חדרים ושנת בנייה נשמרים כפי שדווחו בכל מקור. אם הפרטים שונים בין דיווחים שנמצאו לאותה עסקה, אפשר לפתוח את השוואת הדיווחים ולראות את ההבדלים.</p>
+              </details>
+
               <section class="about-section">
-                <h3>הטאבים השונים באפליקציה</h3>
+                <h3>המסכים באתר — מה רואים ובמה הם עוזרים?</h3>
                 <div class="about-workflows">
-                  <div>
-                    <h4>1. Analysis Deals - ניתוח עסקאות</h4>
-                    <p>כל נקודה היא עסקה בודדת. מתאים לחקר מפורט, מציאת נכסים ספציפיים, והבנת וריאציות מחירים בתוך אזור.</p>
-                  </div>
-                  <div>
-                    <h4>2. Compare Areas - השוואת אזורים</h4>
-                    <p>כל נקודה היא חציון מחירים של כל העסקאות באותה שנה וגוש. מתאים להשוואת מחירים טיפוסיים בין אזורים ומעקב אחר מגמות.</p>
-                  </div>
-                  <div>
-                    <h4>3. City Comparison - השוואת ערים</h4>
-                    <p>כל נקודה היא חציון מחירים של כל העסקאות באותה שנה ועיר. מתאים להשוואת ערים ולניתוח מגמות עירוניות.</p>
-                  </div>
-                  <div>
-                    <h4>4. City Performance - ביצועי עיר</h4>
-                    <p>מציג גושים טובים, טיפוסיים, וגרועים בתוך עיר לפי שינויי מחירים לאורך זמן.</p>
-                  </div>
-                  <div>
-                    <h4>5. Gush Map - מפת גושים</h4>
-                    <p>מציגה את הגושים על גבי מפת רחובות, מאפשרת לבחור גושים בלחיצה, ואז להשתמש באותה בחירה בניתוח עסקאות או בהשוואת אזורים.</p>
-                  </div>
+                  <div><h4><a href="#analysis">חיפוש וניתוח עסקאות</a></h4><p>לחיפוש כתובת ולבדיקת עסקאות בודדות. בגרף כל נקודה היא עסקה. לחיצה עליה פותחת את פרטי העסקה ואת העסקאות הנוספות שנמצאו לאותו מזהה, ועוזרת להבין את פערי המחירים בתוך האזור.</p></div>
+                  <div><h4><a href="#compare">השוואת אזורים</a></h4><p>כל סדרה מסכמת את העסקאות ברחוב או בגוש לפי שנה. ברירת המחדל היא חציון המחיר, ואפשר לבחור גם מדדים אחרים. מתאים להשוואת מחירים טיפוסיים בין אזורים ולמעקב אחר מגמות.</p></div>
+                  <div><h4><a href="#city">השוואת ערים</a></h4><p>כל סדרה מסכמת עסקאות בעיר לפי שנה; ברירת המחדל היא חציון המחיר למ״ר. אפשר להציג ערכים מוחלטים או שינוי ביחס לשנת בסיס משותפת. כדאי להשוות תקופות ומאפייני נכסים דומים, ולבדוק שיש מספיק עסקאות בכל שנה.</p></div>
+                  <div><h4><a href="#gush">מגמות מחירים לפי גוש</a></h4><p>מציג גושים לפי שינוי המחירים בין שנות קצה משותפות, בכפוף למספר עסקאות מינימלי. מאפשר לבחור גושים עם עלייה גבוהה, נמוכה או קרובה לאמצע. שינוי בחציון של קבוצת עסקאות אינו תשואה של דירה מסוימת.</p></div>
+                  <div><h4><a href="#map">מפת גושים</a></h4><p>מציגה גבולות גושים על מפת רחובות. אפשר לבחור גושים בלחיצה ולהמשיך עם אותה בחירה לניתוח עסקאות או להשוואת אזורים. המפה אינה מציגה מיקום מדויק של דירות; גוש ללא גבול זמין יכול עדיין לכלול עסקאות.</p></div>
+                  <div><h4><a href="#downloads">ייצוא נתונים</a></h4><p>להורדת עסקאות או סיכומים לפי מסנני המסך שבחרתם.</p></div>
                 </div>
               </section>
 
               <section class="about-section">
                 <h3>תוספות פחות שגרתיות</h3>
                 <h4>חריגים (Outliers)</h4>
-                <p>
-                  חריגים הם עסקאות בעלות מחירים גבוהים או נמוכים באופן קיצוני ביחס לשאר העסקאות באותו אזור, או עם מספר חדרים לא הגיוני, או שטח דירה קטנטן או ענק באופן מחשיד. ניתן לסנן החוצה חריגים אלה כדי למנוע הטיה של הניתוח.
-                </p>
+                <p>עסקאות עם מחיר או שטח יוצאי דופן יכולות להשפיע מאוד על התמונה. אפשר להפעיל סינון חריגי מחיר, ובמסך ניתוח העסקאות גם סינון חריגי שטח. הסינון נעשה לפי כללים סטטיסטיים, ולא קובע שהעסקה שגויה. כדאי להשוות את הגרף עם הסינון ובלעדיו, במיוחד כשיש מעט עסקאות. ערכים חשודים במספר החדרים או במאפיינים אחרים אפשר לבדוק ולסנן בנפרד.</p>
                 <h4>קו השוואה למדד S&amp;P 500</h4>
-                <p>
-                  הקו המשווה למדד S&amp;P 500 מחשב כיצד היה הכסף מתפתח אילו הושקע במדד S&amp;P 500 במקום בנדל"ן. המדד מתואם לשקלים כדי להתחשב בשינויי שער חליפין.
-                </p>
+                <p>קו ההשוואה מאפשר לראות איך סכום בסיס היה משתנה עם מדד S&amp;P 500 לאורך השנים המוצגות. סדרת המדד שבאתר כוללת השקעה מחדש של דיבידנדים ומומרת לשקלים כדי להביא בחשבון את שינויי שער הדולר. הקו מותאם לערך בסיס של נתוני הנדל״ן בתחילת תקופת ההשוואה, כדי שאפשר יהיה להשוות את קצב השינוי.</p>
+                <p>זו השוואת מגמות: היא אינה כוללת את כל מרכיבי ההשקעה בדירה או בשוק ההון, כמו שכר דירה, תחזוקה, מימון, מסים ועמלות. הקו מוצג רק בשנים שיש להן נתוני מדד מתאימים.</p>
                 <h4>קו השוואה עירוני</h4>
-                <p>
-                  קו ההשוואה העירוני מציג את החציון של מחירי הנדל"ן בעיר כולה, עם אותם מסננים שהוחלו על הנתונים המוצגים. כך אפשר להשוות את האזור הספציפי לעיר בכללותה.
-                </p>
+                <p>קו ההשוואה העירוני מוסיף לגרף את נתוני העיר כולה, כדי לראות איך האזור שבחרתם משתווה לסביבתו. במסך ניתוח העסקאות הוא מציג חציון שנתי; במסכי ההשוואה הוא מחושב לפי המדד שנבחר. מסנני מאפייני העסקאות, כגון שנים, חדרים וסוג נכס, חלים גם עליו, בעוד שהבחירה ברחובות או בגושים אינה מגבילה אותו. עדיין ייתכנו הבדלים בהרכב הדירות שנמכרו באזור ובעיר כולה.</p>
+              </section>
+
+              <section class="about-section about-faq">
+                <h3>שאלות שחוזרות בזמן החיפוש</h3>
+                <details><summary>למה עסקה שאני מכיר לא מופיעה?</summary><p>המקור אינו בהכרח מלא. ייתכן שהעסקה עדיין לא נאספה, שהכתובת חסרה, שלא נמצא קישור אמין או שהמסננים מסתירים אותה. נסו חיפוש כתובת עם טווח שנים רחב וללא קומה, ובדקו את הכיסוי בעיר. חיפוש הכתובת כולל גם מכירות חלקיות וחלק לא ידוע, בעוד שבניתוח ברירת המחדל היא מכירות מלאות.</p></details>
+                <details><summary>למה לאותו דיווח יש מספר חדרים או שטח שונה?</summary><p>המקורות עשויים לדווח פרטים שונים גם כשמזהה הנכס, המחיר והתאריך תואמים. בתצוגת ההיסטוריה דיווחים מקבילים מתאימים מופיעים יחד, ואת ההבדלים אפשר לפתוח בהשוואת הדיווחים. רשומות המקור נשמרות.</p></details>
+                <details><summary>האם כמה תאריכים באותו מזהה הם בהכרח מכירות חוזרות של אותה דירה?</summary><p>לא בהכרח. הקישור מבוסס על עיר ומזהה גוש, חלקה ותת־חלקה, והוא מועמד לבדיקה. המזהה או מאפייני הנכס עשויים להשתנות, ודיווחים באותו יום יכולים להיות כפולים או מכירות של חלקים. לכן מבחינים בין מספר רשומות למספר תאריכי עסקה.</p></details>
+                <details><summary>איך מתייחסים לחלק מהנכס ולמידע חסר?</summary><p>בניתוח מוצגות כברירת מחדל מכירות של 100% מהנכס. אם בוחרים מכירות חלקיות, המחיר הוא הסכום שדווח לחלק שנמכר; הוא אינו מומר למחיר דירה שלמה. ערך חסר אינו אפס ואינו מעיד שהתכונה אינה קיימת. סינון לפי רחוב או קומה עלול להוציא עסקאות שבהן המידע הזה חסר.</p></details>
+                <details><summary>האם אפשר לסנן דירות גג או פרויקטים חדשים?</summary><p>לא בפיילוט הנוכחי: המידע על גג וסטטוס פרויקט חדש אינו ידוע במקור. אין להסיק מערך חסר שמדובר בדירה רגילה או ביד שנייה.</p></details>
               </section>
 
               <section class="about-section">
+                <h3>מגבלות ושימוש בנתונים</h3>
+                <p>זהו כלי לחקירה ולהשוואה, המבוסס על דיווחי המקור ועל כללי עיבוד וקישור. ייתכנו חוסרים, שגיאות והבדלים בין דיווחים. לפני הסתמכות על עסקה מסוימת, בדקו את פרטי המקור ואת בסיס ההתאמה.</p>
+                <p>כמובן שהוא מסופק "כפי שהוא", ללא אחריות מכל סוג, מפורשת או משתמעת. כל שימוש הוא באחריות המשתמשים בלבד, ולא אקח אחריות על החלטות המבוססות על הנתונים או הניתוחים המוצגים כאן, על שגיאה בניתוח או על כל דבר אחר.</p>
+                <h4>מה עובד, ומה עוד בדרך?</h4>
+                <p>לא כל הפונקציונליות פועלת באופן מושלם, וישנן תכונות מתוכננות שטרם יושמו. האתר מאוחסן על שרת חלש (=זול) עם זיכרון מוגבל, לכן ייתכנו בעיות ביצועים במקרים מסוימים.</p>
                 <h3>קריאה נוספת</h3>
-                <p>
-                  לפני שאתם רצים להשקיע בנדל"ן, מוזמנים גם לקרוא משהו שכתבתי לפני כעשור על
-                  <a href="https://wp.me/p9vBZz-hd" target="_blank" rel="noopener">השקעה בדירה או בשוק ההון?</a>
-                </p>
+                <p>מוזמנים גם לקרוא משהו שכתבתי על <a href="https://wp.me/p9vBZz-hd" target="_blank" rel="noopener">השקעה בדירה או בשוק ההון?</a></p>
                 <h3>צור קשר</h3>
-                <p>הערות, הצעות ושאלות יתקבלו בברכה בכתובת: <span class="ltr-text">hovav@hotmail.com</span></p>
+                <p>הערות, הצעות ושאלות יתקבלו בברכה בכתובת <a class="ltr-text" href="mailto:drorhovav1@gmail.com">drorhovav1@gmail.com</a>. כשמדווחים על עסקה חסרה או על תוצאה מפתיעה, כדאי לצרף כתובת, תאריך וקישור למסך הרלוונטי.</p>
               </section>
             </article>
           </section>
@@ -660,10 +706,10 @@
                 </div>
               </div>
               <div class="workflow-quick-grid">
-                <label>Y value<select id="compare-y-variable"><option value="price_millions">Price</option><option value="price_per_m2">Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
-                <label>Statistic<select id="compare-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
-                <label>Color palette<select id="compare-color-palette"><option value="okabe">Okabe-Ito</option><option value="default">Default</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option><option value="category20">Category20</option><option value="grey">Grey</option></select></label>
-                <label>Shape palette<select id="compare-shape-palette"><option value="default">Default</option><option value="open">Open</option><option value="solid">Solid</option><option value="mixed">Mixed</option></select></label>
+                <label>Y value<select id="compare-y-variable" autocomplete="off"><option value="price_millions">Price</option><option value="price_per_m2">Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
+                <label>Statistic<select id="compare-statistic" autocomplete="off"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                <label>Color palette<select id="compare-color-palette" autocomplete="off"><option value="okabe">Okabe-Ito</option><option value="default">Default</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option><option value="category20">Category20</option><option value="grey">Grey</option></select></label>
+                <label>Shape palette<select id="compare-shape-palette" autocomplete="off"><option value="default">Default</option><option value="open">Open</option><option value="solid">Solid</option><option value="mixed">Mixed</option></select></label>
                 <label class="checkbox-field"><input id="compare-reverse-colors" type="checkbox"> Reverse colors</label>
               </div>
               <details class="advanced-filters compare-filter-details" open>
@@ -674,14 +720,14 @@
                       <h4>Deal ranges</h4>
                     </div>
                     <div class="range-grid">
-                      <label>Deal years from<input id="compare-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                      <label>Deal years to<input id="compare-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                      <label>Price from (₪m)<input id="compare-filter-price-min" inputmode="decimal"></label>
-                      <label>Price to (₪m)<input id="compare-filter-price-max" inputmode="decimal"></label>
-                      <label>Price / m² from (₪k)<input id="compare-filter-price-m2-min" inputmode="decimal"></label>
-                      <label>Price / m² to (₪k)<input id="compare-filter-price-m2-max" inputmode="decimal"></label>
-                      <label>Area from (m²)<input id="compare-filter-area-min" inputmode="decimal"></label>
-                      <label>Area to (m²)<input id="compare-filter-area-max" inputmode="decimal"></label>
+                      <label>Deal years from<input id="compare-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                      <label>Deal years to<input id="compare-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                      <label>Price from (₪m)<input id="compare-filter-price-min" inputmode="decimal" autocomplete="off"></label>
+                      <label>Price to (₪m)<input id="compare-filter-price-max" inputmode="decimal" autocomplete="off"></label>
+                      <label>Price / m² from (₪k)<input id="compare-filter-price-m2-min" inputmode="decimal" autocomplete="off"></label>
+                      <label>Price / m² to (₪k)<input id="compare-filter-price-m2-max" inputmode="decimal" autocomplete="off"></label>
+                      <label>Area from (m²)<input id="compare-filter-area-min" inputmode="decimal" autocomplete="off"></label>
+                      <label>Area to (m²)<input id="compare-filter-area-max" inputmode="decimal" autocomplete="off"></label>
                     </div>
                   </div>
                   <div class="filter-cluster">
@@ -697,12 +743,12 @@
                       </span>
                     </div>
                     <div id="compare-rooms-chip-group" class="filter-chip-group" aria-label="Compare rooms"></div>
-                    <select id="compare-rooms-select" class="native-filter-select" multiple size="4"></select>
+                    <select id="compare-rooms-select" class="native-filter-select" multiple size="4" autocomplete="off"></select>
                     <label class="apartment-type-filter">
                       Apartment type
                       <input id="compare-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
                       <div id="compare-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Compare apartment types"></div>
-                      <select id="compare-apartment-type-select" class="native-filter-select" multiple size="4"></select>
+                      <select id="compare-apartment-type-select" class="native-filter-select" multiple size="4" autocomplete="off"></select>
                     </label>
                   </div>
                   <div class="filter-cluster">
@@ -717,14 +763,14 @@
                       <label><input id="compare-include-unknown-building-age" type="checkbox" checked> Age</label>
                     </div>
                     <div class="range-grid">
-                      <label>Floor min<input id="compare-filter-floor-min" inputmode="numeric"></label>
-                      <label>Floor max<input id="compare-filter-floor-max" inputmode="numeric"></label>
-                      <label>Building floors min<input id="compare-filter-building-floors-min" inputmode="numeric"></label>
-                      <label>Building floors max<input id="compare-filter-building-floors-max" inputmode="numeric"></label>
-                      <label>Built year min<input id="compare-filter-built-year-min" inputmode="numeric"></label>
-                      <label>Built year max<input id="compare-filter-built-year-max" inputmode="numeric"></label>
-                      <label>Building age min<input id="compare-filter-building-age-min" inputmode="numeric"></label>
-                      <label>Building age max<input id="compare-filter-building-age-max" inputmode="numeric"></label>
+                      <label>Floor min<input id="compare-filter-floor-min" inputmode="numeric" autocomplete="off"></label>
+                      <label>Floor max<input id="compare-filter-floor-max" inputmode="numeric" autocomplete="off"></label>
+                      <label>Building floors min<input id="compare-filter-building-floors-min" inputmode="numeric" autocomplete="off"></label>
+                      <label>Building floors max<input id="compare-filter-building-floors-max" inputmode="numeric" autocomplete="off"></label>
+                      <label>Built year min<input id="compare-filter-built-year-min" inputmode="numeric" autocomplete="off"></label>
+                      <label>Built year max<input id="compare-filter-built-year-max" inputmode="numeric" autocomplete="off"></label>
+                      <label>Building age min<input id="compare-filter-building-age-min" inputmode="numeric" autocomplete="off"></label>
+                      <label>Building age max<input id="compare-filter-building-age-max" inputmode="numeric" autocomplete="off"></label>
                     </div>
                   </div>
                   <div class="filter-cluster">
@@ -733,7 +779,7 @@
                     </div>
                     <div class="segmented-field">
                       <span>Top floor / roof</span>
-                      <select id="compare-roof-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                      <select id="compare-roof-select" class="native-filter-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
                       <div class="segmented-control" data-select="compare-roof-select">
                         <button type="button" data-value="both">Both</button>
                         <button type="button" data-value="yes">Yes</button>
@@ -742,7 +788,7 @@
                     </div>
                     <div class="segmented-field">
                       <span>New project</span>
-                      <select id="compare-new-project-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                      <select id="compare-new-project-select" class="native-filter-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
                       <div class="segmented-control" data-select="compare-new-project-select">
                         <button type="button" data-value="both">Both</button>
                         <button type="button" data-value="yes">Yes</button>
@@ -842,10 +888,10 @@
               <div class="city-picker-layout">
                 <div class="picker-block">
                   <label for="city-comparison-search">Select Cities to Compare</label>
-                  <input id="city-comparison-search" autocomplete="off" placeholder="Search city name">
+                  <input type="search" id="city-comparison-search" autocomplete="off" placeholder="Search city name">
                   <div id="city-comparison-selected" class="selected-chips"></div>
                   <div id="city-comparison-results" class="picker-results" aria-live="polite"></div>
-                  <select id="city-comparison-select" class="native-picker-select" multiple size="8"></select>
+                  <select id="city-comparison-select" class="native-picker-select" multiple size="8" autocomplete="off"></select>
                 </div>
               </div>
             </section>
@@ -866,14 +912,14 @@
                     <h4>Deal ranges</h4>
                   </div>
                   <div class="range-grid city-filter-range-grid">
-                    <label>Deal years from<input id="city-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                    <label>Deal years to<input id="city-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                    <label>Price from (₪m)<input id="city-filter-price-min" inputmode="decimal"></label>
-                    <label>Price to (₪m)<input id="city-filter-price-max" inputmode="decimal"></label>
-                    <label>Price / m² from (₪k)<input id="city-filter-price-m2-min" inputmode="decimal"></label>
-                    <label>Price / m² to (₪k)<input id="city-filter-price-m2-max" inputmode="decimal"></label>
-                    <label>Area from (m²)<input id="city-filter-area-min" inputmode="decimal"></label>
-                    <label>Area to (m²)<input id="city-filter-area-max" inputmode="decimal"></label>
+                    <label>Deal years from<input id="city-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                    <label>Deal years to<input id="city-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                    <label>Price from (₪m)<input id="city-filter-price-min" inputmode="decimal" autocomplete="off"></label>
+                    <label>Price to (₪m)<input id="city-filter-price-max" inputmode="decimal" autocomplete="off"></label>
+                    <label>Price / m² from (₪k)<input id="city-filter-price-m2-min" inputmode="decimal" autocomplete="off"></label>
+                    <label>Price / m² to (₪k)<input id="city-filter-price-m2-max" inputmode="decimal" autocomplete="off"></label>
+                    <label>Area from (m²)<input id="city-filter-area-min" inputmode="decimal" autocomplete="off"></label>
+                    <label>Area to (m²)<input id="city-filter-area-max" inputmode="decimal" autocomplete="off"></label>
                   </div>
                 </div>
                 <div class="filter-cluster">
@@ -889,12 +935,12 @@
                     </span>
                   </div>
                   <div id="city-rooms-chip-group" class="filter-chip-group" aria-label="City comparison rooms"></div>
-                  <select id="city-rooms-select" class="native-filter-select" multiple size="4"></select>
+                  <select id="city-rooms-select" class="native-filter-select" multiple size="4" autocomplete="off"></select>
                   <label class="apartment-type-filter">
                     Apartment type
                     <input id="city-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
                     <div id="city-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="City comparison apartment types"></div>
-                    <select id="city-apartment-type-select" class="native-filter-select" multiple size="4"></select>
+                    <select id="city-apartment-type-select" class="native-filter-select" multiple size="4" autocomplete="off"></select>
                   </label>
                 </div>
                 <div class="filter-cluster">
@@ -909,14 +955,14 @@
                     <label><input id="city-include-unknown-building-age" type="checkbox" checked> Age</label>
                   </div>
                   <div class="range-grid city-filter-range-grid">
-                    <label>Floor min<input id="city-filter-floor-min" inputmode="numeric"></label>
-                    <label>Floor max<input id="city-filter-floor-max" inputmode="numeric"></label>
-                    <label>Building floors min<input id="city-filter-building-floors-min" inputmode="numeric"></label>
-                    <label>Building floors max<input id="city-filter-building-floors-max" inputmode="numeric"></label>
-                    <label>Built year min<input id="city-filter-built-year-min" inputmode="numeric"></label>
-                    <label>Built year max<input id="city-filter-built-year-max" inputmode="numeric"></label>
-                    <label>Building age min<input id="city-filter-building-age-min" inputmode="numeric"></label>
-                    <label>Building age max<input id="city-filter-building-age-max" inputmode="numeric"></label>
+                    <label>Floor min<input id="city-filter-floor-min" inputmode="numeric" autocomplete="off"></label>
+                    <label>Floor max<input id="city-filter-floor-max" inputmode="numeric" autocomplete="off"></label>
+                    <label>Building floors min<input id="city-filter-building-floors-min" inputmode="numeric" autocomplete="off"></label>
+                    <label>Building floors max<input id="city-filter-building-floors-max" inputmode="numeric" autocomplete="off"></label>
+                    <label>Built year min<input id="city-filter-built-year-min" inputmode="numeric" autocomplete="off"></label>
+                    <label>Built year max<input id="city-filter-built-year-max" inputmode="numeric" autocomplete="off"></label>
+                    <label>Building age min<input id="city-filter-building-age-min" inputmode="numeric" autocomplete="off"></label>
+                    <label>Building age max<input id="city-filter-building-age-max" inputmode="numeric" autocomplete="off"></label>
                   </div>
                 </div>
                 <div class="filter-cluster">
@@ -925,7 +971,7 @@
                   </div>
                   <div class="segmented-field">
                     <span>Top floor / roof</span>
-                    <select id="city-roof-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                    <select id="city-roof-select" class="native-filter-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
                     <div class="segmented-control" data-select="city-roof-select">
                       <button type="button" data-value="both">Both</button>
                       <button type="button" data-value="yes">Yes</button>
@@ -934,7 +980,7 @@
                   </div>
                   <div class="segmented-field">
                     <span>New project</span>
-                    <select id="city-new-project-select" class="native-filter-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
+                    <select id="city-new-project-select" class="native-filter-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select>
                     <div class="segmented-control" data-select="city-new-project-select">
                       <button type="button" data-value="both">Both</button>
                       <button type="button" data-value="yes">Yes</button>
@@ -946,7 +992,7 @@
                   <div class="filter-section-heading is-first">
                     <h4>City comparison only</h4>
                   </div>
-                <label>Min deals / year<input id="city-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="10"></label>
+                <label>Min deals / year<input id="city-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="10" autocomplete="off"></label>
                 </div>
               </div>
             </section>
@@ -963,22 +1009,22 @@
                     <h3>Plot Controls</h3>
                   </div>
                   <div class="plot-control-grid">
-                    <label>Y-axis Variable<select id="city-y-variable"><option value="price_millions">Price</option><option value="price_per_m2" selected>Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
-                    <label>Statistic<select id="city-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
-                    <label>Chart mode<select id="city-chart-mode"><option value="absolute">Absolute</option><option value="indexed">Index to first year</option><option value="change">Change from first year</option></select></label>
-                    <label>Palette<select id="city-color-palette"><option value="default">Category20</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option></select></label>
+                    <label>Y-axis Variable<select id="city-y-variable" autocomplete="off"><option value="price_millions">Price</option><option value="price_per_m2" selected>Price / m²</option><option value="price_per_room">Price / Room</option><option value="n_deals">Deals</option></select></label>
+                    <label>Statistic<select id="city-statistic" autocomplete="off"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                    <label>Chart mode<select id="city-chart-mode" autocomplete="off"><option value="absolute">Absolute</option><option value="indexed">Index to first year</option><option value="change">Change from first year</option></select></label>
+                    <label>Palette<select id="city-color-palette" autocomplete="off"><option value="default">Category20</option><option value="bold">Bold</option><option value="soft">Soft</option><option value="contrast">High contrast</option><option value="earth">Earth</option></select></label>
                   </div>
                   <div class="plot-toggle-row city-plot-options">
                     <label><input id="city-reverse-colors" type="checkbox"> Reverse color order</label>
                     <label><input id="city-show-points" type="checkbox" checked> Show points</label>
-                    <label title="Smallest marker size for city/year points, scaled by deal count.">Point min<input id="city-point-size-min" inputmode="decimal" type="number" min="1" max="20" step="0.5" value="3"></label>
-                    <label title="Largest marker size for city/year points, scaled by deal count.">Point max<input id="city-point-size-max" inputmode="decimal" type="number" min="1" max="30" step="0.5" value="10"></label>
+                    <label title="Smallest marker size for city/year points, scaled by deal count.">Point min<input id="city-point-size-min" inputmode="decimal" type="number" min="1" max="20" step="0.5" value="3" autocomplete="off"></label>
+                    <label title="Largest marker size for city/year points, scaled by deal count.">Point max<input id="city-point-size-max" inputmode="decimal" type="number" min="1" max="30" step="0.5" value="10" autocomplete="off"></label>
                     <label><input id="city-show-sp500" type="checkbox"> S&amp;P 500</label>
                   </div>
                 </section>
                 <section class="city-plot-panel">
                   <div class="city-plot-title">Plot</div>
-                  <div id="city-state" class="state"></div>
+                  <label class="partial-year-toggle"><input id="city-include-partial-year" type="checkbox">כלול את שנת האיסוף החלקית</label><div id="city-state" class="state"></div>
                   <div id="city-filter-summary" class="performance-summary"></div>
                   <div id="city-data-info" class="performance-info"></div>
                   <div id="city-chart" class="chart chart-guide">
@@ -1063,7 +1109,7 @@
                   </div>
                   <label>
                     City
-                    <select id="gush-city-select"></select>
+                    <select id="gush-city-select" autocomplete="off"></select>
                   </label>
                   <div id="gush-city-current" class="selected-city-readout"></div>
                 </section>
@@ -1075,10 +1121,10 @@
                 </div>
               </div>
               <div class="workflow-quick-grid performance-quick-grid">
-                <label>Top<input id="gush-top-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5"></label>
-                <label>Typical<input id="gush-typical-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="0"></label>
-                <label>Bottom<input id="gush-bottom-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5"></label>
-                <label>Min deals<input id="gush-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="5"></label>
+                <label>Top<input id="gush-top-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5" autocomplete="off"></label>
+                <label>Typical<input id="gush-typical-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="0" autocomplete="off"></label>
+                <label>Bottom<input id="gush-bottom-count" inputmode="numeric" type="number" min="0" max="25" step="1" value="5" autocomplete="off"></label>
+                <label>Min deals<input id="gush-min-deals" inputmode="numeric" type="number" min="1" max="1000" step="1" value="5" autocomplete="off"></label>
               </div>
               <details class="advanced-filters performance-advanced-filters" open>
                 <summary>Step 3: Additional filters</summary>
@@ -1087,14 +1133,14 @@
                   <button id="reset-gush-filters" class="secondary compact-button" type="button">Reset</button>
                 </div>
                 <div class="range-grid">
-                  <label>Deal years from<input id="gush-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                  <label>Deal years to<input id="gush-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1"></label>
-                  <label>Price from (₪m)<input id="gush-filter-price-min" inputmode="decimal"></label>
-                  <label>Price to (₪m)<input id="gush-filter-price-max" inputmode="decimal"></label>
-                  <label>Price / m² from (₪k)<input id="gush-filter-price-m2-min" inputmode="decimal"></label>
-                  <label>Price / m² to (₪k)<input id="gush-filter-price-m2-max" inputmode="decimal"></label>
-                  <label>Area from (m²)<input id="gush-filter-area-min" inputmode="decimal"></label>
-                  <label>Area to (m²)<input id="gush-filter-area-max" inputmode="decimal"></label>
+                  <label>Deal years from<input id="gush-filter-year-min" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                  <label>Deal years to<input id="gush-filter-year-max" inputmode="numeric" type="number" min="1998" max="2027" step="1" autocomplete="off"></label>
+                  <label>Price from (₪m)<input id="gush-filter-price-min" inputmode="decimal" autocomplete="off"></label>
+                  <label>Price to (₪m)<input id="gush-filter-price-max" inputmode="decimal" autocomplete="off"></label>
+                  <label>Price / m² from (₪k)<input id="gush-filter-price-m2-min" inputmode="decimal" autocomplete="off"></label>
+                  <label>Price / m² to (₪k)<input id="gush-filter-price-m2-max" inputmode="decimal" autocomplete="off"></label>
+                  <label>Area from (m²)<input id="gush-filter-area-min" inputmode="decimal" autocomplete="off"></label>
+                  <label>Area to (m²)<input id="gush-filter-area-max" inputmode="decimal" autocomplete="off"></label>
                 </div>
                 <div class="filter-section-heading">
                   <h4>Apartment mix</h4>
@@ -1108,12 +1154,12 @@
                   </span>
                 </div>
                 <div id="gush-rooms-chip-group" class="filter-chip-group performance-room-chips" aria-label="Gush performance rooms"></div>
-                <select id="gush-rooms-select" class="native-filter-select" multiple size="5"></select>
+                <select id="gush-rooms-select" class="native-filter-select" multiple size="5" autocomplete="off"></select>
                 <label class="apartment-type-filter">
                   Apartment type
                   <input id="gush-apartment-type-search" autocomplete="off" placeholder="Search apartment types">
                   <div id="gush-apartment-type-chip-group" class="filter-chip-group filter-chip-scroll" aria-label="Gush performance apartment types"></div>
-                  <select id="gush-apartment-type-select" class="native-filter-select" multiple size="5"></select>
+                  <select id="gush-apartment-type-select" class="native-filter-select" multiple size="5" autocomplete="off"></select>
                 </label>
                 <div class="filter-section-heading">
                   <h4>Building attributes</h4>
@@ -1126,16 +1172,16 @@
                   <label><input id="gush-include-unknown-building-age" type="checkbox" checked> Age</label>
                 </div>
                 <div class="range-grid">
-                  <label>Floor from<input id="gush-filter-floor-min" inputmode="numeric"></label>
-                  <label>Floor to<input id="gush-filter-floor-max" inputmode="numeric"></label>
-                  <label>Building floors from<input id="gush-filter-building-floors-min" inputmode="numeric"></label>
-                  <label>Building floors to<input id="gush-filter-building-floors-max" inputmode="numeric"></label>
-                  <label>Built year from<input id="gush-filter-built-year-min" inputmode="numeric"></label>
-                  <label>Built year to<input id="gush-filter-built-year-max" inputmode="numeric"></label>
-                  <label>Building age from<input id="gush-filter-building-age-min" inputmode="numeric"></label>
-                  <label>Building age to<input id="gush-filter-building-age-max" inputmode="numeric"></label>
-                  <label>Top floor / roof<select id="gush-roof-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
-                  <label>New project<select id="gush-new-project-select"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                  <label>Floor from<input id="gush-filter-floor-min" inputmode="numeric" autocomplete="off"></label>
+                  <label>Floor to<input id="gush-filter-floor-max" inputmode="numeric" autocomplete="off"></label>
+                  <label>Building floors from<input id="gush-filter-building-floors-min" inputmode="numeric" autocomplete="off"></label>
+                  <label>Building floors to<input id="gush-filter-building-floors-max" inputmode="numeric" autocomplete="off"></label>
+                  <label>Built year from<input id="gush-filter-built-year-min" inputmode="numeric" autocomplete="off"></label>
+                  <label>Built year to<input id="gush-filter-built-year-max" inputmode="numeric" autocomplete="off"></label>
+                  <label>Building age from<input id="gush-filter-building-age-min" inputmode="numeric" autocomplete="off"></label>
+                  <label>Building age to<input id="gush-filter-building-age-max" inputmode="numeric" autocomplete="off"></label>
+                  <label>Top floor / roof<select id="gush-roof-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
+                  <label>New project<select id="gush-new-project-select" autocomplete="off"><option value="both">Both</option><option value="yes">Yes</option><option value="no">No</option></select></label>
                 </div>
               </details>
             </section>
@@ -1152,15 +1198,15 @@
                     <h3>Plot Controls</h3>
                   </div>
                   <div class="plot-control-grid">
-                    <label>Y-axis Variable<select id="gush-y-variable"><option value="price_millions">Median price (M₪)</option><option value="price_per_m2" selected>Median price / m² (k₪)</option><option value="price_per_room">Median price / room</option><option value="n_deals">Number of deals</option></select></label>
-                    <label>Statistic<select id="gush-statistic"><option value="median">Median</option><option value="mean">Mean</option></select></label>
+                    <label>Y-axis Variable<select id="gush-y-variable" autocomplete="off"><option value="price_millions">Median price (M₪)</option><option value="price_per_m2" selected>Median price / m² (k₪)</option><option value="price_per_room">Median price / room</option><option value="n_deals">Number of deals</option></select></label>
+                    <label>Statistic<select id="gush-statistic" autocomplete="off"><option value="median">Median</option><option value="mean">Mean</option></select></label>
                   </div>
                   <div class="plot-toggle-row">
                     <label><input id="gush-show-sp500" type="checkbox"> S&amp;P 500</label>
                     <label><input id="gush-show-city-overlay" type="checkbox"> City-wide</label>
                   </div>
                 </section>
-            <div id="gush-state" class="state"></div>
+            <label class="partial-year-toggle"><input id="gush-include-partial-year" type="checkbox">כלול את שנת האיסוף החלקית</label><div id="gush-state" class="state"></div>
             <div id="gush-filter-summary" class="performance-summary"></div>
             <div id="gush-performance-info" class="performance-info"></div>
             <div class="performance-actions">
@@ -1197,10 +1243,10 @@
             <div class="panel-heading">
               <div>
                 <h2>Exports</h2>
-                <p>CSV exports use the filter panel for the workflow you export.</p>
+                <p>בחרו סוג ייצוא ובדקו את המסננים לפני ההורדה. קובץ CSV מכיל את כל השורות המתאימות, ללא דגימת הגרף וללא סינון מקומי של הטבלה.</p>
               </div>
             </div>
-            <div id="download-state" class="state"></div>
+            <div id="download-state" class="state"></div><section id="export-preview" class="export-preview" hidden aria-live="polite"></section>
             <div class="download-grid">
               <button data-download="analysis" type="button">Analysis deals CSV</button>
               <button data-download="compare-summary" type="button">Compare summary CSV</button>

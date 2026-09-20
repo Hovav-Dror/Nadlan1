@@ -27,3 +27,9 @@ Thumbs.db
 data/raw/
 data_odata/
 data_odata_current/
+
+# Isolated OVER pilot build and response caches
+data_over/
+data_over_linked/
+.cache/
+.cache_over/

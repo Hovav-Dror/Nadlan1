@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Optional, Sequence
+from math import isfinite
 
 import pandas as pd
 
@@ -9,6 +10,7 @@ from .calculations import (
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
     apply_common_filters,
+    apply_transaction_filters,
     price_used,
     remove_price_outliers_global_iqr,
     sp500_normalized,
@@ -34,7 +36,7 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
     city_frame = data_store.load_cities([city["id"] for city in selection["cities"]])
     raw_rows = int(len(city_frame))
 
-    filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(city_frame, _non_location_filters(request_payload.get("filters")))
     filtered_rows = int(len(filtered))
 
     if _remove_price_outliers(request_payload):
@@ -59,7 +61,7 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
             warnings.append(f"Hidden {before - len(table)} city/year points below {min_deals} deals.")
     plot_table = _without_year_rows(table, 2027) if _exclude_2027(request_payload) else table
     series = build_city_year_series(plot_table)
-    city_stats = build_city_stats(table, selection["cities"], y_variable)
+    city_stats = build_city_stats(plot_table, selection["cities"], y_variable)
     overlay_frame = _without_year(filtered, 2027) if _exclude_2027(request_payload) else filtered
     overlays, overlay_warnings = _overlays(overlay_frame, request_payload, y_variable)
     warnings.extend(overlay_warnings)
@@ -96,7 +98,7 @@ def build_city_comparison_raw_response(data_store: DataStore, payload: Optional[
 
     selection = resolve_city_comparison_selection(data_store, request_payload)
     city_frame = data_store.load_cities([city["id"] for city in selection["cities"]])
-    filtered = apply_common_filters(city_frame, _non_location_filters(request_payload.get("filters")))
+    filtered = apply_transaction_filters(city_frame, _non_location_filters(request_payload.get("filters")))
     filtered_rows = int(len(filtered))
 
     if _remove_price_outliers(request_payload):
@@ -207,66 +209,65 @@ def build_city_stats(
     selected_cities: Sequence[Mapping[str, Any]],
     y_variable: str,
 ) -> Dict[str, Any]:
-    if not table:
-        return {"cards": [], "ranking": [], "year_range": None}
-
     by_city: Dict[str, List[Mapping[str, Any]]] = {}
     for row in table:
         city = str(row.get("city") or row.get("city_label") or "")
         if city:
             by_city.setdefault(city, []).append(row)
 
-    first_years = []
-    last_years = []
+    # Chart eligibility has already removed low-count or explicitly excluded
+    # years. Rank only over two valid endpoint years shared by every series.
+    valid_by_city = {
+        city: {int(row["deal_year"]): row for row in rows
+               if row.get("deal_year") is not None
+               and _safe_float(row.get("y")) is not None
+               and isfinite(float(row["y"])) and float(row["y"]) > 0}
+        for city, rows in by_city.items()
+    }
+    shared = set.intersection(*(set(years) for years in valid_by_city.values())) if valid_by_city else set()
+    comparable = len(shared) >= 2
+    first_year = min(shared) if comparable else None
+    last_year = max(shared) if comparable else None
     ranking: List[Dict[str, Any]] = []
-    for city, rows in by_city.items():
-        ordered = sorted(
-            [row for row in rows if row.get("deal_year") is not None],
-            key=lambda row: int(row["deal_year"]),
-        )
-        if not ordered:
-            continue
-        first = ordered[0]
-        last = ordered[-1]
-        first_y = _safe_float(first.get("y"))
-        last_y = _safe_float(last.get("y"))
-        first_years.append(first.get("deal_year"))
-        last_years.append(last.get("deal_year"))
-        pct_change = None
-        absolute_change = None
-        if first_y is not None and last_y is not None:
-            absolute_change = _compact_number(last_y - first_y)
-            if first_y != 0:
-                pct_change = _compact_number(((last_y / first_y) - 1) * 100)
-        ranking.append(
-            {
-                "city": city,
-                "city_label": city,
-                "first_year": first.get("deal_year"),
-                "last_year": last.get("deal_year"),
-                "first_value": first.get("y"),
-                "last_value": last.get("y"),
-                "absolute_change": absolute_change,
-                "pct_change": pct_change,
-                "years": len(ordered),
-                "total_deals": _compact_number(sum((_safe_float(row.get("n_deals")) or 0) for row in ordered)),
-                "avg_deals_per_year": _compact_number(
-                    sum((_safe_float(row.get("n_deals")) or 0) for row in ordered) / len(ordered)
-                ),
-            }
-        )
-
-    ranking = sorted(
-        ranking,
-        key=lambda row: (row.get("pct_change") is None, 0 if row.get("pct_change") is None else -float(row["pct_change"]), str(row.get("city") or "")),
-    )
-
+    if comparable:
+        for city, valid_years in valid_by_city.items():
+            first = valid_years[first_year]
+            last = valid_years[last_year]
+            first_y = float(first["y"])
+            last_y = float(last["y"])
+            ordered = [row for row in by_city[city] if row.get("deal_year") is not None and first_year <= row["deal_year"] <= last_year]
+            deals = sum((_safe_float(row.get("n_deals")) or 0) for row in ordered)
+            ranking.append(
+                {
+                    "city": city,
+                    "city_label": city,
+                    "first_year": first_year,
+                    "last_year": last_year,
+                    "first_value": first["y"],
+                    "last_value": last["y"],
+                    "first_year_deals": first.get("n_deals"),
+                    "last_year_deals": last.get("n_deals"),
+                    "absolute_change": _compact_number(last_y - first_y),
+                    "pct_change": _compact_number((last_y / first_y - 1) * 100),
+                    "years": len(ordered),
+                    "total_deals": _compact_number(deals),
+                    "avg_deals_per_year": _compact_number(deals / len(ordered)),
+                }
+            )
+    ranking.sort(key=lambda row: (-float(row["pct_change"]), str(row["city"])))
     cards = _city_stat_cards(ranking, len(selected_cities), y_variable)
-    year_range = None
-    all_years = [year for year in first_years + last_years if year is not None]
-    if all_years:
-        year_range = {"min": min(all_years), "max": max(all_years)}
-    return {"cards": cards, "ranking": ranking, "year_range": year_range}
+    cards[1]["value"] = len(by_city)
+    return {
+        "cards": cards,
+        "ranking": ranking,
+        "year_range": {"min": first_year, "max": last_year} if comparable else None,
+        "first_year": first_year,
+        "last_year": last_year,
+        "comparison_basis": "common_plotted_endpoint_years",
+        "comparable": comparable,
+        "common_years": sorted(shared),
+        "note": "השינוי מחושב בין אותן שתי שנים בכל הערים המוצגות; הוא מתאר עסקאות שונות ולא תשואה של אותה דירה." if comparable else "אין שתי שנים עם ערכים תקינים המשותפות לכל הערים המוצגות. אפשר לצמצם את בחירת הערים או לשנות את תקופת ההשוואה וסף העסקאות.",
+    }
 
 
 def _city_stat_cards(ranking: Sequence[Mapping[str, Any]], selected_count: int, y_variable: str) -> List[Dict[str, Any]]:
@@ -362,6 +363,11 @@ def _raw_rows(df: pd.DataFrame) -> List[Dict[str, Any]]:
     columns = [
         column
         for column in [
+            "location_basis",
+            "location_reference_id",
+            "sale_portion",
+            "quality_flags",
+            "legacy_match",
             "city",
             "street",
             "Gush",

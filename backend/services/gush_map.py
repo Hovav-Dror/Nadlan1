@@ -64,6 +64,8 @@ def build_gush_map_response(data_store: DataStore, payload: Mapping[str, Any]) -
     missing = sorted(str(value) for value in missing_values)
     selected_missing = sorted(str(value) for value in selected_gushes - matched_gushes)
     warnings: List[str] = []
+    if missing:
+        warnings.append(f"חסרים מצולעים עבור {len(missing)} גושים בבחירה הנוכחית; המפה מציגה כיסוי חלקי.")
     if selected_missing:
         warnings.append(f"{len(selected_missing)} selected Gush polygons were not found in the local cache.")
     if not enriched_features:
@@ -90,6 +92,8 @@ def build_gush_map_response(data_store: DataStore, payload: Mapping[str, Any]) -
             "fetched_at": source.get("fetched_at"),
             "disclaimer": source.get("disclaimer"),
         },
+        "missing_gushes": missing,
+        "selected_missing_gushes": selected_missing,
         "warnings": warnings,
     }
 

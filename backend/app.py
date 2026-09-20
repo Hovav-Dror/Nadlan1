@@ -11,6 +11,7 @@ from werkzeug.exceptions import HTTPException
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from .config import Config
+from .services.calculations import CalculationServiceError
 from .services.analysis_deals import AnalysisDealsError, build_analysis_deals_response
 from .services.city_comparison import (
     CityComparisonError,
@@ -32,6 +33,8 @@ from .services.downloads import (
 from .services.filter_metadata import FilterMetadataError, build_filter_options, gush_detail, gush_search_results, street_search_results
 from .services.gush_performance import GushPerformanceError, build_gush_performance_summary_response
 from .services.gush_map import GushMapError, build_gush_map_response
+from .services.address_lookup import lookup_address
+from .services.deal_history import deal_history
 
 
 def create_app(config_object: Optional[type] = None) -> Flask:
@@ -54,6 +57,8 @@ def create_app(config_object: Optional[type] = None) -> Flask:
         response_cache_ttl_seconds=app.config["RESPONSE_CACHE_TTL_SECONDS"],
     )
     app.extensions["nadlan2_data_store"] = data_store
+    if app.config.get("LEGACY_DATA_DIR"):
+        app.extensions["legacy_address_store"] = DataStore(app.config["LEGACY_DATA_DIR"], city_cache_max_items=2)
 
     register_routes(app)
     register_error_handlers(app)
@@ -62,6 +67,29 @@ def create_app(config_object: Optional[type] = None) -> Flask:
 
 def register_routes(app: Flask) -> None:
     frontend_dir = Path(app.config["PROJECT_ROOT"]) / "frontend"
+
+    @app.get("/api/deals/detail")
+    def deal_detail():
+        started = time.perf_counter()
+        try:
+            data = deal_history(_data_store(), app.extensions.get("legacy_address_store"),
+                                request.args.get("city"), request.args.get("record"))
+        except (DataStoreError, CalculationServiceError) as exc:
+            return _error_response(exc.public_message, started, status_code=400)
+        return jsonify(_api_response(data=data, meta={"status": "ok"}, warnings=[], started=started))
+
+    @app.post("/api/address-lookup")
+    def address_lookup():
+        started = time.perf_counter()
+        legacy = app.extensions.get("legacy_address_store")
+        payload = request.get_json(silent=True)
+        if legacy is None or not isinstance(payload, dict):
+            return _error_response("חיפוש בשני המקורות זמין בפיילוט עם בקשה תקינה בלבד.", started, status_code=400)
+        try:
+            data = lookup_address(legacy, _data_store(), payload)
+        except (DataStoreError, CalculationServiceError) as exc:
+            return _error_response(exc.public_message, started, status_code=400)
+        return jsonify(_api_response(data=data, meta={"status":"ok"}, warnings=data["warnings"], started=started))
 
     @app.get("/api/status")
     def status():
@@ -424,6 +452,11 @@ def register_routes(app: Flask) -> None:
 
 
 def register_error_handlers(app: Flask) -> None:
+    @app.errorhandler(CalculationServiceError)
+    def calculation_error(exc):
+        return jsonify({"data": None, "meta": {"status": "error", "code": 400},
+                        "warnings": [exc.public_message]}), 400
+
     @app.errorhandler(HTTPException)
     def handle_http_error(exc: HTTPException):
         return (
@@ -465,6 +498,14 @@ def _api_response(
     warnings: List[str],
     started: float,
 ) -> Dict[str, Any]:
+    warnings = list(warnings)
+    payload = request.get_json(silent=True) if request.is_json else None
+    if (data is not None and isinstance(payload, dict)
+            and hasattr(_data_store(), "load_manifest")
+            and _data_store().load_manifest().get("source", {}).get("pilot")):
+        filters = payload.get("filters")
+        if isinstance(filters, dict) and filters.get("sale_portion", "full") != "full":
+            warnings.append("מחירי המקור מתייחסים לחלק שנמכר; לא בוצע נרמול למחיר נכס שלם.")
     return {
         "data": data,
         "meta": meta,
