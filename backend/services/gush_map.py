@@ -25,7 +25,7 @@ def build_gush_map_response(data_store: DataStore, payload: Mapping[str, Any]) -
         raise GushMapError("Choose a city or at least one Gush area before loading the map.")
 
     collection = data_store.load_gush_polygons()
-    features = _matching_features(collection.get("features") or [], requested_gushes, city_name, city_gush_ids)
+    features = _matching_features(collection.get("features") or [], requested_gushes, city_name)
     description_by_gush = {_gush_key(row.get("id")): row for row in city_gushes}
 
     enriched_features = []
@@ -110,25 +110,31 @@ def _matching_features(
     features: Iterable[Mapping[str, Any]],
     requested_gushes: set[int | str],
     city: Optional[str],
-    city_gush_ids: set[int | str],
 ) -> List[Mapping[str, Any]]:
     if not city:
         return [feature for feature in features if _normalize_gush_id((feature.get("properties") or {}).get("GUSH_NUM")) in requested_gushes]
 
     city_matches: List[Mapping[str, Any]] = []
     fallback_matches: List[Mapping[str, Any]] = []
+    matched_ids: set[int | str] = set()
     normalized_city = _normalize_place(city)
     for feature in features:
         properties = feature.get("properties") or {}
         gush_id = _normalize_gush_id(properties.get("GUSH_NUM"))
         if gush_id not in requested_gushes:
             continue
-        if gush_id in city_gush_ids:
-            fallback_matches.append(feature)
+        fallback_matches.append(feature)
         place_values = [properties.get("LOCALITY_N"), properties.get("REG_MUN_NA")]
         if any(_normalize_place(value) == normalized_city for value in place_values if value):
             city_matches.append(feature)
-    return city_matches or fallback_matches
+            matched_ids.add(gush_id)
+    # Municipality labels can be missing or disagree with transaction metadata.
+    # Prefer local geometry per block, falling back for every remaining request,
+    # including explicitly selected blocks outside the current city.
+    return city_matches + [
+        feature for feature in fallback_matches
+        if _normalize_gush_id((feature.get("properties") or {}).get("GUSH_NUM")) not in matched_ids
+    ]
 
 
 def _as_list(value: Any) -> List[Any]:

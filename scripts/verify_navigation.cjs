@@ -18,7 +18,7 @@ const state={analysisMode:'chart',latestAnalysisRows:[{id:'deal1',record_id:'r1'
 const document={body:{dataset:{activeTab:'analysis',analysisMode:'chart'}},querySelectorAll:()=>[]};
 const context={URL,URLSearchParams,document,state,byId:element,get location(){return location;},window:{history,get location(){return location;},scrollY:123},captureView:()=>({mode:state.analysisMode,tab:document.body.dataset.activeTab,controls:{address:'בויאר 12'}}),persistSharedView(){},activateTab(){},markSelectedDealOnChart(){},renderSelectedDeal(row){state.selectedDeal=row;},dealUrl:()=>'?deal_city=city&deal_record=r1#analysis'};
 vm.createContext(context);
-vm.runInContext(['cleanAnalysisUrl','rememberNavigation','pushNavigation','updateNavigationControls','showMainView','closeSelectedDeal','selectDeal'].map(definition).join('\n'),context);
+vm.runInContext(['urlForTab','cleanAnalysisUrl','rememberNavigation','pushNavigation','updateNavigationControls','showMainView','closeSelectedDeal','selectDeal'].map(definition).join('\n'),context);
 context.selectDeal('deal1');
 assert.equal(document.body.dataset.analysisMode,'chart','Selecting a point keeps the chart context');
 assert.equal(state.selectedDeal.record_id,'r1');

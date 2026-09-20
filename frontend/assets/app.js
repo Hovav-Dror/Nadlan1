@@ -3,7 +3,7 @@
 
   var state = {
     analysisMode: "chart",
-    restoringView: new URLSearchParams(window.location.search).has("view") || new URLSearchParams(window.location.search).has("deal_record"),
+    restoringView: sharedViewValue() !== null || new URLSearchParams(window.location.search).has("deal_record"),
     meta: null,
     streets: [],
     gushes: [],
@@ -418,8 +418,15 @@
   });
 
   function initialTabFromHash() {
-    var tab = String(window.location.hash || "").replace(/^#/, "");
+    var tab = String(window.location.hash || "").replace(/^#/, "").split("?")[0];
     return validTab(tab) ? tab : "analysis";
+  }
+
+  function urlForTab(tab) {
+    var url = new URL(window.location.href);
+    var query = url.hash.split("?")[1];
+    url.hash = tab + (query ? "?" + query : "");
+    return url;
   }
 
   function validTab(tab) {
@@ -445,8 +452,8 @@
       panel.classList.toggle("is-active", isActive);
       panel.hidden = !isActive;
     });
-    if (updateHash && window.location.hash !== "#" + tab) {
-      pushNavigation(window.location.pathname + window.location.search + "#" + tab, true);
+    if (updateHash && initialTabFromHash() !== tab) {
+      pushNavigation(urlForTab(tab).href, true);
     }
         updateSelectionSummary();
         updateCompareSelectionState();
@@ -1599,8 +1606,8 @@
   }
 
   function cleanAnalysisUrl() {
-    var url=new URL(window.location.href);
-    url.searchParams.delete("deal_city");url.searchParams.delete("deal_record");url.hash="analysis";
+    var url=urlForTab("analysis");
+    url.searchParams.delete("deal_city");url.searchParams.delete("deal_record");
     return url.pathname+url.search+url.hash;
   }
 
@@ -1726,7 +1733,7 @@
         if(entry.deal)await openLinkedDeal();
         window.scrollTo(0,entry.scrollY || 0);
       } else if(initialTabFromHash()==="analysis" && new URLSearchParams(location.search).has("deal_record"))await openLinkedDeal();
-      else if(new URLSearchParams(location.search).has("view"))await restoreSharedView();
+      else if(sharedViewValue() !== null)await restoreSharedView();
       else activateTab(initialTabFromHash(),false);
       updateNavigationControls();
     });
@@ -1852,7 +1859,7 @@
 
   async function openLookupContext(mode) {
     if (!state.lookupRequest || !state.lookupData) return;
-    pushNavigation(mode === "map" ? "#map" : cleanAnalysisUrl());
+    pushNavigation(mode === "map" ? urlForTab("map").href : cleanAnalysisUrl());
     state.analysisMode="chart";
     await setAnalysisLocation(state.lookupRequest.city);
     var rows = state.lookupData.rows || [];
@@ -1877,7 +1884,7 @@
   async function openDealMap(row) {
     var gush = String(row.gush_code || "").split("-")[0];
     if (!gush) { setNotice("analysis-state", "אין מספר גוש ברשומה זו.", "warning"); return; }
-    pushNavigation("#map");
+    pushNavigation(urlForTab("map").href);
     await setAnalysisLocation(row.city);
     ensureSelectOption(byId("gush-select"), {value:gush, label:"גוש " + gush});
     setSelectedValues(byId("gush-select"), [gush]); renderLocationPickers();
@@ -2012,23 +2019,38 @@
 
   function persistSharedView() {
     if (state.restoringView) return;
-    if(new URLSearchParams(window.location.search).has("view")){
-      var url=new URL(window.location.href);url.searchParams.set("view",JSON.stringify(captureView()));
+    if(sharedViewValue() !== null){
+      var url=sharedViewUrl(captureView());
       window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
     }
     rememberNavigation();
   }
 
   async function shareCurrentView() {
-    var url=new URL(window.location.href);
-    url.searchParams.set("view",JSON.stringify(captureView()));
+    var url=sharedViewUrl(captureView());
     window.history.replaceState(window.history.state,"",url.pathname+url.search+url.hash);
     try { await navigator.clipboard.writeText(url.href); byId("share-view-state").textContent="הקישור הועתק, כולל המסננים והבחירות."; }
     catch(error) { byId("share-view-state").innerHTML='<a href="'+escapeHtml(url.href)+'">הקישור מוכן — ניתן להעתיק משורת הכתובת</a>'; }
   }
 
+  function sharedViewValue() {
+    var fragment = new URLSearchParams(window.location.hash.split("?")[1] || "");
+    // Continue reading existing query-based links, but write new state only in
+    // the fragment so it is never sent in the HTTP request line.
+    return fragment.has("view") ? fragment.get("view") : new URLSearchParams(window.location.search).get("view");
+  }
+
+  function sharedViewUrl(view) {
+    var url = urlForTab(initialTabFromHash());
+    var fragment = new URLSearchParams(url.hash.split("?")[1] || "");
+    fragment.set("view", JSON.stringify(view));
+    url.searchParams.delete("view");
+    url.hash = initialTabFromHash() + "?" + fragment.toString();
+    return url;
+  }
+
   function readSharedView() {
-    var raw=new URLSearchParams(window.location.search).get("view");
+    var raw=sharedViewValue();
     if(!raw)return null;
     if(raw.length>60000)throw new Error("הקישור ארוך מדי לשחזור.");
     var saved=JSON.parse(raw);
@@ -2298,9 +2320,36 @@
       "</div>";
   }
 
+  function analysisFacetGroups(points, enabled) {
+    if (!enabled) return [{ label: "All", points: points }];
+    var byValue = new Map();
+    var missing = [];
+    points.forEach(function (point) {
+      if (point.facet === null || point.facet === undefined || point.facet === "") {
+        missing.push(point);
+        return;
+      }
+      var value = String(point.facet);
+      if (!byValue.has(value)) byValue.set(value, []);
+      byValue.get(value).push(point);
+    });
+    var groups = Array.from(byValue.keys()).sort(compareCategoryValues).map(function (value) {
+      return { label: value, points: byValue.get(value) };
+    });
+    var available = ANALYSIS_FACET_LIMIT - (missing.length ? 1 : 0);
+    if (groups.length > available) {
+      var overflow = groups.splice(available - 1);
+      groups.push({ label: "ערכים נוספים (" + overflow.length + ")", points: overflow.reduce(function (rows, group) {
+        return rows.concat(group.points);
+      }, []) });
+    }
+    if (missing.length) groups.push({ label: "לא ידוע", points: missing });
+    return groups;
+  }
+
   function analysisChartSpec(points, data) {
-    var facetValues = limitedCategories(points.map(function (point) { return categoryValue(point.facet); }), ANALYSIS_FACET_LIMIT);
-    var facets = facetValues.length ? facetValues : ["All"];
+    var facetGroups = analysisFacetGroups(points, Boolean(byId("analysis-facet-var").value));
+    var facets = facetGroups.map(function (group) { return group.label; });
     var traces = [];
     var colorVar = byId("analysis-color-var").value;
     var colors = colorPalette(byId("analysis-color-palette").value, colorVar);
@@ -2311,11 +2360,8 @@
     var symbolByValue = mapByValue(shapeValues, symbolPalette);
     var sizes = scaledSizes(points);
 
-    facets.forEach(function (facet, facetIndex) {
-      var facetPoints = facet === "All" ? points : points.filter(function (point) {
-        return categoryValue(point.facet) === facet;
-      });
-      var groups = groupPoints(facetPoints);
+    facetGroups.forEach(function (facet, facetIndex) {
+      var groups = groupPoints(facet.points);
       orderedGroupKeys(groups, colorValues, shapeValues).forEach(function (key) {
         var group = groups[key];
         var first = group[0] || {};
@@ -3406,10 +3452,9 @@
   }
 
   function dealUrl(city, record) {
-    var url = new URL(window.location.href);
+    var url = urlForTab("analysis");
     url.searchParams.set("deal_city", city);
     url.searchParams.set("deal_record", record);
-    url.hash = "analysis";
     return url.pathname + url.search + url.hash;
   }
 
@@ -3884,7 +3929,7 @@
   function applyFilterDefaults(data) {
     var ranges = data.ranges || {};
     applyScopedFilterDefaults("analysis", data, { skipRooms: true });
-    ["compare", "gush"].forEach(function (scope) {
+    ["compare"].forEach(function (scope) {
       setRangeInputs(scope + "-filter-year", ranges.deal_year);
       setRangeInputs(scope + "-filter-price", ranges.price_millions);
       setRangeInputs(scope + "-filter-price-m2", ranges.price_per_m2);
@@ -3902,7 +3947,7 @@
       return { value: value, label: value };
     });
     setOptions(byId("rooms-select"), roomOptions, true);
-    ["compare", "gush"].forEach(function (scope) {
+    ["compare"].forEach(function (scope) {
       var select = byId(scope + "-rooms-select");
       var selected = selectedValues(select);
       setOptions(select, roomOptions, true);
@@ -3927,7 +3972,7 @@
       var selectedApartmentTypes = selectedValues(byId("apartment-type-select"));
       setOptions(byId("apartment-type-select"), availableApartmentOptions, true);
       setSelectedValues(byId("apartment-type-select"), selectedApartmentTypes);
-      ["compare", "gush"].forEach(function (scope) {
+      ["compare"].forEach(function (scope) {
         var select = byId(scope + "-apartment-type-select");
         var selected = selectedValues(select);
         setOptions(select, availableApartmentOptions, true);
@@ -3995,18 +4040,9 @@
     }
 
     var choiceSet = new Set(choices);
-    var selectedSet = new Set(selected);
-    var nextSelected = selected.filter(function (value) {
+    return selected.filter(function (value) {
       return choiceSet.has(value);
     });
-    choices.forEach(function (value) {
-      if (!selectedSet.has(value)) nextSelected.push(value);
-    });
-
-    if (!nextSelected.length) {
-      return smart.length ? smart : choices;
-    }
-    return nextSelected;
   }
 
   function clearRoomSelection() {

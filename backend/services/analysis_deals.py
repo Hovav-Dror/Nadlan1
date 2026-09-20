@@ -637,7 +637,7 @@ def _category_warnings(
         unique_count = int(df[column].dropna().nunique())
         if unique_count > MAX_CATEGORY_VALUES:
             label = labels.get(column, column)
-            warnings.append(f"{label} has {unique_count} categories; the frontend may group or hide some categories.")
+            warnings.append(f"{label} has {unique_count} categories; the frontend may group some categories.")
     return warnings
 
 
