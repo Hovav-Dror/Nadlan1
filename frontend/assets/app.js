@@ -1787,7 +1787,7 @@
     document.body.dataset.analysisMode="lookup";
     byId("address-lookup-results").innerHTML = "";
     setBusy("run-address-lookup", true);
-    setNotice("address-lookup-state", "מחפש עסקאות בשני המקורות…", "loading");
+    setNotice("address-lookup-state", pilotActive() ? "מחפש עסקאות בשני המקורות…" : "מחפש עסקאות במאגר הפעיל…", "loading");
     try {
       var response = await postJson("api/address-lookup", request);
       if (requestId !== state.lookupRequestId) return;
@@ -2086,6 +2086,9 @@
     if (state.lookupBound) return;
     state.lookupBound = true;
     panel.hidden = false;
+    byId("address-lookup-scope").textContent = pilotActive() ?
+      "החיפוש בשני המקורות, כולל מכירות חלקיות, ללא מסנני הניתוח. כתובת וקומה שהושלמו לפי מזהה נכס מסומנות כפרטי ייחוס." :
+      "החיפוש במאגר מידע לעם — התמנון, ללא מסנני הניתוח. נתוני רשות המסים החדשים אינם פעילים בגרסה זו.";
     byId("open-address-search").hidden=false;
     setOptions(byId("address-lookup-city"), state.meta.cities.map(function (city) { return {value:city.id, label:city.name}; }), false);
     byId("address-lookup-city").value = byId("city-select").value;
@@ -2099,8 +2102,8 @@
   }
 
   function setupPilotControls() {
-    if (!pilotActive()) return;
     setupAddressLookup();
+    if (!pilotActive()) return;
     if (!state.pilotDiscoveryDefaultsSet) {
       byId("remove-price-outliers").checked = false;
       byId("remove-area-outliers").checked = false;

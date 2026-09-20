@@ -77,3 +77,23 @@ invalidYear.checkValidity=()=>true;
 assert.equal(context.validateAddressLookup(),true);
 assert.equal(validityReports,1,'Valid searches do not show validation prompts');
 console.log('PASS: search-region validation preserves required fields and exposes invalid advanced controls');
+
+// Address search must also be initialized for deployments without the pilot.
+const bindings=[];
+for (const id of ['pilot-address-lookup','address-lookup-scope','open-address-search','address-lookup-city','run-address-lookup','address-lookup-form']) {
+  inputs[id]={hidden:true,addEventListener(type){bindings.push([id,type]);}};
+}
+inputs['city-select']={value:'tel_aviv_yafo'};
+context.state={meta:{cities:[{id:'tel_aviv_yafo',name:'תל אביב -יפו'}]}};
+context.pilotActive=()=>false;
+context.setOptions=()=>{};
+context.runAddressLookup=()=>{};
+vm.runInContext(['setupAddressLookup','setupPilotControls'].map(definition).join('\n'),context);
+context.setupPilotControls();
+assert.equal(inputs['open-address-search'].hidden,false);
+assert.equal(inputs['pilot-address-lookup'].hidden,false);
+assert.equal(inputs['address-lookup-city'].value,'tel_aviv_yafo');
+assert(inputs['address-lookup-scope'].textContent.includes('אינם פעילים'));
+assert.equal(bindings.length,2);
+context.setupPilotControls();assert.equal(bindings.length,2,'Reloading controls must not duplicate search handlers');
+console.log('PASS: address search is available without pilot metadata and binds only once');

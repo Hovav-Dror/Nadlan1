@@ -83,10 +83,10 @@ def register_routes(app: Flask) -> None:
         started = time.perf_counter()
         legacy = app.extensions.get("legacy_address_store")
         payload = request.get_json(silent=True)
-        if legacy is None or not isinstance(payload, dict):
-            return _error_response("חיפוש בשני המקורות זמין בפיילוט עם בקשה תקינה בלבד.", started, status_code=400)
+        if not isinstance(payload, dict):
+            return _error_response("נדרשת בקשת חיפוש תקינה.", started, status_code=400)
         try:
-            data = lookup_address(legacy, _data_store(), payload)
+            data = lookup_address(legacy or _data_store(), _data_store() if legacy is not None else None, payload)
         except (DataStoreError, CalculationServiceError) as exc:
             return _error_response(exc.public_message, started, status_code=400)
         return jsonify(_api_response(data=data, meta={"status":"ok"}, warnings=data["warnings"], started=started))

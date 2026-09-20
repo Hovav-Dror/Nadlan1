@@ -51,7 +51,8 @@ def lookup_address(legacy, current, payload):
             raise ValueError()
     except (TypeError, ValueError):
         raise CalculationServiceError('טווח השנים או הקומה אינם תקינים.')
-    old, new = _prepare(legacy.load_city(city)), _prepare(current.load_city(city))
+    old = _prepare(legacy.load_city(city))
+    new = _prepare(current.load_city(city)) if current is not None else old.iloc[:0]
     city_name = _text(old.city.iloc[0]) if len(old) else str(city)
     selected = address_mask(old.FULLADRESS, query)
     if floor is not None:
@@ -118,4 +119,4 @@ def lookup_address(legacy, current, payload):
     rows.sort(key=lambda r:(r['date'],r['source_id']))
     return {'rows':rows, 'counts':{'records':len(rows),'distinct_dates':len({r['date'] for r in rows}),
             'reference_properties':len(keys)},
-        'warnings':['זהו חיפוש משלים שאינו משתמש במסנני הגרף או בדגימה. כתובת וקומה של מועמדים מגיעות מרשומת ייחוס בנתוני מידע לעם — התמנון; קישור לפי מזהה בלבד אינו מאמת שזו אותה דירה. מקור הפיילוט מוגבל לעסקאות המגורים שיובאו ולתאריכי הכיסוי שלו.']}
+        'warnings':(['החיפוש במאגר מידע לעם — התמנון בלבד. נתוני רשות המסים החדשים אינם פעילים בגרסה זו. החיפוש אינו משתמש במסנני הגרף; כתובת חסרה במקור עלולה למנוע איתור.'] if current is None else ['זהו חיפוש משלים שאינו משתמש במסנני הגרף או בדגימה. כתובת וקומה של מועמדים מגיעות מרשומת ייחוס בנתוני מידע לעם — התמנון; קישור לפי מזהה בלבד אינו מאמת שזו אותה דירה. מקור הפיילוט מוגבל לעסקאות המגורים שיובאו ולתאריכי הכיסוי שלו.'])}

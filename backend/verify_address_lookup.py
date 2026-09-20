@@ -37,6 +37,10 @@ def synthetic():
     partial=current.copy();partial.loc[0,'sale_portion']=.5
     assert len(lookup_address(Store(old),Store(partial),payload)['rows'])==4
     assert not lookup_address(Store(old),Store(current),{**payload,'floor':4})['rows']
+    single = lookup_address(Store(old),None,payload)
+    assert len(single['rows']) == 2
+    assert all(row['source_id'].startswith('legacy:') for row in single['rows'])
+    assert not lookup_address(Store(old),None,{**payload,'floor':4})['rows']
     for change in [{'year_from':2027,'year_to':2014},{'floor':'bad'},{'address':''}]:
         try: lookup_address(Store(old),Store(current),{**payload,**change})
         except CalculationServiceError: pass
@@ -57,7 +61,17 @@ def actual():
     earlier=client.post('/api/address-lookup',json={**payload,'year_from':1998}).get_json()['data']
     assert [r['date'] for r in earlier['rows']]==['2004-12-12','2020-06-25','2023-08-06']
     assert client.post('/api/address-lookup',json={**payload,'year_from':'bad'}).status_code==400
-    assert create_app().test_client().post('/api/address-lookup',json=payload).status_code==400
+    single = create_app().test_client()
+    response = single.post('/api/address-lookup',json={**payload,'year_from':1998})
+    assert response.status_code == 200,response.data
+    found = response.get_json()['data']
+    assert found['rows'] and all(r['source_id'].startswith('legacy:') for r in found['rows'])
+    assert 'אינם פעילים' in found['warnings'][0]
+    for row in found['rows']:
+        detail = single.get('/api/deals/detail',query_string={'city':row['city'],'record':row['source_id']})
+        assert detail.status_code == 200,detail.data
+        assert detail.get_json()['data']['deal']['record_id'] == row['source_id']
+    assert single.post('/api/address-lookup',json=[]).status_code == 400
     print('Address lookup regression checks passed: synthetic ambiguity, legacy preservation, real Boyar 12 case.')
 
 if __name__=='__main__':
