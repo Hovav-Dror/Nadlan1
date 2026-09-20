@@ -394,6 +394,10 @@
               </div>
             </section>
             <div id="analysis-state" class="state"></div>
+            <div id="analysis-stale" class="notice warning analysis-stale" role="status" hidden>
+              <span>המסננים השתנו. הגרף והטבלה מציגים את העדכון הקודם. עדכנו את הניתוח לפני ייצוא.</span>
+              <button id="update-stale-analysis" type="button">עדכון הניתוח</button>
+            </div>
             <div id="analysis-chart" class="chart chart-guide" data-empty-label="Select streets or Gush areas, then update analysis">
               <div class="chart-guide-content">
                 <h3>איך מתחילים</h3>
@@ -1265,5 +1269,10 @@
       data-app="Nadlan1"
       data-endpoint="/AppUsage1/api/track"
       defer></script>
-  </body>
+  <div class="mobile-analysis-actions" aria-label="פעולות ניתוח">
+    <span id="mobile-analysis-status" role="status"></span>
+    <button id="mobile-run-analysis" type="button">עדכון הניתוח</button>
+    <button id="mobile-cancel-analysis" class="secondary" type="button" hidden>ביטול</button>
+  </div>
+</body>
 </html>

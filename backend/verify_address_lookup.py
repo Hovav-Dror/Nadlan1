@@ -20,12 +20,14 @@ def synthetic():
         area=80,rooms=3,build_year=1990,price_millions=2),
         dict(city='בדיקה',GUSH='1-2-5',date='2016-01-01',FULLADRESS='בויאר אברהם 120',floor=5,
         area=80,rooms=3,build_year=1990,price_millions=2)])
+    old['street'] = 'בויאר אברהם'
     current=pd.DataFrame([dict(city='בדיקה',GUSH='01-02-003',date='2023-01-01',area=98,rooms=4,build_year=1994,
         price_millions=5.4,deal_amount=5400000,sale_portion=1,source_id='a'),
         dict(city='בדיקה',GUSH='1-2-3',date='2020-01-01',area=98,rooms=5,build_year=1987,
         price_millions=3.85,deal_amount=3850000,sale_portion=1,source_id='b')])
     payload={'city':'בדיקה','address':'בויאר 12','floor':5,'year_from':2014,'year_to':2026}
     result=lookup_address(Store(old),Store(current),payload)
+    assert all(row['reference_streets'] == ['בויאר אברהם'] for row in result['rows'])
     assert len(result['rows'])==3 # includes legacy-only; excludes house 120; one 2023 link
     assert result['rows'][0]['source']=='מידע לעם — התמנון' and result['rows'][0]['sale_portion'] is None
     assert 'מועמד' in result['rows'][1]['link']
@@ -65,6 +67,7 @@ def actual():
     response = single.post('/api/address-lookup',json={**payload,'year_from':1998})
     assert response.status_code == 200,response.data
     found = response.get_json()['data']
+    assert all(row['reference_streets'] == ['בויאר אברהם'] for row in found['rows'])
     assert found['rows'] and all(r['source_id'].startswith('legacy:') for r in found['rows'])
     assert 'אינם פעילים' in found['warnings'][0]
     for row in found['rows']:

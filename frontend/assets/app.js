@@ -15,6 +15,7 @@
     gushFilterOptionsSignature: "",
     latestPayloads: {},
     latestAnalysisRows: [],
+    successfulAnalysisPayload: null,
     latestGushPerformance: null,
     selectedPointId: null,
     tableStates: {},
@@ -508,6 +509,14 @@
       if (event.key === "Enter") { event.preventDefault(); runAnalysis(); }
     });
     byId("run-analysis").addEventListener("click", runAnalysis);
+    byId("update-stale-analysis").addEventListener("click", runAnalysis);
+    byId("mobile-run-analysis").addEventListener("click", async function () {
+      await runAnalysis();
+      if (state.successfulAnalysisPayload && !analysisNeedsUpdate()) {
+        byId("analysis-state").scrollIntoView({ block: "start" });
+      }
+    });
+    byId("mobile-cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
     byId("cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
     byId("auto-update-analysis").addEventListener("change", function () {
       scheduleAnalysisAutoUpdate("auto-toggle");
@@ -717,18 +726,88 @@
         input.max = String(currentYear);
         input.step = "1";
       }
-      input.addEventListener("change", function () { clampInputValue(input); });
-      input.addEventListener("blur", function () { clampInputValue(input); });
+      input.addEventListener("input", function () { validateNumericInput(input); });
+      input.addEventListener("change", function () { normalizeNumericInput(input); });
+      input.addEventListener("blur", function () { normalizeNumericInput(input); });
     });
   }
 
-  function clampInputValue(input) {
-    if (!input || input.value === "") return;
-    var value = Number(input.value);
-    if (!Number.isFinite(value)) return;
-    if (input.min !== "") value = Math.max(Number(input.min), value);
-    if (input.max !== "") value = Math.min(Number(input.max), value);
-    if (String(value) !== input.value) input.value = value;
+  function parseNumericValue(value) {
+    value = String(value).trim();
+    if (!value) return null;
+    // Commas are thousands separators, never decimal separators.
+    if (!/^[+-]?(?:(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?|\.\d+)$/.test(value)) return NaN;
+    var number = Number(value.replace(/,/g, ""));
+    return Number.isFinite(number) ? number : NaN;
+  }
+
+  function validateNumericInput(input) {
+    var value = parseNumericValue(input.value);
+    var message = Number.isNaN(value) || (input.validity && input.validity.badInput)
+      ? "יש להזין מספר תקין, למשל 1000 או 1,000." : "";
+    if (!message && value !== null) {
+      if (input.step === "1" && !Number.isInteger(value)) message = "יש להזין מספר שלם.";
+      if (input.min !== "" && value < Number(input.min)) message = "הערך המינימלי הוא " + input.min + ".";
+      if (input.max !== "" && value > Number(input.max)) message = "הערך המקסימלי הוא " + input.max + ".";
+    }
+    if (!message && /-max$/.test(input.id) && value !== null) {
+      var lower = byId(input.id.replace(/-max$/, "-min"));
+      var minimum = lower ? parseNumericValue(lower.value) : null;
+      if (minimum !== null && minimum > value) message = "הערך המרבי חייב להיות גדול מהערך המזערי או שווה לו.";
+    }
+    var errorId = input.id + "-error";
+    var error = byId(errorId);
+    if (!error && message) {
+      error = document.createElement("span");
+      error.id = errorId;
+      error.className = "field-error";
+      error.setAttribute("aria-live", "polite");
+      input.insertAdjacentElement("afterend", error);
+      var description = input.getAttribute("aria-describedby") || "";
+      input.setAttribute("aria-describedby", (description + " " + errorId).trim());
+    }
+    if (error) { error.textContent = message; error.hidden = !message; }
+    input.setAttribute("aria-invalid", String(Boolean(message)));
+    return !message;
+  }
+
+  function numericInputsForScope(scope) {
+    return Array.from(document.querySelectorAll('input[inputmode="numeric"], input[inputmode="decimal"]')).filter(function (input) {
+      return scope === "analysis" ? /^(filter-|row-limit$)/.test(input.id) : input.id.indexOf(scope + "-") === 0;
+    });
+  }
+
+  function validateNumericScope(scope, focus) {
+    var invalid = numericInputsForScope(scope).filter(function (input) { return !validateNumericInput(input); });
+    if (invalid.length && focus !== false) {
+      activateTab(scope, false);
+      var disclosure = invalid[0].closest("details");
+      if (disclosure) disclosure.open = true;
+      invalid[0].focus();
+      invalid[0].scrollIntoView({ block: "center" });
+      setNotice(scope + "-state", "יש לתקן את השדות המסומנים לפני העדכון או הייצוא.", "warning");
+    }
+    return !invalid.length;
+  }
+
+  function normalizeNumericInput(input) {
+    if (!input || !validateNumericInput(input)) return;
+    var value = parseNumericValue(input.value);
+    if (value !== null) input.value = String(value);
+    updateAnalysisFreshness();
+  }
+
+  function analysisNeedsUpdate() {
+    return Boolean(state.successfulAnalysisPayload) &&
+      (!validateNumericScope("analysis", false) || JSON.stringify(buildAnalysisPayload()) !== JSON.stringify(state.successfulAnalysisPayload));
+  }
+
+  function updateAnalysisFreshness() {
+    var stale = analysisNeedsUpdate();
+    var banner = byId("analysis-stale");
+    if (banner) banner.hidden = !stale;
+    var status = byId("mobile-analysis-status");
+    if (status) status.textContent = stale ? "המסננים השתנו — נדרש עדכון" : "";
   }
 
   async function refreshStatus() {
@@ -1270,6 +1349,7 @@
   async function runAnalysis(options) {
     options = options || {};
     if (state.restoringView) return;
+    if (!validateNumericScope("analysis", !options.auto)) return;
     var payload = buildAnalysisPayload();
     if(state.analysisMode!=="chart" && !state.restoringNavigation)pushNavigation(cleanAnalysisUrl());
     state.analysisMode = "chart";
@@ -1292,6 +1372,7 @@
       var response = await postJson(endpoints.analysis, payload, { signal: controller.signal });
       if (requestId !== state.analysisRequestId) return;
       var data = response.data || {};
+      state.successfulAnalysisPayload = payload;
       state.latestAnalysisRows = data.table_rows || [];
       state.selectedPointId = null;
       renderAnalysisChart(data);
@@ -1314,12 +1395,13 @@
       }
       setNotice("analysis-state", error.message, "error");
     } finally {
-      if (requestId === state.analysisRequestId) finishRequest("analysis");
+      if (requestId === state.analysisRequestId) { finishRequest("analysis"); updateAnalysisFreshness(); }
     }
   }
 
   async function runCompare(options) {
     options = options || {};
+    if (!validateNumericScope("compare", !options.auto)) return;
     var payload = buildComparePayload();
     if (!payload.gushes.length && !payload.streets.length) {
       setNotice("compare-state", "Select Gush areas or streets before updating compare.", "warning");
@@ -1357,6 +1439,7 @@
   }
 
   async function runCompareRawPreview() {
+    if (!validateNumericScope("compare")) return;
     var payload = buildComparePayload();
     if (!payload.gushes.length && !payload.streets.length) {
       setNotice("compare-state", "Select Gush areas or streets before loading raw deals.", "warning");
@@ -1382,6 +1465,7 @@
 
   async function runCityComparison(options) {
     options = options || {};
+    if (!validateNumericScope("city", !options.auto)) return;
     var payload = buildCityPayload();
     if (!payload.cities.length) {
       setNotice("city-state", "Select at least one city.", "warning");
@@ -1426,6 +1510,7 @@
 
   async function runGushPerformance(options) {
     options = options || {};
+    if (!validateNumericScope("gush", !options.auto)) return;
     var payload = buildGushPayload();
     if (!payload.city) {
       setNotice("gush-state", "Choose one city first.", "warning");
@@ -1857,6 +1942,13 @@
     } finally { state.restoringView = false; }
   }
 
+  function lookupStreets(rows, available) {
+    var references = new Set();
+    rows.forEach(function (row) { (row.reference_streets || []).forEach(function (street) { references.add(street); }); });
+    var matching = available.filter(function (street) { return references.has(street); });
+    return matching.length === references.size ? matching : [];
+  }
+
   async function openLookupContext(mode) {
     if (!state.lookupRequest || !state.lookupData) return;
     pushNavigation(mode === "map" ? urlForTab("map").href : cleanAnalysisUrl());
@@ -1866,9 +1958,19 @@
     var gushes = Array.from(new Set(rows.map(function (row) { return String(row.gush_code || "").split("-")[0]; }).filter(Boolean)));
     byId("analysis-address").value = mode === "building" ? state.lookupRequest.address : "";
     if (mode === "street") {
-      var query = state.lookupRequest.address.replace(/\d+[\u05d0-\u05ea]?/g, " ").trim();
-      var matching = state.streets.filter(function (street) { return matchesSearch(street, query); });
-      if (!matching.length) { setNotice("address-lookup-state", "לא זוהה רחוב יחיד לניתוח. אפשר לבחור רחוב ברשימת האזורים.", "warning"); return; }
+      var matching = lookupStreets(rows, state.streets);
+      if (matching.length !== 1) {
+        renderLocationPickers(); updateSelectionSummary();
+        activateTab("analysis", false);
+        byId("pilot-address-lookup").open = false;
+        byId("street-picker-search").value = "";
+        renderPicker("streets");
+        setNotice("analysis-state", "לא זוהה רחוב יחיד לניתוח. בחרו רחוב ברשימת האזורים ועדכנו את הניתוח.", "warning");
+        byId("street-picker-search").focus();
+        byId("street-picker-search").scrollIntoView({block:"center"});
+        rememberNavigation();
+        return;
+      }
       setSelectedValues(byId("street-select"), matching);
     } else if (mode === "map") setSelectedValues(byId("gush-select"), gushes);
     renderLocationPickers(); updateSelectionSummary();
@@ -1876,7 +1978,6 @@
     if (mode === "map") {await runGushMap();rememberNavigation();}
     else {
       await runAnalysis();
-      setNotice("analysis-state", "הניתוח משתמש במסננים המוצגים ובכתובות הזמינות במאגר. החיפוש בראש העמוד שומר גם רשומות ייחוס ומכירות חלקיות.", "ok");
       byId("analysis-chart").scrollIntoView({block:"start"});
     }
   }
@@ -1979,6 +2080,15 @@
   }
 
   function previewExport(kind) {
+    var exportScope = kind.indexOf("city-") === 0 ? "city" : kind.indexOf("gush-") === 0 ? "gush" : kind.indexOf("compare-") === 0 ? "compare" : "analysis";
+    if (!validateNumericScope(exportScope)) return;
+    if (kind === "analysis" && analysisNeedsUpdate()) {
+      activateTab("analysis", false);
+      updateAnalysisFreshness();
+      setNotice("analysis-state", "המסננים השתנו. עדכנו את הניתוח לפני ייצוא כדי שהקובץ יתאים לתוצאות.", "warning");
+      byId("update-stale-analysis").focus();
+      return;
+    }
     var payload=payloadForDownload(kind);
     activateTab("downloads",true);
     var target=byId("export-preview");target.hidden=false;
@@ -2268,7 +2378,7 @@
       summary.hidden = false;
       summary.textContent = "גרף הניתוח · " + points.length + " עסקאות מוצגות · " +
         formatDealDate(data.summary && data.summary.date_min) + " – " + formatDealDate(data.summary && data.summary.date_max) +
-        " · לפי המסננים הפעילים";
+        " · לפי המסננים בעדכון האחרון";
     }
     Plotly.react("analysis-chart", chartSpec.traces, chartSpec.layout, {responsive: true, displaylogo: false}).then(function () {
       if (chart.removeAllListeners) chart.removeAllListeners("plotly_click");
@@ -4669,6 +4779,7 @@
   }
 
   function scheduleAnalysisAutoUpdate(reason) {
+    updateAnalysisFreshness();
     if (state.restoringView) return;
     if (state.autoAnalysisTimer) window.clearTimeout(state.autoAnalysisTimer);
     if (!byId("auto-update-analysis").checked) return;
@@ -4934,6 +5045,9 @@
     var target = byId(config.targetId);
     var select = byId(config.selectId);
     if (!target || !select) return;
+    var focusedValue = target.contains(document.activeElement) ? document.activeElement.dataset.chipValue : null;
+    var extra = target.querySelector("details");
+    if (extra) target.dataset.extraRoomsOpen = String(extra.open);
     var selected = new Set(selectedValues(select).map(String));
     var options = Array.from(select.options || []).filter(function (option) { return option.value; });
     if (!options.length) {
@@ -4946,6 +5060,8 @@
       button.type = "button";
       button.className = "filter-chip";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.dataset.chipValue = String(option.value);
+      button.setAttribute("aria-pressed", String(option.selected));
       button.textContent = option.textContent;
       button.addEventListener("click", function () {
         option.selected = !option.selected;
@@ -4955,6 +5071,7 @@
       target.appendChild(button);
     });
     if (window.NadlanLayout) window.NadlanLayout.decorateRoomChips(target, select);
+    restoreChipFocus(target, focusedValue);
   }
 
   function renderApartmentTypeChips() {
@@ -5010,6 +5127,7 @@
     var search = byId(config.searchId);
     if (!target || !select || !search) return;
 
+    var focusedValue = target.contains(document.activeElement) ? document.activeElement.dataset.chipValue : null;
     var selected = new Set(selectedValues(select).map(String));
     var query = normalizeSearch(search.value);
     var options = Array.from(select.options || []).filter(function (option) {
@@ -5020,6 +5138,7 @@
     target.innerHTML = "";
     if (!visible.length) {
       target.innerHTML = '<div class="mini-notice">לא נמצאו סוגי דירות מתאימים.</div>';
+      if (focusedValue !== null) search.focus();
       return;
     }
     visible.forEach(function (option) {
@@ -5027,6 +5146,8 @@
       button.type = "button";
       button.className = "filter-chip";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.dataset.chipValue = String(option.value);
+      button.setAttribute("aria-pressed", String(option.selected));
       button.textContent = option.textContent;
       if (hasHebrew(option.textContent)) button.classList.add("rtl-text");
       button.addEventListener("click", function () {
@@ -5036,6 +5157,13 @@
       });
       target.appendChild(button);
     });
+    restoreChipFocus(target, focusedValue, search);
+  }
+
+  function restoreChipFocus(target, value, fallback) {
+    if (value == null) return;
+    var button = Array.from(target.querySelectorAll("button[data-chip-value]")).find(function (item) { return item.dataset.chipValue === value; });
+    if (button || fallback) (button || fallback).focus({ preventScroll: true });
   }
 
   function syncSegmentedControls() {
@@ -5138,16 +5266,15 @@
   function numberValue(id) {
     var value = byId(id).value.trim();
     if (!value) return null;
-    var number = Number(value);
-    return Number.isFinite(number) ? number : null;
+    return parseNumericValue(value);
   }
 
   function intValue(id, fallback, min, max) {
-    var number = parseInt(byId(id).value, 10);
+    var number = parseNumericValue(byId(id).value);
+    if (number !== null) number = Math.trunc(number);
     if (!Number.isFinite(number)) number = fallback;
     if (Number.isFinite(min)) number = Math.max(min, number);
     if (Number.isFinite(max)) number = Math.min(max, number);
-    byId(id).value = number;
     return number;
   }
 
@@ -5205,6 +5332,11 @@
     }[key];
     var cancelId = "cancel-" + key;
     setBusy(runId, busy);
+    if (key === "analysis") {
+      setBusy("mobile-run-analysis", busy);
+      setBusy("update-stale-analysis", busy);
+      byId("mobile-cancel-analysis").hidden = !busy;
+    }
     var cancelButton = byId(cancelId);
     if (cancelButton) cancelButton.hidden = !busy;
   }
@@ -5214,6 +5346,7 @@
   }
 
   function updateSelectionSummary() {
+    updateAnalysisFreshness();
     var target = byId("selection-summary");
     if (!target) return;
     var citySelect = byId("city-select");

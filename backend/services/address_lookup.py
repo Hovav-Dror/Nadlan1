@@ -95,6 +95,7 @@ def lookup_address(legacy, current, payload):
             'date':row._date, 'gush_code':row._key, 'price_ils':_number(row.get('deal_amount')),
             'sale_portion':_number(row.sale_portion), 'area':_number(row.area), 'rooms':_number(row.rooms),
             'build_year':_number(row.build_year), 'reference_address':' / '.join(addresses),
+            'reference_streets':sorted(set(source_refs.get('street', pd.Series(dtype=str)).map(_text)) - {''}),
             'reference_floor':' / '.join(str(int(f)) if f.is_integer() else str(f) for f in floors),
             'source':'גרסאות לעם + דיווח מקביל ממידע לעם — התמנון' if match is not None else 'גרסאות לעם',
             'link':'מזהה, תאריך ומחיר תואמים' if match is not None else 'מועמד לפי מזהה בלבד; הכתובת והקומה אינן מאומתות לעסקה זו',
@@ -111,7 +112,7 @@ def lookup_address(legacy, current, payload):
         price = _number(row.price_millions)
         rows.append({'date':row._date,'gush_code':row._key,'price_ils':None if price is None else price*1e6,
             'sale_portion':None,'area':_number(row.area),'rooms':_number(row.rooms),'build_year':_number(row.build_year),
-            'reference_address':_text(row.FULLADRESS),'reference_floor':_number(row.floor),
+            'reference_address':_text(row.FULLADRESS),'reference_streets':[_text(row.get('street'))] if _text(row.get('street')) else [],'reference_floor':_number(row.floor),
             'city':city_name,'source':'מידע לעם — התמנון','link':'כתובת וקומה מדיווח מידע לעם — התמנון; לא אוחדה עם רשומה חדשה',
             'conflicts':'חלק המכירה אינו ידוע בנתוני מידע לעם — התמנון','source_id':f'legacy:{city_name}:{index}',
             'legacy_reference_ids':[f'{city_name}:{index}'], 'legacy_area':None,'legacy_rooms':None,'legacy_build_year':None})

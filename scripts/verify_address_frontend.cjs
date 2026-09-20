@@ -12,7 +12,7 @@ function definition(name) {
 const inputs = { min: {value:'1.234', dataset:{defaultValue:'1.234'}}, max: {value:'2.346', dataset:{defaultValue:'2.346'}} };
 const context = {byId: id => inputs[id]};
 vm.createContext(context);
-vm.runInContext(['normalizeSearch','matchesSearch','numberValue','addRange'].map(definition).join('\n'), context);
+vm.runInContext(['normalizeSearch','matchesSearch','parseNumericValue','numberValue','addRange'].map(definition).join('\n'), context);
 for (const query of ['אברהם בויאר 12','בויאר 12','בויאר, 12 תל אביב-יפו']) {
   assert(context.matchesSearch('בויאר אברהם 12, תל אביב -יפו',query));
   assert(!context.matchesSearch('בויאר אברהם 120, תל אביב -יפו',query));
