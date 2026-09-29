@@ -7,6 +7,8 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from .calculations import plausible_area
+
 
 MIN_YEAR_PRICES = 10
 
@@ -77,7 +79,7 @@ BAND_SPECS = {
     "rooms": ("rooms", [(1, 2, "1–1.5"), (2, 3, "2–2.5"), (3, 4, "3–3.5"), (4, 5, "4–4.5"), (5, 6, "5–5.5"), (6, 13, "6+")]),
     "floor": ("floor", [(-10, 1, "קרקע ומטה"), (1, 3, "1–2"), (3, 6, "3–5"), (6, 11, "6–10"), (11, 100, "11+")]),
     "age": ("building age", [(-5, 3, "חדש (עד 2)"), (3, 11, "3–10"), (11, 26, "11–25"), (26, 51, "26–50"), (51, 150, "51+")]),
-    "area": ("area", [(10, 50, "עד 50"), (50, 75, "50–75"), (75, 100, "75–100"), (100, 130, "100–130"), (130, 1000, "130+")]),
+    "area": ("area", [(15, 50, "עד 50"), (50, 75, "50–75"), (75, 100, "75–100"), (100, 130, "100–130"), (130, 1000, "130+")]),
 }
 MAX_TYPE_SEGMENTS = 6
 
@@ -150,7 +152,7 @@ def build_adjusted_index(frame: pd.DataFrame) -> dict[str, Any]:
     The index is independent of the chosen price metric: area is always controlled.
     """
     price, area, years = (_numeric(frame, column) for column in ("price_millions", "area", "deal year"))
-    usable = price.gt(0) & price.lt(np.inf) & area.between(10, 1000) & years.between(1900, 2100)
+    usable = price.gt(0) & price.lt(np.inf) & plausible_area(area, _numeric(frame, "rooms")) & years.between(1900, 2100)
     counts = years[usable].value_counts()
     index_years = sorted(int(year) for year, count in counts.items() if count >= MIN_INDEX_YEAR_PRICES)
     usable &= years.isin(index_years)

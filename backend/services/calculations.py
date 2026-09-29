@@ -13,6 +13,12 @@ PRICE_TYPE_M2 = "Price / m²"
 PRICE_TYPE_ROOM = "Price / Room"
 
 SPECIAL_UNKNOWN_VALUE = 999
+# The source uses placeholder areas (commonly 1 or 10 m²); dividing by them yields
+# prices of millions of shekels per m². Areas outside this range, or too small for
+# the recorded room count, are treated as unknown for price-per-m² purposes.
+MIN_PLAUSIBLE_AREA = 15
+MAX_PLAUSIBLE_AREA = 1000
+MIN_AREA_PER_ROOM = 8
 MIN_RELIABLE_YEAR_SAMPLE = 10
 MAX_OUTLIER_YEAR_WINDOW = 5
 
@@ -32,7 +38,8 @@ def price_used(row_or_df: Any, price_type: str) -> Any:
         price = price.replace([float("inf"), -float("inf")], float("nan"))
         if price_type_key == "price_per_m2":
             area = pd.to_numeric(row_or_df.get("area", missing), errors="coerce")
-            ratio = (price * 1000 / area).where(area.gt(0) & area.lt(float("inf")))
+            rooms = pd.to_numeric(row_or_df.get("rooms", missing), errors="coerce")
+            ratio = (price * 1000 / area).where(plausible_area(area, rooms))
             return ratio.replace([float("inf"), -float("inf")], float("nan"))
         if price_type_key == "price_per_room":
             rooms = pd.to_numeric(row_or_df.get("rooms", missing), errors="coerce")
@@ -44,21 +51,29 @@ def price_used(row_or_df: Any, price_type: str) -> Any:
     price = _safe_number(row.get("price_millions"))
     if price_type_key == "price_per_m2":
         area = _safe_number(row.get("area"))
-        return _safe_number(price * 1000 / area) if price is not None and area and area > 0 else None
+        plausible = area is not None and bool(plausible_area(pd.Series([area]), pd.Series([_safe_number(row.get("rooms"))], dtype=float)).iloc[0])
+        return _safe_number(price * 1000 / area) if price is not None and plausible else None
     if price_type_key == "price_per_room":
         rooms = _safe_number(row.get("rooms"))
         return _safe_number(price / rooms) if price is not None and rooms and rooms > 0 and rooms != SPECIAL_UNKNOWN_VALUE else None
     return price
 
 
-def remove_price_outliers_by_year(df: pd.DataFrame) -> pd.DataFrame:
-    if "price_millions" not in df.columns or "deal year" not in df.columns:
+def plausible_area(area: pd.Series, rooms: pd.Series) -> pd.Series:
+    area = pd.to_numeric(area, errors="coerce")
+    rooms = pd.to_numeric(rooms, errors="coerce")
+    known_rooms = rooms.gt(0) & rooms.lt(20)
+    return area.between(MIN_PLAUSIBLE_AREA, MAX_PLAUSIBLE_AREA) & ~(known_rooms & area.lt(rooms * MIN_AREA_PER_ROOM))
+
+
+def remove_price_outliers_by_year(df: pd.DataFrame, column: str = "price_millions") -> pd.DataFrame:
+    if column not in df.columns or "deal year" not in df.columns:
         return df.copy()
     if df.empty:
         return df.copy()
 
     working = df.copy()
-    working["_nadlan2_price"] = pd.to_numeric(working["price_millions"], errors="coerce")
+    working["_nadlan2_price"] = pd.to_numeric(working[column], errors="coerce")
     working["_nadlan2_year"] = pd.to_numeric(working["deal year"], errors="coerce")
     years = sorted(working["_nadlan2_year"].dropna().unique().tolist())
     if not years:

@@ -84,7 +84,7 @@ def build_analysis_deals_response(data_store: DataStore, payload: Optional[Mappi
 
     filtered = apply_transaction_filters(location_frame, _non_location_filters(request_payload.get("filters")))
     pre_outlier_rows = int(len(filtered))
-    filtered = _apply_requested_outlier_filters(filtered, request_payload, warnings)
+    filtered = _apply_requested_outlier_filters(filtered, request_payload, warnings, price_type)
     outlier_rows = int(len(filtered))
 
     prepared = _with_display_calculations(filtered, price_type)
@@ -167,13 +167,20 @@ def _non_location_filters(filters: Any) -> Dict[str, Any]:
     return {key: value for key, value in filters.items() if key not in LOCATION_FILTER_KEYS}
 
 
-def _apply_requested_outlier_filters(df: pd.DataFrame, payload: Mapping[str, Any], warnings: List[str]) -> pd.DataFrame:
+def _apply_requested_outlier_filters(
+    df: pd.DataFrame, payload: Mapping[str, Any], warnings: List[str], price_type: str = PRICE_TYPE_PRICE
+) -> pd.DataFrame:
     filters = payload.get("filters") if isinstance(payload.get("filters"), Mapping) else {}
     remove_price = _first_present(payload, "remove_price_outliers")
     if remove_price is None and isinstance(filters, Mapping):
         remove_price = _first_present(filters, "remove_price_outliers")
     if remove_price is not False:
         df = remove_price_outliers_by_year(df)
+        if price_type != PRICE_TYPE_PRICE:
+            # A normal total price can still be an extreme ratio (e.g. a whole-building
+            # price recorded against one apartment's area), so also trim the chosen metric.
+            df = df.assign(_metric_for_outliers=price_used(df, price_type))
+            df = remove_price_outliers_by_year(df, "_metric_for_outliers").drop(columns="_metric_for_outliers")
 
     remove_area = _first_present(payload, "remove_area_outliers")
     if remove_area is None and isinstance(filters, Mapping):
