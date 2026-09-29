@@ -36,6 +36,9 @@
     gushFilterOptionsTimer: null,
     analysisRequestId: 0,
     compareRequestId: 0,
+    compareRawRequestId: 0,
+    streetSearchRequestId: 0,
+    compareStreetSearchRequestId: 0,
     cityRequestId: 0,
     gushRequestId: 0,
     mapRequestId: 0,
@@ -490,9 +493,11 @@
         byId(pair[1]).scrollIntoView({block: "start"});
       });
     });
-    byId("analysis-view-mode").addEventListener("change", function () {
-      updateAnalysisViewControls();
-      if (state.latestAnalysisData) renderAnalysisChart(state.latestAnalysisData);
+    ["analysis-view-mode", "analysis-segment-dim"].forEach(function (id) {
+      byId(id).addEventListener("change", function () {
+        updateAnalysisViewControls();
+        if (state.latestAnalysisData) renderAnalysisChart(state.latestAnalysisData);
+      });
     });
     byId("refresh-meta").addEventListener("click", refreshCoverageOnly);
     byId("random-city").addEventListener("click", chooseRandomCity);
@@ -732,7 +737,8 @@
   function bindNumericGuardrails() {
     var currentYear = Math.max(2027, new Date().getFullYear() + 1);
     document.querySelectorAll('input[inputmode="numeric"], input[inputmode="decimal"]').forEach(function (input) {
-      if (input.id.indexOf("year") !== -1 && !input.min) {
+      // Only deal years start at 1998; construction years go back much further.
+      if (/filter-year-(min|max)$/.test(input.id) && !input.min) {
         input.min = "1998";
         input.max = String(currentYear);
         input.step = "1";
@@ -952,6 +958,7 @@
     } catch (error) {
       if (requestId !== state.locationRequestId || city !== byId("city-select").value) return;
       setNotice("metadata-state", error.message, "error");
+      setNotice("analysis-state", "טעינת הרחובות והגושים נכשלה: " + error.message, "error");
     }
   }
 
@@ -980,7 +987,9 @@
       scheduleCompareAutoUpdate("filter-options");
       scheduleGushAutoUpdate("filter-options");
     } catch (error) {
+      if (requestId !== state.filterOptionsRequestId) return;
       setNotice("metadata-state", error.message, "error");
+      if (document.body.dataset.activeTab === "analysis") setNotice("analysis-state", "טעינת טווחי המסננים נכשלה: " + error.message, "error");
     }
   }
 
@@ -1240,13 +1249,17 @@
       target.innerHTML = "";
       return;
     }
+    var requestId = ++state.streetSearchRequestId;
     target.innerHTML = '<div class="mini-notice">מחפש...</div>';
     try {
       var url = "api/street-search?q=" + encodeURIComponent(query) + "&limit=8";
       if (city && !isCompare) url += "&city=" + encodeURIComponent(city);
       var response = await getJson(url);
+      // A slower response for an earlier prefix must not replace newer results.
+      if (requestId !== state.streetSearchRequestId) return;
       renderStreetSearchResults(response.data.results || []);
     } catch (error) {
+      if (requestId !== state.streetSearchRequestId) return;
       target.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
     }
   }
@@ -1265,11 +1278,14 @@
       target.innerHTML = '<div class="mini-notice">הקלידו שם רחוב כדי לחפש בכל הערים.</div>';
       return;
     }
+    var requestId = ++state.compareStreetSearchRequestId;
     target.innerHTML = '<div class="mini-notice">מחפש רחובות בכל הערים...</div>';
     try {
       var response = await getJson("api/street-search?q=" + encodeURIComponent(query) + "&limit=12");
+      if (requestId !== state.compareStreetSearchRequestId) return;
       renderCompareStreetSearchResults(response.data.results || []);
     } catch (error) {
+      if (requestId !== state.compareStreetSearchRequestId) return;
       target.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
     }
   }
@@ -1422,6 +1438,7 @@
       return;
     }
     var requestId = ++state.compareRequestId;
+    state.compareRawRequestId += 1; // a new comparison makes any pending raw preview stale
     var controller = startRequest("compare");
     state.latestPayloads["compare-summary"] = payload;
     state.latestPayloads["compare-raw"] = payload;
@@ -1459,10 +1476,12 @@
       setNotice("compare-state", "Select Gush areas or streets before loading raw deals.", "warning");
       return;
     }
+    var requestId = ++state.compareRawRequestId;
     setBusy("load-compare-raw", true);
     setNotice("compare-state", "Loading raw deals preview...", "loading");
     try {
       var response = await postJson("api/compare/raw", payload);
+      if (requestId !== state.compareRawRequestId) return;
       var data = response.data || {};
       renderTable("compare-raw-table", data.rows || [], compareRawColumns(), {
         sortable: true,
@@ -1471,7 +1490,7 @@
       });
       setNotice("compare-state", warningText(response) || emptyText(data.rows, "Raw deals preview loaded.", "No matching raw deals."), warningText(response) ? "warning" : "ok");
     } catch (error) {
-      setNotice("compare-state", error.message, "error");
+      if (requestId === state.compareRawRequestId) setNotice("compare-state", error.message, "error");
     } finally {
       setBusy("load-compare-raw", false);
     }
@@ -1627,7 +1646,9 @@
     var gushes = activeGushSelection();
     var priceType = byId("analysis-price-type").value;
     var payload = {
-      city: byId("city-select").value,
+      // Gush numbers are national; the backend resolves their cities, including
+      // gushes added from another city's search.
+      city: gushes.length ? "" : byId("city-select").value,
       streets: gushes.length ? [] : activeStreetSelection(),
       gushes: gushes,
       filters: buildFilters("analysis"),
@@ -1694,9 +1715,10 @@
   }
 
   function buildMapPayload() {
+    var gushes = activeGushSelection();
     return {
-      city: byId("city-select").value,
-      gushes: activeGushSelection()
+      city: gushes.length ? "" : byId("city-select").value,
+      gushes: gushes
     };
   }
 
@@ -2374,7 +2396,7 @@
     byId("analysis-view-description").textContent = window.NadlanInsights.description(mode, data.insights);
     byId("analysis-insight-data").hidden = true;
     if (mode !== "scatter" && data.insights) {
-      var spec = window.NadlanInsights.chartSpec(data, mode, {unit: unit, partialYear: data.insight_snapshot_year});
+      var spec = window.NadlanInsights.chartSpec(data, mode, {unit: unit, partialYear: data.insight_snapshot_year, segmentDim: byId("analysis-segment-dim").value});
       if (!spec.hasData) {
         renderAnalysisChartGuide(data);
         byId("analysis-chart-summary").hidden = true;
@@ -2387,7 +2409,7 @@
       Plotly.react(chart, spec.traces, spec.layout, {responsive: true, displaylogo: false}).then(function () { schedulePlotResize("analysis-chart"); });
       var insightSummary = byId("analysis-chart-summary");
       insightSummary.hidden = false;
-      insightSummary.textContent = "מבוסס על כל העסקאות המתאימות בעדכון האחרון, ללא דגימה. " +
+      insightSummary.textContent = (spec.note || "") + "מבוסס על כל העסקאות המתאימות בעדכון האחרון, ללא דגימה. " +
         (spec.partial ? "* השנה האחרונה באיסוף ואילך: כיסוי חלקי; אין להשוות היקף לשנה מלאה. " : "") +
         (data.insights.undated_deals ? formatNumber(data.insights.undated_deals) + " עסקאות ללא שנה תקינה אינן מוצגות לפי שנה. " : "") +
         "טבלת העסקאות למטה מציגה עד " + formatNumber(points.length) + " עסקאות עם מדד מחיר תקין; הייצוא כולל את כל הרשומות אחרי סינון.";
@@ -2436,6 +2458,10 @@
       byId(id).closest("label").hidden = mode !== "scatter";
     });
     byId("analysis-price-type").closest(".plot-controls").classList.toggle("aggregate-controls", mode !== "scatter");
+    // Both views fix their own metric: the index models total price with area as a
+    // control, and segment premiums compare price per m².
+    byId("analysis-price-type").disabled = mode === "adjusted" || mode === "segments";
+    byId("analysis-segment-dim").closest("label").hidden = mode !== "segments";
     byId("analysis-view-description").textContent = window.NadlanInsights.description(mode, state.latestAnalysisData && state.latestAnalysisData.insights);
   }
 
@@ -3588,9 +3614,9 @@
     if(row.rooms != null && (row.rooms < 1 || row.rooms > 20 || !Number.isInteger(Number(row.rooms)*2)))suspect.push("מספר חדרים לא שגרתי");
     if(row.area != null && (row.area <= 0 || row.area > 1000))suspect.push("שטח לא שגרתי לנכס מגורים");
     if(row.build_year != null && (row.build_year < 1800 || row.build_year > snapshotYear()+10))suspect.push("שנת בנייה לא שגרתית");
-    var amount = row.price_ils === null || row.price_ils === undefined ? row.price_millions * 1000000 : row.price_ils;
+    var amount = row.price_ils != null ? row.price_ils : row.price_millions != null ? row.price_millions * 1000000 : null;
     var fields = [["שטח (מ״ר)", row.area], ["חדרים", row.rooms], ["קומה", row.floor],
-      ["סוג נכס", row.apartment_type], ["חלק נמכר", row.sale_portion === null || row.sale_portion === undefined ? "לא ידוע" : (row.sale_portion * 100) + "%"],
+      ["סוג נכס", row.apartment_type], ["חלק נמכר", row.sale_portion == null ? "לא ידוע" : formatNumber(row.sale_portion * 100) + "%"],
       ["מקור", row.source_label || (row.source_id ? "גרסאות לעם" : "מידע לעם — התמנון")]];
     var metadata = [["גוש / חלקה / תת־חלקה", row.gush_code],
       ["בסיס שיוך כתובת וקומה", pilotTableValue(row, "location_basis")],
@@ -3600,7 +3626,8 @@
     }
     target.innerHTML = '<div class="deal-card"><header class="deal-card-heading"><div><span class="deal-eyebrow">עסקה שנבחרה</span>' +
       '<h3>' + escapeHtml(row.address || row.street || "כתובת לא ידועה") + '</h3><time dir="ltr">' + escapeHtml(formatDealDate(row.date)) + '</time></div>' +
-      '<strong class="deal-price" dir="ltr">' + escapeHtml(formatNumber(amount)) + ' ₪</strong></header>' +
+      (amount == null ? '<strong class="deal-price">מחיר לא ידוע</strong></header>' :
+        '<strong class="deal-price" dir="ltr">' + escapeHtml(formatNumber(amount)) + ' ₪</strong></header>') +
       '<div class="deal-navigation"><button data-deal-action="back" class="secondary" type="button">' + (state.analysisMode === "chart" && state.latestAnalysisRows.length ? 'סגירת פרטי העסקה וחזרה לגרף' : (state.analysisMode === 'lookup' && state.lookupData ? 'חזרה לתוצאות החיפוש' : 'לתצוגה הראשית')) + '</button><button data-deal-action="building" class="secondary" type="button">כל העסקאות בבניין</button><button data-deal-action="map" class="secondary" type="button">הגוש במפה</button></div>' +
       '<dl class="deal-stats">' + fields.map(fieldMarkup).join("") + '</dl>' +
       (suspect.length ? '<p class="deal-location-note">' + escapeHtml(suspect.join(" · ") + ". הערכים נשמרו כפי שדווחו במקור.") + '</p>' : '') +
@@ -3671,7 +3698,7 @@
               '<a href="' + escapeHtml(dealUrl(row.city, row.record_id)) + '" aria-label="' + escapeHtml(formatDealDate(row.date) + ' · ' + price + ' · ' + row.source_label) + '"><bdi>' + escapeHtml(price) + '</bdi></a>' +
               '<span class="history-source">' + escapeHtml(row.source_label + (selected ? " · נבחרה" : "")) + '</span>' +
               '<span class="history-facts">' + escapeHtml([valueOrDash(row.area) + " מ״ר", valueOrDash(row.rooms) + " חדרים",
-                row.sale_portion === null ? "חלק לא ידוע" : (row.sale_portion * 100) + "% מהנכס"].join(" · ")) + '</span>' +
+                row.sale_portion == null ? "חלק לא ידוע" : formatNumber(row.sale_portion * 100) + "% מהנכס"].join(" · ")) + '</span>' +
               (row.alternate_records.length ? '<details class="history-comparison"><summary>השוואת דיווחים</summary><p>תאריך ומחיר תואמים בשני המקורות. מוצג דיווח גרסאות לעם; נתוני הנכס לא מוזגו.</p>' +
                 [row].concat(row.alternate_records).map(function (sourceRow) {
                   return '<div class="source-comparison-row"><strong>' + escapeHtml(sourceRow.source_label) + '</strong><span>' +
@@ -3697,7 +3724,7 @@
           x: selected.map(function (row) { return row.date; }), y: selected.map(function (row) { return row.price_ils / 1000000; }),
           customdata: selected.map(function (row) { return dealUrl(row.city, row.record_id); }),
           text: selected.map(function (row) { return escapeHtml(formatDealDate(row.date) + " · " + formatNumber(row.price_ils) + " ₪ · " +
-            (row.sale_portion === null ? "חלק לא ידוע" : (row.sale_portion * 100) + "% מהנכס")); }),
+            (row.sale_portion == null ? "חלק לא ידוע" : formatNumber(row.sale_portion * 100) + "% מהנכס")); }),
           hovertemplate: "%{text}<extra>%{fullData.name}</extra>",
           marker: {size: index ? 18 : 11, symbol: index ? "diamond-open" : "circle", color: index ? "#ad793b" : "#186c72"}};
       }).filter(function (trace) { return trace.x.length; });
@@ -4085,18 +4112,18 @@
     target.innerHTML = cards.map(infoCard).join("");
   }
 
-  function applyFilterDefaults(data) {
+  function applyFilterDefaults(data, force) {
     var ranges = data.ranges || {};
-    applyScopedFilterDefaults("analysis", data, { skipRooms: true });
+    applyScopedFilterDefaults("analysis", data, { skipRooms: true, force: force });
     ["compare"].forEach(function (scope) {
-      setRangeInputs(scope + "-filter-year", ranges.deal_year);
-      setRangeInputs(scope + "-filter-price", ranges.price_millions);
-      setRangeInputs(scope + "-filter-price-m2", ranges.price_per_m2);
-      setRangeInputs(scope + "-filter-area", ranges.area);
-      setRangeInputs(scope + "-filter-floor", ranges.floor);
-      setRangeInputs(scope + "-filter-building-floors", ranges.build_floors);
-      setRangeInputs(scope + "-filter-built-year", ranges.build_year);
-      setRangeInputs(scope + "-filter-building-age", ranges.building_age);
+      setRangeInputs(scope + "-filter-year", ranges.deal_year, force);
+      setRangeInputs(scope + "-filter-price", ranges.price_millions, force);
+      setRangeInputs(scope + "-filter-price-m2", ranges.price_per_m2, force);
+      setRangeInputs(scope + "-filter-area", ranges.area, force);
+      setRangeInputs(scope + "-filter-floor", ranges.floor, force);
+      setRangeInputs(scope + "-filter-building-floors", ranges.build_floors, force);
+      setRangeInputs(scope + "-filter-built-year", ranges.build_year, force);
+      setRangeInputs(scope + "-filter-building-age", ranges.building_age, force);
     });
     var selectedRooms = selectedValues(byId("rooms-select"));
     var roomChoices = data.rooms && data.rooms.choices || [];
@@ -4146,21 +4173,24 @@
   function applyScopedFilterDefaults(scope, data, options) {
     options = options || {};
     var ranges = data && data.ranges || {};
-    setRangeInputs(filterControlPrefix(scope, "filter-year"), ranges.deal_year);
-    setRangeInputs(filterControlPrefix(scope, "filter-price"), ranges.price_millions);
-    setRangeInputs(filterControlPrefix(scope, "filter-price-m2"), ranges.price_per_m2);
-    setRangeInputs(filterControlPrefix(scope, "filter-area"), ranges.area);
-    setRangeInputs(filterControlPrefix(scope, "filter-floor"), ranges.floor);
-    setRangeInputs(filterControlPrefix(scope, "filter-building-floors"), ranges.build_floors);
-    setRangeInputs(filterControlPrefix(scope, "filter-built-year"), ranges.build_year);
-    setRangeInputs(filterControlPrefix(scope, "filter-building-age"), ranges.building_age);
+    setRangeInputs(filterControlPrefix(scope, "filter-year"), ranges.deal_year, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-price"), ranges.price_millions, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-price-m2"), ranges.price_per_m2, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-area"), ranges.area, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-floor"), ranges.floor, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-building-floors"), ranges.build_floors, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-built-year"), ranges.build_year, options.force);
+    setRangeInputs(filterControlPrefix(scope, "filter-building-age"), ranges.building_age, options.force);
     var roomOptions = (data.rooms && data.rooms.choices || []).map(function (value) {
       return { value: value, label: value };
     });
     var roomsSelect = byId(filterControlId(scope, "rooms-select"));
     if (roomsSelect && !options.skipRooms) {
+      var currentRooms = selectedValues(roomsSelect).filter(function (value) {
+        return roomOptions.some(function (option) { return String(option.value) === String(value); });
+      });
       setOptions(roomsSelect, roomOptions, true);
-      setSelectedValues(roomsSelect, data.rooms && data.rooms.smart_selected || []);
+      setSelectedValues(roomsSelect, !options.force && currentRooms.length ? currentRooms : data.rooms && data.rooms.smart_selected || []);
     }
     var aptSelect = byId(filterControlId(scope, "apartment-type-select"));
     if (aptSelect && data.apartment_types && data.apartment_types.available) {
@@ -4179,7 +4209,7 @@
   function applySmartRoomSelection() {
     var smartRooms = state.filterOptions && state.filterOptions.rooms && state.filterOptions.rooms.smart_selected;
     if (!smartRooms || !smartRooms.length) {
-      setNotice("metadata-state", "No smart room selection is available for the current filters.", "warning");
+      setNotice("analysis-state", "No smart room selection is available for the current filters.", "warning");
       return;
     }
     setSelectedValues(byId("rooms-select"), smartRooms);
@@ -4187,7 +4217,7 @@
     renderRoomChips();
     updateSelectionSummary();
     scheduleAnalysisAutoUpdate("rooms");
-    setNotice("metadata-state", "Applied smart room selection: " + smartRooms.join(", ") + ".", "ok");
+    setNotice("analysis-state", "Applied smart room selection: " + smartRooms.join(", ") + ".", "ok");
   }
 
   function smartRoomSelectionForOptions(currentSelected, roomChoices, smartRooms) {
@@ -4210,7 +4240,7 @@
     renderRoomChips();
     updateSelectionSummary();
     scheduleAnalysisAutoUpdate("rooms");
-    setNotice("metadata-state", "Room filter cleared.", "ok");
+    setNotice("analysis-state", "Room filter cleared.", "ok");
   }
 
   function applyGushSmartRoomSelection() {
@@ -4236,7 +4266,7 @@
     var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
     setSelectedValues(byId("gush-apartment-type-select"), defaultApartmentTypes);
     if (state.gushFilterOptions) {
-      applyScopedFilterDefaults("gush", state.gushFilterOptions);
+      applyScopedFilterDefaults("gush", state.gushFilterOptions, { force: true });
     }
     byId("gush-roof-select").value = "both";
     byId("gush-new-project-select").value = "both";
@@ -4275,7 +4305,7 @@
     var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
     setSelectedValues(byId("compare-apartment-type-select"), defaultApartmentTypes);
     if (state.filterOptions) {
-      applyScopedFilterDefaults("compare", state.filterOptions);
+      applyScopedFilterDefaults("compare", state.filterOptions, { force: true });
     }
     state.compareRoomsSelectionInitialized = true;
     byId("compare-roof-select").value = "both";
@@ -4315,7 +4345,7 @@
     var defaultApartmentTypes = state.meta && state.meta.default_filters && state.meta.default_filters.apartment_types || [];
     setSelectedValues(byId("city-apartment-type-select"), defaultApartmentTypes);
     if (state.cityFilterOptions) {
-      applyScopedFilterDefaults("city", state.cityFilterOptions);
+      applyScopedFilterDefaults("city", state.cityFilterOptions, { force: true });
     }
     byId("city-roof-select").value = "both";
     byId("city-new-project-select").value = "both";
@@ -4332,7 +4362,7 @@
 
   function resetFilterRanges() {
     if (state.filterOptions) {
-      applyFilterDefaults(state.filterOptions);
+      applyFilterDefaults(state.filterOptions, true);
     }
     byId("roof-select").value = "both";
     byId("new-project-select").value = "both";
@@ -4340,7 +4370,7 @@
     syncSegmentedControls();
     updateSelectionSummary();
     scheduleAnalysisAutoUpdate("reset-filters");
-    setNotice("metadata-state", "Filter ranges reset to the current selection.", "ok");
+    setNotice("analysis-state", "Filter ranges reset to the current selection.", "ok");
   }
 
   function analysisColumns() {
@@ -4521,6 +4551,7 @@
       chip.type = "button";
       chip.className = "selection-chip";
       chip.innerHTML = chipMarkup(option ? option.textContent : value);
+      chip.setAttribute("aria-label", "הסרת " + (option ? option.textContent : value));
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
         renderCityComparisonPicker();
@@ -4541,6 +4572,7 @@
       button.type = "button";
       button.className = "picker-option city-picker-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.setAttribute("aria-pressed", String(selected.has(String(option.value))));
       button.innerHTML = '<span class="city-picker-check" aria-hidden="true"></span><span class="city-picker-label ' + textDirectionClass(option.textContent) + '">' +
         escapeHtml(option.textContent) + "</span>";
       button.addEventListener("click", function () {
@@ -4628,6 +4660,7 @@
       mergeCompareGushOptions(response.data.results || []);
       renderLocationPickers();
     } catch (error) {
+      if (requestId !== state.compareGushSearchRequestId) return;
       results.innerHTML = '<div class="mini-notice error">' + escapeHtml(error.message) + "</div>";
     }
   }
@@ -4669,6 +4702,7 @@
       chip.type = "button";
       chip.className = "selection-chip";
       chip.innerHTML = chipMarkup(option ? option.textContent : value);
+      chip.setAttribute("aria-label", "הסרת " + (option ? option.textContent : value));
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
         renderLocationPickers();
@@ -4705,6 +4739,7 @@
       button.className = "picker-option";
       if (key === "gushes") button.classList.add("gush-picker-option");
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.setAttribute("aria-pressed", String(selected.has(String(option.value))));
       if (key === "gushes") {
         button.innerHTML = '<span class="gush-picker-result-label ' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</span>";
       } else {
@@ -4739,6 +4774,7 @@
       chip.type = "button";
       chip.className = "selection-chip";
       chip.innerHTML = chipMarkup(option ? option.textContent : value);
+      chip.setAttribute("aria-label", "הסרת " + (option ? option.textContent : value));
       if (option && hasHebrew(option.textContent)) chip.classList.add("rtl-text");
       chip.addEventListener("click", function () {
         setOptionSelected(select, value, false);
@@ -4766,6 +4802,7 @@
       button.type = "button";
       button.className = "picker-option compare-gush-option";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.setAttribute("aria-pressed", String(selected.has(String(option.value))));
       button.innerHTML = '<span class="compare-gush-result-label ' + textDirectionClass(option.textContent) + '">' + escapeHtml(option.textContent) + "</span>";
       button.addEventListener("click", function () {
         setSelectedValues(byId("street-select"), []);
@@ -4975,6 +5012,9 @@
   }
 
   function enforceCompareGushLimit() {
+    // The selection is shared; only Compare Areas has the 15-series limit. Other tabs
+    // keep every gush, and Compare pauses its auto update if it opens with more.
+    if (document.body.dataset.activeTab !== "compare") return;
     var select = byId("gush-select");
     var selected = selectedValues(select);
     if (selected.length <= 15) return;
@@ -5109,6 +5149,7 @@
       button.type = "button";
       button.className = "filter-chip";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.setAttribute("aria-pressed", String(selected.has(String(option.value))));
       button.dataset.chipValue = String(option.value);
       button.setAttribute("aria-pressed", String(option.selected));
       button.textContent = option.textContent;
@@ -5195,6 +5236,7 @@
       button.type = "button";
       button.className = "filter-chip";
       button.classList.toggle("is-selected", selected.has(String(option.value)));
+      button.setAttribute("aria-pressed", String(selected.has(String(option.value))));
       button.dataset.chipValue = String(option.value);
       button.setAttribute("aria-pressed", String(option.selected));
       button.textContent = option.textContent;
@@ -5300,13 +5342,16 @@
     return scope === "analysis" ? baseId : scope + "-" + baseId;
   }
 
-  function setRangeInputs(prefix, range) {
+  function setRangeInputs(prefix, range, force) {
     if (!range) return;
     var year = /filter-year$/.test(prefix);
     ["min","max"].forEach(function (side) {
       var input = byId(prefix + "-" + side);
-      input.value = year ? valueOrEmpty(range[side]) : "";
-      input.dataset.defaultValue = input.value;
+      // A new area refreshes the defaults but keeps bounds the user typed; resets pass force.
+      var edited = input.value !== "" && input.value !== (input.dataset.defaultValue || "");
+      var fallback = year ? String(valueOrEmpty(range[side])) : "";
+      if (force || !edited) input.value = fallback;
+      input.dataset.defaultValue = fallback;
       input.placeholder = year ? "ללא הגבלה" : (side === "min" ? "ללא מינימום" : "ללא מקסימום");
       input.title = "טווח המקור: " + valueOrDash(range.min) + "–" + valueOrDash(range.max) + ". השאירו ריק כדי לא להגביל.";
     });

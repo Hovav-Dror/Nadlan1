@@ -49,7 +49,7 @@ def lookup_address(legacy, current, payload):
         floor = None if payload.get('floor') in (None, '') else float(payload['floor'])
         if not 1900 <= start <= end <= 2100 or (floor is not None and not -10 <= floor <= 200):
             raise ValueError()
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         raise CalculationServiceError('טווח השנים או הקומה אינם תקינים.')
     old = _prepare(legacy.load_city(city))
     new = _prepare(current.load_city(city)) if current is not None else old.iloc[:0]

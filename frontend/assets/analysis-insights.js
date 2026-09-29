@@ -29,12 +29,124 @@
   function description(mode, insights) {
     if (mode === "trend") return "חציון שנתי וטווח 50% האמצעיים. סימון חלול: פחות מ־" + (insights && insights.min_year_prices || 10) + " עסקאות עם מחיר תקין. פער בקו: אין מחירים זמינים. שינוי בתמהיל הנכסים עשוי לשנות את החציון; זו אינה תשואת דירה או רווח לאחר הוצאות.";
     if (mode === "volume") return "כל העסקאות אחרי סינון, כולל עסקאות ללא ערך למדד המחיר. אפס מציין שאין רשומות בבחירה; אין בכך הוכחה שלא היו עסקאות בשוק.";
+    if (mode === "adjusted") return "כמה עלתה דירה דומה? מודל שמנטרל שינויים בשטח, חדרים, קומה, גיל הבניין וסוג הנכס בין השנים. קו מקווקו: חציון מחיר למ\"ר בלי תיקון. השוואה בין השניים מראה כמה מהשינוי נובע מהתמהיל. המדד אינו תלוי במדד המחיר שנבחר ואינו מתואם לאינפלציה.";
+    if (mode === "segments") return "מחיר למ\"ר: בכמה אחוזים דירות מכל קבוצה יקרות או זולות מעסקה טיפוסית באותה שנה. ההשוואה בתוך כל שנה מונעת ממועד המכירה להיראות כמו השפעה של המאפיין. תכונות אחרות לא מנוטרלות: למשל, קומות גבוהות נמצאות לרוב בבניינים חדשים.";
     if (mode === "distribution") return "כמה עסקאות נמצאות בכל טווח מחיר? כל הערכים התקינים בכל השנים שנבחרו, ללא דגימה וללא התאמה לאינפלציה. כל עמודה כוללת את הגבול התחתון; האחרונה כוללת גם את העליון.";
     return "כל נקודה היא עסקה. לחצו עליה לפתיחת הפרטים וההיסטוריה. צבע, צורה, גודל, פיצול וקווי השוואה חלים על תצוגה זו.";
   }
 
+  var SEGMENT_TITLES = {rooms: "חדרים", floor: "קומה", age: "גיל הבניין בעת העסקה", area: "שטח (מ\"ר)", type: "סוג נכס"};
+
+  function signedPercent(value) {
+    return value == null ? "—" : (value > 0 ? "+" : "") + number(value) + "%";
+  }
+
+  function changeText(pct) {
+    var rounded = Math.round(Math.abs(pct) * 10) / 10;
+    return (pct >= 0 ? "עלייה של " : "ירידה של ") + number(rounded) + "%";
+  }
+
+  function baseLayout(title, xTitle, yTitle) {
+    return {
+      title: {text: title, font: {size: 18}},
+      margin: {t: 55, r: 24, b: 85, l: 72},
+      font: {family: '"Noto Sans Hebrew", "Segoe UI", Arial, sans-serif', size: 12, color: "#34494e"},
+      paper_bgcolor: "#fff", plot_bgcolor: "#fff",
+      xaxis: {title: xTitle, automargin: true},
+      yaxis: {title: yTitle, automargin: true, gridcolor: "#edf1f1"},
+      legend: {orientation: "h", y: -0.22}, hovermode: "closest"
+    };
+  }
+
+  function segmentSpec(insights, options) {
+    var dim = options.segmentDim || "rooms";
+    var rows = ((insights.segments || {}).dimensions || {})[dim] || [];
+    var charted = rows.filter(function (r) { return !r.unknown; });
+    var hover = charted.map(function (r) {
+      return escape(r.label) + "<br>" + signedPercent(r.premium_pct) + " לעומת עסקה טיפוסית באותה שנה" +
+        "<br>" + number(r.valid_prices) + " עסקאות עם מדד מחיר" + (r.low_sample ? " · מעט מדי להשוואה" : "") +
+        "<br>חציון: " + number(r.median) + " " + escape(unit);
+    });
+    var unit = "אלפי ₪ למ\"ר";
+    var layout = baseLayout("פער מחיר למ\"ר לפי " + SEGMENT_TITLES[dim], SEGMENT_TITLES[dim], "% לעומת חציון אותה שנה");
+    layout.xaxis.type = "category";
+    layout.yaxis.zeroline = true;
+    layout.yaxis.zerolinecolor = "#8aa0a3";
+    layout.yaxis.ticksuffix = "%";
+    layout.showlegend = false;
+    return {
+      traces: [{type: "bar", x: charted.map(function (r) { return r.label; }), y: charted.map(function (r) { return r.premium_pct; }),
+        text: hover, textposition: "none", hovertemplate: "%{text}<extra></extra>",
+        marker: {color: charted.map(function (r) { return r.premium_pct == null ? "#c9d3d4" : r.premium_pct >= 0 ? "#186c72" : "#b7791f"; })}}],
+      layout: layout,
+      headers: [SEGMENT_TITLES[dim], "עסקאות", "עם מחיר למ\"ר", "פער מחציון השנה", "חציון (" + unit + ")", "רבעון תחתון", "רבעון עליון"],
+      rows: rows.map(function (r) {
+        return [r.label, number(r.deals), number(r.valid_prices), r.premium_pct == null ? "מעט מדי עסקאות" : signedPercent(r.premium_pct), number(r.median), number(r.p25), number(r.p75)];
+      }),
+      partial: false,
+      hasData: charted.some(function (r) { return r.premium_pct != null; }),
+      note: rows.some(function (r) { return r.unknown; }) ? "עסקאות ללא ערך ידוע מופיעות בטבלה ולא בגרף. " : ""
+    };
+  }
+
+  function adjustedSpec(insights, options) {
+    var index = insights.adjusted_index || {};
+    var known = index.years || [];
+    var byYear = {};
+    known.forEach(function (r) { byYear[r.year] = r; });
+    var rows = [];
+    // A full year range keeps gaps visible where a year had too few deals for the model.
+    if (known.length) for (var y = known[0].year; y <= known[known.length - 1].year; y += 1) rows.push(byYear[y] || {year: y});
+    var years = rows.map(function (r) { return r.year; });
+    var partial = function (r) { return r.year >= options.partialYear; };
+    var layout = baseLayout("מדד מחיר מתוקן לתמהיל (" + (index.base_year || "") + " = 100)", "שנת עסקה", "מדד (" + (index.base_year || "בסיס") + " = 100)");
+    layout.xaxis.tickformat = "d";
+    var hover = rows.map(function (r) {
+      if (r.adjusted == null) return r.year + "<br>מעט מדי עסקאות למודל";
+      return r.year + (partial(r) ? " · שנה חלקית" : "") + "<br>מתוקן: " + number(r.adjusted) +
+        (r.adjusted_low != null ? " (95%: " + number(r.adjusted_low) + "–" + number(r.adjusted_high) + ")" : " · שנת בסיס") +
+        "<br>חציון למ\"ר בלי תיקון: " + number(r.raw) + "<br>" + number(r.observations) + " עסקאות במודל";
+    });
+    var band = rows.filter(function (r) { return r.adjusted != null; });
+    var lowBand = band.map(function (r) { return r.adjusted_low == null ? r.adjusted : r.adjusted_low; });
+    var highBand = band.map(function (r) { return r.adjusted_high == null ? r.adjusted : r.adjusted_high; });
+    var traces = [
+      {type: "scatter", mode: "lines", name: "טווח סביר (95%)", x: band.map(function (r) { return r.year; }).concat(band.map(function (r) { return r.year; }).reverse()),
+        y: lowBand.concat(highBand.reverse()), fill: "toself", fillcolor: "rgba(24,108,114,0.14)", line: {width: 0}, hoverinfo: "skip", legendrank: 3},
+      {type: "scatter", mode: "lines", name: "חציון למ\"ר, בלי תיקון", x: years, y: rows.map(function (r) { return r.raw == null ? null : r.raw; }),
+        line: {color: "#8a8f98", width: 2, dash: "dash"}, connectgaps: false, hoverinfo: "skip", legendrank: 2},
+      {type: "scatter", mode: "lines+markers", name: "מדד מתוקן לתמהיל", x: years, y: rows.map(function (r) { return r.adjusted == null ? null : r.adjusted; }),
+        text: hover, hovertemplate: "%{text}<extra></extra>", connectgaps: false, legendrank: 1,
+        line: {color: "#186c72", width: 3}, marker: {size: 8, color: rows.map(function (r) { return partial(r) ? "#b7791f" : "#186c72"; })}}
+    ];
+    var complete = band.filter(function (r) { return !partial(r); });
+    var first = complete[0];
+    var last = complete[complete.length - 1];
+    var note = "";
+    if (first && last && last.year > first.year) {
+      var span = last.year - first.year;
+      var cagr = function (v) { return 100 * (Math.pow(v / first.adjusted, 1 / span) - 1); };
+      note = "בין " + first.year + " ל־" + last.year + " מחיר דירה דומה: " + changeText(last.adjusted - first.adjusted) +
+        " (" + changeText(cagr(last.adjusted)) + " בממוצע לשנה). בלי תיקון לתמהיל: " + changeText(last.raw - first.raw) + ". ";
+    }
+    if (index.excluded_outliers) note += number(index.excluded_outliers) + " עסקאות חריגות מאוד הוצאו מהמודל. ";
+    return {
+      traces: traces, layout: layout,
+      headers: ["שנה", "עסקאות במודל", "מדד מתוקן", "טווח 95%", "חציון למ\"ר (מדד)"],
+      rows: rows.map(function (r) {
+        return [String(r.year) + (partial(r) ? "*" : ""), number(r.observations), r.adjusted == null ? "מעט מדי עסקאות" : number(r.adjusted),
+          r.adjusted_low == null ? (r.adjusted == null ? "—" : "בסיס") : number(r.adjusted_low) + " – " + number(r.adjusted_high), number(r.raw)];
+      }),
+      partial: rows.some(partial),
+      hasData: band.length > 1,
+      note: note
+    };
+  }
+
   function chartSpec(data, mode, options) {
     var insights = data.insights;
+    if (mode === "segments") return segmentSpec(insights, options);
+    if (mode === "adjusted") return adjustedSpec(insights, options);
     var unit = options.unit;
     var annual = insights.annual || [];
     var years = annual.map(function (row) { return row.year; });

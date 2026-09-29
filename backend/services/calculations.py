@@ -64,7 +64,11 @@ def remove_price_outliers_by_year(df: pd.DataFrame) -> pd.DataFrame:
     if not years:
         return working.drop(columns=["_nadlan2_price", "_nadlan2_year"])
 
-    filtered_frames: list[pd.DataFrame] = []
+    # Rows without a year or price cannot be judged against a yearly range; keep them
+    # so missing-value counts downstream stay truthful.
+    filtered_frames: list[pd.DataFrame] = [
+        working.loc[working["_nadlan2_year"].isna() | working["_nadlan2_price"].isna()]
+    ]
     min_year = min(years)
     max_year = max(years)
 
@@ -94,7 +98,7 @@ def remove_price_outliers_by_year(df: pd.DataFrame) -> pd.DataFrame:
             ]
         )
 
-    if not filtered_frames:
+    if not any(len(frame) for frame in filtered_frames):
         return working.iloc[0:0].drop(columns=["_nadlan2_price", "_nadlan2_year"])
     return pd.concat(filtered_frames, ignore_index=True).drop(columns=["_nadlan2_price", "_nadlan2_year"])
 
@@ -150,12 +154,12 @@ def apply_common_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]])
         addresses = result.get("FULLADRESS", pd.Series("", index=result.index))
         result = result.loc[address_mask(addresses, query)]
     location_choice = filters.get("location_basis", "all")
-    if location_choice not in {"all", "verified"}:
+    if not isinstance(location_choice, str) or location_choice not in {"all", "verified"}:
         raise CalculationServiceError("Unknown location basis filter.")
     if location_choice == "verified" and "location_basis" in result.columns:
         result = result.loc[result["location_basis"].eq("strict_transaction")]
     share_choice = filters.get("sale_portion", "all")
-    if share_choice not in {"all", "full", "partial", "unknown"}:
+    if not isinstance(share_choice, str) or share_choice not in {"all", "full", "partial", "unknown"}:
         raise CalculationServiceError("Unknown sale portion filter.")
     if "sale_portion" in result.columns and share_choice != "all":
         shares = pd.to_numeric(result["sale_portion"], errors="coerce")
@@ -166,7 +170,7 @@ def apply_common_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]])
         else:
             result = result.loc[shares.isna() | shares.le(0) | shares.gt(1)]
     quality_choice = filters.get("data_completeness", "all")
-    if quality_choice not in {"all", "with_address", "with_floor", "with_address_and_floor"}:
+    if not isinstance(quality_choice, str) or quality_choice not in {"all", "with_address", "with_floor", "with_address_and_floor"}:
         raise CalculationServiceError("Unknown data completeness filter.")
     if quality_choice in {"with_address", "with_address_and_floor"}:
         address = result.get("FULLADRESS", pd.Series(None, index=result.index, dtype=object))

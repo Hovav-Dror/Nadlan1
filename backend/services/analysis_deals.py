@@ -72,6 +72,8 @@ def build_analysis_deals_response(data_store: DataStore, payload: Optional[Mappi
 
     limit = _coerce_limit(request_payload.get("limit"))
     sample_seed = _safe_int(request_payload.get("sample_seed"))
+    if sample_seed is not None:
+        sample_seed %= 2**32
     price_type = _price_type(_first_present(request_payload, "price_type", "y_variable"))
 
     city_frame = data_store.load_cities(selected_cities)
@@ -551,8 +553,10 @@ def _overlays(
     overlays: Dict[str, Any] = {"sp500": [], "city_comparison": []}
 
     if payload.get("show_city_comparison") is True:
-        city_filtered = apply_transaction_filters(city_frame, _non_location_filters(payload.get("filters")))
-        if payload.get("remove_price_outliers") is not False:
+        # The city line is the context for the selection, so the address search is not applied.
+        city_filters = {key: value for key, value in _non_location_filters(payload.get("filters")).items() if key != "address"}
+        city_filtered = apply_transaction_filters(city_frame, city_filters)
+        if _first_present(payload, "remove_price_outliers") is not False:
             city_filtered = remove_price_outliers_by_year(city_filtered)
         city_prepared = _with_display_calculations(city_filtered, price_type)
         city_summary = summary_by_city_year(city_prepared)
@@ -639,7 +643,7 @@ def _price_type(value: Any) -> str:
 def _coerce_limit(value: Any) -> int:
     try:
         limit = int(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         limit = DEFAULT_LIMIT
     return max(1, min(limit, MAX_LIMIT))
 
@@ -671,7 +675,7 @@ def _safe_int(value: Any) -> Optional[int]:
         if pd.isna(value):
             return None
         return int(value)
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return None
 
 

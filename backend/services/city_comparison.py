@@ -63,7 +63,7 @@ def build_city_comparison_summary_response(data_store: DataStore, payload: Optio
     series = build_city_year_series(plot_table)
     city_stats = build_city_stats(plot_table, selection["cities"], y_variable)
     overlay_frame = _without_year(filtered, 2027) if _exclude_2027(request_payload) else filtered
-    overlays, overlay_warnings = _overlays(overlay_frame, request_payload, y_variable)
+    overlays, overlay_warnings = _overlays(overlay_frame, request_payload, y_variable, statistic)
     warnings.extend(overlay_warnings)
 
     return _json_ready(
@@ -449,7 +449,7 @@ def _min_deals_per_year(payload: Mapping[str, Any]) -> int:
         value = _first_present(payload.get("filters", {}) if isinstance(payload.get("filters"), Mapping) else {}, "min_deals_per_year")
     try:
         return max(1, int(value))
-    except (TypeError, ValueError):
+    except (TypeError, ValueError, OverflowError):
         return 1
 
 
@@ -457,12 +457,13 @@ def _overlays(
     selected_deals: pd.DataFrame,
     payload: Mapping[str, Any],
     y_variable: str,
+    statistic: str = "median",
 ) -> tuple[Dict[str, Any], List[str]]:
     overlays: Dict[str, Any] = {"sp500": []}
     warnings: List[str] = []
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:
-        yearly = _yearly_selected_medians(selected_deals, y_variable)
+        yearly = _yearly_selected_values(selected_deals, y_variable, statistic)
         if not yearly.empty:
             try:
                 base_value = yearly.sort_values("deal year")["PriceUsed"].iloc[0]
@@ -482,7 +483,7 @@ def _overlays(
     return overlays, warnings
 
 
-def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
+def _yearly_selected_values(df: pd.DataFrame, y_variable: str, statistic: str) -> pd.DataFrame:
     if df.empty or "deal year" not in df.columns:
         return pd.DataFrame(columns=["deal year", "PriceUsed"])
     working = df.copy()
@@ -496,7 +497,7 @@ def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
     return (
         working.dropna(subset=["deal year", "PriceUsed"])
         .groupby("deal year", dropna=True)["PriceUsed"]
-        .median()
+        .agg("mean" if statistic == "mean" else "median")
         .reset_index()
     )
 

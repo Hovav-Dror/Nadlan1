@@ -283,10 +283,13 @@ def _comparison_period(
     available = [year for year in years if year not in excluded]
     filters = payload.get("filters") if isinstance(payload.get("filters"), Mapping) else {}
     bounds = _range_value(filters, "deal year", "deal_year_range", "year")
-    first_year = _safe_int(bounds[0]) if bounds and bounds[0] is not None else (min(available) if available else None)
-    last_year = _safe_int(bounds[1]) if bounds and bounds[1] is not None else (max(available) if available else None)
-    if not include_partial and last_year is not None and last_year >= snapshot.year:
-        last_year = snapshot.year - 1
+    # Endpoints are the first and last years that have data inside the requested bounds;
+    # a bound outside the data (or a fractional one) must not select an empty year.
+    low = _finite(bounds[0]) if bounds else None
+    high = _finite(bounds[1]) if bounds else None
+    in_range = [year for year in available if (low is None or year >= low) and (high is None or year <= high)]
+    first_year = min(in_range) if in_range else None
+    last_year = max(in_range) if in_range else None
     dates = pd.to_datetime(city_frame["date"], errors="coerce") if "date" in city_frame else pd.Series(dtype="datetime64[ns]")
     return {
         "first_year": first_year,
@@ -544,7 +547,7 @@ def _overlays(
         overlays["city"] = _city_overlay_rows(_summary_by_city_year_for_stat(selected_deals, statistic), y_variable)
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:
-        yearly = _yearly_selected_medians(selected_deals, y_variable)
+        yearly = _yearly_selected_values(selected_deals, y_variable, statistic)
         if not yearly.empty:
             try:
                 base_value = yearly.sort_values("deal year")["PriceUsed"].iloc[0]
@@ -583,7 +586,7 @@ def _city_overlay_rows(summary: pd.DataFrame, y_variable: str) -> List[Dict[str,
     return rows
 
 
-def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
+def _yearly_selected_values(df: pd.DataFrame, y_variable: str, statistic: str) -> pd.DataFrame:
     if df.empty or "deal year" not in df.columns:
         return pd.DataFrame(columns=["deal year", "PriceUsed"])
     working = df.copy()
@@ -599,7 +602,7 @@ def _yearly_selected_medians(df: pd.DataFrame, y_variable: str) -> pd.DataFrame:
     return (
         working.dropna(subset=["deal year", "PriceUsed"])
         .groupby("deal year", dropna=True)["PriceUsed"]
-        .median()
+        .agg("mean" if statistic == "mean" else "median")
         .reset_index()
     )
 
@@ -763,3 +766,11 @@ def _json_ready(value: Any) -> Any:
         except (TypeError, ValueError):
             pass
     return value
+
+
+def _finite(value: Any) -> Optional[float]:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if isfinite(number) else None

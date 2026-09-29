@@ -5,7 +5,9 @@ import unittest
 import pandas as pd
 
 from backend.services.analysis_deals import build_analysis_deals_response
-from backend.services.analysis_insights import build_analysis_insights
+import numpy as np
+
+from backend.services.analysis_insights import build_adjusted_index, build_analysis_insights, build_segment_breakdown
 from backend.services.calculations import apply_common_filters, price_used
 
 
@@ -116,6 +118,57 @@ class AnalysisInsightsTests(unittest.TestCase):
         response = build_analysis_deals_response(Store(frame), {"city": "test", "facet_var": "area", "remove_price_outliers": False})
         self.assertEqual(response["summary"]["deals"], 6)
         self.assertEqual({row["facet"] for row in response["points"]}, {"999"})
+
+    def test_adjusted_index_removes_mix_shift(self):
+        # Prices rise exactly 10% a year per apartment, but later years sell far more
+        # large new apartments. The raw median overstates growth; the index must not.
+        rng = np.random.default_rng(7)
+        rows = []
+        for offset, year in enumerate([2020, 2021, 2022]):
+            for i in range(200):
+                large = rng.random() < (0.1 + 0.4 * offset)
+                area = 120.0 if large else 60.0
+                age = 1 if large else 40
+                rooms = 5 if large else 2
+                premium = 1.3 if large else 1.0
+                noise = float(np.exp(rng.normal(0, 0.02)))
+                rows.append({"deal year": year, "area": area, "rooms": rooms, "floor": 2, "building age": age,
+                             "apt type": "flat", "price_millions": 0.02 * area * premium * 1.1 ** offset * noise})
+        rows.append({"deal year": 2022, "area": 60.0, "rooms": 2, "floor": 2, "building age": 40,
+                     "apt type": "flat", "price_millions": 500.0})  # whole-building misrecord
+        index = build_adjusted_index(pd.DataFrame(rows))
+        by_year = {row["year"]: row for row in index["years"]}
+        self.assertEqual(index["base_year"], 2020)
+        self.assertEqual(by_year[2020]["adjusted"], 100.0)
+        self.assertAlmostEqual(by_year[2022]["adjusted"], 121.0, delta=1.5)
+        self.assertGreater(by_year[2022]["raw"], 130)
+        self.assertLess(by_year[2022]["adjusted_low"], 121.0)
+        self.assertGreater(by_year[2022]["adjusted_high"], 121.0)
+        self.assertGreaterEqual(index["excluded_outliers"], 1)
+        json.dumps(index, allow_nan=False)
+
+    def test_adjusted_index_requires_enough_years_and_deals(self):
+        frame = pd.DataFrame({"deal year": [2020] * 40, "area": [80.0] * 40, "price_millions": [2.0] * 40})
+        self.assertEqual(build_adjusted_index(frame)["reason"], "insufficient")
+        frame = pd.DataFrame({"deal year": [2020, 2021] * 3, "area": [80.0] * 6, "price_millions": [2.0] * 6})
+        self.assertEqual(build_adjusted_index(frame)["years"], [])
+        self.assertEqual(build_adjusted_index(pd.DataFrame({"PriceUsed": []}))["reason"], "insufficient")
+
+    def test_segment_premium_uses_same_year_median(self):
+        # Large apartments sell only in the expensive year. Pooled medians would call
+        # them a big premium; within-year comparison shows the true 20%.
+        rows = [{"deal year": 2020, "rooms": 3, "price_per_m2": 1.0} for _ in range(20)]
+        rows += [{"deal year": 2024, "rooms": 3, "price_per_m2": 2.0} for _ in range(20)]
+        rows += [{"deal year": 2024, "rooms": 5, "price_per_m2": 2.4} for _ in range(20)]
+        rows += [{"deal year": 2024, "rooms": 999, "price_per_m2": 2.0} for _ in range(3)]
+        segments = build_segment_breakdown(pd.DataFrame(rows))
+        rooms = {row["label"]: row for row in segments["dimensions"]["rooms"]}
+        self.assertEqual(rooms["5–5.5"]["deals"], 20)
+        self.assertEqual(rooms["לא ידוע"]["deals"], 3, "Sentinel rooms stay in the unknown band")
+        self.assertTrue(rooms["לא ידוע"]["low_sample"])
+        self.assertIsNone(rooms["לא ידוע"]["premium_pct"])
+        self.assertAlmostEqual(rooms["5–5.5"]["premium_pct"] - rooms["3–3.5"]["premium_pct"], 20.0, delta=1)
+        self.assertEqual(sum(row["deals"] for row in segments["dimensions"]["type"]), len(rows))
 
 
 if __name__ == "__main__":

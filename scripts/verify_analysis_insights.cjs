@@ -50,4 +50,32 @@ assert(target.hidden);
 assert.equal(target.innerHTML,'');
 assert(ui.description('trend',data.insights).includes('10'));
 assert(!ui.chartSpec({insights:{annual:[],distribution:[],valid_price_deals:0}},'volume',options).hasData);
-console.log('PASS: aggregate charts use the complete population, retain missing-year gaps, mark partial years, and escape tables');
+
+// Mix-adjusted index: gaps for years the model skipped, base year without a range, headline change.
+const adjusted = {insights: {adjusted_index: {base_year: 2020, excluded_outliers: 2, years: [
+  {year: 2020, observations: 50, adjusted: 100, adjusted_low: null, adjusted_high: null, raw: 100},
+  {year: 2022, observations: 40, adjusted: 121, adjusted_low: 115, adjusted_high: 127, raw: 140},
+  {year: 2023, observations: 30, adjusted: 130, adjusted_low: 120, adjusted_high: 140, raw: 150}]}}};
+spec = ui.chartSpec(adjusted, 'adjusted', {unit: 'x', partialYear: 2023});
+const line = spec.traces.find(trace => trace.name === 'מדד מתוקן לתמהיל');
+assert.deepEqual(Array.from(line.x), [2020, 2021, 2022, 2023]);
+assert.equal(line.y[1], null, 'A skipped year is a gap, not an interpolated value');
+assert(spec.hasData && spec.partial);
+assert(spec.note.includes('2020') && spec.note.includes('2022') && !spec.note.includes('2023'), 'Headline change ignores the partial year');
+assert(spec.note.includes('21%') && spec.note.includes('40%'));
+assert.equal(spec.rows[0][3], 'בסיס');
+assert(!ui.chartSpec({insights: {adjusted_index: {years: [], reason: 'insufficient'}}}, 'adjusted', options).hasData);
+
+// Segment premiums: unknown band in the table only, low samples grey and without a bar value.
+const segments = {insights: {segments: {dimensions: {rooms: [
+  {label: '3–3.5', deals: 40, valid_prices: 40, median: 20, p25: 18, p75: 22, premium_pct: -4.5, low_sample: false, unknown: false},
+  {label: '<b>6+</b>', deals: 3, valid_prices: 3, median: 25, p25: 24, p75: 26, premium_pct: null, low_sample: true, unknown: false},
+  {label: 'לא ידוע', deals: 5, valid_prices: 5, median: 9, p25: 8, p75: 10, premium_pct: null, low_sample: true, unknown: true}]}}}};
+spec = ui.chartSpec(segments, 'segments', {unit: 'x', partialYear: 2030, segmentDim: 'rooms'});
+assert.deepEqual(Array.from(spec.traces[0].x), ['3–3.5', '<b>6+</b>']);
+assert.equal(spec.traces[0].y[1], null);
+assert.equal(spec.rows.length, 3);
+assert(spec.traces[0].text[1].includes('&lt;b&gt;'), 'Escape segment labels in hover text');
+assert(spec.hasData);
+assert(!ui.chartSpec(segments, 'segments', {unit: 'x', segmentDim: 'floor'}).hasData);
+console.log('PASS: aggregate charts use the complete population, retain missing-year gaps, mark partial years, and escape tables; adjusted index and segment views keep gaps, partial years and unknowns honest');

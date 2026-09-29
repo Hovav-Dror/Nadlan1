@@ -168,6 +168,8 @@ def register_routes(app: Flask) -> None:
         payload = request.get_json(silent=True) or {}
         if not isinstance(payload, dict):
             return _error_response("Request body must be a JSON object.", started, status_code=400)
+        if not all(isinstance(payload.get(key) or [], list) for key in ("gushes", "streets")):
+            return _error_response("gushes and streets must be lists.", started, status_code=400)
         try:
             streets = _data_store().streets_for_gushes(city, payload.get("gushes") or [])
             gushes = _data_store().gushes_for_streets(city, payload.get("streets") or [])
