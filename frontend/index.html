@@ -10,6 +10,7 @@
     <script src="assets/plotly.min.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
     <script src="assets/data-quality.js" defer></script>
+    <script src="assets/analysis-insights.js" defer></script>
     <script src="assets/app.js" defer></script>
     <script src="assets/ui-layout.js" defer></script>
   </head>
@@ -60,7 +61,7 @@
 
       <div class="view-toolbar"><div class="navigation-actions"><button id="navigation-back" class="secondary" type="button" disabled>חזרה לתצוגה הקודמת</button><button id="navigation-home" class="secondary" type="button">לתצוגה הראשית</button></div><button id="share-view" class="secondary" type="button">קישור לחיפוש ולמסננים</button><span id="share-view-state" role="status"></span></div>
       <section class="workspace">
-        <aside class="control-panel" aria-label="Controls">
+        <aside class="control-panel" id="analysis-filters" tabindex="-1" aria-label="Controls">
           <div class="control-section step-section">
             <div class="section-heading">
               <span class="step-kicker">Step 1</span>
@@ -229,34 +230,12 @@
         </aside>
 
         <section class="content-panel">
-          <section class="tab-panel is-active" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis">
-            <div class="workflow-banner">
+          <section class="tab-panel is-active" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis" tabindex="-1">
+            <div class="workflow-banner analysis-intro">
               <div>
-                <h2>Analysis Deals - Granular View</h2>
-                <dl class="workflow-explainer">
-                  <div>
-                    <dt>What you see</dt>
-                    <dd>Each point is one individual deal.</dd>
-                  </div>
-                  <div>
-                    <dt>Best for</dt>
-                    <dd>Detailed exploration, finding specific properties, and understanding price variation within an area.</dd>
-                  </div>
-                  <div>
-                    <dt>Use when</dt>
-                    <dd>You want to see all deals, inspect individual transactions, or analyze price distribution in detail.</dd>
-                  </div>
-                  <div>
-                    <dt>Map shortcut</dt>
-                    <dd>Use Gush Map first to click polygons, then return here to analyze the selected deals.</dd>
-                  </div>
-                </dl>
-              </div>
-              <div class="workflow-tags">
-                <span>Transaction-level</span>
-                <span>Street or Gush</span>
-                <span>Map selection</span>
-                <span>CSV export</span>
+                <h2>מה קורה בשוק באזור שבחרתם?</h2>
+                <p>בחרו עיר, רחוב או גוש. בדקו עסקאות בודדות, מגמת מחירים, היקף פעילות והתפלגות — עם אותם מסננים.</p>
+                <a href="#map">בחירת אזור במפה ←</a>
               </div>
             </div>
             <div class="panel-heading">
@@ -269,6 +248,18 @@
                 <button id="cancel-analysis" class="secondary compact-button cancel-button" type="button" hidden>Cancel</button>
                 <button class="secondary" data-download="analysis" type="button">CSV</button>
               </div>
+            </div>
+            <div id="analysis-insights" class="analysis-insights" aria-label="סיכום כל העסקאות המתאימות" hidden></div>
+            <div class="analysis-view-toolbar">
+              <label for="analysis-view-mode">מה תרצו לבדוק?
+                <select id="analysis-view-mode" autocomplete="off" aria-describedby="analysis-view-description">
+                  <option value="scatter">עסקאות בודדות</option>
+                  <option value="trend">מגמת מחירים ופיזור</option>
+                  <option value="volume">היקף עסקאות לפי שנה</option>
+                  <option value="distribution">התפלגות מחירים</option>
+                </select>
+              </label>
+              <p id="analysis-view-description">כל נקודה היא עסקה. לחצו עליה לפתיחת הפרטים וההיסטוריה.</p>
             </div>
             <section class="plot-controls" aria-label="Plot Controls">
               <div class="plot-controls-heading">
@@ -419,8 +410,15 @@
               </div>
             </div>
             <div id="analysis-chart-summary" class="analysis-chart-summary" hidden></div>
+            <details id="analysis-insight-data" class="analysis-insight-data" hidden>
+              <summary>הנתונים שמאחורי הגרף</summary>
+              <div id="analysis-insight-table" class="table-wrap" tabindex="0" aria-label="נתוני הסיכום; אפשר לגלול אופקית"></div>
+            </details>
             <div id="selected-deal" class="selected-deal"></div>
-            <div id="analysis-counts" class="metrics"></div>
+            <details class="analysis-insight-data">
+              <summary>איך סוננו העסקאות?</summary>
+              <div id="analysis-counts" class="metrics"></div>
+            </details>
             <div id="analysis-table" class="table-wrap"></div>
           </section>
 
@@ -1271,6 +1269,8 @@
       defer></script>
   <div class="mobile-analysis-actions" aria-label="פעולות ניתוח">
     <span id="mobile-analysis-status" role="status"></span>
+    <button id="mobile-show-filters" class="secondary" type="button">מסננים</button>
+    <button id="mobile-show-results" class="secondary" type="button">תוצאות</button>
     <button id="mobile-run-analysis" type="button">עדכון הניתוח</button>
     <button id="mobile-cancel-analysis" class="secondary" type="button" hidden>ביטול</button>
   </div>

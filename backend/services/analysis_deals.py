@@ -19,6 +19,7 @@ from .calculations import (
     summary_by_city_year,
 )
 from .data_store import DataStore
+from .analysis_insights import build_analysis_insights
 
 
 DEFAULT_LIMIT = 2000
@@ -85,10 +86,13 @@ def build_analysis_deals_response(data_store: DataStore, payload: Optional[Mappi
     outlier_rows = int(len(filtered))
 
     prepared = _with_display_calculations(filtered, price_type)
+    insights = build_analysis_insights(prepared)
     prepared = prepared.loc[pd.to_numeric(prepared["PriceUsed"], errors="coerce").notna()].copy()
+    if insights["missing_price_deals"]:
+        warnings.append(f'{insights["missing_price_deals"]} עסקאות ללא ערך תקין למדד המחיר הנבחר; הן נספרות בהיקף העסקאות אך אינן נכללות בגרפי המחיר.')
     filtered_rows = int(len(prepared))
 
-    if prepared.empty:
+    if filtered.empty:
         warnings.append("No matching transactions were found.")
 
     aesthetic_columns = _requested_aesthetic_columns(request_payload)
@@ -118,6 +122,7 @@ def build_analysis_deals_response(data_store: DataStore, payload: Optional[Mappi
             "points": points,
             "table_rows": table_rows,
             "summary": summary,
+            "insights": insights,
             "counts": {
                 "city_rows": city_rows,
                 "location_rows": location_rows,
@@ -230,15 +235,6 @@ def _with_plot_aesthetic_processing(
         if not column or column not in working.columns:
             continue
 
-        if response_key == "facet":
-            before = len(working)
-            working = working.loc[~working[column].map(_is_unknown_facet_value)].copy()
-            removed = before - len(working)
-            if removed:
-                warnings.append(f"Removed {removed} deals with unknown {column} facet values.")
-            if working.empty:
-                return working
-
         processed = _processed_aesthetic_series(working, column, response_key, descriptions)
         if processed is not None:
             processed_column = f"_{response_key}_processed"
@@ -263,8 +259,11 @@ def _processed_aesthetic_series(
             return pd.Series(labels, index=df.index, dtype="object")
         return df[column].map(_display_value)
 
-    numeric = pd.to_numeric(df[column], errors="coerce")
-    if numeric.notna().all():
+    values = df[column]
+    if column in {"rooms", "floor", "build_floors"}:
+        values = values.mask(pd.to_numeric(values, errors="coerce").eq(999))
+    numeric = pd.to_numeric(values, errors="coerce")
+    if numeric.notna().any() and numeric.notna().sum() == values.notna().sum():
         unique_values = sorted(numeric.dropna().unique().tolist())
         discrete_limit = 8 if response_key == "color" else 5
         if column in {"rooms", "floor", "build_floors"} or len(unique_values) <= discrete_limit:
@@ -286,7 +285,7 @@ def _processed_aesthetic_series(
         except ValueError:
             return numeric.map(_compact_number).astype("object")
 
-    return df[column].map(_display_value)
+    return values.map(_display_value)
 
 
 def _gush_description_lookup(data_store: DataStore) -> Dict[tuple[Any, Optional[int]], Any]:
@@ -306,18 +305,6 @@ def _gush_description_lookup(data_store: DataStore) -> Dict[tuple[Any, Optional[
         if city and gush is not None and label:
             lookup[(city, gush)] = label
     return lookup
-
-
-def _is_unknown_facet_value(value: Any) -> bool:
-    if value is None:
-        return False
-    try:
-        if pd.isna(value):
-            return False
-    except (TypeError, ValueError):
-        pass
-    text = str(value).strip()
-    return text == "999" or text == "999.0"
 
 
 def _format_interval(value: Any) -> Any:
@@ -542,7 +529,7 @@ def _summary_stats(df: pd.DataFrame, price_type: str) -> Dict[str, Any]:
         "median_price_per_m2": _series_median(df.get("price_per_m2")),
         "median_price_per_room": _series_median(df.get("price_per_room")),
         "median_area": _series_median(df.get("area")),
-        "median_rooms": _series_median(df.get("rooms")),
+        "median_rooms": _series_median(df.get("rooms", pd.Series(dtype=float)).replace(999, float("nan"))),
         "year_min": _compact_number(years.min()),
         "year_max": _compact_number(years.max()),
         "date_min": _date_value(dates.min()),

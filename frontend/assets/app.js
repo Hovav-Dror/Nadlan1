@@ -15,6 +15,7 @@
     gushFilterOptionsSignature: "",
     latestPayloads: {},
     latestAnalysisRows: [],
+    latestAnalysisData: null,
     successfulAnalysisPayload: null,
     latestGushPerformance: null,
     selectedPointId: null,
@@ -483,6 +484,16 @@
   }
 
   function bindControls() {
+    [["mobile-show-filters", "analysis-filters"], ["mobile-show-results", "panel-analysis"]].forEach(function (pair) {
+      byId(pair[0]).addEventListener("click", function () {
+        byId(pair[1]).focus({preventScroll: true});
+        byId(pair[1]).scrollIntoView({block: "start"});
+      });
+    });
+    byId("analysis-view-mode").addEventListener("change", function () {
+      updateAnalysisViewControls();
+      if (state.latestAnalysisData) renderAnalysisChart(state.latestAnalysisData);
+    });
     byId("refresh-meta").addEventListener("click", refreshCoverageOnly);
     byId("random-city").addEventListener("click", chooseRandomCity);
     byId("city-select").addEventListener("change", function () {
@@ -513,7 +524,7 @@
     byId("mobile-run-analysis").addEventListener("click", async function () {
       await runAnalysis();
       if (state.successfulAnalysisPayload && !analysisNeedsUpdate()) {
-        byId("analysis-state").scrollIntoView({ block: "start" });
+        byId(byId("analysis-insights").hidden ? "analysis-state" : "analysis-insights").scrollIntoView({ block: "start" });
       }
     });
     byId("mobile-cancel-analysis").addEventListener("click", function () { cancelRequest("analysis"); });
@@ -1360,6 +1371,7 @@
       return;
     }
     var requestId = ++state.analysisRequestId;
+    var analysisSnapshotYear = snapshotYear("analysis");
     var controller = startRequest("analysis");
     state.latestPayloads.analysis = payload;
     var analysisUrl = new URL(window.location.href);
@@ -1372,6 +1384,8 @@
       var response = await postJson(endpoints.analysis, payload, { signal: controller.signal });
       if (requestId !== state.analysisRequestId) return;
       var data = response.data || {};
+      data.insight_snapshot_year = analysisSnapshotYear;
+      state.latestAnalysisData = data;
       state.successfulAnalysisPayload = payload;
       state.latestAnalysisRows = data.table_rows || [];
       state.selectedPointId = null;
@@ -1386,7 +1400,7 @@
       });
       persistSharedView();
       rememberNavigation();
-      setNotice("analysis-state", warningText(response) || emptyText(data.table_rows, "Analysis updated.", "No matching transactions."), warningText(response) ? "warning" : "ok");
+      setNotice("analysis-state", warningText(response) || (data.insights && data.insights.matching_deals ? "Analysis updated." : emptyText(data.table_rows, "Analysis updated.", "No matching transactions.")), warningText(response) ? "warning" : "ok");
     } catch (error) {
       if (requestId !== state.analysisRequestId) return;
       if (error.name === "AbortError") {
@@ -2353,15 +2367,38 @@
   function renderAnalysisChart(data) {
     var points = data.points || [];
     var chart = byId("analysis-chart");
+    var mode = byId("analysis-view-mode").value || "scatter";
+    var unit = yLabel(data.summary && data.summary.price_type);
+    updateAnalysisViewControls();
+    window.NadlanInsights.renderSummary(data, byId("analysis-insights"), unit);
+    byId("analysis-view-description").textContent = window.NadlanInsights.description(mode, data.insights);
+    byId("analysis-insight-data").hidden = true;
+    if (mode !== "scatter" && data.insights) {
+      var spec = window.NadlanInsights.chartSpec(data, mode, {unit: unit, partialYear: data.insight_snapshot_year});
+      if (!spec.hasData) {
+        renderAnalysisChartGuide(data);
+        byId("analysis-chart-summary").hidden = true;
+        return;
+      }
+      chart.hidden = false;
+      chart.classList.remove("chart-guide");
+      if (!chart.classList.contains("js-plotly-plot")) chart.innerHTML = "";
+      if (chart.removeAllListeners) chart.removeAllListeners("plotly_click");
+      Plotly.react(chart, spec.traces, spec.layout, {responsive: true, displaylogo: false}).then(function () { schedulePlotResize("analysis-chart"); });
+      var insightSummary = byId("analysis-chart-summary");
+      insightSummary.hidden = false;
+      insightSummary.textContent = "מבוסס על כל העסקאות המתאימות בעדכון האחרון, ללא דגימה. " +
+        (spec.partial ? "* השנה האחרונה באיסוף ואילך: כיסוי חלקי; אין להשוות היקף לשנה מלאה. " : "") +
+        (data.insights.undated_deals ? formatNumber(data.insights.undated_deals) + " עסקאות ללא שנה תקינה אינן מוצגות לפי שנה. " : "") +
+        "טבלת העסקאות למטה מציגה עד " + formatNumber(points.length) + " עסקאות עם מדד מחיר תקין; הייצוא כולל את כל הרשומות אחרי סינון.";
+      window.NadlanInsights.renderTable(spec, byId("analysis-insight-table"));
+      byId("analysis-insight-data").hidden = false;
+      return;
+    }
     if (!points.length) {
       if (byId("analysis-chart-summary")) byId("analysis-chart-summary").hidden = true;
       if (data && Object.prototype.hasOwnProperty.call(data, "table_rows")) {
-        if (window.Plotly && chart.classList.contains("js-plotly-plot")) {
-          Plotly.purge(chart);
-        }
-        chart.hidden = true;
-        chart.className = "chart";
-        chart.innerHTML = "";
+        renderAnalysisChartGuide(data);
         return;
       }
       renderAnalysisChartGuide();
@@ -2376,7 +2413,7 @@
     var summary = byId("analysis-chart-summary");
     if (summary) {
       summary.hidden = false;
-      summary.textContent = "גרף הניתוח · " + points.length + " עסקאות מוצגות · " +
+      summary.textContent = "גרף הניתוח · " + formatNumber(points.length) + " עסקאות מוצגות מתוך " + formatNumber(data.counts && data.counts.filtered_rows) + " עם מדד מחיר תקין · " +
         formatDealDate(data.summary && data.summary.date_min) + " – " + formatDealDate(data.summary && data.summary.date_max) +
         " · לפי המסננים בעדכון האחרון";
     }
@@ -2389,6 +2426,17 @@
       markSelectedDealOnChart(state.selectedPointId);
       schedulePlotResize("analysis-chart");
     });
+  }
+
+  function updateAnalysisViewControls() {
+    var mode = byId("analysis-view-mode").value || "scatter";
+    ["analysis-color-var", "analysis-shape-var", "analysis-size-var", "analysis-facet-var",
+      "analysis-color-palette", "analysis-shape-palette", "show-sp500", "show-city-overlay"].forEach(function (id) {
+      byId(id).disabled = mode !== "scatter";
+      byId(id).closest("label").hidden = mode !== "scatter";
+    });
+    byId("analysis-price-type").closest(".plot-controls").classList.toggle("aggregate-controls", mode !== "scatter");
+    byId("analysis-view-description").textContent = window.NadlanInsights.description(mode, state.latestAnalysisData && state.latestAnalysisData.insights);
   }
 
   function schedulePlotResize(targetId) {
@@ -2408,8 +2456,9 @@
     chart.hidden = false;
     chart.className = "chart chart-guide";
     var hasAttemptedAnalysis = data && Object.prototype.hasOwnProperty.call(data, "table_rows");
-    var title = hasAttemptedAnalysis ? "לא נמצאו עסקאות מתאימות" : "איך מתחילים";
-    var intro = hasAttemptedAnalysis ?
+    var hasUnplottableDeals = data && data.insights && data.insights.matching_deals > 0;
+    var title = hasUnplottableDeals ? "אין נתונים מתאימים לתצוגה הזו" : hasAttemptedAnalysis ? "לא נמצאו עסקאות מתאימות" : "איך מתחילים";
+    var intro = hasUnplottableDeals ? "נמצאו עסקאות, אך חסרים ערכי מחיר או שנה לתצוגה שנבחרה. נסו מדד מחיר אחר או את תצוגת היקף העסקאות." : hasAttemptedAnalysis ?
       "הרחיבו את הבחירה או שחררו מסננים, ואז עדכנו את הניתוח שוב." :
       "השתמשו באזור הגרף כרשימת בדיקה עד שהפיזור מוכן.";
     chart.innerHTML = '<div class="chart-guide-content">' +
@@ -5477,7 +5526,7 @@
       .replace(/^Choose a city first\.$/, "בחרו עיר קודם.")
       .replace(/^Loading streets and Gush areas\.\.\.$/, "טוען רחובות וגושים...")
       .replace(/^Loaded ([\d,]+) streets and ([\d,]+) Gush areas\.$/, "נטענו $1 רחובות ו-$2 גושים.")
-      .replace(/^Returned a deterministic sample of ([\d,]+) deals from ([\d,]+) matching deals\.$/, "מוצג מדגם של $1 עסקאות מתוך $2 התאמות. ייצוא CSV כולל את כל ההתאמות; סינון הטבלה חל על המדגם בלבד.")
+      .replace(/^Returned a deterministic sample of ([\d,]+) deals from ([\d,]+) matching deals\.$/, "גרף העסקאות הבודדות וטבלת העסקאות מציגים $1 מתוך $2 התאמות. הסיכומים ושאר גרפי הניתוח משתמשים בכל הערכים התקינים; ייצוא CSV כולל את כל הרשומות אחרי סינון.")
       .replace(/^City metadata loaded\. Search streets or Gush areas, then update analysis\.$/, "מטא-דאטה של העיר נטען. חפשו רחובות או גושים ואז עדכנו את הניתוח.")
       .replace(/^Loading dynamic filter ranges\.\.\.$/, "טוען טווחי סינון דינמיים...")
       .replace(/^Filter options loaded\.$/, "אפשרויות הסינון נטענו.")

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Iterable, Mapping, Optional, Sequence
@@ -26,23 +27,27 @@ def price_used(row_or_df: Any, price_type: str) -> Any:
     price_type_key = _normalize_price_type(price_type)
 
     if isinstance(row_or_df, pd.DataFrame):
-        price = pd.to_numeric(row_or_df.get("price_millions"), errors="coerce")
+        missing = pd.Series(index=row_or_df.index, dtype=float)
+        price = pd.to_numeric(row_or_df.get("price_millions", missing), errors="coerce")
+        price = price.replace([float("inf"), -float("inf")], float("nan"))
         if price_type_key == "price_per_m2":
-            area = pd.to_numeric(row_or_df.get("area"), errors="coerce")
-            return (price * 1000 / area).where(area > 0)
+            area = pd.to_numeric(row_or_df.get("area", missing), errors="coerce")
+            ratio = (price * 1000 / area).where(area.gt(0) & area.lt(float("inf")))
+            return ratio.replace([float("inf"), -float("inf")], float("nan"))
         if price_type_key == "price_per_room":
-            rooms = pd.to_numeric(row_or_df.get("rooms"), errors="coerce")
-            return (price / rooms).where(rooms > 0)
+            rooms = pd.to_numeric(row_or_df.get("rooms", missing), errors="coerce")
+            ratio = (price / rooms).where(rooms.gt(0) & rooms.ne(SPECIAL_UNKNOWN_VALUE) & rooms.lt(float("inf")))
+            return ratio.replace([float("inf"), -float("inf")], float("nan"))
         return price
 
     row = row_or_df if isinstance(row_or_df, Mapping) else row_or_df.to_dict()
     price = _safe_number(row.get("price_millions"))
     if price_type_key == "price_per_m2":
         area = _safe_number(row.get("area"))
-        return price * 1000 / area if price is not None and area and area > 0 else None
+        return _safe_number(price * 1000 / area) if price is not None and area and area > 0 else None
     if price_type_key == "price_per_room":
         rooms = _safe_number(row.get("rooms"))
-        return price / rooms if price is not None and rooms and rooms > 0 else None
+        return _safe_number(price / rooms) if price is not None and rooms and rooms > 0 and rooms != SPECIAL_UNKNOWN_VALUE else None
     return price
 
 
@@ -180,6 +185,9 @@ def apply_common_filters(df: pd.DataFrame, filters: Optional[Mapping[str, Any]])
         _range_value(filters, "floor", "floor_range"),
         retain_special_values={SPECIAL_UNKNOWN_VALUE} if _include_unknown(filters, "floor") else None,
     )
+    if not _include_unknown(filters, "floor") and "floor" in result.columns:
+        floor = pd.to_numeric(result["floor"], errors="coerce")
+        result = result.loc[floor.notna() & floor.ne(SPECIAL_UNKNOWN_VALUE)]
     result = _apply_rooms_filter(
         result,
         _filter_value(filters, "rooms", "rooms_select"),
@@ -323,13 +331,14 @@ def _apply_range_filter(
 
 def _apply_rooms_filter(df: pd.DataFrame, selected: Any, *, include_unknown: bool = True) -> pd.DataFrame:
     selected_values = _as_list(selected)
-    if "rooms" not in df.columns or not selected_values:
+    if "rooms" not in df.columns:
         return df
     selected_numbers = {_safe_number(value) for value in selected_values}
     selected_numbers.discard(None)
     rooms = pd.to_numeric(df["rooms"], errors="coerce")
     rounded_rooms = (rooms * 2).round() / 2
-    mask = rounded_rooms.isin(selected_numbers)
+    known = rooms.notna() & rooms.ne(SPECIAL_UNKNOWN_VALUE)
+    mask = rounded_rooms.isin(selected_numbers) & known if selected_values else known
     if include_unknown:
         mask = mask | rooms.eq(SPECIAL_UNKNOWN_VALUE) | rooms.isna()
     return df.loc[mask]
@@ -351,10 +360,11 @@ def _apply_build_year_filter(
     *,
     include_unknown: bool = True,
 ) -> pd.DataFrame:
-    if value_range is None or "build_year" not in df.columns:
+    if "build_year" not in df.columns:
         return df
     values = pd.to_numeric(df["build_year"], errors="coerce")
-    mask = _between_mask(values, value_range)
+    known = values.notna() & values.ge(1900)
+    mask = _between_mask(values, value_range) & known if value_range is not None else known
     if include_unknown:
         mask = mask | values.isna() | (values < 1900)
     return df.loc[mask]
@@ -366,10 +376,11 @@ def _apply_building_age_filter(
     *,
     include_unknown: bool = True,
 ) -> pd.DataFrame:
-    if value_range is None or "building age" not in df.columns:
+    if "building age" not in df.columns:
         return df
     values = pd.to_numeric(df["building age"], errors="coerce")
-    mask = _between_mask(values, value_range)
+    known = values.notna() & values.le(150)
+    mask = _between_mask(values, value_range) & known if value_range is not None else known
     if include_unknown:
         mask = mask | values.isna() | (values > 150)
     return df.loc[mask]
@@ -381,11 +392,12 @@ def _apply_building_floors_filter(
     *,
     include_unknown: bool = True,
 ) -> pd.DataFrame:
-    if value_range is None or "build_floors" not in df.columns:
+    if "build_floors" not in df.columns:
         return df
     values = pd.to_numeric(df["build_floors"], errors="coerce")
     comparison_values = values.fillna(SPECIAL_UNKNOWN_VALUE)
-    mask = _between_mask(comparison_values, value_range)
+    known = values.notna() & values.ne(SPECIAL_UNKNOWN_VALUE)
+    mask = _between_mask(comparison_values, value_range) & known if value_range is not None else known
     if include_unknown:
         mask = mask | comparison_values.eq(SPECIAL_UNKNOWN_VALUE)
     return df.loc[mask]
@@ -569,7 +581,7 @@ def _safe_number(value: Any) -> Optional[float]:
         numeric = float(value)
     except (TypeError, ValueError):
         return None
-    if pd.isna(numeric):
+    if not math.isfinite(numeric):
         return None
     return numeric
 

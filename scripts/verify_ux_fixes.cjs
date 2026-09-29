@@ -51,12 +51,13 @@ async function staleResults() {
   const state={analysisMode:'chart',analysisRequestId:0,successfulAnalysisPayload:null,latestPayloads:{}};
   const c = load({state,URL,document:{body:{dataset:{}}},window:{location:{href:'http://localhost/#analysis'},history:{replaceState(){}}},
     byId:id=>nodes[id], validateNumericScope:()=>valid, buildAnalysisPayload:()=>structuredClone(payload),
-    endpoints:{analysis:'api/analysis/deals'},startRequest:()=>({signal:{}}),finishRequest(){},setAnalysisBusy(){},
+    endpoints:{analysis:'api/analysis/deals'},snapshotYear:()=>2026,startRequest:()=>({signal:{}}),finishRequest(){},setAnalysisBusy(){},
     postJson(){posts++; return new Promise((yes,no)=>{resolve=yes;reject=no;});},
     renderAnalysisChart(){},renderSelectedDeal(){},renderMetrics(){},renderTable(){},analysisColumns:()=>[],
     persistSharedView(){},rememberNavigation(){},setNotice(){},warningText:()=>'',emptyText:()=>'',activateTab(){}},
     ['analysisNeedsUpdate','updateAnalysisFreshness','runAnalysis','previewExport']);
   let run=c.runAnalysis(); resolve({data:{table_rows:[{price:4}]}}); await run;
+  assert.equal(state.latestAnalysisData.insight_snapshot_year,2026,'Keep collection year attached to the displayed result');
   assert(!c.analysisNeedsUpdate());
   payload.filters.price_range=[null,0]; c.updateAnalysisFreshness();
   assert(c.analysisNeedsUpdate()); assert.equal(nodes['analysis-stale'].hidden,false);
