@@ -13,6 +13,7 @@ from .calculations import (
     apply_common_filters,
     apply_transaction_filters,
     price_used,
+    remove_metric_outliers,
     remove_outliers_from_var,
     remove_price_outliers_by_year,
     sp500_normalized,
@@ -176,11 +177,7 @@ def _apply_requested_outlier_filters(
         remove_price = _first_present(filters, "remove_price_outliers")
     if remove_price is not False:
         df = remove_price_outliers_by_year(df)
-        if price_type != PRICE_TYPE_PRICE:
-            # A normal total price can still be an extreme ratio (e.g. a whole-building
-            # price recorded against one apartment's area), so also trim the chosen metric.
-            df = df.assign(_metric_for_outliers=price_used(df, price_type))
-            df = remove_price_outliers_by_year(df, "_metric_for_outliers").drop(columns="_metric_for_outliers")
+        df = remove_metric_outliers(df, price_type, by_year=True)
 
     remove_area = _first_present(payload, "remove_area_outliers")
     if remove_area is None and isinstance(filters, Mapping):

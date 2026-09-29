@@ -5,7 +5,7 @@ import unittest
 import pandas as pd
 
 from backend.services.analysis_deals import build_analysis_deals_response
-from backend.services.calculations import CalculationServiceError, apply_transaction_filters, price_used, remove_price_outliers_by_year
+from backend.services.calculations import CalculationServiceError, apply_transaction_filters, price_used, remove_metric_outliers, remove_price_outliers_by_year
 
 
 class Store:
@@ -65,6 +65,18 @@ class ReviewFixTests(unittest.TestCase):
         frame.loc[0, "price_millions"] = 1.3
         response = build_analysis_deals_response(Store(frame), {"city": "test", "price_type": "Price / m²"})
         self.assertLess(max(point["y"] for point in response["points"]), 20)
+
+    def test_metric_outliers_trim_ratio_but_keep_missing_metric_rows(self):
+        frame = city()
+        frame.loc[0, ["area", "rooms", "price_millions"]] = [20.0, 1.0, 1.3]  # ratio outlier, normal total
+        frame.loc[1, "area"] = 1.0  # placeholder area: no metric, but still a transaction
+        frame["marker"] = range(len(frame))
+        for by_year in [False, True]:
+            kept = set(remove_metric_outliers(frame, "price_per_m2", by_year=by_year)["marker"])
+            self.assertNotIn(0, kept)
+            self.assertIn(1, kept)
+            self.assertEqual(len(kept), len(frame) - 1)
+        self.assertEqual(len(remove_metric_outliers(frame, "price_millions", by_year=False)), len(frame))
 
 
 if __name__ == "__main__":

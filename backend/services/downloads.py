@@ -7,6 +7,8 @@ import pandas as pd
 
 from .analysis_deals import DISPLAY_COLUMNS
 from .calculations import (
+    remove_metric_outliers,
+    requested_metric,
     apply_common_filters,
     apply_transaction_filters,
     price_used,
@@ -103,6 +105,7 @@ def build_compare_raw_download(data_store: DataStore, payload: Optional[Mapping[
     filtered = apply_transaction_filters(selected, _non_location_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
+        filtered = remove_metric_outliers(filtered, requested_metric(request_payload), by_year=False)
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_compare_raw.csv", column_names=RAW_COLUMN_NAMES)
 
@@ -124,6 +127,7 @@ def build_city_comparison_raw_download(data_store: DataStore, payload: Optional[
     filtered = apply_transaction_filters(city_frame, _city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
+        filtered = remove_metric_outliers(filtered, requested_metric(request_payload), by_year=False)
     filtered = _rows_in_year_groups(filtered, _plotted_city_years(summary), "city")
     rows = _raw_rows(_with_price_calculations(filtered), include_story=True)
     return _download_payload(rows, filename="nadlan_city_comparison_raw.csv", column_names=RAW_COLUMN_NAMES)
@@ -147,6 +151,7 @@ def build_gush_performance_raw_download(data_store: DataStore, payload: Optional
     filtered = apply_transaction_filters(city_frame, _non_city_filters(request_payload.get("filters")))
     if _remove_price_outliers(request_payload):
         filtered = remove_price_outliers_global_iqr(filtered)
+        filtered = remove_metric_outliers(filtered, requested_metric(request_payload), by_year=False)
         filtered = remove_outliers_from_var(filtered, "area")
     # The summary owns ranking, endpoint eligibility and the effective period.
     # Filter source records after applying the identical outlier population.
@@ -233,6 +238,7 @@ def _apply_analysis_outlier_filters(df: pd.DataFrame, payload: Mapping[str, Any]
         remove_price = _first_present(filters, "remove_price_outliers")
     if remove_price is not False:
         df = remove_price_outliers_by_year(df)
+        df = remove_metric_outliers(df, _first_present(payload, "price_type", "y_variable"), by_year=True)
 
     remove_area = _first_present(payload, "remove_area_outliers")
     if remove_area is None and isinstance(filters, Mapping):

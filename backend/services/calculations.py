@@ -133,6 +133,33 @@ def remove_price_outliers_global_iqr(df: pd.DataFrame, *, multiplier: float = 1.
     return df.loc[(values >= lower_bound) & (values <= upper_bound)].copy()
 
 
+def requested_metric(payload: Mapping[str, Any]) -> Any:
+    for key in ("y_variable", "yvar", "price_type"):
+        if isinstance(payload, Mapping) and payload.get(key) is not None:
+            return payload[key]
+    return None
+
+
+def remove_metric_outliers(df: pd.DataFrame, metric: Any, *, by_year: bool, multiplier: float = 1.5) -> pd.DataFrame:
+    """Trim outliers of a plotted per-m² or per-room metric, after total-price trimming.
+
+    A normal total price can still be an extreme ratio (a whole-building price recorded
+    against one unit's area). Rows without a metric value are kept: they still count
+    as transactions and are reported as lacking that metric.
+    """
+    price_type = {"price_per_m2": PRICE_TYPE_M2, "price_per_room": PRICE_TYPE_ROOM}.get(_normalize_price_type(str(metric or "")))
+    if price_type is None or df.empty:
+        return df
+    working = df.assign(_nadlan2_metric=price_used(df, price_type))
+    if by_year:
+        return remove_price_outliers_by_year(working, "_nadlan2_metric").drop(columns="_nadlan2_metric")
+    values = working["_nadlan2_metric"]
+    q1, q3 = values.quantile(0.25), values.quantile(0.75)
+    iqr = q3 - q1
+    keep = values.isna() | values.between(q1 - multiplier * iqr, q3 + multiplier * iqr)
+    return working.loc[keep].drop(columns="_nadlan2_metric")
+
+
 def remove_outliers_from_var(df: pd.DataFrame, var_name: str) -> pd.DataFrame:
     if var_name not in df.columns:
         return df.copy()

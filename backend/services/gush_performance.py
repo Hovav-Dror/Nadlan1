@@ -7,6 +7,8 @@ from math import isfinite
 import pandas as pd
 
 from .calculations import (
+    remove_metric_outliers,
+    requested_metric,
     PRICE_TYPE_M2,
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
@@ -60,6 +62,7 @@ def build_gush_performance_summary_response(data_store: DataStore, payload: Opti
     if _remove_price_outliers(request_payload):
         before = len(filtered)
         filtered = remove_price_outliers_global_iqr(filtered)
+        filtered = remove_metric_outliers(filtered, requested_metric(request_payload), by_year=False)
         filtered = remove_outliers_from_var(filtered, "area")
         if len(filtered) < before:
             warnings.append(f"Removed {before - len(filtered)} outlier deals.")

@@ -5,6 +5,8 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence
 import pandas as pd
 
 from .calculations import (
+    remove_metric_outliers,
+    requested_metric,
     PRICE_TYPE_M2,
     PRICE_TYPE_PRICE,
     PRICE_TYPE_ROOM,
@@ -157,6 +159,7 @@ def _filtered_compare_deals(
     if _remove_price_outliers(request_payload):
         before = len(filtered)
         filtered = remove_price_outliers_global_iqr(filtered)
+        filtered = remove_metric_outliers(filtered, requested_metric(request_payload), by_year=False)
         if len(filtered) < before:
             warnings.append(f"Removed {before - len(filtered)} price outlier deals.")
 
@@ -420,6 +423,7 @@ def _overlays(
         city_filtered = apply_transaction_filters(city_frame, _non_location_filters(payload.get("filters")))
         if _remove_price_outliers(payload):
             city_filtered = remove_price_outliers_global_iqr(city_filtered)
+            city_filtered = remove_metric_outliers(city_filtered, requested_metric(payload), by_year=False)
         overlays["city_comparison"] = _city_overlay_rows(_summary_by_city_year(city_filtered, statistic), y_variable)
 
     if payload.get("show_sp500") is True and y_variable != "n_deals" and not selected_deals.empty:
