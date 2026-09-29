@@ -132,6 +132,15 @@ function filterIsolation() {
   console.log('PASS: independent performance filters and deliberate room selections survive metadata updates');
 }
 
-(async () => {await sharedLinks(); chartMembership(); filterIsolation();})().catch(error => {
+function mapKeepsCityAfterSelection() {
+  // After a gush is clicked the map must still request the whole city, or every
+  // other polygon disappears and nothing else can be selected.
+  const ids = {'city-select': {value: 'tel_aviv_yafo'}};
+  const context = load({byId: id => ids[id], activeGushSelection: () => ['6034']}, ['buildMapPayload']);
+  assert.deepEqual(plain(context.buildMapPayload()), {city: 'tel_aviv_yafo', gushes: ['6034']});
+  console.log('PASS: map selection keeps the city polygons clickable');
+}
+
+(async () => {await sharedLinks(); chartMembership(); filterIsolation(); mapKeepsCityAfterSelection();})().catch(error => {
   console.error(error); process.exitCode = 1;
 });

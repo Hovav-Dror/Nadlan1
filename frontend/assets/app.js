@@ -1715,10 +1715,11 @@
   }
 
   function buildMapPayload() {
-    var gushes = activeGushSelection();
+    // Keep the city: the map shows all of its gushes for clicking, plus any selected
+    // gushes from other cities (the backend takes the union).
     return {
-      city: gushes.length ? "" : byId("city-select").value,
-      gushes: gushes
+      city: byId("city-select").value,
+      gushes: activeGushSelection()
     };
   }
 
